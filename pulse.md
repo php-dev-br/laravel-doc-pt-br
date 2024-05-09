@@ -35,14 +35,7 @@ For in-depth debugging of individual events, check out [Laravel Telescope](/docs
 > [!WARNING]  
 > Pulse's first-party storage implementation currently requires a MySQL, MariaDB, or PostgreSQL database. If you are using a different database engine, you will need a separate MySQL, MariaDB, or PostgreSQL database for your Pulse data.
 
-Since Pulse is currently in beta, you may need to adjust your application's `composer.json` file to allow beta package releases to be installed:
-
-```json
-"minimum-stability": "beta",
-"prefer-stable": true
-```
-
-Then, you may use the Composer package manager to install Pulse into your Laravel project:
+You may install Pulse using the Composer package manager:
 
 ```sh
 composer require laravel/pulse
@@ -176,6 +169,12 @@ public function boot(): void
 
 The `<livewire:pulse.servers />` card displays system resource usage for all servers running the `pulse:check` command. Please refer to the documentation regarding the [servers recorder](#servers-recorder) for more information on system resource reporting.
 
+If you replace a server in your infrastructure, you may wish to stop displaying the inactive server in the Pulse dashboard after a given duration. You may accomplish this using the `ignore-after` prop, which accepts the number of seconds after which inactive servers should be removed from the Pulse dashboard. Alternatively, you may provide a relative time formatted string, such as `1 hour` or `3 days and 1 hour`:
+
+```blade
+<livewire:pulse.servers ignore-after="3 hours" />
+```
+
 <a name="application-usage-card"></a>
 #### Application Usage
 
@@ -220,6 +219,12 @@ The `<livewire:pulse.slow-jobs />` card shows the queued jobs in your applicatio
 The `<livewire:pulse.slow-queries />` card shows the database queries in your application that exceed the configured threshold, which is 1,000ms by default.
 
 By default, slow queries are grouped based on the SQL query (without bindings) and the location where it occurred, but you may choose to not capture the location if you wish to group solely on the SQL query.
+
+If you encounter rendering performance issues due to extremely large SQL queries receiving syntax highlighting, you may disable highlighting by adding the `without-highlighting` prop:
+
+```blade
+<livewire:pulse.slow-queries without-highlighting />
+```
 
 See the [slow queries recorder](#slow-queries-recorder) documentation for more information.
 
@@ -666,7 +671,7 @@ class TopSellers extends Card
 }
 ```
 
-The `aggregate` method returns return a collection of PHP `stdClass` objects. Each object will contain the `key` property captured earlier, along with keys for each of the requested aggregates:
+The `aggregate` method returns a collection of PHP `stdClass` objects. Each object will contain the `key` property captured earlier, along with keys for each of the requested aggregates:
 
 ```
 @foreach ($topSellers as $seller)
