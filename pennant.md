@@ -141,7 +141,7 @@ class NewApi
 }
 ```
 
-> [!NOTE] Feature classes are resolved via the [container](/docs/{{version}}/container), so you may inject dependencies into the feature class's constructor when needed.
+> [!NOTE] Feature classes are resolved via the [container](container.md), so you may inject dependencies into the feature class's constructor when needed.
 
 #### Customizing the Stored Feature Name
 
@@ -222,7 +222,7 @@ Feature::allAreInactive(['new-api', 'site-redesign']);
 Feature::someAreInactive(['new-api', 'site-redesign']);
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > When using Pennant outside of an HTTP context, such as in an Artisan command or a queued job, you should typically [explicitly specify the feature's scope](#specifying-the-scope). Alternatively, you may define a [default scope](#default-scope) that accounts for both authenticated HTTP contexts and unauthenticated contexts.
 
 <a name="checking-class-based-features"></a>
@@ -366,7 +366,7 @@ To make checking features in Blade a seamless experience, Pennant offers a `@fea
 <a name="middleware"></a>
 ### Middleware
 
-Pennant also includes a [middleware](/docs/{{version}}/middleware) that may be used to verify the currently authenticated user has access to a feature before a route is even invoked. You may assign the middleware to a route and specify the features that are required to access the route. If any of the specified features are inactive for the currently authenticated user, a `400 Bad Request` HTTP response will be returned by the route. Multiple features may be passed to the static `using` method.
+Pennant also includes a [middleware](middleware.md) that may be used to verify the currently authenticated user has access to a feature before a route is even invoked. You may assign the middleware to a route and specify the features that are required to access the route. If any of the specified features are inactive for the currently authenticated user, a `400 Bad Request` HTTP response will be returned by the route. Multiple features may be passed to the static `using` method.
 
 ```php
 use Illuminate\Support\Facades\Route;
@@ -553,7 +553,7 @@ class User extends Model implements FeatureScopeable
 <a name="serializing-scope"></a>
 ### Serializing Scope
 
-By default, Pennant will use a fully qualified class name when storing a feature associated with an Eloquent model. If you are already using an [Eloquent morph map](/docs/{{version}}/eloquent-relationships#custom-polymorphic-types), you may choose to have Pennant also use the morph map to decouple the stored feature from your application structure.
+By default, Pennant will use a fully qualified class name when storing a feature associated with an Eloquent model. If you are already using an [Eloquent morph map](eloquent-relationships.md#custom-polymorphic-types), you may choose to have Pennant also use the morph map to decouple the stored feature from your application structure.
 
 To achieve this, after defining your Eloquent morph map in a service provider, you may invoke the `Feature` facade's `useMorphMap` method:
 
@@ -879,7 +879,7 @@ public function test_it_can_control_feature_values()
 }
 ```
 
-If your feature is returning a `Lottery` instance, there are a handful of useful [testing helpers available](/docs/{{version}}/helpers#testing-lotteries).
+If your feature is returning a `Lottery` instance, there are a handful of useful [testing helpers available](helpers.md#testing-lotteries).
 
 <a name="store-configuration"></a>
 #### Store Configuration
@@ -927,13 +927,13 @@ class RedisFeatureDriver implements Driver
 
 Now, we just need to implement each of these methods using a Redis connection. For an example of how to implement each of these methods, take a look at the `Laravel\Pennant\Drivers\DatabaseDriver` in the [Pennant source code](https://github.com/laravel/pennant/blob/1.x/src/Drivers/DatabaseDriver.php)
 
-> [!NOTE]  
+> [!NOTE]
 > Laravel does not ship with a directory to contain your extensions. You are free to place them anywhere you like. In this example, we have created an `Extensions` directory to house the `RedisFeatureDriver`.
 
 <a name="registering-the-driver"></a>
 #### Registering the Driver
 
-Once your driver has been implemented, you are ready to register it with Laravel. To add additional drivers to Pennant, you may use the `extend` method provided by the `Feature` facade. You should call the `extend` method from the `boot` method of one of your application's [service provider](/docs/{{version}}/providers):
+Once your driver has been implemented, you are ready to register it with Laravel. To add additional drivers to Pennant, you may use the `extend` method provided by the `Feature` facade. You should call the `extend` method from the `boot` method of one of your application's [service provider](providers.md):
 
 ```php
 <?php

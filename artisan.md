@@ -42,7 +42,7 @@ php artisan help migrate
 <a name="laravel-sail"></a>
 #### Laravel Sail
 
-If you are using [Laravel Sail](/docs/{{version}}/sail) as your local development environment, remember to use the `sail` command line to invoke Artisan commands. Sail will execute your Artisan commands within your application's Docker containers:
+If you are using [Laravel Sail](sail.md) as your local development environment, remember to use the `sail` command line to invoke Artisan commands. Sail will execute your Artisan commands within your application's Docker containers:
 
 ```shell
 ./vendor/bin/sail artisan list
@@ -62,7 +62,7 @@ All Laravel applications include Tinker by default. However, you may install Tin
 composer require laravel/tinker
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > Looking for hot reloading, multiline code editing, and autocompletion when interacting with your Laravel application? Check out [Tinkerwell](https://tinkerwell.app)!
 
 <a name="usage"></a>
@@ -80,7 +80,7 @@ You can publish Tinker's configuration file using the `vendor:publish` command:
 php artisan vendor:publish --provider="Laravel\Tinker\TinkerServiceProvider"
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > The `dispatch` helper function and `dispatch` method on the `Dispatchable` class depends on garbage collection to place the job on the queue. Therefore, when using tinker, you should use `Bus::dispatch` or `Queue::push` to dispatch jobs.
 
 <a name="command-allow-list"></a>
@@ -120,7 +120,7 @@ php artisan make:command SendEmails
 
 After generating your command, you should define appropriate values for the `signature` and `description` properties of the class. These properties will be used when displaying your command on the `list` screen. The `signature` property also allows you to define [your command's input expectations](#defining-input-expectations). The `handle` method will be called when your command is executed. You may place your command logic in this method.
 
-Let's take a look at an example command. Note that we are able to request any dependencies we need via the command's `handle` method. The Laravel [service container](/docs/{{version}}/container) will automatically inject all dependencies that are type-hinted in this method's signature:
+Let's take a look at an example command. Note that we are able to request any dependencies we need via the command's `handle` method. The Laravel [service container](container.md) will automatically inject all dependencies that are type-hinted in this method's signature:
 
     <?php
 
@@ -155,7 +155,7 @@ Let's take a look at an example command. Note that we are able to request any de
         }
     }
 
-> [!NOTE]  
+> [!NOTE]
 > For greater code reuse, it is good practice to keep your console commands light and let them defer to application services to accomplish their tasks. In the example above, note that we inject a service class to do the "heavy lifting" of sending the e-mails.
 
 <a name="closure-commands"></a>
@@ -174,7 +174,7 @@ The closure is bound to the underlying command instance, so you have full access
 <a name="type-hinting-dependencies"></a>
 #### Type-Hinting Dependencies
 
-In addition to receiving your command's arguments and options, command closures may also type-hint additional dependencies that you would like resolved out of the [service container](/docs/{{version}}/container):
+In addition to receiving your command's arguments and options, command closures may also type-hint additional dependencies that you would like resolved out of the [service container](container.md):
 
     use App\Models\User;
     use App\Support\DripEmailer;
@@ -195,7 +195,7 @@ When defining a closure based command, you may use the `purpose` method to add a
 <a name="isolatable-commands"></a>
 ### Isolatable Commands
 
-> [!WARNING]  
+> [!WARNING]
 > To utilize this feature, your application must be using the `memcached`, `redis`, `dynamodb`, `database`, `file`, or `array` cache driver as your application's default cache driver. In addition, all servers must be communicating with the same central cache server.
 
 Sometimes you may wish to ensure that only one instance of a command can run at a time. To accomplish this, you may implement the `Illuminate\Contracts\Console\Isolatable` interface on your command class:
@@ -440,8 +440,8 @@ If you would like complete control over the prompt, you may provide a closure th
         ),
     ];
 
-> [!NOTE]  
-The comprehensive [Laravel Prompts](/docs/{{version}}/prompts) documentation includes additional information on the available prompts and their usage.
+> [!NOTE]
+The comprehensive [Laravel Prompts](prompts.md) documentation includes additional information on the available prompts and their usage.
 
 If you wish to prompt the user to select or enter [options](#options), you may include prompts in your command's `handle` method. However, if you only wish to prompt the user when they have also been automatically prompted for missing arguments, then you may implement the `afterPromptingForMissingArguments` method:
 
@@ -493,8 +493,8 @@ Options may be retrieved just as easily as arguments using the `option` method. 
 <a name="prompting-for-input"></a>
 ### Prompting for Input
 
-> [!NOTE]  
-> [Laravel Prompts](/docs/{{version}}/prompts) is a PHP package for adding beautiful and user-friendly forms to your command-line applications, with browser-like features including placeholder text and validation.
+> [!NOTE]
+> [Laravel Prompts](prompts.md) is a PHP package for adding beautiful and user-friendly forms to your command-line applications, with browser-like features including placeholder text and validation.
 
 In addition to displaying output, you may also ask the user to provide input during the execution of your command. The `ask` method will prompt the user with the given question, accept their input, and then return the user's input back to your command:
 
@@ -656,7 +656,7 @@ If necessary, you may also manually register commands by providing the command's
         SendEmails::class,
     ])
 
- When Artisan boots, all the commands in your application will be resolved by the [service container](/docs/{{version}}/container) and registered with Artisan.
+ When Artisan boots, all the commands in your application will be resolved by the [service container](container.md) and registered with Artisan.
 
 <a name="programmatically-executing-commands"></a>
 ## Programmatically Executing Commands
@@ -702,7 +702,7 @@ If you need to specify the value of an option that does not accept string values
 <a name="queueing-artisan-commands"></a>
 #### Queueing Artisan Commands
 
-Using the `queue` method on the `Artisan` facade, you may even queue Artisan commands so they are processed in the background by your [queue workers](/docs/{{version}}/queues). Before using this method, make sure you have configured your queue and are running a queue listener:
+Using the `queue` method on the `Artisan` facade, you may even queue Artisan commands so they are processed in the background by your [queue workers](queues.md). Before using this method, make sure you have configured your queue and are running a queue listener:
 
     use Illuminate\Support\Facades\Artisan;
 

@@ -33,7 +33,7 @@ When writing a Laravel application, it generally does not matter if you use cont
 <a name="package-discovery"></a>
 ## Package Discovery
 
-A Laravel application's `bootstrap/providers.php` file contains the list of service providers that should be loaded by Laravel. However, instead of requiring users to manually add your service provider to the list, you may define the provider in the `extra` section of your package's `composer.json` file so that it is automatically loaded by Laravel. In addition to service providers, you may also list any [facades](/docs/{{version}}/facades) you would like to be registered:
+A Laravel application's `bootstrap/providers.php` file contains the list of service providers that should be loaded by Laravel. However, instead of requiring users to manually add your service provider to the list, you may define the provider in the `extra` section of your package's `composer.json` file so that it is automatically loaded by Laravel. In addition to service providers, you may also list any [facades](facades.md) you would like to be registered:
 
 ```json
 "extra": {
@@ -80,9 +80,9 @@ You may disable package discovery for all packages using the `*` character insid
 <a name="service-providers"></a>
 ## Service Providers
 
-[Service providers](/docs/{{version}}/providers) are the connection point between your package and Laravel. A service provider is responsible for binding things into Laravel's [service container](/docs/{{version}}/container) and informing Laravel where to load package resources such as views, configuration, and language files.
+[Service providers](providers.md) are the connection point between your package and Laravel. A service provider is responsible for binding things into Laravel's [service container](container.md) and informing Laravel where to load package resources such as views, configuration, and language files.
 
-A service provider extends the `Illuminate\Support\ServiceProvider` class and contains two methods: `register` and `boot`. The base `ServiceProvider` class is located in the `illuminate/support` Composer package, which you should add to your own package's dependencies. To learn more about the structure and purpose of service providers, check out [their documentation](/docs/{{version}}/providers).
+A service provider extends the `Illuminate\Support\ServiceProvider` class and contains two methods: `register` and `boot`. The base `ServiceProvider` class is located in the `illuminate/support` Composer package, which you should add to your own package's dependencies. To learn more about the structure and purpose of service providers, check out [their documentation](providers.md).
 
 <a name="resources"></a>
 ## Resources
@@ -106,7 +106,7 @@ Now, when users of your package execute Laravel's `vendor:publish` command, your
 
     $value = config('courier.option');
 
-> [!WARNING]  
+> [!WARNING]
 > You should not define closures in your configuration files. They can not be serialized correctly when users execute the `config:cache` Artisan command.
 
 <a name="default-package-configuration"></a>
@@ -126,7 +126,7 @@ The `mergeConfigFrom` method accepts the path to your package's configuration fi
         );
     }
 
-> [!WARNING]  
+> [!WARNING]
 > This method only merges the first level of the configuration array. If your users partially define a multi-dimensional configuration array, the missing options will not be merged.
 
 <a name="routes"></a>
@@ -145,7 +145,7 @@ If your package contains routes, you may load them using the `loadRoutesFrom` me
 <a name="migrations"></a>
 ### Migrations
 
-If your package contains [database migrations](/docs/{{version}}/migrations), you may use the `publishesMigrations` method to inform Laravel that the given directory or file contains migrations. When Laravel publishes the migrations, it will automatically update the timestamp within their filename to reflect the current date and time:
+If your package contains [database migrations](migrations.md), you may use the `publishesMigrations` method to inform Laravel that the given directory or file contains migrations. When Laravel publishes the migrations, it will automatically update the timestamp within their filename to reflect the current date and time:
 
     /**
      * Bootstrap any package services.
@@ -160,7 +160,7 @@ If your package contains [database migrations](/docs/{{version}}/migrations), yo
 <a name="language-files"></a>
 ### Language Files
 
-If your package contains [language files](/docs/{{version}}/localization), you may use the `loadTranslationsFrom` method to inform Laravel how to load them. For example, if your package is named `courier`, you should add the following to your service provider's `boot` method:
+If your package contains [language files](localization.md), you may use the `loadTranslationsFrom` method to inform Laravel how to load them. For example, if your package is named `courier`, you should add the following to your service provider's `boot` method:
 
     /**
      * Bootstrap any package services.
@@ -208,7 +208,7 @@ Now, when users of your package execute Laravel's `vendor:publish` Artisan comma
 <a name="views"></a>
 ### Views
 
-To register your package's [views](/docs/{{version}}/views) with Laravel, you need to tell Laravel where the views are located. You may do this using the service provider's `loadViewsFrom` method. The `loadViewsFrom` method accepts two arguments: the path to your view templates and your package's name. For example, if your package's name is `courier`, you would add the following to your service provider's `boot` method:
+To register your package's [views](views.md) with Laravel, you need to tell Laravel where the views are located. You may do this using the service provider's `loadViewsFrom` method. The `loadViewsFrom` method accepts two arguments: the path to your view templates and your package's name. For example, if your package's name is `courier`, you would add the following to your service provider's `boot` method:
 
     /**
      * Bootstrap any package services.
@@ -321,7 +321,7 @@ Laravel's built-in `about` Artisan command provides a synopsis of the applicatio
 <a name="commands"></a>
 ## Commands
 
-To register your package's Artisan commands with Laravel, you may use the `commands` method. This method expects an array of command class names. Once the commands have been registered, you may execute them using the [Artisan CLI](/docs/{{version}}/artisan):
+To register your package's Artisan commands with Laravel, you may use the `commands` method. This method expects an array of command class names. Once the commands have been registered, you may execute them using the [Artisan CLI](artisan.md):
 
     use Courier\Console\Commands\InstallCommand;
     use Courier\Console\Commands\NetworkCommand;

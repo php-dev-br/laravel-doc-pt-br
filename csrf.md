@@ -35,7 +35,7 @@ Without CSRF protection, a malicious website could create an HTML form that poin
 <a name="preventing-csrf-requests"></a>
 ## Preventing CSRF Requests
 
-Laravel automatically generates a CSRF "token" for each active [user session](/docs/{{version}}/session) managed by the application. This token is used to verify that the authenticated user is the person actually making the requests to the application. Since this token is stored in the user's session and changes each time the session is regenerated, a malicious application is unable to access it.
+Laravel automatically generates a CSRF "token" for each active [user session](session.md) managed by the application. This token is used to verify that the authenticated user is the person actually making the requests to the application. Since this token is stored in the user's session and changes each time the session is regenerated, a malicious application is unable to access it.
 
 The current session's CSRF token can be accessed via the request's session or via the `csrf_token` helper function:
 
@@ -60,12 +60,12 @@ Anytime you define a "POST", "PUT", "PATCH", or "DELETE" HTML form in your appli
 </form>
 ```
 
-The `Illuminate\Foundation\Http\Middleware\ValidateCsrfToken` [middleware](/docs/{{version}}/middleware), which is included in the `web` middleware group by default, will automatically verify that the token in the request input matches the token stored in the session. When these two tokens match, we know that the authenticated user is the one initiating the request.
+The `Illuminate\Foundation\Http\Middleware\ValidateCsrfToken` [middleware](middleware.md), which is included in the `web` middleware group by default, will automatically verify that the token in the request input matches the token stored in the session. When these two tokens match, we know that the authenticated user is the one initiating the request.
 
 <a name="csrf-tokens-and-spas"></a>
 ### CSRF Tokens & SPAs
 
-If you are building a SPA that is utilizing Laravel as an API backend, you should consult the [Laravel Sanctum documentation](/docs/{{version}}/sanctum) for information on authenticating with your API and protecting against CSRF vulnerabilities.
+If you are building a SPA that is utilizing Laravel as an API backend, you should consult the [Laravel Sanctum documentation](sanctum.md) for information on authenticating with your API and protecting against CSRF vulnerabilities.
 
 <a name="csrf-excluding-uris"></a>
 ### Excluding URIs From CSRF Protection
@@ -82,8 +82,8 @@ Typically, you should place these kinds of routes outside of the `web` middlewar
         ]);
     })
 
-> [!NOTE]  
-> For convenience, the CSRF middleware is automatically disabled for all routes when [running tests](/docs/{{version}}/testing).
+> [!NOTE]
+> For convenience, the CSRF middleware is automatically disabled for all routes when [running tests](testing.md).
 
 <a name="csrf-x-csrf-token"></a>
 ## X-CSRF-TOKEN
@@ -111,5 +111,5 @@ Laravel stores the current CSRF token in an encrypted `XSRF-TOKEN` cookie that i
 
 This cookie is primarily sent as a developer convenience since some JavaScript frameworks and libraries, like Angular and Axios, automatically place its value in the `X-XSRF-TOKEN` header on same-origin requests.
 
-> [!NOTE]  
+> [!NOTE]
 > By default, the `resources/js/bootstrap.js` file includes the Axios HTTP library which will automatically send the `X-XSRF-TOKEN` header for you.

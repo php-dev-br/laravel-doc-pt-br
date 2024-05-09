@@ -22,7 +22,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-[Laravel Reverb](https://github.com/laravel/reverb) brings blazing-fast and scalable real-time WebSocket communication directly to your Laravel application, and provides seamless integration with Laravel’s existing suite of [event broadcasting tools](/docs/{{version}}/broadcasting).
+[Laravel Reverb](https://github.com/laravel/reverb) brings blazing-fast and scalable real-time WebSocket communication directly to your Laravel application, and provides seamless integration with Laravel’s existing suite of [event broadcasting tools](broadcasting.md).
 
 <a name="installation"></a>
 ## Installation
@@ -89,7 +89,7 @@ For example, you may wish to maintain a single Laravel application which, via Re
 
 In most cases, secure WebSocket connections are handled by the upstream web server (Nginx, etc.) before the request is proxied to your Reverb server.
 
-However, it can sometimes be useful, such as during local development, for the Reverb server to handle secure connections directly. If you are using [Laravel Herd's](https://herd.laravel.com) secure site feature or you are using [Laravel Valet](/docs/{{version}}/valet) and have run the [secure command](/docs/{{version}}/valet#securing-sites) against your application, you may use the Herd / Valet certificate generated for your site to secure your Reverb connections. To do so, set the `REVERB_HOST` environment variable to your site's hostname or explicitly pass the hostname option when starting the Reverb server:
+However, it can sometimes be useful, such as during local development, for the Reverb server to handle secure connections directly. If you are using [Laravel Herd's](https://herd.laravel.com) secure site feature or you are using [Laravel Valet](valet.md) and have run the [secure command](valet.md#securing-sites) against your application, you may use the Herd / Valet certificate generated for your site to secure your Reverb connections. To do so, set the `REVERB_HOST` environment variable to your site's hostname or explicitly pass the hostname option when starting the Reverb server:
 
 ```sh
 php artisan reverb:start --host="0.0.0.0" --port=8080 --hostname="laravel.test"
@@ -159,9 +159,9 @@ php artisan reverb:restart
 <a name="monitoring"></a>
 ## Monitoring
 
-Reverb may be monitored via an integration with [Laravel Pulse](/docs/{{version}}/pulse). By enabling Reverb's Pulse integration, you may track the number of connections and messages being handled by your server.
+Reverb may be monitored via an integration with [Laravel Pulse](pulse.md). By enabling Reverb's Pulse integration, you may track the number of connections and messages being handled by your server.
 
-To enable the integration, you should first ensure you have [installed Pulse](/docs/{{version}}/pulse#installation). Then, add any of Reverb's recorders to your application's `config/pulse.php` configuration file:
+To enable the integration, you should first ensure you have [installed Pulse](pulse.md#installation). Then, add any of Reverb's recorders to your application's `config/pulse.php` configuration file:
 
 ```php
 use Laravel\Reverb\Pulse\Recorders\ReverbConnections;
@@ -180,7 +180,7 @@ use Laravel\Reverb\Pulse\Recorders\ReverbMessages;
 ],
 ```
 
-Next, add the Pulse cards for each recorder to your [Pulse dashboard](/docs/{{version}}/pulse#dashboard-customization):
+Next, add the Pulse cards for each recorder to your [Pulse dashboard](pulse.md#dashboard-customization):
 
 ```blade
 <x-pulse>
@@ -195,7 +195,7 @@ Next, add the Pulse cards for each recorder to your [Pulse dashboard](/docs/{{ve
 
 Due to the long-running nature of WebSocket servers, you may need to make some optimizations to your server and hosting environment to ensure your Reverb server can effectively handle the optimal number of connections for the resources available on your server.
 
-> [!NOTE]  
+> [!NOTE]
 > If your site is managed by [Laravel Forge](https://forge.laravel.com), you may automatically optimize your server for Reverb directly from the "Application" panel. By enabling the Reverb integration, Forge will ensure your server is production-ready, including installing any required extensions and increasing the allowed number of connections.
 
 <a name="open-files"></a>
@@ -312,6 +312,6 @@ To enable horizontal scaling, you should set the `REVERB_SCALING_ENABLED` enviro
 REVERB_SCALING_ENABLED=true
 ```
 
-Next, you should have a dedicated, central Redis server to which all of the Reverb servers will communicate. Reverb will use the [default Redis connection configured for your application](/docs/{{version}}/redis#configuration) to publish messages to all of your Reverb servers.
+Next, you should have a dedicated, central Redis server to which all of the Reverb servers will communicate. Reverb will use the [default Redis connection configured for your application](redis.md#configuration) to publish messages to all of your Reverb servers.
 
 Once you have enabled Reverb's scaling option and configured a Redis server, you may simply invoke the `reverb:start` command on multiple servers that are able to communicate with your Redis server. These Reverb servers should be placed behind a load balancer that distributes incoming requests evenly among the servers.

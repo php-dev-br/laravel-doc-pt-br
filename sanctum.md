@@ -48,7 +48,7 @@ For this feature, Sanctum does not use tokens of any kind. Instead, Sanctum uses
 
 Sanctum will only attempt to authenticate using cookies when the incoming request originates from your own SPA frontend. When Sanctum examines an incoming HTTP request, it will first check for an authentication cookie and, if none is present, Sanctum will then examine the `Authorization` header for a valid API token.
 
-> [!NOTE]  
+> [!NOTE]
 > It is perfectly fine to use Sanctum only for API token authentication or only for SPA authentication. Just because you use Sanctum does not mean you are required to use both features it offers.
 
 <a name="installation"></a>
@@ -93,7 +93,7 @@ Then, you may instruct Sanctum to use your custom model via the `usePersonalAcce
 <a name="api-token-authentication"></a>
 ## API Token Authentication
 
-> [!NOTE]  
+> [!NOTE]
 > You should not use API tokens to authenticate your own first-party SPA. Instead, use Sanctum's built-in [SPA authentication features](#spa-authentication).
 
 <a name="issuing-api-tokens"></a>
@@ -171,7 +171,7 @@ The `ability` middleware may be assigned to a route to verify that the incoming 
 
 For convenience, the `tokenCan` method will always return `true` if the incoming authenticated request was from your first-party SPA and you are using Sanctum's built-in [SPA authentication](#spa-authentication).
 
-However, this does not necessarily mean that your application has to allow the user to perform the action. Typically, your application's [authorization policies](/docs/{{version}}/authorization#creating-policies) will determine if the token has been granted the permission to perform the abilities as well as check that the user instance itself should be allowed to perform the action.
+However, this does not necessarily mean that your application has to allow the user to perform the action. Typically, your application's [authorization policies](authorization.md#creating-policies) will determine if the token has been granted the permission to perform the abilities as well as check that the user instance itself should be allowed to perform the action.
 
 For example, if we imagine an application that manages servers, this might mean checking that the token is authorized to update servers **and** that the server belongs to the user:
 
@@ -226,7 +226,7 @@ return $user->createToken(
 )->plainTextToken;
 ```
 
-If you have configured a token expiration time for your application, you may also wish to [schedule a task](/docs/{{version}}/scheduling) to prune your application's expired tokens. Thankfully, Sanctum includes a `sanctum:prune-expired` Artisan command that you may use to accomplish this. For example, you may configure a scheduled task to delete all expired token database records that have been expired for at least 24 hours:
+If you have configured a token expiration time for your application, you may also wish to [schedule a task](scheduling.md) to prune your application's expired tokens. Thankfully, Sanctum includes a `sanctum:prune-expired` Artisan command that you may use to accomplish this. For example, you may configure a scheduled task to delete all expired token database records that have been expired for at least 24 hours:
 
 ```php
 use Illuminate\Support\Facades\Schedule;
@@ -241,7 +241,7 @@ Sanctum also exists to provide a simple method of authenticating single page app
 
 For this feature, Sanctum does not use tokens of any kind. Instead, Sanctum uses Laravel's built-in cookie based session authentication services. This approach to authentication provides the benefits of CSRF protection, session authentication, as well as protects against leakage of the authentication credentials via XSS.
 
-> [!WARNING]  
+> [!WARNING]
 > In order to authenticate, your SPA and API must share the same top-level domain. However, they may be placed on different subdomains. Additionally, you should ensure that you send the `Accept: application/json` header and either the `Referer` or `Origin` header with your request.
 
 <a name="spa-configuration"></a>
@@ -252,7 +252,7 @@ For this feature, Sanctum does not use tokens of any kind. Instead, Sanctum uses
 
 First, you should configure which domains your SPA will be making requests from. You may configure these domains using the `stateful` configuration option in your `sanctum` configuration file. This configuration setting determines which domains will maintain "stateful" authentication using Laravel session cookies when making requests to your API.
 
-> [!WARNING]  
+> [!WARNING]
 > If you are accessing your application via a URL that includes a port (`127.0.0.1:8000`), you should ensure that you include the port number with the domain.
 
 <a name="sanctum-middleware"></a>
@@ -307,14 +307,14 @@ During this request, Laravel will set an `XSRF-TOKEN` cookie containing the curr
 <a name="logging-in"></a>
 #### Logging In
 
-Once CSRF protection has been initialized, you should make a `POST` request to your Laravel application's `/login` route. This `/login` route may be [implemented manually](/docs/{{version}}/authentication#authenticating-users) or using a headless authentication package like [Laravel Fortify](/docs/{{version}}/fortify).
+Once CSRF protection has been initialized, you should make a `POST` request to your Laravel application's `/login` route. This `/login` route may be [implemented manually](authentication.md#authenticating-users) or using a headless authentication package like [Laravel Fortify](fortify.md).
 
 If the login request is successful, you will be authenticated and subsequent requests to your application's routes will automatically be authenticated via the session cookie that the Laravel application issued to your client. In addition, since your application already made a request to the `/sanctum/csrf-cookie` route, subsequent requests should automatically receive CSRF protection as long as your JavaScript HTTP client sends the value of the `XSRF-TOKEN` cookie in the `X-XSRF-TOKEN` header.
 
 Of course, if your user's session expires due to lack of activity, subsequent requests to the Laravel application may receive a 401 or 419 HTTP error response. In this case, you should redirect the user to your SPA's login page.
 
-> [!WARNING]  
-> You are free to write your own `/login` endpoint; however, you should ensure that it authenticates the user using the standard, [session based authentication services that Laravel provides](/docs/{{version}}/authentication#authenticating-users). Typically, this means using the `web` authentication guard.
+> [!WARNING]
+> You are free to write your own `/login` endpoint; however, you should ensure that it authenticates the user using the standard, [session based authentication services that Laravel provides](authentication.md#authenticating-users). Typically, this means using the `web` authentication guard.
 
 <a name="protecting-spa-routes"></a>
 ### Protecting Routes
@@ -330,7 +330,7 @@ To protect routes so that all incoming requests must be authenticated, you shoul
 <a name="authorizing-private-broadcast-channels"></a>
 ### Authorizing Private Broadcast Channels
 
-If your SPA needs to authenticate with [private / presence broadcast channels](/docs/{{version}}/broadcasting#authorizing-channels), you should remove the `channels` entry from the `withRouting` method contained in your application's `bootstrap/app.php` file. Instead, you should invoke the `withBroadcasting` method so that you may specify the correct middleware for your application's broadcasting routes:
+If your SPA needs to authenticate with [private / presence broadcast channels](broadcasting.md#authorizing-channels), you should remove the `channels` entry from the `withRouting` method contained in your application's `bootstrap/app.php` file. Instead, you should invoke the `withBroadcasting` method so that you may specify the correct middleware for your application's broadcasting routes:
 
     return Application::configure(basePath: dirname(__DIR__))
         ->withRouting(
@@ -342,7 +342,7 @@ If your SPA needs to authenticate with [private / presence broadcast channels](/
             ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
         )
 
-Next, in order for Pusher's authorization requests to succeed, you will need to provide a custom Pusher `authorizer` when initializing [Laravel Echo](/docs/{{version}}/broadcasting#client-side-installation). This allows your application to configure Pusher to use the `axios` instance that is [properly configured for cross-domain requests](#cors-and-cookies):
+Next, in order for Pusher's authorization requests to succeed, you will need to provide a custom Pusher `authorizer` when initializing [Laravel Echo](broadcasting.md#client-side-installation). This allows your application to configure Pusher to use the `axios` instance that is [properly configured for cross-domain requests](#cors-and-cookies):
 
 ```js
 window.Echo = new Echo({
@@ -406,7 +406,7 @@ Typically, you will make a request to the token endpoint from your mobile applic
 
 When the mobile application uses the token to make an API request to your application, it should pass the token in the `Authorization` header as a `Bearer` token.
 
-> [!NOTE]  
+> [!NOTE]
 > When issuing tokens for a mobile application, you are also free to specify [token abilities](#token-abilities).
 
 <a name="protecting-mobile-api-routes"></a>

@@ -20,7 +20,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Accessors, mutators, and attribute casting allow you to transform Eloquent attribute values when you retrieve or set them on model instances. For example, you may want to use the [Laravel encrypter](/docs/{{version}}/encryption) to encrypt a value while it is stored in the database, and then automatically decrypt the attribute when you access it on an Eloquent model. Or, you may want to convert a JSON string that is stored in your database to an array when it is accessed via your Eloquent model.
+Accessors, mutators, and attribute casting allow you to transform Eloquent attribute values when you retrieve or set them on model instances. For example, you may want to use the [Laravel encrypter](encryption.md) to encrypt a value while it is stored in the database, and then automatically decrypt the attribute when you access it on an Eloquent model. Or, you may want to convert a JSON string that is stored in your database to an array when it is accessed via your Eloquent model.
 
 <a name="accessors-and-mutators"></a>
 ## Accessors and Mutators
@@ -62,8 +62,8 @@ As you can see, the original value of the column is passed to the accessor, allo
 
     $firstName = $user->first_name;
 
-> [!NOTE]  
-> If you would like these computed values to be added to the array / JSON representations of your model, [you will need to append them](/docs/{{version}}/eloquent-serialization#appending-values-to-json).
+> [!NOTE]
+> If you would like these computed values to be added to the array / JSON representations of your model, [you will need to append them](eloquent-serialization.md#appending-values-to-json).
 
 <a name="building-value-objects-from-multiple-attributes"></a>
 #### Building Value Objects From Multiple Attributes
@@ -264,13 +264,13 @@ If you need to add a new, temporary cast at runtime, you may use the `mergeCasts
         'options' => 'object',
     ]);
 
-> [!WARNING]  
+> [!WARNING]
 > Attributes that are `null` will not be cast. In addition, you should never define a cast (or an attribute) that has the same name as a relationship or assign a cast to the model's primary key.
 
 <a name="stringable-casting"></a>
 #### Stringable Casting
 
-You may use the `Illuminate\Database\Eloquent\Casts\AsStringable` cast class to cast a model attribute to a [fluent `Illuminate\Support\Stringable` object](/docs/{{version}}/strings#fluent-strings-method-list):
+You may use the `Illuminate\Database\Eloquent\Casts\AsStringable` cast class to cast a model attribute to a [fluent `Illuminate\Support\Stringable` object](strings.md#fluent-strings-method-list):
 
     <?php
 
@@ -334,7 +334,7 @@ Once the cast is defined, you may access the `options` attribute and it will aut
 
     $user->save();
 
-To update a single field of a JSON attribute with a more terse syntax, you may [make the attribute mass assignable](/docs/{{version}}/eloquent#mass-assignment-json-columns) and use the `->` operator when calling the `update` method:
+To update a single field of a JSON attribute with a more terse syntax, you may [make the attribute mass assignable](eloquent.md#mass-assignment-json-columns) and use the `->` operator when calling the `update` method:
 
     $user = User::find(1);
 
@@ -365,7 +365,7 @@ To solve this, Laravel offers an `AsArrayObject` cast that casts your JSON attri
         ];
     }
 
-Similarly, Laravel offers an `AsCollection` cast that casts your JSON attribute to a Laravel [Collection](/docs/{{version}}/collections) instance:
+Similarly, Laravel offers an `AsCollection` cast that casts your JSON attribute to a Laravel [Collection](collections.md) instance:
 
     use Illuminate\Database\Eloquent\Casts\AsCollection;
 
@@ -403,7 +403,7 @@ If you would like the `AsCollection` cast to instantiate a custom collection cla
 
 By default, Eloquent will cast the `created_at` and `updated_at` columns to instances of [Carbon](https://github.com/briannesbitt/Carbon), which extends the PHP `DateTime` class and provides an assortment of helpful methods. You may cast additional date attributes by defining additional date casts within your model's `casts` method. Typically, dates should be cast using the `datetime` or `immutable_datetime` cast types.
 
-When defining a `date` or `datetime` cast, you may also specify the date's format. This format will be used when the [model is serialized to an array or JSON](/docs/{{version}}/eloquent-serialization):
+When defining a `date` or `datetime` cast, you may also specify the date's format. This format will be used when the [model is serialized to an array or JSON](eloquent-serialization.md):
 
     /**
      * Get the attributes that should be cast.
@@ -495,7 +495,7 @@ Sometimes you may need your model to store an array of enum values within a sing
 <a name="encrypted-casting"></a>
 ### Encrypted Casting
 
-The `encrypted` cast will encrypt a model's attribute value using Laravel's built-in [encryption](/docs/{{version}}/encryption) features. In addition, the `encrypted:array`, `encrypted:collection`, `encrypted:object`, `AsEncryptedArrayObject`, and `AsEncryptedCollection` casts work like their unencrypted counterparts; however, as you might expect, the underlying value is encrypted when stored in your database.
+The `encrypted` cast will encrypt a model's attribute value using Laravel's built-in [encryption](encryption.md) features. In addition, the `encrypted:array`, `encrypted:collection`, `encrypted:object`, `AsEncryptedArrayObject`, and `AsEncryptedCollection` casts work like their unencrypted counterparts; however, as you might expect, the underlying value is encrypted when stored in your database.
 
 As the final length of the encrypted text is not predictable and is longer than its plain text counterpart, make sure the associated database column is of `TEXT` type or larger. In addition, since the values are encrypted in the database, you will not be able to query or search encrypted attribute values.
 
@@ -654,7 +654,7 @@ When casting to value objects, any changes made to the value object will automat
 
     $user->save();
 
-> [!NOTE]  
+> [!NOTE]
 > If you plan to serialize your Eloquent models containing value objects to JSON or arrays, you should implement the `Illuminate\Contracts\Support\Arrayable` and `JsonSerializable` interfaces on the value object.
 
 <a name="value-object-caching"></a>

@@ -229,7 +229,7 @@ Laravel includes a variety of functions for manipulating string values. Many of 
 <a name="method-__"></a>
 #### `__()` {.collection-method}
 
-The `__` function translates the given translation string or translation key using your [language files](/docs/{{version}}/localization):
+The `__` function translates the given translation string or translation key using your [language files](localization.md):
 
     echo __('Welcome to our application');
 
@@ -503,12 +503,12 @@ The `Str::inlineMarkdown` method converts GitHub flavored Markdown into inline H
 By default, Markdown supports raw HTML, which will expose Cross-Site Scripting (XSS) vulnerabilities when used with raw user input. As per the [CommonMark Security documentation](https://commonmark.thephpleague.com/security/), you may use the `html_input` option to either escape or strip raw HTML, and the `allow_unsafe_links` option to specify whether to allow unsafe links. If you need to allow some raw HTML, you should pass your compiled Markdown through an HTML Purifier:
 
     use Illuminate\Support\Str;
-    
+
     Str::inlineMarkdown('Inject: <script>alert("Hello XSS!");</script>', [
         'html_input' => 'strip',
         'allow_unsafe_links' => false,
     ]);
-    
+
     // Inject: alert(&quot;Hello XSS!&quot;);
 
 <a name="method-str-is"></a>
@@ -791,7 +791,7 @@ The `Str::password` method may be used to generate a secure, random password of 
 <a name="method-str-plural"></a>
 #### `Str::plural()` {.collection-method}
 
-The `Str::plural` method converts a singular word string to its plural form. This function supports [any of the languages support by Laravel's pluralizer](/docs/{{version}}/localization#pluralization-language):
+The `Str::plural` method converts a singular word string to its plural form. This function supports [any of the languages support by Laravel's pluralizer](localization.md#pluralization-language):
 
     use Illuminate\Support\Str;
 
@@ -818,7 +818,7 @@ You may provide an integer as a second argument to the function to retrieve the 
 <a name="method-str-plural-studly"></a>
 #### `Str::pluralStudly()` {.collection-method}
 
-The `Str::pluralStudly` method converts a singular word string formatted in studly caps case to its plural form. This function supports [any of the languages support by Laravel's pluralizer](/docs/{{version}}/localization#pluralization-language):
+The `Str::pluralStudly` method converts a singular word string formatted in studly caps case to its plural form. This function supports [any of the languages support by Laravel's pluralizer](localization.md#pluralization-language):
 
     use Illuminate\Support\Str;
 
@@ -1027,7 +1027,7 @@ The `Str::reverse` method reverses the given string:
 <a name="method-str-singular"></a>
 #### `Str::singular()` {.collection-method}
 
-The `Str::singular` method converts a string to its singular form. This function supports [any of the languages support by Laravel's pluralizer](/docs/{{version}}/localization#pluralization-language):
+The `Str::singular` method converts a string to its singular form. This function supports [any of the languages support by Laravel's pluralizer](localization.md#pluralization-language):
 
     use Illuminate\Support\Str;
 
@@ -1284,7 +1284,7 @@ The `Str::ulid` method generates a ULID, which is a compact, time-ordered unique
     use Illuminate\Support\Str;
 
     return (string) Str::ulid();
-    
+
     // 01gd6r360bp37zj17nxb55yv40
 
 If you would like to retrieve a `Illuminate\Support\Carbon` date instance representing the date and time that a given ULID was created, you may use the `createFromId` method provided by Laravel's Carbon integration:
@@ -1416,7 +1416,7 @@ If no argument is provided to the `str` function, the function returns an instan
 <a name="method-trans"></a>
 #### `trans()` {.collection-method}
 
-The `trans` function translates the given translation key using your [language files](/docs/{{version}}/localization):
+The `trans` function translates the given translation key using your [language files](localization.md):
 
     echo trans('messages.welcome');
 
@@ -2134,7 +2134,7 @@ The `pipe` method allows you to transform the string by passing its current valu
 <a name="method-fluent-str-plural"></a>
 #### `plural` {.collection-method}
 
-The `plural` method converts a singular word string to its plural form. This function supports [any of the languages support by Laravel's pluralizer](/docs/{{version}}/localization#pluralization-language):
+The `plural` method converts a singular word string to its plural form. This function supports [any of the languages support by Laravel's pluralizer](localization.md#pluralization-language):
 
     use Illuminate\Support\Str;
 
@@ -2327,7 +2327,7 @@ The `scan` method parses input from a string into a collection according to a fo
 <a name="method-fluent-str-singular"></a>
 #### `singular` {.collection-method}
 
-The `singular` method converts a string to its singular form. This function supports [any of the languages support by Laravel's pluralizer](/docs/{{version}}/localization#pluralization-language):
+The `singular` method converts a string to its singular form. This function supports [any of the languages support by Laravel's pluralizer](localization.md#pluralization-language):
 
     use Illuminate\Support\Str;
 

@@ -55,7 +55,7 @@ Name | Description
 
 </div>
 
-> [!NOTE]  
+> [!NOTE]
 > Check out the documentation on [advanced channel customization](#monolog-channel-customization) to learn more about the `monolog` and `custom` drivers.
 
 <a name="configuring-the-channel-name"></a>
@@ -181,7 +181,7 @@ Given our configuration, the `syslog` channel will write the message to the syst
 <a name="writing-log-messages"></a>
 ## Writing Log Messages
 
-You may write information to the logs using the `Log` [facade](/docs/{{version}}/facades). As previously mentioned, the logger provides the eight logging levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info** and **debug**:
+You may write information to the logs using the `Log` [facade](facades.md). As previously mentioned, the logger provides the eight logging levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info** and **debug**:
 
     use Illuminate\Support\Facades\Log;
 
@@ -296,7 +296,7 @@ If you would like to share contextual information across _all_ logging channels,
     }
 
 > [!NOTE]
-> If you need to share log context while processing queued jobs, you may utilize [job middleware](/docs/{{version}}/queues#job-middleware).
+> If you need to share log context while processing queued jobs, you may utilize [job middleware](queues.md#job-middleware).
 
 <a name="writing-to-specific-channels"></a>
 ### Writing to Specific Channels
@@ -376,8 +376,8 @@ Once you have configured the `tap` option on your channel, you're ready to defin
         }
     }
 
-> [!NOTE]  
-> All of your "tap" classes are resolved by the [service container](/docs/{{version}}/container), so any constructor dependencies they require will automatically be injected.
+> [!NOTE]
+> All of your "tap" classes are resolved by the [service container](container.md), so any constructor dependencies they require will automatically be injected.
 
 <a name="creating-monolog-handler-channels"></a>
 ### Creating Monolog Handler Channels
@@ -487,7 +487,7 @@ Laravel Pail is a package that allows you to easily dive into your Laravel appli
 <a name="pail-installation"></a>
 ### Installation
 
-> [!WARNING]  
+> [!WARNING]
 > Laravel Pail requires [PHP 8.2+](https://php.net/releases/) and the [PCNTL](https://www.php.net/manual/en/book.pcntl.php) extension.
 
 To get started, install Pail into your project using the Composer package manager:

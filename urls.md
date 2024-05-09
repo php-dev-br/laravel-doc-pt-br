@@ -68,7 +68,7 @@ If no path is provided to the `url` helper, an `Illuminate\Routing\UrlGenerator`
     // Get the full URL for the previous request...
     echo url()->previous();
 
-Each of these methods may also be accessed via the `URL` [facade](/docs/{{version}}/facades):
+Each of these methods may also be accessed via the `URL` [facade](facades.md):
 
     use Illuminate\Support\Facades\URL;
 
@@ -77,7 +77,7 @@ Each of these methods may also be accessed via the `URL` [facade](/docs/{{versio
 <a name="urls-for-named-routes"></a>
 ## URLs for Named Routes
 
-The `route` helper may be used to generate URLs to [named routes](/docs/{{version}}/routing#named-routes). Named routes allow you to generate URLs without being coupled to the actual URL defined on the route. Therefore, if the route's URL changes, no changes need to be made to your calls to the `route` function. For example, imagine your application contains a route defined like the following:
+The `route` helper may be used to generate URLs to [named routes](routing.md#named-routes). Named routes allow you to generate URLs without being coupled to the actual URL defined on the route. Therefore, if the route's URL changes, no changes need to be made to your calls to the `route` function. For example, imagine your application contains a route defined like the following:
 
     Route::get('/post/{post}', function (Post $post) {
         // ...
@@ -108,7 +108,7 @@ Any additional array elements that do not correspond to the route's definition p
 <a name="eloquent-models"></a>
 #### Eloquent Models
 
-You will often be generating URLs using the route key (typically the primary key) of [Eloquent models](/docs/{{version}}/eloquent). For this reason, you may pass Eloquent models as parameter values. The `route` helper will automatically extract the model's route key:
+You will often be generating URLs using the route key (typically the primary key) of [Eloquent models](eloquent.md). For this reason, you may pass Eloquent models as parameter values. The `route` helper will automatically extract the model's route key:
 
     echo route('post.show', ['post' => $post]);
 
@@ -156,7 +156,7 @@ Sometimes, you may need to allow your application's frontend to append data to a
         abort(401);
     }
 
-Instead of validating signed URLs using the incoming request instance, you may assign the `signed` (`Illuminate\Routing\Middleware\ValidateSignature`) [middleware](/docs/{{version}}/middleware) to the route. If the incoming request does not have a valid signature, the middleware will automatically return a `403` HTTP response:
+Instead of validating signed URLs using the incoming request instance, you may assign the `signed` (`Illuminate\Routing\Middleware\ValidateSignature`) [middleware](middleware.md) to the route. If the incoming request does not have a valid signature, the middleware will automatically return a `403` HTTP response:
 
     Route::post('/unsubscribe/{user}', function (Request $request) {
         // ...
@@ -203,7 +203,7 @@ For some applications, you may wish to specify request-wide default values for c
         // ...
     })->name('post.index');
 
-It is cumbersome to always pass the `locale` every time you call the `route` helper. So, you may use the `URL::defaults` method to define a default value for this parameter that will always be applied during the current request. You may wish to call this method from a [route middleware](/docs/{{version}}/middleware#assigning-middleware-to-routes) so that you have access to the current request:
+It is cumbersome to always pass the `locale` every time you call the `route` helper. So, you may use the `URL::defaults` method to define a default value for this parameter that will always be applied during the current request. You may wish to call this method from a [route middleware](middleware.md#assigning-middleware-to-routes) so that you have access to the current request:
 
     <?php
 
@@ -234,7 +234,7 @@ Once the default value for the `locale` parameter has been set, you are no longe
 <a name="url-defaults-middleware-priority"></a>
 #### URL Defaults and Middleware Priority
 
-Setting URL default values can interfere with Laravel's handling of implicit model bindings. Therefore, you should [prioritize your middleware](/docs/{{version}}/middleware#sorting-middleware) that set URL defaults to be executed before Laravel's own `SubstituteBindings` middleware. You can accomplish this using the `priority` middleware method in your application's `bootstrap/app.php` file:
+Setting URL default values can interfere with Laravel's handling of implicit model bindings. Therefore, you should [prioritize your middleware](middleware.md#sorting-middleware) that set URL defaults to be executed before Laravel's own `SubstituteBindings` middleware. You can accomplish this using the `priority` middleware method in your application's `bootstrap/app.php` file:
 
 ```php
 ->withMiddleware(function (Middleware $middleware) {

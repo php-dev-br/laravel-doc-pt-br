@@ -7,7 +7,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-All Eloquent methods that return more than one model result will return instances of the `Illuminate\Database\Eloquent\Collection` class, including results retrieved via the `get` method or accessed via a relationship. The Eloquent collection object extends Laravel's [base collection](/docs/{{version}}/collections), so it naturally inherits dozens of methods used to fluently work with the underlying array of Eloquent models. Be sure to review the Laravel collection documentation to learn all about these helpful methods!
+All Eloquent methods that return more than one model result will return instances of the `Illuminate\Database\Eloquent\Collection` class, including results retrieved via the `get` method or accessed via a relationship. The Eloquent collection object extends Laravel's [base collection](collections.md), so it naturally inherits dozens of methods used to fluently work with the underlying array of Eloquent models. Be sure to review the Laravel collection documentation to learn all about these helpful methods!
 
 All collections also serve as iterators, allowing you to loop over them as if they were simple PHP arrays:
 
@@ -30,12 +30,12 @@ However, as previously mentioned, collections are much more powerful than arrays
 <a name="eloquent-collection-conversion"></a>
 #### Eloquent Collection Conversion
 
-While most Eloquent collection methods return a new instance of an Eloquent collection, the `collapse`, `flatten`, `flip`, `keys`, `pluck`, and `zip` methods return a [base collection](/docs/{{version}}/collections) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be converted to a base collection instance.
+While most Eloquent collection methods return a new instance of an Eloquent collection, the `collapse`, `flatten`, `flip`, `keys`, `pluck`, and `zip` methods return a [base collection](collections.md) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be converted to a base collection instance.
 
 <a name="available-methods"></a>
 ## Available Methods
 
-All Eloquent collections extend the base [Laravel collection](/docs/{{version}}/collections#available-methods) object; therefore, they inherit all of the powerful methods provided by the base collection class.
+All Eloquent collections extend the base [Laravel collection](collections.md#available-methods) object; therefore, they inherit all of the powerful methods provided by the base collection class.
 
 In addition, the `Illuminate\Database\Eloquent\Collection` class provides a superset of methods to aid with managing your model collections. Most methods return `Illuminate\Database\Eloquent\Collection` instances; however, some methods, like `modelKeys`, return an `Illuminate\Support\Collection` instance.
 
@@ -85,10 +85,10 @@ In addition, the `Illuminate\Database\Eloquent\Collection` class provides a supe
 <a name="method-append"></a>
 #### `append($attributes)` {.collection-method .first-collection-method}
 
-The `append` method may be used to indicate that an attribute should be [appended](/docs/{{version}}/eloquent-serialization#appending-values-to-json) for every model in the collection. This method accepts an array of attributes or a single attribute:
+The `append` method may be used to indicate that an attribute should be [appended](eloquent-serialization.md#appending-values-to-json) for every model in the collection. This method accepts an array of attributes or a single attribute:
 
     $users->append('team');
-    
+
     $users->append(['team', 'is_admin']);
 
 <a name="method-contains"></a>
@@ -151,7 +151,7 @@ The `load` method eager loads the given relationships for all models in the coll
     $users->load(['comments', 'posts']);
 
     $users->load('comments.author');
-    
+
     $users->load(['comments', 'posts' => fn ($query) => $query->where('active', 1)]);
 
 <a name="method-loadMissing"></a>
@@ -162,7 +162,7 @@ The `loadMissing` method eager loads the given relationships for all models in t
     $users->loadMissing(['comments', 'posts']);
 
     $users->loadMissing('comments.author');
-    
+
     $users->loadMissing(['comments', 'posts' => fn ($query) => $query->where('active', 1)]);
 
 <a name="method-modelKeys"></a>
@@ -177,14 +177,14 @@ The `modelKeys` method returns the primary keys for all models in the collection
 <a name="method-makeVisible"></a>
 #### `makeVisible($attributes)` {.collection-method}
 
-The `makeVisible` method [makes attributes visible](/docs/{{version}}/eloquent-serialization#hiding-attributes-from-json) that are typically "hidden" on each model in the collection:
+The `makeVisible` method [makes attributes visible](eloquent-serialization.md#hiding-attributes-from-json) that are typically "hidden" on each model in the collection:
 
     $users = $users->makeVisible(['address', 'phone_number']);
 
 <a name="method-makeHidden"></a>
 #### `makeHidden($attributes)` {.collection-method}
 
-The `makeHidden` method [hides attributes](/docs/{{version}}/eloquent-serialization#hiding-attributes-from-json) that are typically "visible" on each model in the collection:
+The `makeHidden` method [hides attributes](eloquent-serialization.md#hiding-attributes-from-json) that are typically "visible" on each model in the collection:
 
     $users = $users->makeHidden(['address', 'phone_number']);
 
@@ -198,14 +198,14 @@ The `only` method returns all of the models that have the given primary keys:
 <a name="method-setVisible"></a>
 #### `setVisible($attributes)` {.collection-method}
 
-The `setVisible` method [temporarily overrides](/docs/{{version}}/eloquent-serialization#temporarily-modifying-attribute-visibility) all of the visible attributes on each model in the collection:
+The `setVisible` method [temporarily overrides](eloquent-serialization.md#temporarily-modifying-attribute-visibility) all of the visible attributes on each model in the collection:
 
     $users = $users->setVisible(['id', 'name']);
 
 <a name="method-setHidden"></a>
 #### `setHidden($attributes)` {.collection-method}
 
-The `setHidden` method [temporarily overrides](/docs/{{version}}/eloquent-serialization#temporarily-modifying-attribute-visibility) all of the hidden attributes on each model in the collection:
+The `setHidden` method [temporarily overrides](eloquent-serialization.md#temporarily-modifying-attribute-visibility) all of the hidden attributes on each model in the collection:
 
     $users = $users->setHidden(['email', 'password', 'remember_token']);
 

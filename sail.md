@@ -41,7 +41,7 @@ Laravel Sail is supported on macOS, Linux, and Windows (via [WSL2](https://docs.
 <a name="installation"></a>
 ## Installation and Setup
 
-Laravel Sail is automatically installed with all new Laravel applications so you may start using it immediately. To learn how to create a new Laravel application, please consult Laravel's [installation documentation](/docs/{{version}}/installation#docker-installation-using-sail) for your operating system. During installation, you will be asked to choose which Sail supported services your application will be interacting with.
+Laravel Sail is automatically installed with all new Laravel applications so you may start using it immediately. To learn how to create a new Laravel application, please consult Laravel's [installation documentation](installation.md#docker-installation-using-sail) for your operating system. During installation, you will be asked to choose which Sail supported services your application will be interacting with.
 
 <a name="installing-sail-into-existing-applications"></a>
 ### Installing Sail Into Existing Applications
@@ -64,7 +64,7 @@ Finally, you may start Sail. To continue learning how to use Sail, please contin
 ./vendor/bin/sail up
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > If you are using Docker Desktop for Linux, you should use the `default` Docker context by executing the following command: `docker context use default`.
 
 <a name="adding-additional-services"></a>
@@ -249,14 +249,14 @@ To connect to your application's Redis database from your local machine, you may
 <a name="meilisearch"></a>
 ### Meilisearch
 
-If you chose to install the [Meilisearch](https://www.meilisearch.com) service when installing Sail, your application's `docker-compose.yml` file will contain an entry for this powerful search engine that is integrated with [Laravel Scout](/docs/{{version}}/scout). Once you have started your containers, you may connect to the Meilisearch instance within your application by setting your `MEILISEARCH_HOST` environment variable to `http://meilisearch:7700`.
+If you chose to install the [Meilisearch](https://www.meilisearch.com) service when installing Sail, your application's `docker-compose.yml` file will contain an entry for this powerful search engine that is integrated with [Laravel Scout](scout.md). Once you have started your containers, you may connect to the Meilisearch instance within your application by setting your `MEILISEARCH_HOST` environment variable to `http://meilisearch:7700`.
 
 From your local machine, you may access Meilisearch's web based administration panel by navigating to `http://localhost:7700` in your web browser.
 
 <a name="typesense"></a>
 ### Typesense
 
-If you chose to install the [Typesense](https://typesense.org) service when installing Sail, your application's `docker-compose.yml` file will contain an entry for this lightning fast, open-source search engine that is natively integrated with [Laravel Scout](/docs/{{version}}/scout#typesense). Once you have started your containers, you may connect to the Typesense instance within your application by setting the following environment variables:
+If you chose to install the [Typesense](https://typesense.org) service when installing Sail, your application's `docker-compose.yml` file will contain an entry for this lightning fast, open-source search engine that is natively integrated with [Laravel Scout](scout.md#typesense). Once you have started your containers, you may connect to the Typesense instance within your application by setting the following environment variables:
 
 ```ini
 TYPESENSE_HOST=typesense
@@ -292,13 +292,13 @@ AWS_URL=http://localhost:9000/local
 
 You may create buckets via the MinIO console, which is available at `http://localhost:8900`. The default username for the MinIO console is `sail` while the default password is `password`.
 
-> [!WARNING]  
+> [!WARNING]
 > Generating temporary storage URLs via the `temporaryUrl` method is not supported when using MinIO.
 
 <a name="running-tests"></a>
 ## Running Tests
 
-Laravel provides amazing testing support out of the box, and you may use Sail's `test` command to run your applications [feature and unit tests](/docs/{{version}}/testing). Any CLI options that are accepted by Pest / PHPUnit may also be passed to the `test` command:
+Laravel provides amazing testing support out of the box, and you may use Sail's `test` command to run your applications [feature and unit tests](testing.md). Any CLI options that are accepted by Pest / PHPUnit may also be passed to the `test` command:
 
 ```shell
 sail test
@@ -321,7 +321,7 @@ By default, Sail will create a dedicated `testing` database so that your tests d
 <a name="laravel-dusk"></a>
 ### Laravel Dusk
 
-[Laravel Dusk](/docs/{{version}}/dusk) provides an expressive, easy-to-use browser automation and testing API. Thanks to Sail, you may run these tests without ever installing Selenium or other tools on your local computer. To get started, uncomment the Selenium service in your application's `docker-compose.yml` file:
+[Laravel Dusk](dusk.md) provides an expressive, easy-to-use browser automation and testing API. Thanks to Sail, you may run these tests without ever installing Selenium or other tools on your local computer. To get started, uncomment the Selenium service in your application's `docker-compose.yml` file:
 
 ```yaml
 selenium:
@@ -471,7 +471,7 @@ If you would like to choose the subdomain for your shared site, you may provide 
 sail share --subdomain=my-sail-site
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > The `share` command is powered by [Expose](https://github.com/beyondcode/expose), an open source tunneling service by [BeyondCode](https://beyondco.de).
 
 <a name="debugging-with-xdebug"></a>
@@ -519,7 +519,7 @@ To debug your application while interacting with the application via a web brows
 
 If you're using PhpStorm, please review JetBrains' documentation regarding [zero-configuration debugging](https://www.jetbrains.com/help/phpstorm/zero-configuration-debugging.html).
 
-> [!WARNING]  
+> [!WARNING]
 > Laravel Sail relies on `artisan serve` to serve your application. The `artisan serve` command only accepts the `XDEBUG_CONFIG` and `XDEBUG_MODE` variables as of Laravel version 8.53.0. Older versions of Laravel (8.52.0 and below) do not support these variables and will not accept debug connections.
 
 <a name="sail-customization"></a>

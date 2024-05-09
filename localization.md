@@ -15,7 +15,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-> [!NOTE]  
+> [!NOTE]
 > By default, the Laravel application skeleton does not include the `lang` directory. If you would like to customize Laravel's language files, you may publish them via the `lang:publish` Artisan command.
 
 Laravel's localization features provide a convenient way to retrieve strings in various languages, allowing you to easily support multiple languages within your application.
@@ -91,13 +91,13 @@ You may instruct Laravel's "pluralizer", which is used by Eloquent and other por
      */
     public function boot(): void
     {
-        Pluralizer::useLanguage('spanish');     
+        Pluralizer::useLanguage('spanish');
 
-        // ...     
+        // ...
     }
 
-> [!WARNING]  
-> If you customize the pluralizer's language, you should explicitly define your Eloquent model's [table names](/docs/{{version}}/eloquent#table-names).
+> [!WARNING]
+> If you customize the pluralizer's language, you should explicitly define your Eloquent model's [table names](eloquent.md#table-names).
 
 <a name="defining-translation-strings"></a>
 ## Defining Translation Strings
@@ -123,7 +123,7 @@ All language files return an array of keyed strings. For example:
         'welcome' => 'Welcome to our application!',
     ];
 
-> [!WARNING]  
+> [!WARNING]
 > For languages that differ by territory, you should name the language directories according to the ISO 15897. For example, "en_GB" should be used for British English rather than "en-gb".
 
 <a name="using-translation-strings-as-keys"></a>
@@ -158,7 +158,7 @@ If the specified translation string does not exist, the `__` function will retur
 
 Again, if the translation string does not exist, the `__` function will return the translation string key that it was given.
 
-If you are using the [Blade templating engine](/docs/{{version}}/blade), you may use the `{{ }}` echo syntax to display the translation string:
+If you are using the [Blade templating engine](blade.md), you may use the `{{ }}` echo syntax to display the translation string:
 
     {{ __('messages.welcome') }}
 

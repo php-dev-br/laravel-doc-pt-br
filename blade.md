@@ -50,7 +50,7 @@
 
 Blade is the simple, yet powerful templating engine that is included with Laravel. Unlike some PHP templating engines, Blade does not restrict you from using plain PHP code in your templates. In fact, all Blade templates are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade template files use the `.blade.php` file extension and are typically stored in the `resources/views` directory.
 
-Blade views may be returned from routes or controllers using the global `view` helper. Of course, as mentioned in the documentation on [views](/docs/{{version}}/views), data may be passed to the Blade view using the `view` helper's second argument:
+Blade views may be returned from routes or controllers using the global `view` helper. Of course, as mentioned in the documentation on [views](views.md), data may be passed to the Blade view using the `view` helper's second argument:
 
     Route::get('/', function () {
         return view('greeting', ['name' => 'Finn']);
@@ -76,7 +76,7 @@ You may display the contents of the `name` variable like so:
 Hello, {{ $name }}.
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > Blade's `{{ }}` echo statements are automatically sent through PHP's `htmlspecialchars` function to prevent XSS attacks.
 
 You are not limited to displaying the contents of the variables passed to the view. You may also echo the results of any PHP function. In fact, you can put any PHP code you wish inside of a Blade echo statement:
@@ -117,7 +117,7 @@ By default, Blade `{{ }}` statements are automatically sent through PHP's `htmls
 Hello, {!! $name !!}.
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > Be very careful when echoing content that is supplied by users of your application. You should typically use the escaped, double curly brace syntax to prevent XSS attacks when displaying user supplied data.
 
 <a name="blade-and-javascript-frameworks"></a>
@@ -170,7 +170,7 @@ The latest versions of the Laravel application skeleton include a `Js` facade, w
 </script>
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > You should only use the `Js::from` method to render existing variables as JSON. The Blade templating is based on regular expressions and attempts to pass a complex expression to the directive may cause unexpected failures.
 
 <a name="the-at-verbatim-directive"></a>
@@ -229,7 +229,7 @@ In addition to the conditional directives already discussed, the `@isset` and `@
 <a name="authentication-directives"></a>
 #### Authentication Directives
 
-The `@auth` and `@guest` directives may be used to quickly determine if the current user is [authenticated](/docs/{{version}}/authentication) or is a guest:
+The `@auth` and `@guest` directives may be used to quickly determine if the current user is [authenticated](authentication.md) or is a guest:
 
 ```blade
 @auth
@@ -304,7 +304,7 @@ You may use the `sectionMissing` directive to determine if a section does not ha
 <a name="session-directives"></a>
 #### Session Directives
 
-The `@session` directive may be used to determine if a [session](/docs/{{version}}/session) value exists. If the session value exists, the template contents within the `@session` and `@endsession` directives will be evaluated. Within the `@session` directive's contents, you may echo the `$value` variable to display the session value:
+The `@session` directive may be used to determine if a [session](session.md) value exists. If the session value exists, the template contents within the `@session` and `@endsession` directives will be evaluated. Within the `@session` directive's contents, you may echo the `$value` variable to display the session value:
 
 ```blade
 @session('status')
@@ -359,7 +359,7 @@ In addition to conditional statements, Blade provides simple directives for work
 @endwhile
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > While iterating through a `foreach` loop, you may use the [loop variable](#the-loop-variable) to gain valuable information about the loop, such as whether you are in the first or last iteration through the loop.
 
 When using loops you may also skip the current iteration or end the loop using the `@continue` and `@break` directives:
@@ -523,7 +523,7 @@ In addition, the `@required` directive may be used to indicate if a given elemen
 <a name="including-subviews"></a>
 ### Including Subviews
 
-> [!NOTE]  
+> [!NOTE]
 > While you're free to use the `@include` directive, Blade [components](#components) provide similar functionality and offer several benefits over the `@include` directive such as data and attribute binding.
 
 Blade's `@include` directive allows you to include a Blade view from within another view. All variables that are available to the parent view will be made available to the included view:
@@ -564,7 +564,7 @@ To include the first view that exists from a given array of views, you may use t
 @includeFirst(['custom.admin', 'admin'], ['status' => 'complete'])
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > You should avoid using the `__DIR__` and `__FILE__` constants in your Blade views, since they will refer to the location of the cached, compiled view.
 
 <a name="rendering-views-for-collections"></a>
@@ -584,7 +584,7 @@ You may also pass a fourth argument to the `@each` directive. This argument dete
 @each('view.name', $jobs, 'job', 'view.empty')
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > Views rendered via `@each` do not inherit the variables from the parent view. If the child view requires these variables, you should use the `@foreach` and `@include` directives instead.
 
 <a name="the-once-directive"></a>
@@ -890,7 +890,7 @@ The closure should return a string. If the returned string corresponds to an exi
 <a name="additional-dependencies"></a>
 #### Additional Dependencies
 
-If your component requires dependencies from Laravel's [service container](/docs/{{version}}/container), you may list them before any of the component's data attributes and they will automatically be injected by the container:
+If your component requires dependencies from Laravel's [service container](container.md), you may list them before any of the component's data attributes and they will automatically be injected by the container:
 
 ```php
 use App\Services\AlertCreator;
@@ -950,7 +950,7 @@ All of the attributes that are not part of the component's constructor will auto
 </div>
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > Using directives such as `@env` within component tags is not supported at this time. For example, `<x-alert :live="@env('production')"/>` will not be compiled.
 
 <a name="default-merged-attributes"></a>
@@ -997,7 +997,7 @@ If you need to merge other attributes onto your component, you can chain the `me
 </button>
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > If you need to conditionally compile classes on other HTML elements that shouldn't receive merged attributes, you can use the [`@class` directive](#conditional-classes).
 
 <a name="non-class-attribute-merging"></a>
@@ -1271,7 +1271,7 @@ Sometimes you may need to render a component but not know which component should
 <a name="manually-registering-components"></a>
 ### Manually Registering Components
 
-> [!WARNING]  
+> [!WARNING]
 > The following documentation on manually registering components is primarily applicable to those who are writing Laravel packages that include view components. If you are not writing a package, this portion of the component documentation may not be relevant to you.
 
 When writing components for your own application, components are automatically discovered within the `app/View/Components` directory and `resources/views/components` directory.
@@ -1421,7 +1421,7 @@ Because the `color` prop was only passed into the parent (`<x-menu>`), it won't 
 </li>
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > The `@aware` directive can not access parent data that is not explicitly passed to the parent component via HTML attributes. Default `@props` values that are not explicitly passed to the parent component can not be accessed by the `@aware` directive.
 
 <a name="anonymous-component-paths"></a>
@@ -1429,7 +1429,7 @@ Because the `color` prop was only passed into the parent (`<x-menu>`), it won't 
 
 As previously discussed, anonymous components are typically defined by placing a Blade template within your `resources/views/components` directory. However, you may occasionally want to register other anonymous component paths with Laravel in addition to the default path.
 
-The `anonymousComponentPath` method accepts the "path" to the anonymous component location as its first argument and an optional "namespace" that components should be placed under as its second argument. Typically, this method should be called from the `boot` method of one of your application's [service providers](/docs/{{version}}/providers):
+The `anonymousComponentPath` method accepts the "path" to the anonymous component location as its first argument and an optional "namespace" that components should be placed under as its second argument. Typically, this method should be called from the `boot` method of one of your application's [service providers](providers.md):
 
     /**
      * Bootstrap any application services.
@@ -1580,7 +1580,7 @@ When defining a child view, use the `@extends` Blade directive to specify which 
 
 In this example, the `sidebar` section is utilizing the `@@parent` directive to append (rather than overwriting) content to the layout's sidebar. The `@@parent` directive will be replaced by the content of the layout when the view is rendered.
 
-> [!NOTE]  
+> [!NOTE]
 > Contrary to the previous example, this `sidebar` section ends with `@endsection` instead of `@show`. The `@endsection` directive will only define a section while `@show` will define and **immediately yield** the section.
 
 The `@yield` directive also accepts a default value as its second parameter. This value will be rendered if the section being yielded is undefined:
@@ -1595,7 +1595,7 @@ The `@yield` directive also accepts a default value as its second parameter. Thi
 <a name="csrf-field"></a>
 ### CSRF Field
 
-Anytime you define an HTML form in your application, you should include a hidden CSRF token field in the form so that [the CSRF protection](/docs/{{version}}/csrf) middleware can validate the request. You may use the `@csrf` Blade directive to generate the token field:
+Anytime you define an HTML form in your application, you should include a hidden CSRF token field in the form so that [the CSRF protection](csrf.md) middleware can validate the request. You may use the `@csrf` Blade directive to generate the token field:
 
 ```blade
 <form method="POST" action="/profile">
@@ -1621,7 +1621,7 @@ Since HTML forms can't make `PUT`, `PATCH`, or `DELETE` requests, you will need 
 <a name="validation-errors"></a>
 ### Validation Errors
 
-The `@error` directive may be used to quickly check if [validation error messages](/docs/{{version}}/validation#quick-displaying-the-validation-errors) exist for a given attribute. Within an `@error` directive, you may echo the `$message` variable to display the error message:
+The `@error` directive may be used to quickly check if [validation error messages](validation.md#quick-displaying-the-validation-errors) exist for a given attribute. Within an `@error` directive, you may echo the `$message` variable to display the error message:
 
 ```blade
 <!-- /resources/views/post/create.blade.php -->
@@ -1649,7 +1649,7 @@ Since the `@error` directive compiles to an "if" statement, you may use the `@el
     class="@error('email') is-invalid @else is-valid @enderror">
 ```
 
-You may pass [the name of a specific error bag](/docs/{{version}}/validation#named-error-bags) as the second parameter to the `@error` directive to retrieve validation error messages on pages containing multiple forms:
+You may pass [the name of a specific error bag](validation.md#named-error-bags) as the second parameter to the `@error` directive to retrieve validation error messages on pages containing multiple forms:
 
 ```blade
 <!-- /resources/views/auth.blade.php -->
@@ -1711,7 +1711,7 @@ If you would like to prepend content onto the beginning of a stack, you should u
 <a name="service-injection"></a>
 ## Service Injection
 
-The `@inject` directive may be used to retrieve a service from the Laravel [service container](/docs/{{version}}/container). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
+The `@inject` directive may be used to retrieve a service from the Laravel [service container](container.md). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
 
 ```blade
 @inject('metrics', 'App\Services\MetricsService')
@@ -1822,7 +1822,7 @@ As you can see, we will chain the `format` method onto whatever expression is pa
 
     <?php echo ($var)->format('m/d/Y H:i'); ?>
 
-> [!WARNING]  
+> [!WARNING]
 > After updating the logic of a Blade directive, you will need to delete all of the cached Blade views. The cached Blade views may be removed using the `view:clear` Artisan command.
 
 <a name="custom-echo-handlers"></a>

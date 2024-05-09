@@ -262,7 +262,7 @@ $table->bigIncrements('id')->primary()->change();
 $table->char('postal_code', 10)->unique(false)->change();
 ```
 
-If you do not want to update all of the existing "change" migrations in your application to retain the column's existing attributes, you may simply [squash your migrations](/docs/{{version}}/migrations#squashing-migrations):
+If you do not want to update all of the existing "change" migrations in your application to retain the column's existing attributes, you may simply [squash your migrations](migrations.md#squashing-migrations):
 
 ```bash
 php artisan schema:dump
@@ -606,7 +606,7 @@ php artisan vendor:publish --tag=telescope-migrations
 
 **Likelihood Of Impact: Medium**
 
-Laravel 11 now provides its own [`once` function](/docs/{{version}}/helpers#method-once) to ensure that a given closure is only executed once. Therefore, if your application has a dependency on the `spatie/once` package, you should remove it from your application's `composer.json` file to avoid conflicts.
+Laravel 11 now provides its own [`once` function](helpers.md#method-once) to ensure that a given closure is only executed once. Therefore, if your application has a dependency on the `spatie/once` package, you should remove it from your application's `composer.json` file to avoid conflicts.
 
 <a name="miscellaneous"></a>
 ### Miscellaneous

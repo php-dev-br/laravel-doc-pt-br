@@ -36,7 +36,7 @@
 
 Laravel integrates seamlessly with Vite by providing an official plugin and Blade directive to load your assets for development and production.
 
-> [!NOTE]  
+> [!NOTE]
 > Are you running Laravel Mix? Vite has replaced Laravel Mix in new Laravel installations. For Mix documentation, please visit the [Laravel Mix](https://laravel-mix.com/) website. If you would like to switch to Vite, please see our [migration guide](https://github.com/laravel/vite-plugin/blob/main/UPGRADE.md#migrating-from-laravel-mix-to-vite).
 
 <a name="vite-or-mix"></a>
@@ -54,8 +54,8 @@ Have you started a new Laravel application using our Vite scaffolding but need t
 <a name="installation"></a>
 ## Installation & Setup
 
-> [!NOTE]  
-> The following documentation discusses how to manually install and configure the Laravel Vite plugin. However, Laravel's [starter kits](/docs/{{version}}/starter-kits) already include all of this scaffolding and are the fastest way to get started with Laravel and Vite.
+> [!NOTE]
+> The following documentation discusses how to manually install and configure the Laravel Vite plugin. However, Laravel's [starter kits](starter-kits.md) already include all of this scaffolding and are the fastest way to get started with Laravel and Vite.
 
 <a name="installing-node"></a>
 ### Installing Node
@@ -134,7 +134,7 @@ The Laravel plugin also supports multiple entry points and advanced configuratio
 
 If your local development web server is serving your application via HTTPS, you may run into issues connecting to the Vite development server.
 
-If you are using [Laravel Herd](https://herd.laravel.com) and have secured the site or you are using [Laravel Valet](/docs/{{version}}/valet) and have run the [secure command](/docs/{{version}}/valet#securing-sites) against your application, the Laravel Vite plugin will automatically detect and use the generated TLS certificate for you.
+If you are using [Laravel Herd](https://herd.laravel.com) and have secured the site or you are using [Laravel Valet](valet.md) and have run the [secure command](valet.md#securing-sites) against your application, the Laravel Vite plugin will automatically detect and use the generated TLS certificate for you.
 
 If you secured the site using a host that does not match the application's directory name, you may manually specify the host in your application's `vite.config.js` file:
 
@@ -178,7 +178,7 @@ If you are unable to generate a trusted certificate for your system, you may ins
 <a name="configuring-hmr-in-sail-on-wsl2"></a>
 #### Running the Development Server in Sail on WSL2
 
-When running the Vite development server within [Laravel Sail](/docs/{{version}}/sail) on Windows Subsystem for Linux 2 (WSL2), you should add the following configuration to your `vite.config.js` file to ensure the browser can communicate with the development server:
+When running the Vite development server within [Laravel Sail](sail.md) on Windows Subsystem for Linux 2 (WSL2), you should add the following configuration to your `vite.config.js` file to ensure the browser can communicate with the development server:
 
 ```js
 // ...
@@ -269,7 +269,7 @@ npm run dev
 npm run build
 ```
 
-If you are running the development server in [Sail](/docs/{{version}}/sail) on WSL2, you may need some [additional configuration](#configuring-hmr-in-sail-on-wsl2) options.
+If you are running the development server in [Sail](sail.md) on WSL2, you may need some [additional configuration](#configuring-hmr-in-sail-on-wsl2) options.
 
 <a name="working-with-scripts"></a>
 ## Working With JavaScript
@@ -344,8 +344,8 @@ export default defineConfig({
 });
 ```
 
-> [!NOTE]  
-> Laravel's [starter kits](/docs/{{version}}/starter-kits) already include the proper Laravel, Vue, and Vite configuration. Check out [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) for the fastest way to get started with Laravel, Vue, and Vite.
+> [!NOTE]
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, Vue, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, Vue, and Vite.
 
 <a name="react"></a>
 ### React
@@ -382,8 +382,8 @@ You will also need to include the additional `@viteReactRefresh` Blade directive
 
 The `@viteReactRefresh` directive must be called before the `@vite` directive.
 
-> [!NOTE]  
-> Laravel's [starter kits](/docs/{{version}}/starter-kits) already include the proper Laravel, React, and Vite configuration. Check out [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) for the fastest way to get started with Laravel, React, and Vite.
+> [!NOTE]
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, React, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, React, and Vite.
 
 <a name="inertia"></a>
 ### Inertia
@@ -405,8 +405,8 @@ createInertiaApp({
 });
 ```
 
-> [!NOTE]  
-> Laravel's [starter kits](/docs/{{version}}/starter-kits) already include the proper Laravel, Inertia, and Vite configuration. Check out [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia, and Vite.
+> [!NOTE]
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, Inertia, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia, and Vite.
 
 <a name="url-processing"></a>
 ### URL Processing
@@ -452,8 +452,8 @@ export default {
 };
 ```
 
-> [!NOTE]  
-> Laravel's [starter kits](/docs/{{version}}/starter-kits) already include the proper Tailwind, PostCSS, and Vite configuration. Or, if you would like to use Tailwind and Laravel without using one of our starter kits, check out [Tailwind's installation guide for Laravel](https://tailwindcss.com/docs/guides/laravel).
+> [!NOTE]
+> Laravel's [starter kits](starter-kits.md) already include the proper Tailwind, PostCSS, and Vite configuration. Or, if you would like to use Tailwind and Laravel without using one of our starter kits, check out [Tailwind's installation guide for Laravel](https://tailwindcss.com/docs/guides/laravel).
 
 <a name="working-with-blade-and-routes"></a>
 ## Working With Blade and Routes
@@ -545,7 +545,7 @@ export default defineConfig({
 <a name="blade-aliases"></a>
 ### Aliases
 
-It is common in JavaScript applications to [create aliases](#aliases) to regularly referenced directories. But, you may also create aliases to use in Blade by using the `macro` method on the `Illuminate\Support\Facades\Vite` class. Typically, "macros" should be defined within the `boot` method of a [service provider](/docs/{{version}}/providers):
+It is common in JavaScript applications to [create aliases](#aliases) to regularly referenced directories. But, you may also create aliases to use in Blade by using the `macro` method on the `Illuminate\Support\Facades\Vite` class. Typically, "macros" should be defined within the `boot` method of a [service provider](providers.md):
 
     /**
      * Bootstrap any application services.
@@ -684,8 +684,8 @@ If you are using [SSR with Inertia](https://inertiajs.com/server-side-rendering)
 php artisan inertia:start-ssr
 ```
 
-> [!NOTE]  
-> Laravel's [starter kits](/docs/{{version}}/starter-kits) already include the proper Laravel, Inertia SSR, and Vite configuration. Check out [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia SSR, and Vite.
+> [!NOTE]
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, Inertia SSR, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia SSR, and Vite.
 
 <a name="script-and-style-attributes"></a>
 ## Script and Style Tag Attributes
@@ -693,7 +693,7 @@ php artisan inertia:start-ssr
 <a name="content-security-policy-csp-nonce"></a>
 ### Content Security Policy (CSP) Nonce
 
-If you wish to include a [`nonce` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) on your script and style tags as part of your [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), you may generate or specify a nonce using the `useCspNonce` method within a custom [middleware](/docs/{{version}}/middleware):
+If you wish to include a [`nonce` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) on your script and style tags as part of your [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), you may generate or specify a nonce using the `useCspNonce` method within a custom [middleware](middleware.md):
 
 ```php
 <?php
@@ -725,7 +725,7 @@ class AddContentSecurityPolicyHeaders
 
 After invoking the `useCspNonce` method, Laravel will automatically include the `nonce` attributes on all generated script and style tags.
 
-If you need to specify the nonce elsewhere, including the [Ziggy `@route` directive](https://github.com/tighten/ziggy#using-routes-with-a-content-security-policy) included with Laravel's [starter kits](/docs/{{version}}/starter-kits), you may retrieve it using the `cspNonce` method:
+If you need to specify the nonce elsewhere, including the [Ziggy `@route` directive](https://github.com/tighten/ziggy#using-routes-with-a-content-security-policy) included with Laravel's [starter kits](starter-kits.md), you may retrieve it using the `cspNonce` method:
 
 ```blade
 @routes(nonce: Vite::cspNonce())
@@ -780,7 +780,7 @@ Vite::useIntegrityKey(false);
 <a name="arbitrary-attributes"></a>
 ### Arbitrary Attributes
 
-If you need to include additional attributes on your script and style tags, such as the [`data-turbo-track`](https://turbo.hotwired.dev/handbook/drive#reloading-when-assets-change) attribute, you may specify them via the `useScriptTagAttributes` and `useStyleTagAttributes` methods. Typically, this methods should be invoked from a [service provider](/docs/{{version}}/providers):
+If you need to include additional attributes on your script and style tags, such as the [`data-turbo-track`](https://turbo.hotwired.dev/handbook/drive#reloading-when-assets-change) attribute, you may specify them via the `useScriptTagAttributes` and `useStyleTagAttributes` methods. Typically, this methods should be invoked from a [service provider](providers.md):
 
 ```php
 use Illuminate\Support\Facades\Vite;
@@ -810,7 +810,7 @@ Vite::useStyleTagAttributes(fn (string $src, string $url, array|null $chunk, arr
 ]);
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > The `$chunk` and `$manifest` arguments will be `null` while the Vite development server is running.
 
 <a name="advanced-customization"></a>
@@ -866,7 +866,7 @@ For example, the `vite-imagetools` plugin outputs URLs like the following while 
 <img src="/@imagetools/f0b2f404b13f052c604e632f2fb60381bf61a520">
 ```
 
-The `vite-imagetools` plugin is expecting that the output URL will be intercepted by Vite and the plugin may then handle all URLs that start with `/@imagetools`. If you are using plugins that are expecting this behaviour, you will need to manually correct the URLs. You can do this in your `vite.config.js` file by using the `transformOnServe` option. 
+The `vite-imagetools` plugin is expecting that the output URL will be intercepted by Vite and the plugin may then handle all URLs that start with `/@imagetools`. If you are using plugins that are expecting this behaviour, you will need to manually correct the URLs. You can do this in your `vite.config.js` file by using the `transformOnServe` option.
 
 In this particular example, we will prepend the dev server URL to all occurrences of `/@imagetools` within the generated code:
 

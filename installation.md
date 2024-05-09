@@ -26,7 +26,7 @@ Laravel strives to provide an amazing developer experience while providing power
 
 Whether you are new to PHP web frameworks or have years of experience, Laravel is a framework that can grow with you. We'll help you take your first steps as a web developer or give you a boost as you take your expertise to the next level. We can't wait to see what you build.
 
-> [!NOTE]  
+> [!NOTE]
 > New to Laravel? Check out the [Laravel Bootcamp](https://bootcamp.laravel.com) for a hands-on tour of the framework while we walk you through building your first Laravel application.
 
 <a name="why-laravel"></a>
@@ -38,7 +38,7 @@ There are a variety of tools and frameworks available to you when building a web
 
 We like to call Laravel a "progressive" framework. By that, we mean that Laravel grows with you. If you're just taking your first steps into web development, Laravel's vast library of documentation, guides, and [video tutorials](https://laracasts.com) will help you learn the ropes without becoming overwhelmed.
 
-If you're a senior developer, Laravel gives you robust tools for [dependency injection](/docs/{{version}}/container), [unit testing](/docs/{{version}}/testing), [queues](/docs/{{version}}/queues), [real-time events](/docs/{{version}}/broadcasting), and more. Laravel is fine-tuned for building professional web applications and ready to handle enterprise work loads.
+If you're a senior developer, Laravel gives you robust tools for [dependency injection](container.md), [unit testing](testing.md), [queues](/docs/{{version}}/queues), [real-time events](/docs/{{version}}/broadcasting), and more. Laravel is fine-tuned for building professional web applications and ready to handle enterprise work loads.
 
 #### A Scalable Framework
 
@@ -80,7 +80,7 @@ php artisan serve
 Once you have started the Artisan development server, your application will be accessible in your web browser at [http://localhost:8000](http://localhost:8000). Next, you're ready to [start taking your next steps into the Laravel ecosystem](#next-steps). Of course, you may also want to [configure a database](#databases-and-migrations).
 
 > [!NOTE]
-> If you would like a head start when developing your Laravel application, consider using one of our [starter kits](/docs/{{version}}/starter-kits). Laravel's starter kits provide backend and frontend authentication scaffolding for your new Laravel application.
+> If you would like a head start when developing your Laravel application, consider using one of our [starter kits](starter-kits.md). Laravel's starter kits provide backend and frontend authentication scaffolding for your new Laravel application.
 
 <a name="initial-configuration"></a>
 ## Initial Configuration
@@ -97,7 +97,7 @@ Since many of Laravel's configuration option values may vary depending on whethe
 Your `.env` file should not be committed to your application's source control, since each developer / server using your application could require a different environment configuration. Furthermore, this would be a security risk in the event an intruder gains access to your source control repository, since any sensitive credentials would be exposed.
 
 > [!NOTE]
-> For more information about the `.env` file and environment based configuration, check out the full [configuration documentation](/docs/{{version}}/configuration#environment-configuration).
+> For more information about the `.env` file and environment based configuration, check out the full [configuration documentation](configuration.md#environment-configuration).
 
 <a name="databases-and-migrations"></a>
 ### Databases and Migrations
@@ -117,7 +117,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-If you choose to use a database other than SQLite, you will need to create the database and run your application's [database migrations](/docs/{{version}}/migrations):
+If you choose to use a database other than SQLite, you will need to create the database and run your application's [database migrations](migrations.md):
 
 ```shell
 php artisan migrate
@@ -134,13 +134,13 @@ Laravel should always be served out of the root of the "web directory" configure
 <a name="docker-installation-using-sail"></a>
 ## Docker Installation Using Sail
 
-We want it to be as easy as possible to get started with Laravel regardless of your preferred operating system. So, there are a variety of options for developing and running a Laravel project on your local machine. While you may wish to explore these options at a later time, Laravel provides [Sail](/docs/{{version}}/sail), a built-in solution for running your Laravel project using [Docker](https://www.docker.com).
+We want it to be as easy as possible to get started with Laravel regardless of your preferred operating system. So, there are a variety of options for developing and running a Laravel project on your local machine. While you may wish to explore these options at a later time, Laravel provides [Sail](sail.md), a built-in solution for running your Laravel project using [Docker](https://www.docker.com).
 
 Docker is a tool for running applications and services in small, light-weight "containers" which do not interfere with your local machine's installed software or configuration. This means you don't have to worry about configuring or setting up complicated development tools such as web servers and databases on your local machine. To get started, you only need to install [Docker Desktop](https://www.docker.com/products/docker-desktop).
 
 Laravel Sail is a light-weight command-line interface for interacting with Laravel's default Docker configuration. Sail provides a great starting point for building a Laravel application using PHP, MySQL, and Redis without requiring prior Docker experience.
 
-> [!NOTE]  
+> [!NOTE]
 > Already a Docker expert? Don't worry! Everything about Sail can be customized using the `docker-compose.yml` file included with Laravel.
 
 <a name="sail-on-macos"></a>
@@ -164,7 +164,7 @@ cd example-app
 ./vendor/bin/sail up
 ```
 
-Once the application's Docker containers have started, you should run your application's [database migrations](/docs/{{version}}/migrations):
+Once the application's Docker containers have started, you should run your application's [database migrations](migrations.md):
 
 ```shell
 ./vendor/bin/sail artisan migrate
@@ -172,15 +172,15 @@ Once the application's Docker containers have started, you should run your appli
 
 Finally, you can access the application in your web browser at: http://localhost.
 
-> [!NOTE]  
-> To continue learning more about Laravel Sail, review its [complete documentation](/docs/{{version}}/sail).
+> [!NOTE]
+> To continue learning more about Laravel Sail, review its [complete documentation](sail.md).
 
 <a name="sail-on-windows"></a>
 ### Sail on Windows
 
 Before we create a new Laravel application on your Windows machine, make sure to install [Docker Desktop](https://www.docker.com/products/docker-desktop). Next, you should ensure that Windows Subsystem for Linux 2 (WSL2) is installed and enabled. WSL allows you to run Linux binary executables natively on Windows 10. Information on how to install and enable WSL2 can be found within Microsoft's [developer environment documentation](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
-> [!NOTE]  
+> [!NOTE]
 > After installing and enabling WSL2, you should ensure that Docker Desktop is [configured to use the WSL2 backend](https://docs.docker.com/docker-for-windows/wsl/).
 
 Next, you are ready to create your first Laravel project. Launch [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701?rtc=1&activetab=pivot:overviewtab) and begin a new terminal session for your WSL2 Linux operating system. Next, you can use a simple terminal command to create a new Laravel project. For example, to create a new Laravel application in a directory named "example-app", you may run the following command in your terminal:
@@ -201,7 +201,7 @@ cd example-app
 ./vendor/bin/sail up
 ```
 
-Once the application's Docker containers have started, you should run your application's [database migrations](/docs/{{version}}/migrations):
+Once the application's Docker containers have started, you should run your application's [database migrations](migrations.md):
 
 ```shell
 ./vendor/bin/sail artisan migrate
@@ -209,8 +209,8 @@ Once the application's Docker containers have started, you should run your appli
 
 Finally, you can access the application in your web browser at: http://localhost.
 
-> [!NOTE]  
-> To continue learning more about Laravel Sail, review its [complete documentation](/docs/{{version}}/sail).
+> [!NOTE]
+> To continue learning more about Laravel Sail, review its [complete documentation](sail.md).
 
 #### Developing Within WSL2
 
@@ -247,7 +247,7 @@ cd example-app
 ./vendor/bin/sail up
 ```
 
-Once the application's Docker containers have started, you should run your application's [database migrations](/docs/{{version}}/migrations):
+Once the application's Docker containers have started, you should run your application's [database migrations](migrations.md):
 
 ```shell
 ./vendor/bin/sail artisan migrate
@@ -255,8 +255,8 @@ Once the application's Docker containers have started, you should run your appli
 
 Finally, you can access the application in your web browser at: http://localhost.
 
-> [!NOTE]  
-> To continue learning more about Laravel Sail, review its [complete documentation](/docs/{{version}}/sail).
+> [!NOTE]
+> To continue learning more about Laravel Sail, review its [complete documentation](sail.md).
 
 <a name="choosing-your-sail-services"></a>
 ### Choosing Your Sail Services
@@ -269,7 +269,7 @@ curl -s "https://laravel.build/example-app?with=mysql,redis" | bash
 
 If you do not specify which services you would like configured, a default stack of `mysql`, `redis`, `meilisearch`, `mailpit`, and `selenium` will be configured.
 
-You may instruct Sail to install a default [Devcontainer](/docs/{{version}}/sail#using-devcontainers) by adding the `devcontainer` parameter to the URL:
+You may instruct Sail to install a default [Devcontainer](sail.md#using-devcontainers) by adding the `devcontainer` parameter to the URL:
 
 ```shell
 curl -s "https://laravel.build/example-app?with=mysql,redis&devcontainer" | bash
@@ -289,38 +289,38 @@ Now that you have created your Laravel project, you may be wondering what to lea
 
 <div class="content-list" markdown="1">
 
-- [Request Lifecycle](/docs/{{version}}/lifecycle)
-- [Configuration](/docs/{{version}}/configuration)
-- [Directory Structure](/docs/{{version}}/structure)
-- [Frontend](/docs/{{version}}/frontend)
-- [Service Container](/docs/{{version}}/container)
-- [Facades](/docs/{{version}}/facades)
+- [Request Lifecycle](lifecycle.md)
+- [Configuration](configuration.md)
+- [Directory Structure](structure.md)
+- [Frontend](frontend.md)
+- [Service Container](container.md)
+- [Facades](facades.md)
 
 </div>
 
 How you want to use Laravel will also dictate the next steps on your journey. There are a variety of ways to use Laravel, and we'll explore two primary use cases for the framework below.
 
-> [!NOTE]  
+> [!NOTE]
 > New to Laravel? Check out the [Laravel Bootcamp](https://bootcamp.laravel.com) for a hands-on tour of the framework while we walk you through building your first Laravel application.
 
 <a name="laravel-the-fullstack-framework"></a>
 ### Laravel the Full Stack Framework
 
-Laravel may serve as a full stack framework. By "full stack" framework we mean that you are going to use Laravel to route requests to your application and render your frontend via [Blade templates](/docs/{{version}}/blade) or a single-page application hybrid technology like [Inertia](https://inertiajs.com). This is the most common way to use the Laravel framework, and, in our opinion, the most productive way to use Laravel.
+Laravel may serve as a full stack framework. By "full stack" framework we mean that you are going to use Laravel to route requests to your application and render your frontend via [Blade templates](blade.md) or a single-page application hybrid technology like [Inertia](https://inertiajs.com). This is the most common way to use the Laravel framework, and, in our opinion, the most productive way to use Laravel.
 
-If this is how you plan to use Laravel, you may want to check out our documentation on [frontend development](/docs/{{version}}/frontend), [routing](/docs/{{version}}/routing), [views](/docs/{{version}}/views), or the [Eloquent ORM](/docs/{{version}}/eloquent). In addition, you might be interested in learning about community packages like [Livewire](https://livewire.laravel.com) and [Inertia](https://inertiajs.com). These packages allow you to use Laravel as a full-stack framework while enjoying many of the UI benefits provided by single-page JavaScript applications.
+If this is how you plan to use Laravel, you may want to check out our documentation on [frontend development](frontend.md), [routing](routing.md), [views](/docs/{{version}}/views), or the [Eloquent ORM](/docs/{{version}}/eloquent). In addition, you might be interested in learning about community packages like [Livewire](https://livewire.laravel.com) and [Inertia](https://inertiajs.com). These packages allow you to use Laravel as a full-stack framework while enjoying many of the UI benefits provided by single-page JavaScript applications.
 
-If you are using Laravel as a full stack framework, we also strongly encourage you to learn how to compile your application's CSS and JavaScript using [Vite](/docs/{{version}}/vite).
+If you are using Laravel as a full stack framework, we also strongly encourage you to learn how to compile your application's CSS and JavaScript using [Vite](vite.md).
 
-> [!NOTE]  
-> If you want to get a head start building your application, check out one of our official [application starter kits](/docs/{{version}}/starter-kits).
+> [!NOTE]
+> If you want to get a head start building your application, check out one of our official [application starter kits](starter-kits.md).
 
 <a name="laravel-the-api-backend"></a>
 ### Laravel the API Backend
 
-Laravel may also serve as an API backend to a JavaScript single-page application or mobile application. For example, you might use Laravel as an API backend for your [Next.js](https://nextjs.org) application. In this context, you may use Laravel to provide [authentication](/docs/{{version}}/sanctum) and data storage / retrieval for your application, while also taking advantage of Laravel's powerful services such as queues, emails, notifications, and more.
+Laravel may also serve as an API backend to a JavaScript single-page application or mobile application. For example, you might use Laravel as an API backend for your [Next.js](https://nextjs.org) application. In this context, you may use Laravel to provide [authentication](sanctum.md) and data storage / retrieval for your application, while also taking advantage of Laravel's powerful services such as queues, emails, notifications, and more.
 
-If this is how you plan to use Laravel, you may want to check out our documentation on [routing](/docs/{{version}}/routing), [Laravel Sanctum](/docs/{{version}}/sanctum), and the [Eloquent ORM](/docs/{{version}}/eloquent).
+If this is how you plan to use Laravel, you may want to check out our documentation on [routing](routing.md), [Laravel Sanctum](sanctum.md), and the [Eloquent ORM](/docs/{{version}}/eloquent).
 
-> [!NOTE]  
-> Need a head start scaffolding your Laravel backend and Next.js frontend? Laravel Breeze offers an [API stack](/docs/{{version}}/starter-kits#breeze-and-next) as well as a [Next.js frontend implementation](https://github.com/laravel/breeze-next) so you can get started in minutes.
+> [!NOTE]
+> Need a head start scaffolding your Laravel backend and Next.js frontend? Laravel Breeze offers an [API stack](starter-kits.md#breeze-and-next) as well as a [Next.js frontend implementation](https://github.com/laravel/breeze-next) so you can get started in minutes.

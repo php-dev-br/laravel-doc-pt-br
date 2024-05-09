@@ -32,7 +32,7 @@ As mentioned above, the `collect` helper returns a new `Illuminate\Support\Colle
     $collection = collect([1, 2, 3]);
 
 > [!NOTE]
-> The results of [Eloquent](/docs/{{version}}/eloquent) queries are always returned as `Collection` instances.
+> The results of [Eloquent](eloquent.md) queries are always returned as `Collection` instances.
 
 <a name="extending-collections"></a>
 ### Extending Collections
@@ -54,7 +54,7 @@ Collections are "macroable", which allows you to add additional methods to the `
 
     // ['FIRST', 'SECOND']
 
-Typically, you should declare collection macros in the `boot` method of a [service provider](/docs/{{version}}/providers).
+Typically, you should declare collection macros in the `boot` method of a [service provider](providers.md).
 
 <a name="macro-arguments"></a>
 #### Macro Arguments
@@ -300,7 +300,7 @@ The `chunk` method breaks the collection into multiple, smaller collections of a
 
     // [[1, 2, 3, 4], [5, 6, 7]]
 
-This method is especially useful in [views](/docs/{{version}}/views) when working with a grid system such as [Bootstrap](https://getbootstrap.com/docs/5.3/layout/grid/). For example, imagine you have a collection of [Eloquent](/docs/{{version}}/eloquent) models you want to display in a grid:
+This method is especially useful in [views](views.md) when working with a grid system such as [Bootstrap](https://getbootstrap.com/docs/5.3/layout/grid/). For example, imagine you have a collection of [Eloquent](eloquent.md) models you want to display in a grid:
 
 ```blade
 @foreach ($products->chunk(3) as $chunk)
@@ -469,7 +469,7 @@ The `containsOneItem` method determines whether the collection contains a single
 This method has the same signature as the [`contains`](#method-contains) method; however, all values are compared using "strict" comparisons.
 
 > [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/{{version}}/eloquent-collections#method-contains).
+> This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-contains).
 
 <a name="method-count"></a>
 #### `count()` {.collection-method}
@@ -580,7 +580,7 @@ The `diff` method compares the collection against another collection or a plain 
     // [1, 3, 5]
 
 > [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/{{version}}/eloquent-collections#method-diff).
+> This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-diff).
 
 <a name="method-diffassoc"></a>
 #### `diffAssoc()` {.collection-method}
@@ -839,7 +839,7 @@ The `except` method returns all items in the collection except for those with th
 For the inverse of `except`, see the [only](#method-only) method.
 
 > [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/{{version}}/eloquent-collections#method-except).
+> This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-except).
 
 <a name="method-filter"></a>
 #### `filter()` {.collection-method}
@@ -1225,7 +1225,7 @@ The `intersect` method removes any values from the original collection that are 
     // [0 => 'Desk', 2 => 'Chair']
 
 > [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/{{version}}/eloquent-collections#method-intersect).
+> This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-intersect).
 
 <a name="method-intersectAssoc"></a>
 #### `intersectAssoc()` {.collection-method}
@@ -1671,7 +1671,7 @@ The `only` method returns the items in the collection with the specified keys:
 For the inverse of `only`, see the [except](#method-except) method.
 
 > [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/{{version}}/eloquent-collections#method-only).
+> This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-only).
 
 <a name="method-pad"></a>
 #### `pad()` {.collection-method}
@@ -2764,7 +2764,7 @@ The static `times` method creates a new collection by invoking the given closure
 <a name="method-toarray"></a>
 #### `toArray()` {.collection-method}
 
-The `toArray` method converts the collection into a plain PHP `array`. If the collection's values are [Eloquent](/docs/{{version}}/eloquent) models, the models will also be converted to arrays:
+The `toArray` method converts the collection into a plain PHP `array`. If the collection's values are [Eloquent](eloquent.md) models, the models will also be converted to arrays:
 
     $collection = collect(['name' => 'Desk', 'price' => 200]);
 
@@ -2910,7 +2910,7 @@ Finally, you may also pass your own closure to the `unique` method to specify wh
 The `unique` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value. Use the [`uniqueStrict`](#method-uniquestrict) method to filter using "strict" comparisons.
 
 > [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/{{version}}/eloquent-collections#method-unique).
+> This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-unique).
 
 <a name="method-uniquestrict"></a>
 #### `uniqueStrict()` {.collection-method}
@@ -3637,7 +3637,7 @@ The `takeUntilTimeout` method returns a new lazy collection that will enumerate 
     // 58
     // 59
 
-To illustrate the usage of this method, imagine an application that submits invoices from the database using a cursor. You could define a [scheduled task](/docs/{{version}}/scheduling) that runs every 15 minutes and only processes invoices for a maximum of 14 minutes:
+To illustrate the usage of this method, imagine an application that submits invoices from the database using a cursor. You could define a [scheduled task](scheduling.md) that runs every 15 minutes and only processes invoices for a maximum of 14 minutes:
 
     use App\Models\Invoice;
     use Illuminate\Support\Carbon;

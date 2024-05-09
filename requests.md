@@ -32,7 +32,7 @@ Laravel's `Illuminate\Http\Request` class provides an object-oriented way to int
 <a name="accessing-the-request"></a>
 ### Accessing the Request
 
-To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `Illuminate\Http\Request` class on your route closure or controller method. The incoming request instance will automatically be injected by the Laravel [service container](/docs/{{version}}/container):
+To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `Illuminate\Http\Request` class on your route closure or controller method. The incoming request instance will automatically be injected by the Laravel [service container](container.md):
 
     <?php
 
@@ -116,7 +116,7 @@ The `is` method allows you to verify that the incoming request path matches a gi
         // ...
     }
 
-Using the `routeIs` method, you may determine if the incoming request has matched a [named route](/docs/{{version}}/routing#named-routes):
+Using the `routeIs` method, you may determine if the incoming request has matched a [named route](routing.md#named-routes):
 
     if ($request->routeIs('admin.*')) {
         // ...
@@ -234,7 +234,7 @@ Once you have installed these libraries, you may obtain a PSR-7 request by type-
         // ...
     });
 
-> [!NOTE]  
+> [!NOTE]
 > If you return a PSR-7 response instance from a route or controller, it will automatically be converted back to a Laravel response instance and be displayed by the framework.
 
 <a name="input"></a>
@@ -250,7 +250,7 @@ You may retrieve all of the incoming request's input data as an `array` using th
 
     $input = $request->all();
 
-Using the `collect` method, you may retrieve all of the incoming request's input data as a [collection](/docs/{{version}}/collections):
+Using the `collect` method, you may retrieve all of the incoming request's input data as a [collection](collections.md):
 
     $input = $request->collect();
 
@@ -306,7 +306,7 @@ When sending JSON requests to your application, you may access the JSON data via
 <a name="retrieving-stringable-input-values"></a>
 #### Retrieving Stringable Input Values
 
-Instead of retrieving the request's input data as a primitive `string`, you may use the `string` method to retrieve the request data as an instance of [`Illuminate\Support\Stringable`](/docs/{{version}}/helpers#fluent-strings):
+Instead of retrieving the request's input data as a primitive `string`, you may use the `string` method to retrieve the request data as an instance of [`Illuminate\Support\Stringable`](helpers.md#fluent-strings):
 
     $name = $request->string('name')->trim();
 
@@ -361,7 +361,7 @@ If you need to retrieve a subset of the input data, you may use the `only` and `
 
     $input = $request->except('credit_card');
 
-> [!WARNING]  
+> [!WARNING]
 > The `only` method returns all of the key / value pairs that you request; however, it will not return key / value pairs that are not present on the request.
 
 <a name="input-presence"></a>
@@ -451,12 +451,12 @@ The `mergeIfMissing` method may be used to merge input into the request if the c
 <a name="old-input"></a>
 ### Old Input
 
-Laravel allows you to keep input from one request during the next request. This feature is particularly useful for re-populating forms after detecting validation errors. However, if you are using Laravel's included [validation features](/docs/{{version}}/validation), it is possible that you will not need to manually use these session input flashing methods directly, as some of Laravel's built-in validation facilities will call them automatically.
+Laravel allows you to keep input from one request during the next request. This feature is particularly useful for re-populating forms after detecting validation errors. However, if you are using Laravel's included [validation features](validation.md), it is possible that you will not need to manually use these session input flashing methods directly, as some of Laravel's built-in validation facilities will call them automatically.
 
 <a name="flashing-input-to-the-session"></a>
 #### Flashing Input to the Session
 
-The `flash` method on the `Illuminate\Http\Request` class will flash the current input to the [session](/docs/{{version}}/session) so that it is available during the user's next request to the application:
+The `flash` method on the `Illuminate\Http\Request` class will flash the current input to the [session](session.md) so that it is available during the user's next request to the application:
 
     $request->flash();
 
@@ -482,11 +482,11 @@ Since you often will want to flash input to the session and then redirect to the
 <a name="retrieving-old-input"></a>
 #### Retrieving Old Input
 
-To retrieve flashed input from the previous request, invoke the `old` method on an instance of `Illuminate\Http\Request`. The `old` method will pull the previously flashed input data from the [session](/docs/{{version}}/session):
+To retrieve flashed input from the previous request, invoke the `old` method on an instance of `Illuminate\Http\Request`. The `old` method will pull the previously flashed input data from the [session](session.md):
 
     $username = $request->old('username');
 
-Laravel also provides a global `old` helper. If you are displaying old input within a [Blade template](/docs/{{version}}/blade), it is more convenient to use the `old` helper to repopulate the form. If no old input exists for the given field, `null` will be returned:
+Laravel also provides a global `old` helper. If you are displaying old input within a [Blade template](blade.md), it is more convenient to use the `old` helper to repopulate the form. If no old input exists for the given field, `null` will be returned:
 
     <input type="text" name="username" value="{{ old('username') }}">
 
@@ -575,7 +575,7 @@ There are a variety of other methods available on `UploadedFile` instances. Chec
 <a name="storing-uploaded-files"></a>
 ### Storing Uploaded Files
 
-To store an uploaded file, you will typically use one of your configured [filesystems](/docs/{{version}}/filesystem). The `UploadedFile` class has a `store` method that will move an uploaded file to one of your disks, which may be a location on your local filesystem or a cloud storage location like Amazon S3.
+To store an uploaded file, you will typically use one of your configured [filesystems](filesystem.md). The `UploadedFile` class has a `store` method that will move an uploaded file to one of your disks, which may be a location on your local filesystem or a cloud storage location like Amazon S3.
 
 The `store` method accepts the path where the file should be stored relative to the filesystem's configured root directory. This path should not contain a filename, since a unique ID will automatically be generated to serve as the filename.
 
@@ -591,8 +591,8 @@ If you do not want a filename to be automatically generated, you may use the `st
 
     $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 
-> [!NOTE]  
-> For more information about file storage in Laravel, check out the complete [file storage documentation](/docs/{{version}}/filesystem).
+> [!NOTE]
+> For more information about file storage in Laravel, check out the complete [file storage documentation](filesystem.md).
 
 <a name="configuring-trusted-proxies"></a>
 ## Configuring Trusted Proxies
@@ -619,7 +619,7 @@ In addition to configuring the trusted proxies, you may also configure the proxy
         );
     })
 
-> [!NOTE]  
+> [!NOTE]
 > If you are using AWS Elastic Load Balancing, the `headers` value should be `Request::HEADER_X_FORWARDED_AWS_ELB`. If your load balancer uses the standard `Forwarded` header from [RFC 7239](https://www.rfc-editor.org/rfc/rfc7239#section-4), the `headers` value should be `Request::HEADER_FORWARDED`. For more information on the constants that may be used in the `headers` value, check out Symfony's documentation on [trusting proxies](https://symfony.com/doc/7.0/deployment/proxies.html).
 
 <a name="trusting-all-proxies"></a>

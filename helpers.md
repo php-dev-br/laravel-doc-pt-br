@@ -929,7 +929,7 @@ $classes = Arr::toCssStyles($array);
 */
 ```
 
-This method powers Laravel's functionality allowing [merging classes with a Blade component's attribute bag](/docs/{{version}}/blade#conditionally-merge-classes) as well as the `@class` [Blade directive](/docs/{{version}}/blade#conditional-classes).
+This method powers Laravel's functionality allowing [merging classes with a Blade component's attribute bag](blade.md#conditionally-merge-classes) as well as the `@class` [Blade directive](blade.md#conditional-classes).
 
 <a name="method-array-undot"></a>
 #### `Arr::undot()` {.collection-method}
@@ -1441,13 +1441,13 @@ The `lang_path` function returns the fully qualified path to your application's 
 
     $path = lang_path('en/messages.php');
 
-> [!NOTE]  
+> [!NOTE]
 > By default, the Laravel application skeleton does not include the `lang` directory. If you would like to customize Laravel's language files, you may publish them via the `lang:publish` Artisan command.
 
 <a name="method-mix"></a>
 #### `mix()` {.collection-method}
 
-The `mix` function returns the path to a [versioned Mix file](/docs/{{version}}/mix):
+The `mix` function returns the path to a [versioned Mix file](mix.md):
 
     $path = mix('css/app.css');
 
@@ -1510,7 +1510,7 @@ You can configure the asset URL host by setting the `ASSET_URL` variable in your
 <a name="method-route"></a>
 #### `route()` {.collection-method}
 
-The `route` function generates a URL for a given [named route](/docs/{{version}}/routing#named-routes):
+The `route` function generates a URL for a given [named route](routing.md#named-routes):
 
     $url = route('route.name');
 
@@ -1541,7 +1541,7 @@ The `secure_url` function generates a fully qualified HTTPS URL to the given pat
 <a name="method-to-route"></a>
 #### `to_route()` {.collection-method}
 
-The `to_route` function generates a [redirect HTTP response](/docs/{{version}}/responses#redirects) for a given [named route](/docs/{{version}}/routing#named-routes):
+The `to_route` function generates a [redirect HTTP response](responses.md#redirects) for a given [named route](routing.md#named-routes):
 
     return to_route('users.show', ['user' => 1]);
 
@@ -1572,7 +1572,7 @@ If no path is provided, an `Illuminate\Routing\UrlGenerator` instance is returne
 <a name="method-abort"></a>
 #### `abort()` {.collection-method}
 
-The `abort` function throws [an HTTP exception](/docs/{{version}}/errors#http-exceptions) which will be rendered by the [exception handler](/docs/{{version}}/errors#the-exception-handler):
+The `abort` function throws [an HTTP exception](errors.md#http-exceptions) which will be rendered by the [exception handler](errors.md#the-exception-handler):
 
     abort(403);
 
@@ -1601,7 +1601,7 @@ Like the `abort` method, you may also provide the exception's response text as t
 <a name="method-app"></a>
 #### `app()` {.collection-method}
 
-The `app` function returns the [service container](/docs/{{version}}/container) instance:
+The `app` function returns the [service container](container.md) instance:
 
     $container = app();
 
@@ -1612,7 +1612,7 @@ You may pass a class or interface name to resolve it from the container:
 <a name="method-auth"></a>
 #### `auth()` {.collection-method}
 
-The `auth` function returns an [authenticator](/docs/{{version}}/authentication) instance. You may use it as an alternative to the `Auth` facade:
+The `auth` function returns an [authenticator](authentication.md) instance. You may use it as an alternative to the `Auth` facade:
 
     $user = auth()->user();
 
@@ -1623,7 +1623,7 @@ If needed, you may specify which guard instance you would like to access:
 <a name="method-back"></a>
 #### `back()` {.collection-method}
 
-The `back` function generates a [redirect HTTP response](/docs/{{version}}/responses#redirects) to the user's previous location:
+The `back` function generates a [redirect HTTP response](responses.md#redirects) to the user's previous location:
 
     return back($status = 302, $headers = [], $fallback = '/');
 
@@ -1632,7 +1632,7 @@ The `back` function generates a [redirect HTTP response](/docs/{{version}}/respo
 <a name="method-bcrypt"></a>
 #### `bcrypt()` {.collection-method}
 
-The `bcrypt` function [hashes](/docs/{{version}}/hashing) the given value using Bcrypt. You may use this function as an alternative to the `Hash` facade:
+The `bcrypt` function [hashes](hashing.md) the given value using Bcrypt. You may use this function as an alternative to the `Hash` facade:
 
     $password = bcrypt('my-secret-password');
 
@@ -1659,7 +1659,7 @@ For the inverse of `blank`, see the [`filled`](#method-filled) method.
 <a name="method-broadcast"></a>
 #### `broadcast()` {.collection-method}
 
-The `broadcast` function [broadcasts](/docs/{{version}}/broadcasting) the given [event](/docs/{{version}}/events) to its listeners:
+The `broadcast` function [broadcasts](broadcasting.md) the given [event](events.md) to its listeners:
 
     broadcast(new UserRegistered($user));
 
@@ -1668,7 +1668,7 @@ The `broadcast` function [broadcasts](/docs/{{version}}/broadcasting) the given 
 <a name="method-cache"></a>
 #### `cache()` {.collection-method}
 
-The `cache` function may be used to get values from the [cache](/docs/{{version}}/cache). If the given key does not exist in the cache, an optional default value will be returned:
+The `cache` function may be used to get values from the [cache](cache.md). If the given key does not exist in the cache, an optional default value will be returned:
 
     $value = cache('key');
 
@@ -1690,14 +1690,14 @@ The `class_uses_recursive` function returns all traits used by a class, includin
 <a name="method-collect"></a>
 #### `collect()` {.collection-method}
 
-The `collect` function creates a [collection](/docs/{{version}}/collections) instance from the given value:
+The `collect` function creates a [collection](collections.md) instance from the given value:
 
     $collection = collect(['taylor', 'abigail']);
 
 <a name="method-config"></a>
 #### `config()` {.collection-method}
 
-The `config` function gets the value of a [configuration](/docs/{{version}}/configuration) variable. The configuration values may be accessed using "dot" syntax, which includes the name of the file and the option you wish to access. A default value may be specified and is returned if the configuration option does not exist:
+The `config` function gets the value of a [configuration](configuration.md) variable. The configuration values may be accessed using "dot" syntax, which includes the name of the file and the option you wish to access. A default value may be specified and is returned if the configuration option does not exist:
 
     $value = config('app.timezone');
 
@@ -1710,7 +1710,7 @@ You may set configuration variables at runtime by passing an array of key / valu
 <a name="method-context"></a>
 #### `context()` {.collection-method}
 
-The `context` function gets the value from the [current context](/docs/{{version}}/context). A default value may be specified and is returned if the context key does not exist:
+The `context` function gets the value from the [current context](context.md). A default value may be specified and is returned if the context key does not exist:
 
     $value = context('trace_id');
 
@@ -1725,14 +1725,14 @@ You may set context values by passing an array of key / value pairs:
 <a name="method-cookie"></a>
 #### `cookie()` {.collection-method}
 
-The `cookie` function creates a new [cookie](/docs/{{version}}/requests#cookies) instance:
+The `cookie` function creates a new [cookie](requests.md#cookies) instance:
 
     $cookie = cookie('name', 'value', $minutes);
 
 <a name="method-csrf-field"></a>
 #### `csrf_field()` {.collection-method}
 
-The `csrf_field` function generates an HTML `hidden` input field containing the value of the CSRF token. For example, using [Blade syntax](/docs/{{version}}/blade):
+The `csrf_field` function generates an HTML `hidden` input field containing the value of the CSRF token. For example, using [Blade syntax](blade.md):
 
     {{ csrf_field() }}
 
@@ -1746,7 +1746,7 @@ The `csrf_token` function retrieves the value of the current CSRF token:
 <a name="method-decrypt"></a>
 #### `decrypt()` {.collection-method}
 
-The `decrypt` function [decrypts](/docs/{{version}}/encryption) the given value. You may use this function as an alternative to the `Crypt` facade:
+The `decrypt` function [decrypts](encryption.md) the given value. You may use this function as an alternative to the `Crypt` facade:
 
     $password = decrypt($value);
 
@@ -1764,14 +1764,14 @@ If you do not want to halt the execution of your script, use the [`dump`](#metho
 <a name="method-dispatch"></a>
 #### `dispatch()` {.collection-method}
 
-The `dispatch` function pushes the given [job](/docs/{{version}}/queues#creating-jobs) onto the Laravel [job queue](/docs/{{version}}/queues):
+The `dispatch` function pushes the given [job](queues.md#creating-jobs) onto the Laravel [job queue](queues.md):
 
     dispatch(new App\Jobs\SendEmails);
 
 <a name="method-dispatch-sync"></a>
 #### `dispatch_sync()` {.collection-method}
 
-The `dispatch_sync` function pushes the given job to the [sync](/docs/{{version}}/queues#synchronous-dispatching) queue so that it is processed immediately:
+The `dispatch_sync` function pushes the given job to the [sync](queues.md#synchronous-dispatching) queue so that it is processed immediately:
 
     dispatch_sync(new App\Jobs\SendEmails);
 
@@ -1789,26 +1789,26 @@ If you want to stop executing the script after dumping the variables, use the [`
 <a name="method-encrypt"></a>
 #### `encrypt()` {.collection-method}
 
-The `encrypt` function [encrypts](/docs/{{version}}/encryption) the given value. You may use this function as an alternative to the `Crypt` facade:
+The `encrypt` function [encrypts](encryption.md) the given value. You may use this function as an alternative to the `Crypt` facade:
 
     $secret = encrypt('my-secret-value');
 
 <a name="method-env"></a>
 #### `env()` {.collection-method}
 
-The `env` function retrieves the value of an [environment variable](/docs/{{version}}/configuration#environment-configuration) or returns a default value:
+The `env` function retrieves the value of an [environment variable](configuration.md#environment-configuration) or returns a default value:
 
     $env = env('APP_ENV');
 
     $env = env('APP_ENV', 'production');
 
-> [!WARNING]  
+> [!WARNING]
 > If you execute the `config:cache` command during your deployment process, you should be sure that you are only calling the `env` function from within your configuration files. Once the configuration has been cached, the `.env` file will not be loaded and all calls to the `env` function will return `null`.
 
 <a name="method-event"></a>
 #### `event()` {.collection-method}
 
-The `event` function dispatches the given [event](/docs/{{version}}/events) to its listeners:
+The `event` function dispatches the given [event](events.md) to its listeners:
 
     event(new UserRegistered($user));
 
@@ -1856,7 +1856,7 @@ For the inverse of `filled`, see the [`blank`](#method-blank) method.
 <a name="method-info"></a>
 #### `info()` {.collection-method}
 
-The `info` function will write information to your application's [log](/docs/{{version}}/logging):
+The `info` function will write information to your application's [log](logging.md):
 
     info('Some helpful information!');
 
@@ -1880,7 +1880,7 @@ An array of contextual data may also be passed to the function:
 <a name="method-logger"></a>
 #### `logger()` {.collection-method}
 
-The `logger` function can be used to write a `debug` level message to the [log](/docs/{{version}}/logging):
+The `logger` function can be used to write a `debug` level message to the [log](logging.md):
 
     logger('Debug message');
 
@@ -1888,14 +1888,14 @@ An array of contextual data may also be passed to the function:
 
     logger('User has logged in.', ['id' => $user->id]);
 
-A [logger](/docs/{{version}}/errors#logging) instance will be returned if no value is passed to the function:
+A [logger](errors.md#logging) instance will be returned if no value is passed to the function:
 
     logger()->error('You are not allowed here.');
 
 <a name="method-method-field"></a>
 #### `method_field()` {.collection-method}
 
-The `method_field` function generates an HTML `hidden` input field containing the spoofed value of the form's HTTP verb. For example, using [Blade syntax](/docs/{{version}}/blade):
+The `method_field` function generates an HTML `hidden` input field containing the spoofed value of the form's HTTP verb. For example, using [Blade syntax](blade.md):
 
     <form method="POST">
         {{ method_field('DELETE') }}
@@ -1911,7 +1911,7 @@ The `now` function creates a new `Illuminate\Support\Carbon` instance for the cu
 <a name="method-old"></a>
 #### `old()` {.collection-method}
 
-The `old` function [retrieves](/docs/{{version}}/requests#retrieving-input) an [old input](/docs/{{version}}/requests#old-input) value flashed into the session:
+The `old` function [retrieves](requests.md#retrieving-input) an [old input](requests.md#old-input) value flashed into the session:
 
     $value = old('value');
 
@@ -1982,14 +1982,14 @@ The `optional` function also accepts a closure as its second argument. The closu
 <a name="method-policy"></a>
 #### `policy()` {.collection-method}
 
-The `policy` method retrieves a [policy](/docs/{{version}}/authorization#creating-policies) instance for a given class:
+The `policy` method retrieves a [policy](authorization.md#creating-policies) instance for a given class:
 
     $policy = policy(App\Models\User::class);
 
 <a name="method-redirect"></a>
 #### `redirect()` {.collection-method}
 
-The `redirect` function returns a [redirect HTTP response](/docs/{{version}}/responses#redirects), or returns the redirector instance if called with no arguments:
+The `redirect` function returns a [redirect HTTP response](responses.md#redirects), or returns the redirector instance if called with no arguments:
 
     return redirect($to = null, $status = 302, $headers = [], $https = null);
 
@@ -2000,7 +2000,7 @@ The `redirect` function returns a [redirect HTTP response](/docs/{{version}}/res
 <a name="method-report"></a>
 #### `report()` {.collection-method}
 
-The `report` function will report an exception using your [exception handler](/docs/{{version}}/errors#the-exception-handler):
+The `report` function will report an exception using your [exception handler](errors.md#the-exception-handler):
 
     report($e);
 
@@ -2011,7 +2011,7 @@ The `report` function also accepts a string as an argument. When a string is giv
 <a name="method-report-if"></a>
 #### `report_if()` {.collection-method}
 
-The `report_if` function will report an exception using your [exception handler](/docs/{{version}}/errors#the-exception-handler) if the given condition is `true`:
+The `report_if` function will report an exception using your [exception handler](errors.md#the-exception-handler) if the given condition is `true`:
 
     report_if($shouldReport, $e);
 
@@ -2020,7 +2020,7 @@ The `report_if` function will report an exception using your [exception handler]
 <a name="method-report-unless"></a>
 #### `report_unless()` {.collection-method}
 
-The `report_unless` function will report an exception using your [exception handler](/docs/{{version}}/errors#the-exception-handler) if the given condition is `false`:
+The `report_unless` function will report an exception using your [exception handler](errors.md#the-exception-handler) if the given condition is `false`:
 
     report_unless($reportingDisabled, $e);
 
@@ -2029,7 +2029,7 @@ The `report_unless` function will report an exception using your [exception hand
 <a name="method-request"></a>
 #### `request()` {.collection-method}
 
-The `request` function returns the current [request](/docs/{{version}}/requests) instance or obtains an input field's value from the current request:
+The `request` function returns the current [request](requests.md) instance or obtains an input field's value from the current request:
 
     $request = request();
 
@@ -2038,7 +2038,7 @@ The `request` function returns the current [request](/docs/{{version}}/requests)
 <a name="method-rescue"></a>
 #### `rescue()` {.collection-method}
 
-The `rescue` function executes the given closure and catches any exceptions that occur during its execution. All exceptions that are caught will be sent to your [exception handler](/docs/{{version}}/errors#the-exception-handler); however, the request will continue processing:
+The `rescue` function executes the given closure and catches any exceptions that occur during its execution. All exceptions that are caught will be sent to your [exception handler](errors.md#the-exception-handler); however, the request will continue processing:
 
     return rescue(function () {
         return $this->method();
@@ -2067,14 +2067,14 @@ A `report` argument may be provided to the `rescue` function to determine if the
 <a name="method-resolve"></a>
 #### `resolve()` {.collection-method}
 
-The `resolve` function resolves a given class or interface name to an instance using the [service container](/docs/{{version}}/container):
+The `resolve` function resolves a given class or interface name to an instance using the [service container](container.md):
 
     $api = resolve('HelpSpot\API');
 
 <a name="method-response"></a>
 #### `response()` {.collection-method}
 
-The `response` function creates a [response](/docs/{{version}}/responses) instance or obtains an instance of the response factory:
+The `response` function creates a [response](responses.md) instance or obtains an instance of the response factory:
 
     return response('Hello World', 200, $headers);
 
@@ -2118,7 +2118,7 @@ To only retry under specific conditions, you may pass a closure as the fourth ar
 <a name="method-session"></a>
 #### `session()` {.collection-method}
 
-The `session` function may be used to get or set [session](/docs/{{version}}/session) values:
+The `session` function may be used to get or set [session](session.md) values:
 
     $value = session('key');
 
@@ -2218,7 +2218,7 @@ A default value or closure may be passed as the third argument to the function. 
 <a name="method-validator"></a>
 #### `validator()` {.collection-method}
 
-The `validator` function creates a new [validator](/docs/{{version}}/validation) instance with the given arguments. You may use it as an alternative to the `Validator` facade:
+The `validator` function creates a new [validator](validation.md) instance with the given arguments. You may use it as an alternative to the `Validator` facade:
 
     $validator = validator($data, $rules, $messages);
 
@@ -2242,13 +2242,13 @@ Additional arguments may be passed to the `value` function. If the first argumen
     $result = value(function (string $name) {
         return $name;
     }, 'Taylor');
-    
+
     // 'Taylor'
 
 <a name="method-view"></a>
 #### `view()` {.collection-method}
 
-The `view` function retrieves a [view](/docs/{{version}}/views) instance:
+The `view` function retrieves a [view](views.md) instance:
 
     return view('auth.login');
 
@@ -2388,11 +2388,11 @@ $user = Pipeline::send($user)
             ->then(fn (User $user) => $user);
 ```
 
-As you can see, each invokable class or closure in the pipeline is provided the input and a `$next` closure. Invoking the `$next` closure will invoke the next callable in the pipeline. As you may have noticed, this is very similar to [middleware](/docs/{{version}}/middleware).
+As you can see, each invokable class or closure in the pipeline is provided the input and a `$next` closure. Invoking the `$next` closure will invoke the next callable in the pipeline. As you may have noticed, this is very similar to [middleware](middleware.md).
 
 When the last callable in the pipeline invokes the `$next` closure, the callable provided to the `then` method will be invoked. Typically, this callable will simply return the given input.
 
-Of course, as discussed previously, you are not limited to providing closures to your pipeline. You may also provide invokable classes. If a class name is provided, the class will be instantiated via Laravel's [service container](/docs/{{version}}/container), allowing dependencies to be injected into the invokable class:
+Of course, as discussed previously, you are not limited to providing closures to your pipeline. You may also provide invokable classes. If a class name is provided, the class will be instantiated via Laravel's [service container](container.md), allowing dependencies to be injected into the invokable class:
 
 ```php
 $user = Pipeline::send($user)
@@ -2532,7 +2532,7 @@ Of course, the `Sleep` class offers a variety of other assertions you may use wh
     // Assert that, even if Sleep was called, no execution paused occurred...
     Sleep::assertInsomniac();
 
-Sometimes it may be useful to perform an action whenever a fake sleep occurs in your application code. To achieve this, you may provide a callback to the `whenFakingSleep` method. In the following example, we use Laravel's [time manipulation helpers](/docs/{{version}}/mocking#interacting-with-time) to instantly progress time by the duration of each sleep:
+Sometimes it may be useful to perform an action whenever a fake sleep occurs in your application code. To achieve this, you may provide a callback to the `whenFakingSleep` method. In the following example, we use Laravel's [time manipulation helpers](mocking.md#interacting-with-time) to instantly progress time by the duration of each sleep:
 
 ```php
 use Carbon\CarbonInterval as Duration;

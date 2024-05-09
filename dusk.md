@@ -76,7 +76,7 @@ php artisan dusk:install
 Next, set the `APP_URL` environment variable in your application's `.env` file. This value should match the URL you use to access your application in a browser.
 
 > [!NOTE]
-> If you are using [Laravel Sail](/docs/{{version}}/sail) to manage your local development environment, please also consult the Sail documentation on [configuring and running Dusk tests](/docs/{{version}}/sail#laravel-dusk).
+> If you are using [Laravel Sail](sail.md) to manage your local development environment, please also consult the Sail documentation on [configuring and running Dusk tests](sail.md#laravel-dusk).
 
 <a name="managing-chromedriver-installations"></a>
 ### Managing ChromeDriver Installations
@@ -288,7 +288,7 @@ php artisan dusk --group=foo
 ```
 
 > [!NOTE]
-> If you are using [Laravel Sail](/docs/{{version}}/sail) to manage your local development environment, please consult the Sail documentation on [configuring and running Dusk tests](/docs/{{version}}/sail#laravel-dusk).
+> If you are using [Laravel Sail](sail.md) to manage your local development environment, please consult the Sail documentation on [configuring and running Dusk tests](sail.md#laravel-dusk).
 
 <a name="manually-starting-chromedriver"></a>
 #### Manually Starting ChromeDriver
@@ -421,7 +421,7 @@ The `visit` method may be used to navigate to a given URI within your applicatio
 
     $browser->visit('/login');
 
-You may use the `visitRoute` method to navigate to a [named route](/docs/{{version}}/routing#named-routes):
+You may use the `visitRoute` method to navigate to a [named route](routing.md#named-routes):
 
     $browser->visitRoute('login');
 
@@ -461,7 +461,7 @@ You may use the `move` method to move the browser window to a different position
 <a name="browser-macros"></a>
 ### Browser Macros
 
-If you would like to define a custom browser method that you can re-use in a variety of your tests, you may use the `macro` method on the `Browser` class. Typically, you should call this method from a [service provider's](/docs/{{version}}/providers) `boot` method:
+If you would like to define a custom browser method that you can re-use in a variety of your tests, you may use the `macro` method on the `Browser` class. Typically, you should call this method from a [service provider's](providers.md) `boot` method:
 
     <?php
 
@@ -772,7 +772,7 @@ Dusk also provides a `withKeyboard` method, allowing you to fluently perform com
 <a name="keyboard-macros"></a>
 #### Keyboard Macros
 
-If you would like to define custom keyboard interactions that you can easily re-use throughout your test suite, you may use the `macro` method provided by the `Keyboard` class. Typically, you should call this method from a [service provider's](/docs/{{version}}/providers) `boot` method:
+If you would like to define custom keyboard interactions that you can easily re-use throughout your test suite, you may use the `macro` method provided by the `Keyboard` class. Typically, you should call this method from a [service provider's](providers.md) `boot` method:
 
     <?php
 
@@ -1068,7 +1068,7 @@ The `waitForLocation` method can also be used to wait for the current window loc
 
     $browser->waitForLocation('https://example.com/path');
 
-You may also wait for a [named route's](/docs/{{version}}/routing#named-routes) location:
+You may also wait for a [named route's](routing.md#named-routes) location:
 
     $browser->waitForRoute($routeName, $parameters);
 
@@ -1355,7 +1355,7 @@ Assert that the current path does not match the given path:
 <a name="assert-route-is"></a>
 #### assertRouteIs
 
-Assert that the current URL matches the given [named route's](/docs/{{version}}/routing#named-routes) URL:
+Assert that the current URL matches the given [named route's](routing.md#named-routes) URL:
 
     $browser->assertRouteIs($name, $parameters);
 

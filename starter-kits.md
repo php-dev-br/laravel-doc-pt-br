@@ -19,9 +19,9 @@ While you are welcome to use these starter kits, they are not required. You are 
 <a name="laravel-breeze"></a>
 ## Laravel Breeze
 
-[Laravel Breeze](https://github.com/laravel/breeze) is a minimal, simple implementation of all of Laravel's [authentication features](/docs/{{version}}/authentication), including login, registration, password reset, email verification, and password confirmation. In addition, Breeze includes a simple "profile" page where the user may update their name, email address, and password.
+[Laravel Breeze](https://github.com/laravel/breeze) is a minimal, simple implementation of all of Laravel's [authentication features](authentication.md), including login, registration, password reset, email verification, and password confirmation. In addition, Breeze includes a simple "profile" page where the user may update their name, email address, and password.
 
-Laravel Breeze's default view layer is made up of simple [Blade templates](/docs/{{version}}/blade) styled with [Tailwind CSS](https://tailwindcss.com). Additionally, Breeze provides scaffolding options based on [Livewire](https://livewire.laravel.com) or [Inertia](https://inertiajs.com), with the choice of using Vue or React for the Inertia-based scaffolding.
+Laravel Breeze's default view layer is made up of simple [Blade templates](blade.md) styled with [Tailwind CSS](https://tailwindcss.com). Additionally, Breeze provides scaffolding options based on [Livewire](https://livewire.laravel.com) or [Inertia](https://inertiajs.com), with the choice of using Vue or React for the Inertia-based scaffolding.
 
 <img src="https://laravel.com/img/docs/breeze-register.png">
 
@@ -32,7 +32,7 @@ If you're new to Laravel, feel free to jump into the [Laravel Bootcamp](https://
 <a name="laravel-breeze-installation"></a>
 ### Installation
 
-First, you should [create a new Laravel application](/docs/{{version}}/installation). If you create your application using the [Laravel installer](/docs/{{version}}/installation#creating-a-laravel-project), you will be prompted to install Laravel Breeze during the installation process. Otherwise, you will need to follow the manual installation instructions below.
+First, you should [create a new Laravel application](installation.md). If you create your application using the [Laravel installer](installation.md#creating-a-laravel-project), you will be prompted to install Laravel Breeze during the installation process. Otherwise, you will need to follow the manual installation instructions below.
 
 If you have already created a new Laravel application without a starter kit, you may manually install Laravel Breeze using Composer:
 
@@ -55,7 +55,7 @@ npm run dev
 <a name="breeze-and-blade"></a>
 ### Breeze and Blade
 
-The default Breeze "stack" is the Blade stack, which utilizes simple [Blade templates](/docs/{{version}}/blade) to render your application's frontend. The Blade stack may be installed by invoking the `breeze:install` command with no other additional arguments and selecting the Blade frontend stack. After Breeze's scaffolding is installed, you should also compile your application's frontend assets:
+The default Breeze "stack" is the Blade stack, which utilizes simple [Blade templates](blade.md) to render your application's frontend. The Blade stack may be installed by invoking the `breeze:install` command with no other additional arguments and selecting the Blade frontend stack. After Breeze's scaffolding is installed, you should also compile your application's frontend assets:
 
 ```shell
 php artisan breeze:install
@@ -67,8 +67,8 @@ npm run dev
 
 Next, you may navigate to your application's `/login` or `/register` URLs in your web browser. All of Breeze's routes are defined within the `routes/auth.php` file.
 
-> [!NOTE]  
-> To learn more about compiling your application's CSS and JavaScript, check out Laravel's [Vite documentation](/docs/{{version}}/vite#running-vite).
+> [!NOTE]
+> To learn more about compiling your application's CSS and JavaScript, check out Laravel's [Vite documentation](vite.md#running-vite).
 
 <a name="breeze-and-livewire"></a>
 ### Breeze and Livewire

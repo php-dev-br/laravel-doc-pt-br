@@ -61,7 +61,7 @@ Database tables are often related to one another. For example, a blog post may h
 <a name="defining-relationships"></a>
 ## Defining Relationships
 
-Eloquent relationships are defined as methods on your Eloquent model classes. Since relationships also serve as powerful [query builders](/docs/{{version}}/queries), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
+Eloquent relationships are defined as methods on your Eloquent model classes. Since relationships also serve as powerful [query builders](queries.md), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
     $user->posts()->where('active', 1)->get();
 
@@ -172,7 +172,7 @@ A one-to-many relationship is used to define relationships where a single model 
 
 Remember, Eloquent will automatically determine the proper foreign key column for the `Comment` model. By convention, Eloquent will take the "snake case" name of the parent model and suffix it with `_id`. So, in this example, Eloquent will assume the foreign key column on the `Comment` model is `post_id`.
 
-Once the relationship method has been defined, we can access the [collection](/docs/{{version}}/eloquent-collections) of related comments by accessing the `comments` property. Remember, since Eloquent provides "dynamic relationship properties", we can access relationship methods as if they were defined as properties on the model:
+Once the relationship method has been defined, we can access the [collection](eloquent-collections.md) of related comments by accessing the `comments` property. Remember, since Eloquent provides "dynamic relationship properties", we can access relationship methods as if they were defined as properties on the model:
 
     use App\Models\Post;
 
@@ -297,7 +297,7 @@ However, you may find it more convenient to use the `whereBelongsTo` method, whi
 
     $posts = Post::whereBelongsTo($user)->get();
 
-You may also provide a [collection](/docs/{{version}}/eloquent-collections) instance to the `whereBelongsTo` method. When doing so, Laravel will retrieve models that belong to any of the parent models within the collection:
+You may also provide a [collection](eloquent-collections.md) instance to the `whereBelongsTo` method. When doing so, Laravel will retrieve models that belong to any of the parent models within the collection:
 
     $users = User::where('vip', true)->get();
 
@@ -348,7 +348,7 @@ public function largestOrder(): HasOne
 }
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > Because PostgreSQL does not support executing the `MAX` function against UUID columns, it is not currently possible to use one-of-many relationships in combination with PostgreSQL UUID columns.
 
 <a name="converting-many-relationships-to-has-one-relationships"></a>
@@ -682,7 +682,7 @@ If you would like your intermediate table to have `created_at` and `updated_at` 
 
     return $this->belongsToMany(Role::class)->withTimestamps();
 
-> [!WARNING]  
+> [!WARNING]
 > Intermediate tables that utilize Eloquent's automatically maintained timestamps are required to have both `created_at` and `updated_at` timestamp columns.
 
 <a name="customizing-the-pivot-attribute-name"></a>
@@ -781,7 +781,7 @@ When defining the `RoleUser` model, you should extend the `Illuminate\Database\E
         // ...
     }
 
-> [!WARNING]  
+> [!WARNING]
 > Pivot models may not use the `SoftDeletes` trait. If you need to soft delete pivot records consider converting your pivot model to an actual Eloquent model.
 
 <a name="custom-pivot-models-and-incrementing-ids"></a>
@@ -1049,7 +1049,7 @@ public function bestImage(): MorphOne
 }
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > It is possible to construct more advanced "one of many" relationships. For more information, please consult the [has one of many documentation](#advanced-has-one-of-many-relationships).
 
 <a name="many-to-many-polymorphic-relations"></a>
@@ -1077,7 +1077,7 @@ Many-to-many polymorphic relations are slightly more complicated than "morph one
         taggable_id - integer
         taggable_type - string
 
-> [!NOTE]  
+> [!NOTE]
 > Before diving into polymorphic many-to-many relationships, you may benefit from reading the documentation on typical [many-to-many relationships](#many-to-many).
 
 <a name="many-to-many-polymorphic-model-structure"></a>
@@ -1189,7 +1189,7 @@ You may determine the morph alias of a given model at runtime using the model's 
 
     $class = Relation::getMorphedModel($alias);
 
-> [!WARNING]  
+> [!WARNING]
 > When adding a "morph map" to your existing application, every morphable `*_type` column value in your database that still contains a fully-qualified class will need to be converted to its "map" name.
 
 <a name="dynamic-relationships"></a>
@@ -1197,7 +1197,7 @@ You may determine the morph alias of a given model at runtime using the model's 
 
 You may use the `resolveRelationUsing` method to define relations between Eloquent models at runtime. While not typically recommended for normal application development, this may occasionally be useful when developing Laravel packages.
 
-The `resolveRelationUsing` method accepts the desired relationship name as its first argument. The second argument passed to the method should be a closure that accepts the model instance and returns a valid Eloquent relationship definition. Typically, you should configure dynamic relationships within the boot method of a [service provider](/docs/{{version}}/providers):
+The `resolveRelationUsing` method accepts the desired relationship name as its first argument. The second argument passed to the method should be a closure that accepts the model instance and returns a valid Eloquent relationship definition. Typically, you should configure dynamic relationships within the boot method of a [service provider](providers.md):
 
     use App\Models\Order;
     use App\Models\Customer;
@@ -1206,13 +1206,13 @@ The `resolveRelationUsing` method accepts the desired relationship name as its f
         return $orderModel->belongsTo(Customer::class, 'customer_id');
     });
 
-> [!WARNING]  
+> [!WARNING]
 > When defining dynamic relationships, always provide explicit key name arguments to the Eloquent relationship methods.
 
 <a name="querying-relations"></a>
 ## Querying Relations
 
-Since all Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of Eloquent relationships also serve as [query builders](/docs/{{version}}/queries), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
+Since all Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing a query to load the related models. In addition, all types of Eloquent relationships also serve as [query builders](queries.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL query against your database.
 
 For example, imagine a blog application in which a `User` model has many associated `Post` models:
 
@@ -1242,7 +1242,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     $user->posts()->where('active', 1)->get();
 
-You are able to use any of the Laravel [query builder's](/docs/{{version}}/queries) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the Laravel [query builder's](queries.md) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
 <a name="chaining-orwhere-clauses-after-relationships"></a>
 #### Chaining `orWhere` Clauses After Relationships
@@ -1262,7 +1262,7 @@ from posts
 where user_id = ? and active = 1 or votes >= 100
 ```
 
-In most situations, you should use [logical groups](/docs/{{version}}/queries#logical-grouping) to group the conditional checks between parentheses:
+In most situations, you should use [logical groups](queries.md#logical-grouping) to group the conditional checks between parentheses:
 
     use Illuminate\Database\Eloquent\Builder;
 
@@ -1330,7 +1330,7 @@ If you need even more power, you may use the `whereHas` and `orWhereHas` methods
         $query->where('content', 'like', 'code%');
     }, '>=', 10)->get();
 
-> [!WARNING]  
+> [!WARNING]
 > Eloquent does not currently support querying for relationship existence across databases. The relationships must exist within the same database.
 
 <a name="inline-relationship-existence-queries"></a>
@@ -1672,7 +1672,7 @@ You may not always need every column from the relationships you are retrieving. 
 
     $books = Book::with('author:id,name,book_id')->get();
 
-> [!WARNING]  
+> [!WARNING]
 > When using this feature, you should always include the `id` column and any relevant foreign key columns in the list of columns you wish to retrieve.
 
 <a name="eager-loading-by-default"></a>
@@ -1733,7 +1733,7 @@ Sometimes you may wish to eager load a relationship but also specify additional 
         $query->where('title', 'like', '%code%');
     }])->get();
 
-In this example, Eloquent will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](/docs/{{version}}/queries) methods to further customize the eager loading operation:
+In this example, Eloquent will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](queries.md) methods to further customize the eager loading operation:
 
     $users = User::with(['posts' => function (Builder $query) {
         $query->orderBy('created_at', 'desc');
@@ -1941,16 +1941,16 @@ The `createQuietly` and `createManyQuietly` methods may be used to create a mode
     $user->posts()->createQuietly([
         'title' => 'Post title.',
     ]);
-    
+
     $user->posts()->createManyQuietly([
         ['title' => 'First post.'],
         ['title' => 'Second post.'],
     ]);
 
-You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](/docs/{{version}}/eloquent#upserts).
+You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](eloquent.md#upserts).
 
-> [!NOTE]  
-> Before using the `create` method, be sure to review the [mass assignment](/docs/{{version}}/eloquent#mass-assignment) documentation.
+> [!NOTE]
+> Before using the `create` method, be sure to review the [mass assignment](eloquent.md#mass-assignment) documentation.
 
 <a name="updating-belongs-to-relationships"></a>
 ### Belongs To Relationships
@@ -2084,5 +2084,5 @@ For example, when a `Comment` model is updated, you may want to automatically "t
         }
     }
 
-> [!WARNING]  
+> [!WARNING]
 > Parent model timestamps will only be updated if the child model is updated using Eloquent's `save` method.

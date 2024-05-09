@@ -33,7 +33,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-[Laravel Scout](https://github.com/laravel/scout) provides a simple, driver based solution for adding full-text search to your [Eloquent models](/docs/{{version}}/eloquent). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records.
+[Laravel Scout](https://github.com/laravel/scout) provides a simple, driver based solution for adding full-text search to your [Eloquent models](eloquent.md). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records.
 
 Currently, Scout ships with [Algolia](https://www.algolia.com/), [Meilisearch](https://www.meilisearch.com), [Typesense](https://typesense.org), and MySQL / PostgreSQL (`database`) drivers. In addition, Scout includes a "collection" driver that is designed for local development usage and does not require any external dependencies or third-party services. Furthermore, writing custom drivers is simple and you are free to extend Scout with your own search implementations.
 
@@ -69,7 +69,7 @@ Finally, add the `Laravel\Scout\Searchable` trait to the model you would like to
 <a name="queueing"></a>
 ### Queueing
 
-While not strictly required to use Scout, you should strongly consider configuring a [queue driver](/docs/{{version}}/queues) before using the library. Running a queue worker will allow Scout to queue all operations that sync your model information to your search indexes, providing much better response times for your application's web interface.
+While not strictly required to use Scout, you should strongly consider configuring a [queue driver](queues.md) before using the library. Running a queue worker will allow Scout to queue all operations that sync your model information to your search indexes, providing much better response times for your application's web interface.
 
 Once you have configured a queue driver, set the value of the `queue` option in your `config/scout.php` configuration file to `true`:
 
@@ -103,7 +103,7 @@ composer require algolia/algoliasearch-client-php
 <a name="meilisearch"></a>
 ### Meilisearch
 
-[Meilisearch](https://www.meilisearch.com) is a blazingly fast and open source search engine. If you aren't sure how to install Meilisearch on your local machine, you may use [Laravel Sail](/docs/{{version}}/sail#meilisearch), Laravel's officially supported Docker development environment.
+[Meilisearch](https://www.meilisearch.com) is a blazingly fast and open source search engine. If you aren't sure how to install Meilisearch on your local machine, you may use [Laravel Sail](sail.md#meilisearch), Laravel's officially supported Docker development environment.
 
 When using the Meilisearch driver you will need to install the Meilisearch PHP SDK via the Composer package manager:
 
@@ -123,7 +123,7 @@ For more information regarding Meilisearch, please consult the [Meilisearch docu
 
 In addition, you should ensure that you install a version of `meilisearch/meilisearch-php` that is compatible with your Meilisearch binary version by reviewing [Meilisearch's documentation regarding binary compatibility](https://github.com/meilisearch/meilisearch-php#-compatibility-with-meilisearch).
 
-> [!WARNING]  
+> [!WARNING]
 > When upgrading Scout on an application that utilizes Meilisearch, you should always [review any additional breaking changes](https://github.com/meilisearch/Meilisearch/releases) to the Meilisearch service itself.
 
 <a name="typesense"></a>
@@ -177,7 +177,7 @@ public function toSearchableArray()
 }
 ```
 
-You should also define your Typesense collection schemas in your application's `config/scout.php` file. A collection schema describes the data types of each field that is searchable via Typesense. For more information on all available schema options, please consult the [Typesense documentation](https://typesense.org/docs/latest/api/collections.html#schema-parameters). 
+You should also define your Typesense collection schemas in your application's `config/scout.php` file. A collection schema describes the data types of each field that is searchable via Typesense. For more information on all available schema options, please consult the [Typesense documentation](https://typesense.org/docs/latest/api/collections.html#schema-parameters).
 
 If you need to change your Typesense collection's schema after it has been defined, you may either run `scout:flush` and `scout:import`, which will delete all existing indexed data and recreate the schema. Or, you may use Typesense's API to modify the collection's schema without removing any indexed data.
 
@@ -400,7 +400,7 @@ Enabling this feature will also pass the request's IP address and your authentic
 <a name="database-engine"></a>
 ### Database Engine
 
-> [!WARNING]  
+> [!WARNING]
 > The database engine currently supports MySQL and PostgreSQL.
 
 If your application interacts with small to medium sized databases or has a light workload, you may find it more convenient to get started with Scout's "database" engine. The database engine will use "where like" clauses and full text indexes when filtering results from your existing database to determine the applicable search results for your query.
@@ -441,8 +441,8 @@ public function toSearchableArray(): array
 }
 ```
 
-> [!WARNING]  
-> Before specifying that a column should use full text query constraints, ensure that the column has been assigned a [full text index](/docs/{{version}}/migrations#available-index-types).
+> [!WARNING]
+> Before specifying that a column should use full text query constraints, ensure that the column has been assigned a [full text index](migrations.md#available-index-types).
 
 <a name="collection-engine"></a>
 ### Collection Engine
@@ -496,8 +496,8 @@ If you would like to modify the query that is used to retrieve all of your model
         return $query->with('author');
     }
 
-> [!WARNING]  
-> The `makeAllSearchableUsing` method may not be applicable when using a queue to batch import models. Relationships are [not restored](/docs/{{version}}/queues#handling-relationships) when model collections are processed by jobs.
+> [!WARNING]
+> The `makeAllSearchableUsing` method may not be applicable when using a queue to batch import models. Relationships are [not restored](queues.md#handling-relationships) when model collections are processed by jobs.
 
 <a name="adding-records"></a>
 ### Adding Records
@@ -515,7 +515,7 @@ Once you have added the `Laravel\Scout\Searchable` trait to a model, all you nee
 <a name="adding-records-via-query"></a>
 #### Adding Records via Query
 
-If you would like to add a collection of models to your search index via an Eloquent query, you may chain the `searchable` method onto the Eloquent query. The `searchable` method will [chunk the results](/docs/{{version}}/eloquent#chunking-results) of the query and add the records to your search index. Again, if you have configured Scout to use queues, all of the chunks will be imported in the background by your queue workers:
+If you would like to add a collection of models to your search index via an Eloquent query, you may chain the `searchable` method onto the Eloquent query. The `searchable` method will [chunk the results](eloquent.md#chunking-results) of the query and add the records to your search index. Again, if you have configured Scout to use queues, all of the chunks will be imported in the background by your queue workers:
 
     use App\Models\Order;
 
@@ -529,7 +529,7 @@ Or, if you already have a collection of Eloquent models in memory, you may call 
 
     $orders->searchable();
 
-> [!NOTE]  
+> [!NOTE]
 > The `searchable` method can be considered an "upsert" operation. In other words, if the model record is already in your index, it will be updated. If it does not exist in the search index, it will be added to the index.
 
 <a name="updating-records"></a>
@@ -575,7 +575,7 @@ Sometimes you may need to prepare the collection of models before they are made 
 <a name="removing-records"></a>
 ### Removing Records
 
-To remove a record from your index you may simply `delete` the model from the database. This may be done even if you are using [soft deleted](/docs/{{version}}/eloquent#soft-deleting) models:
+To remove a record from your index you may simply `delete` the model from the database. This may be done even if you are using [soft deleted](eloquent.md#soft-deleting) models:
 
     use App\Models\Order;
 
@@ -621,7 +621,7 @@ Sometimes you may need to only make a model searchable under certain conditions.
 
 The `shouldBeSearchable` method is only applied when manipulating models through the `save` and `create` methods, queries, or relationships. Directly making models or collections searchable using the `searchable` method will override the result of the `shouldBeSearchable` method.
 
-> [!WARNING]  
+> [!WARNING]
 > The `shouldBeSearchable` method is not applicable when using Scout's "database" engine, as all searchable data is always stored in the database. To achieve similar behavior when using the database engine, you should use [where clauses](#where-clauses) instead.
 
 <a name="searching"></a>
@@ -678,13 +678,13 @@ The `whereNotIn` method verifies that the given column's value is not contained 
 
 Since a search index is not a relational database, more advanced "where" clauses are not currently supported.
 
-> [!WARNING]  
+> [!WARNING]
 > If your application is using Meilisearch, you must configure your application's [filterable attributes](#configuring-filterable-data-for-meilisearch) before utilizing Scout's "where" clauses.
 
 <a name="pagination"></a>
 ### Pagination
 
-In addition to retrieving a collection of models, you may paginate your search results using the `paginate` method. This method will return an `Illuminate\Pagination\LengthAwarePaginator` instance just as if you had [paginated a traditional Eloquent query](/docs/{{version}}/pagination):
+In addition to retrieving a collection of models, you may paginate your search results using the `paginate` method. This method will return an `Illuminate\Pagination\LengthAwarePaginator` instance just as if you had [paginated a traditional Eloquent query](pagination.md):
 
     use App\Models\Order;
 
@@ -694,7 +694,7 @@ You may specify how many models to retrieve per page by passing the amount as th
 
     $orders = Order::search('Star Trek')->paginate(15);
 
-Once you have retrieved the results, you may display the results and render the page links using [Blade](/docs/{{version}}/blade) just as if you had paginated a traditional Eloquent query:
+Once you have retrieved the results, you may display the results and render the page links using [Blade](blade.md) just as if you had paginated a traditional Eloquent query:
 
 ```html
 <div class="container">
@@ -715,13 +715,13 @@ Of course, if you would like to retrieve the pagination results as JSON, you may
         return Order::search($request->input('query'))->paginate(15);
     });
 
-> [!WARNING]  
+> [!WARNING]
 > Since search engines are not aware of your Eloquent model's global scope definitions, you should not utilize global scopes in applications that utilize Scout pagination. Or, you should recreate the global scope's constraints when searching via Scout.
 
 <a name="soft-deleting"></a>
 ### Soft Deleting
 
-If your indexed models are [soft deleting](/docs/{{version}}/eloquent#soft-deleting) and you need to search your soft deleted models, set the `soft_delete` option of the `config/scout.php` configuration file to `true`:
+If your indexed models are [soft deleting](eloquent.md#soft-deleting) and you need to search your soft deleted models, set the `soft_delete` option of the `config/scout.php` configuration file to `true`:
 
     'soft_delete' => true,
 
@@ -735,7 +735,7 @@ When this configuration option is `true`, Scout will not remove soft deleted mod
     // Only include trashed records when retrieving results...
     $orders = Order::search('Star Trek')->onlyTrashed()->get();
 
-> [!NOTE]  
+> [!NOTE]
 > When a soft deleted model is permanently deleted using `forceDelete`, Scout will remove it from the search index automatically.
 
 <a name="customizing-engine-searches"></a>

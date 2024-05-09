@@ -20,7 +20,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-When testing your application or seeding your database, you may need to insert a few records into your database. Instead of manually specifying the value of each column, Laravel allows you to define a set of default attributes for each of your [Eloquent models](/docs/{{version}}/eloquent) using model factories.
+When testing your application or seeding your database, you may need to insert a few records into your database. Instead of manually specifying the value of each column, Laravel allows you to define a set of default attributes for each of your [Eloquent models](eloquent.md) using model factories.
 
 To see an example of how to write a factory, take a look at the `database/factories/UserFactory.php` file in your application. This factory is included with all new Laravel applications and contains the following factory definition:
 
@@ -71,7 +71,7 @@ As you can see, in their most basic form, factories are classes that extend Lara
 
 Via the `fake` helper, factories have access to the [Faker](https://github.com/FakerPHP/Faker) PHP library, which allows you to conveniently generate various kinds of random data for testing and seeding.
 
-> [!NOTE]  
+> [!NOTE]
 > You can change your application's Faker locale by updating the `faker_locale` option in your `config/app.php` configuration file.
 
 <a name="defining-model-factories"></a>
@@ -80,7 +80,7 @@ Via the `fake` helper, factories have access to the [Faker](https://github.com/F
 <a name="generating-factories"></a>
 ### Generating Factories
 
-To create a factory, execute the `make:factory` [Artisan command](/docs/{{version}}/artisan):
+To create a factory, execute the `make:factory` [Artisan command](artisan.md):
 
 ```shell
 php artisan make:factory PostFactory
@@ -145,7 +145,7 @@ State transformation methods typically call the `state` method provided by Larav
 <a name="trashed-state"></a>
 #### "Trashed" State
 
-If your Eloquent model can be [soft deleted](/docs/{{version}}/eloquent#soft-deleting), you may invoke the built-in `trashed` state method to indicate that the created model should already be "soft deleted". You do not need to manually define the `trashed` state as it is automatically available to all factories:
+If your Eloquent model can be [soft deleted](eloquent.md#soft-deleting), you may invoke the built-in `trashed` state method to indicate that the created model should already be "soft deleted". You do not need to manually define the `trashed` state as it is automatically available to all factories:
 
     use App\Models\User;
 
@@ -237,8 +237,8 @@ Alternatively, the `state` method may be called directly on the factory instance
         'name' => 'Abigail Otwell',
     ])->make();
 
-> [!NOTE]  
-> [Mass assignment protection](/docs/{{version}}/eloquent#mass-assignment) is automatically disabled when creating models using factories.
+> [!NOTE]
+> [Mass assignment protection](eloquent.md#mass-assignment) is automatically disabled when creating models using factories.
 
 <a name="persisting-models"></a>
 ### Persisting Models
@@ -462,7 +462,7 @@ For convenience, you may use Laravel's magic factory relationship methods to def
 <a name="polymorphic-relationships"></a>
 ### Polymorphic Relationships
 
-[Polymorphic relationships](/docs/{{version}}/eloquent-relationships#polymorphic-relationships) may also be created using factories. Polymorphic "morph many" relationships are created in the same way as typical "has many" relationships. For example, if an `App\Models\Post` model has a `morphMany` relationship with an `App\Models\Comment` model:
+[Polymorphic relationships](eloquent-relationships.md#polymorphic-relationships) may also be created using factories. Polymorphic "morph many" relationships are created in the same way as typical "has many" relationships. For example, if an `App\Models\Post` model has a `morphMany` relationship with an `App\Models\Comment` model:
 
     use App\Models\Post;
 

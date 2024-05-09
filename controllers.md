@@ -38,7 +38,7 @@ Let's take a look at an example of a basic controller. A controller may have any
     <?php
 
     namespace App\Http\Controllers;
-    
+
     use App\Models\User;
     use Illuminate\View\View;
 
@@ -63,7 +63,7 @@ Once you have written a controller class and method, you may define a route to t
 
 When an incoming request matches the specified route URI, the `show` method on the `App\Http\Controllers\UserController` class will be invoked and the route parameters will be passed to the method.
 
-> [!NOTE]  
+> [!NOTE]
 > Controllers are not **required** to extend a base class. However, it is sometimes convenient to extend a base controller class that contains methods that should be shared across all of your controllers.
 
 <a name="single-action-controllers"></a>
@@ -98,13 +98,13 @@ You may generate an invokable controller by using the `--invokable` option of th
 php artisan make:controller ProvisionServer --invokable
 ```
 
-> [!NOTE]  
-> Controller stubs may be customized using [stub publishing](/docs/{{version}}/artisan#stub-customization).
+> [!NOTE]
+> Controller stubs may be customized using [stub publishing](artisan.md#stub-customization).
 
 <a name="controller-middleware"></a>
 ## Controller Middleware
 
-[Middleware](/docs/{{version}}/middleware) may be assigned to the controller's routes in your route files:
+[Middleware](middleware.md) may be assigned to the controller's routes in your route files:
 
     Route::get('profile', [UserController::class, 'show'])->middleware('auth');
 
@@ -208,7 +208,7 @@ Typically, a 404 HTTP response will be generated if an implicitly bound resource
 <a name="soft-deleted-models"></a>
 #### Soft Deleted Models
 
-Typically, implicit model binding will not retrieve models that have been [soft deleted](/docs/{{version}}/eloquent#soft-deleting), and will instead return a 404 HTTP response. However, you can instruct the framework to allow soft deleted models by invoking the `withTrashed` method when defining your resource route:
+Typically, implicit model binding will not retrieve models that have been [soft deleted](eloquent.md#soft-deleting), and will instead return a 404 HTTP response. However, you can instruct the framework to allow soft deleted models by invoking the `withTrashed` method when defining your resource route:
 
     use App\Http\Controllers\PhotoController;
 
@@ -221,7 +221,7 @@ Calling `withTrashed` with no arguments will allow soft deleted models for the `
 <a name="specifying-the-resource-model"></a>
 #### Specifying the Resource Model
 
-If you are using [route model binding](/docs/{{version}}/routing#route-model-binding) and would like the resource controller's methods to type-hint a model instance, you may use the `--model` option when generating the controller:
+If you are using [route model binding](routing.md#route-model-binding) and would like the resource controller's methods to type-hint a model instance, you may use the `--model` option when generating the controller:
 
 ```shell
 php artisan make:controller PhotoController --model=Photo --resource
@@ -230,7 +230,7 @@ php artisan make:controller PhotoController --model=Photo --resource
 <a name="generating-form-requests"></a>
 #### Generating Form Requests
 
-You may provide the `--requests` option when generating a resource controller to instruct Artisan to generate [form request classes](/docs/{{version}}/validation#form-request-validation) for the controller's storage and update methods:
+You may provide the `--requests` option when generating a resource controller to instruct Artisan to generate [form request classes](validation.md#form-request-validation) for the controller's storage and update methods:
 
 ```shell
 php artisan make:controller PhotoController --model=Photo --resource --requests
@@ -292,7 +292,7 @@ This route will register a nested resource that may be accessed with URIs like t
 <a name="scoping-nested-resources"></a>
 #### Scoping Nested Resources
 
-Laravel's [implicit model binding](/docs/{{version}}/routing#implicit-model-binding-scoping) feature can automatically scope nested bindings such that the resolved child model is confirmed to belong to the parent model. By using the `scoped` method when defining your nested resource, you may enable automatic scoping as well as instruct Laravel which field the child resource should be retrieved by. For more information on how to accomplish this, please see the documentation on [scoping resource routes](#restful-scoping-resource-routes).
+Laravel's [implicit model binding](routing.md#implicit-model-binding-scoping) feature can automatically scope nested bindings such that the resolved child model is confirmed to belong to the parent model. By using the `scoped` method when defining your nested resource, you may enable automatic scoping as well as instruct Laravel which field the child resource should be retrieved by. For more information on how to accomplish this, please see the documentation on [scoping resource routes](#restful-scoping-resource-routes).
 
 <a name="shallow-nesting"></a>
 #### Shallow Nesting
@@ -344,7 +344,7 @@ By default, `Route::resource` will create the route parameters for your resource
 <a name="restful-scoping-resource-routes"></a>
 ### Scoping Resource Routes
 
-Laravel's [scoped implicit model binding](/docs/{{version}}/routing#implicit-model-binding-scoping) feature can automatically scope nested bindings such that the resolved child model is confirmed to belong to the parent model. By using the `scoped` method when defining your nested resource, you may enable automatic scoping as well as instruct Laravel which field the child resource should be retrieved by:
+Laravel's [scoped implicit model binding](routing.md#implicit-model-binding-scoping) feature can automatically scope nested bindings such that the resolved child model is confirmed to belong to the parent model. By using the `scoped` method when defining your nested resource, you may enable automatic scoping as well as instruct Laravel which field the child resource should be retrieved by:
 
     use App\Http\Controllers\PhotoCommentController;
 
@@ -374,7 +374,7 @@ By default, `Route::resource` will create resource URIs using English verbs and 
         ]);
     }
 
-Laravel's pluralizer supports [several different languages which you may configure based on your needs](/docs/{{version}}/localization#pluralization-language). Once the verbs and pluralization language have been customized, a resource route registration such as `Route::resource('publicacion', PublicacionController::class)` will produce the following URIs:
+Laravel's pluralizer supports [several different languages which you may configure based on your needs](localization.md#pluralization-language). Once the verbs and pluralization language have been customized, a resource route registration such as `Route::resource('publicacion', PublicacionController::class)` will produce the following URIs:
 
     /publicacion/crear
 
@@ -390,7 +390,7 @@ If you need to add additional routes to a resource controller beyond the default
     Route::get('/photos/popular', [PhotoController::class, 'popular']);
     Route::resource('photos', PhotoController::class);
 
-> [!NOTE]  
+> [!NOTE]
 > Remember to keep your controllers focused. If you find yourself routinely needing methods outside of the typical set of resource actions, consider splitting your controller into two, smaller controllers.
 
 <a name="singleton-resource-controllers"></a>
@@ -474,7 +474,7 @@ Route::apiSingleton('photos.thumbnail', ProfileController::class)->creatable();
 <a name="constructor-injection"></a>
 #### Constructor Injection
 
-The Laravel [service container](/docs/{{version}}/container) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
+The Laravel [service container](container.md) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
 
     <?php
 

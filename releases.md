@@ -19,7 +19,7 @@ When referencing the Laravel framework or its components from your application o
 <a name="support-policy"></a>
 ## Support Policy
 
-For all Laravel releases, bug fixes are provided for 18 months and security fixes are provided for 2 years. For all additional libraries, including Lumen, only the latest major release receives bug fixes. In addition, please review the database versions [supported by Laravel](/docs/{{version}}/database#introduction).
+For all Laravel releases, bug fixes are provided for 18 months and security fixes are provided for 2 years. For all additional libraries, including Lumen, only the latest major release receives bug fixes. In addition, please review the database versions [supported by Laravel](database.md#introduction).
 
 
 <div class="overflow-auto">
@@ -181,7 +181,7 @@ php artisan reverb:start
 
 In addition, Reverb supports horizontal scaling via Redis's publish / subscribe capabilities, allowing you to distribute your WebSocket traffic across multiple backend Reverb servers all supporting a single, high-demand application.
 
-For more information on Laravel Reverb, please consult the complete [Reverb documentation](/docs/{{version}}/reverb).
+For more information on Laravel Reverb, please consult the complete [Reverb documentation](reverb.md).
 
 <a name="rate-limiting"></a>
 ### Per-Second Rate Limiting
@@ -196,7 +196,7 @@ RateLimiter::for('invoices', function (Request $request) {
 });
 ```
 
-For more information on rate limiting in Laravel, check out the [rate limiting documentation](/docs/{{version}}/routing#rate-limiting).
+For more information on rate limiting in Laravel, check out the [rate limiting documentation](routing.md#rate-limiting).
 
 <a name="health"></a>
 ### Health Routing
@@ -228,7 +228,7 @@ When encrypting values, Laravel will always use the "current" encryption key, wh
 
 This approach to graceful decryption allows users to keep using your application uninterrupted even if your encryption key is rotated.
 
-For more information on encryption in Laravel, check out the [encryption documentation](/docs/{{version}}/encryption).
+For more information on encryption in Laravel, check out the [encryption documentation](encryption.md).
 
 <a name="automatic-password-rehashing"></a>
 ### Automatic Password Rehashing
@@ -244,7 +244,7 @@ Typically, the bcrypt work factor should be increased over time as CPU / GPU pro
 
 _Prompt validator integration was contributed by [Andrea Marco Sartori](https://github.com/cerbero90)_.
 
-[Laravel Prompts](/docs/{{version}}/prompts) is a PHP package for adding beautiful and user-friendly forms to your command-line applications, with browser-like features including placeholder text and validation.
+[Laravel Prompts](prompts.md) is a PHP package for adding beautiful and user-friendly forms to your command-line applications, with browser-like features including placeholder text and validation.
 
 Laravel Prompts supports input validation via closures:
 
@@ -259,7 +259,7 @@ $name = text(
 );
 ```
 
-However, this can become cumbersome when dealing with many inputs or complicated validation scenarios. Therefore, in Laravel 11, you may utilize the full power of Laravel's [validator](/docs/{{version}}/validation) when validating prompt inputs:
+However, this can become cumbersome when dealing with many inputs or complicated validation scenarios. Therefore, in Laravel 11, you may utilize the full power of Laravel's [validator](validation.md) when validating prompt inputs:
 
 ```php
 $name = text('What is your name?', validate: [
@@ -284,7 +284,7 @@ $job->handle();
 $job->assertReleased(delay: 30);
 ```
 
-For more information on testing queued jobs, check out the [queue documentation](/docs/{{version}}/queues#testing).
+For more information on testing queued jobs, check out the [queue documentation](queues.md#testing).
 
 <a name="new-artisan-commands"></a>
 ### New Artisan Commands
@@ -322,7 +322,7 @@ Laravel 11 supports defining your model's casts using a method instead of a prop
         ];
     }
 
-For more information on attribute casting, review the [Eloquent documentation](/docs/{{version}}/eloquent-mutators#attribute-casting).
+For more information on attribute casting, review the [Eloquent documentation](eloquent-mutators.md#attribute-casting).
 
 <a name="the-once-function"></a>
 ### The `once` Function
@@ -342,7 +342,7 @@ The `once` helper function executes the given callback and caches the result in 
     random(); // 123 (cached result)
     random(); // 123 (cached result)
 
-For more information on the `once` helper, check out the [helpers documentation](/docs/{{version}}/helpers#method-once).
+For more information on the `once` helper, check out the [helpers documentation](helpers.md#method-once).
 
 <a name="database-performance"></a>
 ### Improved Performance When Testing With In-Memory Databases
@@ -358,7 +358,7 @@ _Improved support for MariaDB was contributed by [Jonas Staudenmeir](https://git
 
 Laravel 11 includes improved support for MariaDB. In previous Laravel releases, you could use MariaDB via Laravel's MySQL driver. However, Laravel 11 now includes a dedicated MariaDB driver which provides better defaults for this database system.
 
-For more information on Laravel's database drivers, check out the [database documentation](/docs/{{version}}/database).
+For more information on Laravel's database drivers, check out the [database documentation](database.md).
 
 <a name="inspecting-database"></a>
 ### Inspecting Databases and Improved Schema Operations

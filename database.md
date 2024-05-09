@@ -15,7 +15,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Almost every modern web application interacts with a database. Laravel makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a [fluent query builder](/docs/{{version}}/queries), and the [Eloquent ORM](/docs/{{version}}/eloquent). Currently, Laravel provides first-party support for five databases:
+Almost every modern web application interacts with a database. Laravel makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a [fluent query builder](queries.md), and the [Eloquent ORM](eloquent.md). Currently, Laravel provides first-party support for five databases:
 
 <div class="content-list" markdown="1">
 
@@ -32,7 +32,7 @@ Almost every modern web application interacts with a database. Laravel makes int
 
 The configuration for Laravel's database services is located in your application's `config/database.php` configuration file. In this file, you may define all of your database connections, as well as specify which connection should be used by default. Most of the configuration options within this file are driven by the values of your application's environment variables. Examples for most of Laravel's supported database systems are provided in this file.
 
-By default, Laravel's sample [environment configuration](/docs/{{version}}/configuration#environment-configuration) is ready to use with [Laravel Sail](/docs/{{version}}/sail), which is a Docker configuration for developing Laravel applications on your local machine. However, you are free to modify your database configuration as needed for your local database.
+By default, Laravel's sample [environment configuration](configuration.md#environment-configuration) is ready to use with [Laravel Sail](sail.md), which is a Docker configuration for developing Laravel applications on your local machine. However, you are free to modify your database configuration as needed for your local database.
 
 <a name="sqlite-configuration"></a>
 #### SQLite Configuration
@@ -51,7 +51,7 @@ DB_FOREIGN_KEYS=false
 ```
 
 > [!NOTE]
-> If you use the [Laravel installer](/docs/{{version}}/installation#creating-a-laravel-project) to create your Laravel application and select SQLite as your database, Laravel will automatically create a `database/database.sqlite` file and run the default [database migrations](/docs/{{version}}/migrations) for you.
+> If you use the [Laravel installer](installation.md#creating-a-laravel-project) to create your Laravel application and select SQLite as your database, Laravel will automatically create a `database/database.sqlite` file and run the default [database migrations](migrations.md) for you.
 
 <a name="mssql-configuration"></a>
 #### Microsoft SQL Server Configuration
@@ -234,7 +234,7 @@ Sometimes you may want to execute an SQL statement without binding any values. Y
 
     DB::unprepared('update users set votes = 100 where name = "Dries"');
 
-> [!WARNING]  
+> [!WARNING]
 > Since unprepared statements do not bind parameters, they may be vulnerable to SQL injection. You should never allow user controlled values within an unprepared statement.
 
 <a name="implicit-commits-in-transactions"></a>
@@ -262,7 +262,7 @@ You may access the raw, underlying PDO instance of a connection using the `getPd
 <a name="listening-for-query-events"></a>
 ### Listening for Query Events
 
-If you would like to specify a closure that is invoked for each SQL query executed by your application, you may use the `DB` facade's `listen` method. This method can be useful for logging queries or debugging. You may register your query listener closure in the `boot` method of a [service provider](/docs/{{version}}/providers):
+If you would like to specify a closure that is invoked for each SQL query executed by your application, you may use the `DB` facade's `listen` method. This method can be useful for logging queries or debugging. You may register your query listener closure in the `boot` method of a [service provider](providers.md):
 
     <?php
 
@@ -298,7 +298,7 @@ If you would like to specify a closure that is invoked for each SQL query execut
 <a name="monitoring-cumulative-query-time"></a>
 ### Monitoring Cumulative Query Time
 
-A common performance bottleneck of modern web applications is the amount of time they spend querying databases. Thankfully, Laravel can invoke a closure or callback of your choice when it spends too much time querying the database during a single request. To get started, provide a query time threshold (in milliseconds) and closure to the `whenQueryingForLongerThan` method. You may invoke this method in the `boot` method of a [service provider](/docs/{{version}}/providers):
+A common performance bottleneck of modern web applications is the amount of time they spend querying databases. Thankfully, Laravel can invoke a closure or callback of your choice when it spends too much time querying the database during a single request. To get started, provide a query time threshold (in milliseconds) and closure to the `whenQueryingForLongerThan` method. You may invoke this method in the `boot` method of a [service provider](providers.md):
 
     <?php
 
@@ -373,8 +373,8 @@ Lastly, you can commit a transaction via the `commit` method:
 
     DB::commit();
 
-> [!NOTE]  
-> The `DB` facade's transaction methods control the transactions for both the [query builder](/docs/{{version}}/queries) and [Eloquent ORM](/docs/{{version}}/eloquent).
+> [!NOTE]
+> The `DB` facade's transaction methods control the transactions for both the [query builder](queries.md) and [Eloquent ORM](eloquent.md).
 
 <a name="connecting-to-the-database-cli"></a>
 ## Connecting to the Database CLI
@@ -440,7 +440,7 @@ php artisan db:table users
 
 Using the `db:monitor` Artisan command, you can instruct Laravel to dispatch an `Illuminate\Database\Events\DatabaseBusy` event if your database is managing more than a specified number of open connections.
 
-To get started, you should schedule the `db:monitor` command to [run every minute](/docs/{{version}}/scheduling). The command accepts the names of the database connection configurations that you wish to monitor as well as the maximum number of open connections that should be tolerated before dispatching an event:
+To get started, you should schedule the `db:monitor` command to [run every minute](scheduling.md). The command accepts the names of the database connection configurations that you wish to monitor as well as the maximum number of open connections that should be tolerated before dispatching an event:
 
 ```shell
 php artisan db:monitor --databases=mysql,pgsql --max=100

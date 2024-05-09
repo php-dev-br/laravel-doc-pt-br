@@ -214,7 +214,7 @@ class ExampleTest extends TestCase
 }
 ```
 
-Laravel's session is typically used to maintain state for the currently authenticated user. Therefore, the `actingAs` helper method provides a simple way to authenticate a given user as the current user. For example, we may use a [model factory](/docs/{{version}}/eloquent-factories) to generate and authenticate a user:
+Laravel's session is typically used to maintain state for the currently authenticated user. Therefore, the `actingAs` helper method provides a simple way to authenticate a given user as the current user. For example, we may use a [model factory](eloquent-factories.md) to generate and authenticate a user:
 
 ```php tab=Pest
 <?php
@@ -852,7 +852,7 @@ If needed, you may get the raw, rendered view contents by casting the `TestView`
 <a name="sharing-errors"></a>
 #### Sharing Errors
 
-Some views may depend on errors shared in the [global error bag provided by Laravel](/docs/{{version}}/validation#quick-displaying-the-validation-errors). To hydrate the error bag with error messages, you may use the `withViewErrors` method:
+Some views may depend on errors shared in the [global error bag provided by Laravel](validation.md#quick-displaying-the-validation-errors). To hydrate the error bag with error messages, you may use the `withViewErrors` method:
 
     $view = $this->withViewErrors([
         'name' => ['Please provide a valid name.']
@@ -863,7 +863,7 @@ Some views may depend on errors shared in the [global error bag provided by Lara
 <a name="rendering-blade-and-components"></a>
 ### Rendering Blade and Components
 
-If necessary, you may use the `blade` method to evaluate and render a raw [Blade](/docs/{{version}}/blade) string. Like the `view` method, the `blade` method returns an instance of `Illuminate\Testing\TestView`:
+If necessary, you may use the `blade` method to evaluate and render a raw [Blade](blade.md) string. Like the `view` method, the `blade` method returns an instance of `Illuminate\Testing\TestView`:
 
     $view = $this->blade(
         '<x-component :name="$name" />',
@@ -872,7 +872,7 @@ If necessary, you may use the `blade` method to evaluate and render a raw [Blade
 
     $view->assertSee('Taylor');
 
-You may use the `component` method to evaluate and render a [Blade component](/docs/{{version}}/blade#components). The `component` method returns an instance of `Illuminate\Testing\TestComponent`:
+You may use the `component` method to evaluate and render a [Blade component](blade.md#components). The `component` method returns an instance of `Illuminate\Testing\TestComponent`:
 
     $view = $this->component(Profile::class, ['name' => 'Taylor']);
 
@@ -1174,7 +1174,7 @@ Assert that the response has no JSON validation errors for the given keys:
 
     $response->assertJsonMissingValidationErrors($keys);
 
-> [!NOTE]  
+> [!NOTE]
 > The more generic [assertValid](#assert-valid) method may be used to assert that a response does not have validation errors that were returned as JSON **and** that no errors were flashed to session storage.
 
 <a name="assert-json-path"></a>
@@ -1282,7 +1282,7 @@ Assert that the response has the given JSON validation errors for the given keys
 
     $response->assertJsonValidationErrors(array $data, $responseKey = 'errors');
 
-> [!NOTE]  
+> [!NOTE]
 > The more generic [assertInvalid](#assert-invalid) method may be used to assert that a response has validation errors returned as JSON **or** that errors were flashed to session storage.
 
 <a name="assert-json-validation-error-for"></a>
@@ -1312,7 +1312,7 @@ Assert that the response has a moved permanently (301) HTTP status code:
 Assert that the response has the given URI value in the `Location` header:
 
     $response->assertLocation($uri);
-    
+
 <a name="assert-content"></a>
 #### assertContent
 
@@ -1379,14 +1379,14 @@ Assert whether the response is redirecting to a URI that contains the given stri
 <a name="assert-redirect-to-route"></a>
 #### assertRedirectToRoute
 
-Assert that the response is a redirect to the given [named route](/docs/{{version}}/routing#named-routes):
+Assert that the response is a redirect to the given [named route](routing.md#named-routes):
 
     $response->assertRedirectToRoute($name, $parameters = []);
 
 <a name="assert-redirect-to-signed-route"></a>
 #### assertRedirectToSignedRoute
 
-Assert that the response is a redirect to the given [signed route](/docs/{{version}}/urls#signed-urls):
+Assert that the response is a redirect to the given [signed route](urls.md#signed-urls):
 
     $response->assertRedirectToSignedRoute($name = null, $parameters = []);
 
@@ -1455,7 +1455,7 @@ If needed, a closure can be provided as the second argument to the `assertSessio
 <a name="assert-session-has-input"></a>
 #### assertSessionHasInput
 
-Assert that the session has a given value in the [flashed input array](/docs/{{version}}/responses#redirecting-with-flashed-session-data):
+Assert that the session has a given value in the [flashed input array](responses.md#redirecting-with-flashed-session-data):
 
     $response->assertSessionHasInput($key, $value = null);
 
@@ -1500,13 +1500,13 @@ Or, you may assert that a given field has a particular validation error message:
         'name' => 'The given name was invalid.'
     ]);
 
-> [!NOTE]  
+> [!NOTE]
 > The more generic [assertInvalid](#assert-invalid) method may be used to assert that a response has validation errors returned as JSON **or** that errors were flashed to session storage.
 
 <a name="assert-session-has-errors-in"></a>
 #### assertSessionHasErrorsIn
 
-Assert that the session contains an error for the given `$keys` within a specific [error bag](/docs/{{version}}/validation#named-error-bags). If `$keys` is an associative array, assert that the session contains a specific error message (value) for each field (key), within the error bag:
+Assert that the session contains an error for the given `$keys` within a specific [error bag](validation.md#named-error-bags). If `$keys` is an associative array, assert that the session contains a specific error message (value) for each field (key), within the error bag:
 
     $response->assertSessionHasErrorsIn($errorBag, $keys = [], $format = null);
 
@@ -1524,7 +1524,7 @@ Assert that the session has no validation errors for the given keys:
 
     $response->assertSessionDoesntHaveErrors($keys = [], $format = null, $errorBag = 'default');
 
-> [!NOTE]  
+> [!NOTE]
 > The more generic [assertValid](#assert-valid) method may be used to assert that a response does not have validation errors that were returned as JSON **and** that no errors were flashed to session storage.
 
 <a name="assert-session-missing"></a>

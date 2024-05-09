@@ -60,7 +60,7 @@ php artisan schedule:list
 <a name="scheduling-artisan-commands"></a>
 ### Scheduling Artisan Commands
 
-In addition to scheduling closures, you may also schedule [Artisan commands](/docs/{{version}}/artisan) and system commands. For example, you may use the `command` method to schedule an Artisan command using either the command's name or class.
+In addition to scheduling closures, you may also schedule [Artisan commands](artisan.md) and system commands. For example, you may use the `command` method to schedule an Artisan command using either the command's name or class.
 
 When scheduling Artisan commands using the command's class name, you may pass an array of additional command-line arguments that should be provided to the command when it is invoked:
 
@@ -89,7 +89,7 @@ If you need to pass arguments to the closure command, you may provide them to th
 <a name="scheduling-queued-jobs"></a>
 ### Scheduling Queued Jobs
 
-The `job` method may be used to schedule a [queued job](/docs/{{version}}/queues). This method provides a convenient way to schedule queued jobs without using the `call` method to define closures to queue the job:
+The `job` method may be used to schedule a [queued job](queues.md). This method provides a convenient way to schedule queued jobs without using the `call` method to define closures to queue the job:
 
     use App\Jobs\Heartbeat;
     use Illuminate\Support\Facades\Schedule;
@@ -257,7 +257,7 @@ When using chained `when` methods, the scheduled command will only execute if al
 <a name="environment-constraints"></a>
 #### Environment Constraints
 
-The `environments` method may be used to execute tasks only on the given environments (as defined by the `APP_ENV` [environment variable](/docs/{{version}}/configuration#environment-configuration)):
+The `environments` method may be used to execute tasks only on the given environments (as defined by the `APP_ENV` [environment variable](configuration.md#environment-configuration)):
 
     Schedule::command('emails:send')
                 ->daily()
@@ -280,7 +280,7 @@ If you are repeatedly assigning the same timezone to all of your scheduled tasks
 
     'schedule_timezone' => 'America/Chicago',
 
-> [!WARNING]  
+> [!WARNING]
 > Remember that some timezones utilize daylight savings time. When daylight saving time changes occur, your scheduled task may run twice or even not run at all. For this reason, we recommend avoiding timezone scheduling when possible.
 
 <a name="preventing-task-overlaps"></a>
@@ -292,18 +292,18 @@ By default, scheduled tasks will be run even if the previous instance of the tas
 
     Schedule::command('emails:send')->withoutOverlapping();
 
-In this example, the `emails:send` [Artisan command](/docs/{{version}}/artisan) will be run every minute if it is not already running. The `withoutOverlapping` method is especially useful if you have tasks that vary drastically in their execution time, preventing you from predicting exactly how long a given task will take.
+In this example, the `emails:send` [Artisan command](artisan.md) will be run every minute if it is not already running. The `withoutOverlapping` method is especially useful if you have tasks that vary drastically in their execution time, preventing you from predicting exactly how long a given task will take.
 
 If needed, you may specify how many minutes must pass before the "without overlapping" lock expires. By default, the lock will expire after 24 hours:
 
     Schedule::command('emails:send')->withoutOverlapping(10);
 
-Behind the scenes, the `withoutOverlapping` method utilizes your application's [cache](/docs/{{version}}/cache) to obtain locks. If necessary, you can clear these cache locks using the `schedule:clear-cache` Artisan command. This is typically only necessary if a task becomes stuck due to an unexpected server problem.
+Behind the scenes, the `withoutOverlapping` method utilizes your application's [cache](cache.md) to obtain locks. If necessary, you can clear these cache locks using the `schedule:clear-cache` Artisan command. This is typically only necessary if a task becomes stuck due to an unexpected server problem.
 
 <a name="running-tasks-on-one-server"></a>
 ### Running Tasks on One Server
 
-> [!WARNING]  
+> [!WARNING]
 > To utilize this feature, your application must be using the `database`, `memcached`, `dynamodb`, or `redis` cache driver as your application's default cache driver. In addition, all servers must be communicating with the same central cache server.
 
 If your application's scheduler is running on multiple servers, you may limit a scheduled job to only execute on a single server. For instance, assume you have a scheduled task that generates a new report every Friday night. If the task scheduler is running on three worker servers, the scheduled task will run on all three servers and generate the report three times. Not good!
@@ -355,13 +355,13 @@ By default, multiple tasks scheduled at the same time will execute sequentially 
              ->daily()
              ->runInBackground();
 
-> [!WARNING]  
+> [!WARNING]
 > The `runInBackground` method may only be used when scheduling tasks via the `command` and `exec` methods.
 
 <a name="maintenance-mode"></a>
 ### Maintenance Mode
 
-Your application's scheduled tasks will not run when the application is in [maintenance mode](/docs/{{version}}/configuration#maintenance-mode), since we don't want your tasks to interfere with any unfinished maintenance you may be performing on your server. However, if you would like to force a task to run even in maintenance mode, you may call the `evenInMaintenanceMode` method when defining the task:
+Your application's scheduled tasks will not run when the application is in [maintenance mode](configuration.md#maintenance-mode), since we don't want your tasks to interfere with any unfinished maintenance you may be performing on your server. However, if you would like to force a task to run even in maintenance mode, you may call the `evenInMaintenanceMode` method when defining the task:
 
     Schedule::command('emails:send')->evenInMaintenanceMode();
 
@@ -434,7 +434,7 @@ If you would like to append the output to a given file, you may use the `appendO
              ->daily()
              ->appendOutputTo($filePath);
 
-Using the `emailOutputTo` method, you may email the output to an email address of your choice. Before emailing the output of a task, you should configure Laravel's [email services](/docs/{{version}}/mail):
+Using the `emailOutputTo` method, you may email the output to an email address of your choice. Before emailing the output of a task, you should configure Laravel's [email services](mail.md):
 
     Schedule::command('report:generate')
              ->daily()
@@ -447,7 +447,7 @@ If you only want to email the output if the scheduled Artisan or system command 
              ->daily()
              ->emailOutputOnFailure('taylor@example.com');
 
-> [!WARNING]  
+> [!WARNING]
 > The `emailOutputTo`, `emailOutputOnFailure`, `sendOutputTo`, and `appendOutputTo` methods are exclusive to the `command` and `exec` methods.
 
 <a name="task-hooks"></a>
@@ -517,7 +517,7 @@ The `pingOnSuccess` and `pingOnFailure` methods may be used to ping a given URL 
 <a name="events"></a>
 ## Events
 
-Laravel dispatches a variety of [events](/docs/{{version}}/events) during the scheduling process. You may [define listeners](/docs/{{version}}/events) for any of the following events:
+Laravel dispatches a variety of [events](events.md) during the scheduling process. You may [define listeners](events.md) for any of the following events:
 
 Event Name |
 ------------- |

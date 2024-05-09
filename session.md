@@ -39,8 +39,8 @@ The session `driver` configuration option defines where session data will be sto
 
 </div>
 
-> [!NOTE]  
-> The array driver is primarily used during [testing](/docs/{{version}}/testing) and prevents the data stored in the session from being persisted.
+> [!NOTE]
+> The array driver is primarily used during [testing](testing.md) and prevents the data stored in the session from being persisted.
 
 <a name="driver-prerequisites"></a>
 ### Driver Prerequisites
@@ -48,7 +48,7 @@ The session `driver` configuration option defines where session data will be sto
 <a name="database"></a>
 #### Database
 
-When using the `database` session driver, you will need to ensure that you have a database table to contain the session data. Typically, this is included in Laravel's default `0001_01_01_000000_create_users_table.php` [database migration](/docs/{{version}}/migrations); however, if for any reason you do not have a `sessions` table, you may use the `make:session-table` Artisan command to generate this migration:
+When using the `database` session driver, you will need to ensure that you have a database table to contain the session data. Typically, this is included in Laravel's default `0001_01_01_000000_create_users_table.php` [database migration](migrations.md); however, if for any reason you do not have a `sessions` table, you may use the `make:session-table` Artisan command to generate this migration:
 
 ```shell
 php artisan make:session-table
@@ -59,9 +59,9 @@ php artisan migrate
 <a name="redis"></a>
 #### Redis
 
-Before using Redis sessions with Laravel, you will need to either install the PhpRedis PHP extension via PECL or install the `predis/predis` package (~1.0) via Composer. For more information on configuring Redis, consult Laravel's [Redis documentation](/docs/{{version}}/redis#configuration).
+Before using Redis sessions with Laravel, you will need to either install the PhpRedis PHP extension via PECL or install the `predis/predis` package (~1.0) via Composer. For more information on configuring Redis, consult Laravel's [Redis documentation](redis.md#configuration).
 
-> [!NOTE]  
+> [!NOTE]
 > The `SESSION_CONNECTION` environment variable, or the `connection` option in the `session.php` configuration file, may be used to specify which Redis connection is used for session storage.
 
 <a name="interacting-with-the-session"></a>
@@ -70,7 +70,7 @@ Before using Redis sessions with Laravel, you will need to either install the Ph
 <a name="retrieving-data"></a>
 ### Retrieving Data
 
-There are two primary ways of working with session data in Laravel: the global `session` helper and via a `Request` instance. First, let's look at accessing the session via a `Request` instance, which can be type-hinted on a route closure or controller method. Remember, controller method dependencies are automatically injected via the Laravel [service container](/docs/{{version}}/container):
+There are two primary ways of working with session data in Laravel: the global `session` helper and via a `Request` instance. First, let's look at accessing the session via a `Request` instance, which can be type-hinted on a route closure or controller method. Remember, controller method dependencies are automatically injected via the Laravel [service container](container.md):
 
     <?php
 
@@ -120,8 +120,8 @@ You may also use the global `session` PHP function to retrieve and store data in
         session(['key' => 'value']);
     });
 
-> [!NOTE]  
-> There is little practical difference between using the session via an HTTP request instance versus using the global `session` helper. Both methods are [testable](/docs/{{version}}/testing) via the `assertSessionHas` method which is available in all of your test cases.
+> [!NOTE]
+> There is little practical difference between using the session via an HTTP request instance versus using the global `session` helper. Both methods are [testable](testing.md) via the `assertSessionHas` method which is available in all of your test cases.
 
 <a name="retrieving-all-session-data"></a>
 #### Retrieving All Session Data
@@ -233,7 +233,7 @@ The `forget` method will remove a piece of data from the session. If you would l
 
 Regenerating the session ID is often done in order to prevent malicious users from exploiting a [session fixation](https://owasp.org/www-community/attacks/Session_fixation) attack on your application.
 
-Laravel automatically regenerates the session ID during authentication if you are using one of the Laravel [application starter kits](/docs/{{version}}/starter-kits) or [Laravel Fortify](/docs/{{version}}/fortify); however, if you need to manually regenerate the session ID, you may use the `regenerate` method:
+Laravel automatically regenerates the session ID during authentication if you are using one of the Laravel [application starter kits](starter-kits.md) or [Laravel Fortify](fortify.md); however, if you need to manually regenerate the session ID, you may use the `regenerate` method:
 
     $request->session()->regenerate();
 
@@ -244,8 +244,8 @@ If you need to regenerate the session ID and remove all data from the session in
 <a name="session-blocking"></a>
 ## Session Blocking
 
-> [!WARNING]  
-> To utilize session blocking, your application must be using a cache driver that supports [atomic locks](/docs/{{version}}/cache#atomic-locks). Currently, those cache drivers include the `memcached`, `dynamodb`, `redis`, `database`, `file`, and `array` drivers. In addition, you may not use the `cookie` session driver.
+> [!WARNING]
+> To utilize session blocking, your application must be using a cache driver that supports [atomic locks](cache.md#atomic-locks). Currently, those cache drivers include the `memcached`, `dynamodb`, `redis`, `database`, `file`, and `array` drivers. In addition, you may not use the `cookie` session driver.
 
 By default, Laravel allows requests using the same session to execute concurrently. So, for example, if you use a JavaScript HTTP library to make two HTTP requests to your application, they will both execute at the same time. For many applications, this is not a problem; however, session data loss can occur in a small subset of applications that make concurrent requests to two different application endpoints which both write data to the session.
 
@@ -291,7 +291,7 @@ If none of the existing session drivers fit your application's needs, Laravel ma
         public function gc($lifetime) {}
     }
 
-> [!NOTE]  
+> [!NOTE]
 > Laravel does not ship with a directory to contain your extensions. You are free to place them anywhere you like. In this example, we have created an `Extensions` directory to house the `MongoSessionHandler`.
 
 Since the purpose of these methods is not readily understandable, let's quickly cover what each of the methods do:
@@ -310,7 +310,7 @@ Since the purpose of these methods is not readily understandable, let's quickly 
 <a name="registering-the-driver"></a>
 ### Registering the Driver
 
-Once your driver has been implemented, you are ready to register it with Laravel. To add additional drivers to Laravel's session backend, you may use the `extend` method provided by the `Session` [facade](/docs/{{version}}/facades). You should call the `extend` method from the `boot` method of a [service provider](/docs/{{version}}/providers). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
+Once your driver has been implemented, you are ready to register it with Laravel. To add additional drivers to Laravel's session backend, you may use the `extend` method provided by the `Session` [facade](facades.md). You should call the `extend` method from the `boot` method of a [service provider](providers.md). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
 
     <?php
 

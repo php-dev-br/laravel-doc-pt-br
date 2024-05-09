@@ -266,7 +266,7 @@ If all of the requests fail, an instance of `Illuminate\Http\Client\RequestExcep
 
     $response = Http::retry(3, 100, throw: false)->post(/* ... */);
 
-> [!WARNING]  
+> [!WARNING]
 > If all of the requests fail because of a connection issue, a `Illuminate\Http\Client\ConnectionException` will still be thrown even when the `throw` argument is set to `false`.
 
 <a name="error-handling"></a>
@@ -686,7 +686,7 @@ $recorded = Http::recorded(function (Request $request, Response $response) {
 
 Laravel fires three events during the process of sending HTTP requests. The `RequestSending` event is fired prior to a request being sent, while the `ResponseReceived` event is fired after a response is received for a given request. The `ConnectionFailed` event is fired if no response is received for a given request.
 
-The `RequestSending` and `ConnectionFailed` events both contain a public `$request` property that you may use to inspect the `Illuminate\Http\Client\Request` instance. Likewise, the `ResponseReceived` event contains a `$request` property as well as a `$response` property which may be used to inspect the `Illuminate\Http\Client\Response` instance. You may create [event listeners](/docs/{{version}}/events) for these events within your application:
+The `RequestSending` and `ConnectionFailed` events both contain a public `$request` property that you may use to inspect the `Illuminate\Http\Client\Request` instance. Likewise, the `ResponseReceived` event contains a `$request` property as well as a `$response` property which may be used to inspect the `Illuminate\Http\Client\Response` instance. You may create [event listeners](events.md) for these events within your application:
 
     use Illuminate\Http\Client\Events\RequestSending;
 

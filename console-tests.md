@@ -8,7 +8,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-In addition to simplifying HTTP testing, Laravel provides a simple API for testing your application's [custom console commands](/docs/{{version}}/artisan).
+In addition to simplifying HTTP testing, Laravel provides a simple API for testing your application's [custom console commands](artisan.md).
 
 <a name="success-failure-expectations"></a>
 ## Success / Failure Expectations

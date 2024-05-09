@@ -44,9 +44,9 @@
 
 In many modern web applications, WebSockets are used to implement realtime, live-updating user interfaces. When some data is updated on the server, a message is typically sent over a WebSocket connection to be handled by the client. WebSockets provide a more efficient alternative to continually polling your application's server for data changes that should be reflected in your UI.
 
-For example, imagine your application is able to export a user's data to a CSV file and email it to them. However, creating this CSV file takes several minutes so you choose to create and mail the CSV within a [queued job](/docs/{{version}}/queues). When the CSV has been created and mailed to the user, we can use event broadcasting to dispatch an `App\Events\UserDataExported` event that is received by our application's JavaScript. Once the event is received, we can display a message to the user that their CSV has been emailed to them without them ever needing to refresh the page.
+For example, imagine your application is able to export a user's data to a CSV file and email it to them. However, creating this CSV file takes several minutes so you choose to create and mail the CSV within a [queued job](queues.md). When the CSV has been created and mailed to the user, we can use event broadcasting to dispatch an `App\Events\UserDataExported` event that is received by our application's JavaScript. Once the event is received, we can display a message to the user that their CSV has been emailed to them without them ever needing to refresh the page.
 
-To assist you in building these types of features, Laravel makes it easy to "broadcast" your server-side Laravel [events](/docs/{{version}}/events) over a WebSocket connection. Broadcasting your Laravel events allows you to share the same event names and data between your server-side Laravel application and your client-side JavaScript application.
+To assist you in building these types of features, Laravel makes it easy to "broadcast" your server-side Laravel [events](events.md) over a WebSocket connection. Broadcasting your Laravel events allows you to share the same event names and data between your server-side Laravel application and your client-side JavaScript application.
 
 The core concepts behind broadcasting are simple: clients connect to named channels on the frontend, while your Laravel application broadcasts events to these channels on the backend. These events can contain any additional data you wish to make available to the frontend.
 
@@ -55,8 +55,8 @@ The core concepts behind broadcasting are simple: clients connect to named chann
 
 By default, Laravel includes three server-side broadcasting drivers for you to choose from: [Laravel Reverb](https://reverb.laravel.com), [Pusher Channels](https://pusher.com/channels), and [Ably](https://ably.com).
 
-> [!NOTE]  
-> Before diving into event broadcasting, make sure you have read Laravel's documentation on [events and listeners](/docs/{{version}}/events).
+> [!NOTE]
+> Before diving into event broadcasting, make sure you have read Laravel's documentation on [events and listeners](events.md).
 
 <a name="server-side-installation"></a>
 ## Server Side Installation
@@ -70,7 +70,7 @@ Event broadcasting is accomplished by a server-side broadcasting driver that bro
 
 All of your application's event broadcasting configuration is stored in the `config/broadcasting.php` configuration file. Don't worry if this directory does not exist in your application; it will be created when you run the `install:broadcasting` Artisan command.
 
-Laravel supports several broadcast drivers out of the box: [Laravel Reverb](/docs/{{version}}/reverb), [Pusher Channels](https://pusher.com/channels), [Ably](https://ably.com), and a `log` driver for local development and debugging. Additionally, a `null` driver is included which allows you to disable broadcasting during testing. A configuration example is included for each of these drivers in the `config/broadcasting.php` configuration file.
+Laravel supports several broadcast drivers out of the box: [Laravel Reverb](reverb.md), [Pusher Channels](https://pusher.com/channels), [Ably](https://ably.com), and a `log` driver for local development and debugging. Additionally, a `null` driver is included which allows you to disable broadcasting during testing. A configuration example is included for each of these drivers in the `config/broadcasting.php` configuration file.
 
 <a name="installation"></a>
 #### Installation
@@ -86,12 +86,12 @@ The `install:broadcasting` command will create the `config/broadcasting.php` con
 <a name="queue-configuration"></a>
 #### Queue Configuration
 
-Before broadcasting any events, you should first configure and run a [queue worker](/docs/{{version}}/queues). All event broadcasting is done via queued jobs so that the response time of your application is not seriously affected by events being broadcast.
+Before broadcasting any events, you should first configure and run a [queue worker](queues.md). All event broadcasting is done via queued jobs so that the response time of your application is not seriously affected by events being broadcast.
 
 <a name="reverb"></a>
 ### Reverb
 
-When running the `install:broadcasting` command, you will be prompted to install [Laravel Reverb](/docs/{{version}}/reverb). Of course, you may also install Reverb manually using the Composer package manager. Since Reverb is currently in beta, you will need to explicitly install the beta release:
+When running the `install:broadcasting` command, you will be prompted to install [Laravel Reverb](reverb.md). Of course, you may also install Reverb manually using the Composer package manager. Since Reverb is currently in beta, you will need to explicitly install the beta release:
 
 ```sh
 composer require laravel/reverb:@beta
@@ -103,7 +103,7 @@ Once the package is installed, you may run Reverb's installation command to publ
 php artisan reverb:install
 ```
 
-You can find detailed Reverb installation and usage instructions in the [Reverb documentation](/docs/{{version}}/reverb).
+You can find detailed Reverb installation and usage instructions in the [Reverb documentation](reverb.md).
 
 <a name="pusher-channels"></a>
 ### Pusher Channels
@@ -139,7 +139,7 @@ Finally, you are ready to install and configure [Laravel Echo](#client-side-inst
 <a name="ably"></a>
 ### Ably
 
-> [!NOTE]  
+> [!NOTE]
 > The documentation below discusses how to use Ably in "Pusher compatibility" mode. However, the Ably team recommends and maintains a broadcaster and Echo client that is able to take advantage of the unique capabilities offered by Ably. For more information on using the Ably maintained drivers, please [consult Ably's Laravel broadcaster documentation](https://github.com/ably/laravel-broadcaster).
 
 If you plan to broadcast your events using [Ably](https://ably.com), you should install the Ably PHP SDK using the Composer package manager:
@@ -148,7 +148,7 @@ If you plan to broadcast your events using [Ably](https://ably.com), you should 
 composer require ably/ably-php
 ```
 
-Next, you should configure your Ably credentials in the `config/broadcasting.php` configuration file. An example Ably configuration is already included in this file, allowing you to quickly specify your key. Typically, this value should be set via the `ABLY_KEY` [environment variable](/docs/{{version}}/configuration#environment-configuration):
+Next, you should configure your Ably credentials in the `config/broadcasting.php` configuration file. An example Ably configuration is already included in this file, allowing you to quickly specify your key. Typically, this value should be set via the `ABLY_KEY` [environment variable](configuration.md#environment-configuration):
 
 ```ini
 ABLY_KEY=your-ably-key
@@ -199,7 +199,7 @@ Next, you should compile your application's assets:
 npm run build
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > The Laravel Echo `reverb` broadcaster requires laravel-echo v1.16.0+.
 
 <a name="client-pusher-channels"></a>
@@ -254,8 +254,8 @@ Once you have adjusted the Echo configuration according to your application's ne
 npm run build
 ```
 
-> [!NOTE]  
-> To learn more about compiling your application's JavaScript assets, please consult the documentation on [Vite](/docs/{{version}}/vite).
+> [!NOTE]
+> To learn more about compiling your application's JavaScript assets, please consult the documentation on [Vite](vite.md).
 
 <a name="using-an-existing-client-instance"></a>
 #### Using an Existing Client Instance
@@ -280,7 +280,7 @@ window.Echo = new Echo({
 <a name="client-ably"></a>
 ### Ably
 
-> [!NOTE]  
+> [!NOTE]
 > The documentation below discusses how to use Ably in "Pusher compatibility" mode. However, the Ably team recommends and maintains a broadcaster and Echo client that is able to take advantage of the unique capabilities offered by Ably. For more information on using the Ably maintained drivers, please [consult Ably's Laravel broadcaster documentation](https://github.com/ably/laravel-broadcaster).
 
 [Laravel Echo](https://github.com/laravel/echo) is a JavaScript library that makes it painless to subscribe to channels and listen for events broadcast by your server-side broadcasting driver. Echo also leverages the `pusher-js` NPM package to implement the Pusher protocol for WebSocket subscriptions, channels, and messages.
@@ -319,8 +319,8 @@ Once you have adjusted the Echo configuration according to your needs, you may c
 npm run dev
 ```
 
-> [!NOTE]  
-> To learn more about compiling your application's JavaScript assets, please consult the documentation on [Vite](/docs/{{version}}/vite).
+> [!NOTE]
+> To learn more about compiling your application's JavaScript assets, please consult the documentation on [Vite](vite.md).
 
 <a name="concept-overview"></a>
 ## Concept Overview
@@ -467,7 +467,7 @@ The `ShouldBroadcast` interface requires you to implement a single method: `broa
         }
     }
 
-After implementing the `ShouldBroadcast` interface, you only need to [fire the event](/docs/{{version}}/events) as you normally would. Once the event has been fired, a [queued job](/docs/{{version}}/queues) will automatically broadcast the event using your specified broadcast driver.
+After implementing the `ShouldBroadcast` interface, you only need to [fire the event](events.md) as you normally would. Once the event has been fired, a [queued job](queues.md) will automatically broadcast the event using your specified broadcast driver.
 
 <a name="broadcast-name"></a>
 ### Broadcast Name
@@ -588,8 +588,8 @@ If your queue connection's `after_commit` configuration option is set to `false`
         use SerializesModels;
     }
 
-> [!NOTE]  
-> To learn more about working around these issues, please review the documentation regarding [queued jobs and database transactions](/docs/{{version}}/queues#jobs-and-database-transactions).
+> [!NOTE]
+> To learn more about working around these issues, please review the documentation regarding [queued jobs and database transactions](queues.md#jobs-and-database-transactions).
 
 <a name="authorizing-channels"></a>
 ## Authorizing Channels
@@ -622,7 +622,7 @@ php artisan channel:list
 <a name="authorization-callback-model-binding"></a>
 #### Authorization Callback Model Binding
 
-Just like HTTP routes, channel routes may also take advantage of implicit and explicit [route model binding](/docs/{{version}}/routing#route-model-binding). For example, instead of receiving a string or numeric order ID, you may request an actual `Order` model instance:
+Just like HTTP routes, channel routes may also take advantage of implicit and explicit [route model binding](routing.md#route-model-binding). For example, instead of receiving a string or numeric order ID, you may request an actual `Order` model instance:
 
     use App\Models\Order;
     use App\Models\User;
@@ -631,8 +631,8 @@ Just like HTTP routes, channel routes may also take advantage of implicit and ex
         return $user->id === $order->user_id;
     });
 
-> [!WARNING]  
-> Unlike HTTP route model binding, channel model binding does not support automatic [implicit model binding scoping](/docs/{{version}}/routing#implicit-model-binding-scoping). However, this is rarely a problem because most channels can be scoped based on a single model's unique, primary key.
+> [!WARNING]
+> Unlike HTTP route model binding, channel model binding does not support automatic [implicit model binding scoping](routing.md#implicit-model-binding-scoping). However, this is rarely a problem because most channels can be scoped based on a single model's unique, primary key.
 
 <a name="authorization-callback-authentication"></a>
 #### Authorization Callback Authentication
@@ -686,8 +686,8 @@ Finally, you may place the authorization logic for your channel in the channel c
         }
     }
 
-> [!NOTE]  
-> Like many other classes in Laravel, channel classes will automatically be resolved by the [service container](/docs/{{version}}/container). So, you may type-hint any dependencies required by your channel in its constructor.
+> [!NOTE]
+> Like many other classes in Laravel, channel classes will automatically be resolved by the [service container](container.md). So, you may type-hint any dependencies required by your channel in its constructor.
 
 <a name="broadcasting-events"></a>
 ## Broadcasting Events
@@ -718,7 +718,7 @@ axios.post('/task', task)
 
 However, remember that we also broadcast the task's creation. If your JavaScript application is also listening for this event in order to add tasks to the task list, you will have duplicate tasks in your list: one from the end-point and one from the broadcast. You may solve this by using the `toOthers` method to instruct the broadcaster to not broadcast the event to the current user.
 
-> [!WARNING]  
+> [!WARNING]
 > Your event must use the `Illuminate\Broadcasting\InteractsWithSockets` trait in order to call the `toOthers` method.
 
 <a name="only-to-others-configuration"></a>
@@ -813,7 +813,7 @@ Broadcast::private('orders.'.$order->id)->send();
 Broadcast::presence('channels.'.$channel->id)->send();
 ```
 
-Broadcasting an anonymous event using the `send` method dispatches the event to your application's [queue](/docs/{{version}}/queues) for processing. However, if you would like to broadcast the event immediately, you may use the `sendNow` method:
+Broadcasting an anonymous event using the `send` method dispatches the event to your application's [queue](queues.md) for processing. However, if you would like to broadcast the event immediately, you may use the `sendNow` method:
 
 ```php
 Broadcast::on('orders.'.$order->id)->sendNow();
@@ -978,10 +978,10 @@ Echo.join(`chat.${roomId}`)
 <a name="model-broadcasting"></a>
 ## Model Broadcasting
 
-> [!WARNING]  
+> [!WARNING]
 > Before reading the following documentation about model broadcasting, we recommend you become familiar with the general concepts of Laravel's model broadcasting services as well as how to manually create and listen to broadcast events.
 
-It is common to broadcast events when your application's [Eloquent models](/docs/{{version}}/eloquent) are created, updated, or deleted. Of course, this can easily be accomplished by manually [defining custom events for Eloquent model state changes](/docs/{{version}}/eloquent#events) and marking those events with the `ShouldBroadcast` interface.
+It is common to broadcast events when your application's [Eloquent models](eloquent.md) are created, updated, or deleted. Of course, this can easily be accomplished by manually [defining custom events for Eloquent model state changes](eloquent.md#events) and marking those events with the `ShouldBroadcast` interface.
 
 However, if you are not using these events for any other purposes in your application, it can be cumbersome to create event classes for the sole purpose of broadcasting them. To remedy this, Laravel allows you to indicate that an Eloquent model should automatically broadcast its state changes.
 
@@ -1167,7 +1167,7 @@ Echo.private(`App.Models.User.${this.user.id}`)
 <a name="client-events"></a>
 ## Client Events
 
-> [!NOTE]  
+> [!NOTE]
 > When using [Pusher Channels](https://pusher.com/channels), you must enable the "Client Events" option in the "App Settings" section of your [application dashboard](https://dashboard.pusher.com/) in order to send client events.
 
 Sometimes you may wish to broadcast an event to other connected clients without hitting your Laravel application at all. This can be particularly useful for things like "typing" notifications, where you want to alert users of your application that another user is typing a message on a given screen.
@@ -1193,7 +1193,7 @@ Echo.private(`chat.${roomId}`)
 <a name="notifications"></a>
 ## Notifications
 
-By pairing event broadcasting with [notifications](/docs/{{version}}/notifications), your JavaScript application may receive new notifications as they occur without needing to refresh the page. Before getting started, be sure to read over the documentation on using [the broadcast notification channel](/docs/{{version}}/notifications#broadcast-notifications).
+By pairing event broadcasting with [notifications](notifications.md), your JavaScript application may receive new notifications as they occur without needing to refresh the page. Before getting started, be sure to read over the documentation on using [the broadcast notification channel](notifications.md#broadcast-notifications).
 
 Once you have configured a notification to use the broadcast channel, you may listen for the broadcast events using Echo's `notification` method. Remember, the channel name should match the class name of the entity receiving the notifications:
 

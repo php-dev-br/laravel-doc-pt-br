@@ -37,7 +37,7 @@ The cache configuration file also contains a variety of other options that you m
 <a name="prerequisites-database"></a>
 #### Database
 
-When using the `database` cache driver, you will need a database table to contain the cache data. Typically, this is included in Laravel's default `0001_01_01_000001_create_cache_table.php` [database migration](/docs/{{version}}/migrations); however, if your application does not contain this migration, you may use the `make:cache-table` Artisan command to create it:
+When using the `database` cache driver, you will need a database table to contain the cache data. Typically, this is included in Laravel's default `0001_01_01_000001_create_cache_table.php` [database migration](migrations.md); however, if your application does not contain this migration, you may use the `make:cache-table` Artisan command to create it:
 
 ```shell
 php artisan make:cache-table
@@ -79,9 +79,9 @@ If needed, you may set the `host` option to a UNIX socket path. If you do this, 
 <a name="redis"></a>
 #### Redis
 
-Before using a Redis cache with Laravel, you will need to either install the PhpRedis PHP extension via PECL or install the `predis/predis` package (~2.0) via Composer. [Laravel Sail](/docs/{{version}}/sail) already includes this extension. In addition, official Laravel deployment platforms such as [Laravel Forge](https://forge.laravel.com) and [Laravel Vapor](https://vapor.laravel.com) have the PhpRedis extension installed by default.
+Before using a Redis cache with Laravel, you will need to either install the PhpRedis PHP extension via PECL or install the `predis/predis` package (~2.0) via Composer. [Laravel Sail](sail.md) already includes this extension. In addition, official Laravel deployment platforms such as [Laravel Forge](https://forge.laravel.com) and [Laravel Vapor](https://vapor.laravel.com) have the PhpRedis extension installed by default.
 
-For more information on configuring Redis, consult its [Laravel documentation page](/docs/{{version}}/redis#configuration).
+For more information on configuring Redis, consult its [Laravel documentation page](redis.md#configuration).
 
 <a name="dynamodb"></a>
 #### DynamoDB
@@ -238,7 +238,7 @@ The `forever` method may be used to store an item in the cache permanently. Sinc
 
     Cache::forever('key', 'value');
 
-> [!NOTE]  
+> [!NOTE]
 > If you are using the Memcached driver, items that are stored "forever" may be removed when the cache reaches its size limit.
 
 <a name="removing-items-from-the-cache"></a>
@@ -258,7 +258,7 @@ You may clear the entire cache using the `flush` method:
 
     Cache::flush();
 
-> [!WARNING]  
+> [!WARNING]
 > Flushing the cache does not respect your configured cache "prefix" and will remove all entries from the cache. Consider this carefully when clearing a cache which is shared by other applications.
 
 <a name="the-cache-helper"></a>
@@ -280,13 +280,13 @@ When the `cache` function is called without any arguments, it returns an instanc
         return DB::table('users')->get();
     });
 
-> [!NOTE]  
-> When testing call to the global `cache` function, you may use the `Cache::shouldReceive` method just as if you were [testing the facade](/docs/{{version}}/mocking#mocking-facades).
+> [!NOTE]
+> When testing call to the global `cache` function, you may use the `Cache::shouldReceive` method just as if you were [testing the facade](mocking.md#mocking-facades).
 
 <a name="atomic-locks"></a>
 ## Atomic Locks
 
-> [!WARNING]  
+> [!WARNING]
 > To utilize this feature, your application must be using the `memcached`, `redis`, `dynamodb`, `database`, `file`, or `array` cache driver as your application's default cache driver. In addition, all servers must be communicating with the same central cache server.
 
 <a name="managing-locks"></a>
@@ -361,7 +361,7 @@ If you would like to release a lock without respecting its current owner, you ma
 <a name="writing-the-driver"></a>
 ### Writing the Driver
 
-To create our custom cache driver, we first need to implement the `Illuminate\Contracts\Cache\Store` [contract](/docs/{{version}}/contracts). So, a MongoDB cache implementation might look something like this:
+To create our custom cache driver, we first need to implement the `Illuminate\Contracts\Cache\Store` [contract](contracts.md). So, a MongoDB cache implementation might look something like this:
 
     <?php
 
@@ -389,7 +389,7 @@ We just need to implement each of these methods using a MongoDB connection. For 
         return Cache::repository(new MongoStore);
     });
 
-> [!NOTE]  
+> [!NOTE]
 > If you're wondering where to put your custom cache driver code, you could create an `Extensions` namespace within your `app` directory. However, keep in mind that Laravel does not have a rigid application structure and you are free to organize your application according to your preferences.
 
 <a name="registering-the-driver"></a>
@@ -429,14 +429,14 @@ To register the custom cache driver with Laravel, we will use the `extend` metho
         }
     }
 
-The first argument passed to the `extend` method is the name of the driver. This will correspond to your `driver` option in the `config/cache.php` configuration file. The second argument is a closure that should return an `Illuminate\Cache\Repository` instance. The closure will be passed an `$app` instance, which is an instance of the [service container](/docs/{{version}}/container).
+The first argument passed to the `extend` method is the name of the driver. This will correspond to your `driver` option in the `config/cache.php` configuration file. The second argument is a closure that should return an `Illuminate\Cache\Repository` instance. The closure will be passed an `$app` instance, which is an instance of the [service container](container.md).
 
 Once your extension is registered, update the `CACHE_STORE` environment variable or `default` option within your application's `config/cache.php` configuration file to the name of your extension.
 
 <a name="events"></a>
 ## Events
 
-To execute code on every cache operation, you may listen for various [events](/docs/{{version}}/events) dispatched by the cache:
+To execute code on every cache operation, you may listen for various [events](events.md) dispatched by the cache:
 
 Event Name |
 ------------- |

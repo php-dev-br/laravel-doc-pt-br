@@ -17,7 +17,7 @@
 
 In addition to typical, form based authentication, Laravel also provides a simple, convenient way to authenticate with OAuth providers using [Laravel Socialite](https://github.com/laravel/socialite). Socialite currently supports authentication via Facebook, Twitter, LinkedIn, Google, GitHub, GitLab, Bitbucket, and Slack.
 
-> [!NOTE]  
+> [!NOTE]
 > Adapters for other platforms are available via the community driven [Socialite Providers](https://socialiteproviders.com/) website.
 
 <a name="installation"></a>
@@ -47,7 +47,7 @@ These credentials should be placed in your application's `config/services.php` c
         'redirect' => 'http://example.com/callback-url',
     ],
 
-> [!NOTE]  
+> [!NOTE]
 > If the `redirect` option contains a relative path, it will automatically be resolved to a fully qualified URL.
 
 <a name="authentication"></a>
@@ -75,7 +75,7 @@ The `redirect` method provided by the `Socialite` facade takes care of redirecti
 <a name="authentication-and-storage"></a>
 ### Authentication and Storage
 
-Once the user has been retrieved from the OAuth provider, you may determine if the user exists in your application's database and [authenticate the user](/docs/{{version}}/authentication#authenticate-a-user-instance). If the user does not exist in your application's database, you will typically create a new record in your database to represent the user:
+Once the user has been retrieved from the OAuth provider, you may determine if the user exists in your application's database and [authenticate the user](authentication.md#authenticate-a-user-instance). If the user does not exist in your application's database, you will typically create a new record in your database to represent the user:
 
     use App\Models\User;
     use Illuminate\Support\Facades\Auth;
@@ -98,7 +98,7 @@ Once the user has been retrieved from the OAuth provider, you may determine if t
         return redirect('/dashboard');
     });
 
-> [!NOTE]  
+> [!NOTE]
 > For more information regarding what user information is available from specific OAuth providers, please consult the documentation on [retrieving user details](#retrieving-user-details).
 
 <a name="access-scopes"></a>
@@ -143,7 +143,7 @@ In addition, you must invoke the `asBotUser` method before invoking the `user` m
 
     $user = Socialite::driver('slack')->asBotUser()->user();
 
-When generating a bot token, the `user` method will still return a `Laravel\Socialite\Two\User` instance; however, only the `token` property will be hydrated. This token may be stored in order to [send notifications to the authenticated user's Slack workspaces](/docs/{{version}}/notifications#notifying-external-slack-workspaces).
+When generating a bot token, the `user` method will still return a `Laravel\Socialite\Two\User` instance; however, only the `token` property will be hydrated. This token may be stored in order to [send notifications to the authenticated user's Slack workspaces](notifications.md#notifying-external-slack-workspaces).
 
 <a name="optional-parameters"></a>
 ### Optional Parameters
@@ -156,7 +156,7 @@ A number of OAuth providers support other optional parameters on the redirect re
         ->with(['hd' => 'example.com'])
         ->redirect();
 
-> [!WARNING]  
+> [!WARNING]
 > When using the `with` method, be careful not to pass any reserved keywords such as `state` or `response_type`.
 
 <a name="retrieving-user-details"></a>
@@ -217,5 +217,5 @@ The `stateless` method may be used to disable session state verification. This i
 
     return Socialite::driver('google')->stateless()->user();
 
-> [!WARNING]  
+> [!WARNING]
 > Stateless authentication is not available for the Twitter OAuth 1.0 driver.
