@@ -6,9 +6,9 @@
 
 ## Prólogo
 
-- [Notas de versão](releases.md)
-- [Guia de atualização](upgrade.md)
-- [Guia de contribuição](contributions.md)
+- [Notas de Versão](prologo/versoes.md)
+- [Guia de Atualização](upgrade.md)
+- [Guia de Contribuição](contributions.md)
 
 ## Começando
 
