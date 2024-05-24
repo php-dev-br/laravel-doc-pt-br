@@ -13,19 +13,19 @@
 - [Tipos de Ponto Flutuante](#tipos-de-ponto-flutuante)
 - [Modificando Colunas](#modificando-colunas)
 - [Versão Mínima do SQLite](#versao-minima-do-sqlite)
-- [Updating Sanctum](#updating-sanctum)
+- [Atualizando o Sanctum](#atualizando-o-sanctum)
 
 ## Mudanças de Médio Impacto
 
 - [Carbon 3](#carbon-3)
 - [Atualização do Hash da Senha](#atualizacao-do-hash-da-senha)
-- [Per-Second Rate Limiting](#per-second-rate-limiting)
+- [Limitação de Taxa por Segundo](#limitacao-de-taxa-por-segundo)
 
 ## Mudanças de Baixo Impacto
 
-- [Doctrine DBAL Removal](#doctrine-dbal-removal)
+- [Remoção do Doctrine DBAL](#remocao-do-doctrine-dbal)
 - [Método `casts` do Modelo do Eloquent](#metodo-casts-do-modelo-do-eloquent)
-- [Spatial Types](#spatial-types)
+- [Tipos Espaciais](#tipos-espaciais)
 - [Spatie Once Package](#spatie-once-package)
 - [O Contrato `Enumerable`](#o-contrato-enumerable)
 - [O Contrato `UserProvider`](#o-contrato-userprovider)
@@ -76,7 +76,7 @@ aplicação:
 Se sua aplicação estiver usando Laravel Cashier Stripe, Passport, Sanctum, Spark
 Stripe ou Telescope, você precisará publicar suas migrações na sua aplicação.
 Cashier Stripe, Passport, Sanctum, Spark Stripe e Telescope **não carregam mais
-migrações automaticamente de seu próprio diretório de migrações**.
+migrações automaticamente do seu diretório de migrações**.
 Portanto, você deve executar o seguinte comando para publicar suas migrações na
 sua aplicação:
 
@@ -227,8 +227,8 @@ public function dump(...$args);
 
 **Probabilidade de Impacto: Alta**
 
-Se a sua aplicação estiver utilizando um banco de dados SQLite, será necessário
-o SQLite 3.35.0 ou superior.
+Se a sua aplicação estiver usando um banco de dados SQLite, será necessário o
+SQLite 3.35.0 ou superior.
 
 #### Método `casts` do Modelo do Eloquent
 
@@ -314,249 +314,227 @@ migração pendente.
 
 **Probabilidade de Impacto: Alta**
 
-The `double` and `float` migration column types have been rewritten to be
-consistent across all databases.
+Os tipos de coluna de migração `double` e `float` foram reescritos para serem
+consistentes em todos os bancos de dados.
 
-The `double` column type now creates a `DOUBLE` equivalent column without total
-digits and places (digits after decimal point), which is the standard SQL
-syntax.
-Therefore, you may remove the arguments for `$total` and `$places`:
-
-```php
-$table->double('amount');
-```
-
-The `float` column type now creates a `FLOAT` equivalent column without total
-digits and places (digits after decimal point), but with an
-optional `$precision` specification to determine storage size as a 4-byte
-single-precision column or an 8-byte double-precision column.
-Therefore, you may remove the arguments for `$total` and `$places` and specify
-the optional `$precision` to your desired value and according to your database's
-documentation:
+O tipo de coluna `double` agora cria uma coluna `DOUBLE` equivalente sem o total
+de dígitos e casas decimais (dígitos após o ponto decimal), que é a sintaxe SQL
+padrão.
+Portanto, você pode remover os argumentos `$total` e `$places`:
 
 ```php
-$table->float('amount', precision: 53);
+$table->double('valor');
 ```
 
-The `unsignedDecimal`, `unsignedDouble`, and `unsignedFloat` methods have been
-removed, as the unsigned modifier for these column types has been deprecated by
-MySQL, and was never standardized on other database systems.
-However, if you wish to continue using the deprecated unsigned attribute for
-these column types, you may chain the `unsigned` method onto the column's
-definition:
+O tipo de coluna `float` agora cria uma coluna equivalente `FLOAT` sem o total
+de dígitos e casas decimais (dígitos após o ponto decimal), mas com uma
+especificação `$precision` opcional para determinar o tamanho do armazenamento
+como uma coluna de precisão simples de 4 bytes ou uma coluna de precisão dupla
+de 8 bytes.
+Portanto, você pode remover os argumentos `$total` e `$places` e especificar o
+argumento opcional `$precision` para o valor desejado e conforme a documentação
+do seu banco de dados:
 
 ```php
-$table->decimal('amount', total: 8, places: 2)->unsigned();
-$table->double('amount')->unsigned();
-$table->float('amount', precision: 53)->unsigned();
+$table->float('valor', precision: 53);
 ```
 
-<a name="dedicated-mariadb-driver"></a>
+Os métodos `unsignedDecimal`, `unsignedDouble` e `unsignedFloat` foram
+removidos, pois o modificador `unsigned` para esses tipos de coluna foi
+descontinuado pelo MySQL e nunca foi padronizado em outros sistemas de banco de
+dados.
+No entanto, se você deseja continuar usando o atributo obsoleto `unsigned` para
+esses tipos de coluna, você pode encadear o método `unsigned` na definição da
+coluna:
 
-#### Dedicated MariaDB Driver
+```php
+$table->decimal('valor', total: 8, places: 2)->unsigned();
+$table->double('valor')->unsigned();
+$table->float('valor', precision: 53)->unsigned();
+```
+
+#### Driver Dedicado MariaDB
 
 **Probabilidade de Impacto: Muito Baixa**
 
-Instead of always utilizing the MySQL driver when connecting to MariaDB
-databases, Laravel 11 adds a dedicated database driver for MariaDB.
+Em vez de sempre usar o driver MySQL ao conectar-se a bancos de dados MariaDB, o
+Laravel 11 adiciona um driver de banco de dados dedicado para o MariaDB.
 
-If your application connects to a MariaDB database, you may update the
-connection configuration to the new `mariadb` driver to benefit from MariaDB
-specific features in the future:
-
-    'driver' => 'mariadb',
-    'url' => env('DB_URL'),
-    'host' => env('DB_HOST', '127.0.0.1'),
-    'port' => env('DB_PORT', '3306'),
-    // ...
-
-Currently, the new MariaDB driver behaves like the current MySQL driver with one
-exception: the `uuid` schema builder method creates native UUID columns instead
-of `char(36)` columns.
-
-If your existing migrations utilize the `uuid` schema builder method and you
-choose to use the new `mariadb` database driver, you should update your
-migration's invocations of the `uuid` method to `char` to avoid breaking changes
-or unexpected behavior:
+Se a sua aplicação se conecta a um banco de dados MariaDB, você poderá atualizar
+a configuração da conexão para o novo driver `mariadb` para se beneficiar dos
+recursos específicos do MariaDB no futuro:
 
 ```php
-Schema::table('users', function (Blueprint $table) {
+'driver' => 'mariadb',
+'url' => env('DB_URL'),
+'host' => env('DB_HOST', '127.0.0.1'),
+'port' => env('DB_PORT', '3306'),
+// ...
+```
+
+Atualmente, o novo driver MariaDB se comporta como o driver MySQL atual com uma
+exceção: o método `uuid` do construtor de esquema cria colunas UUID nativas em
+vez de colunas `char(36)`.
+
+Se suas migrações existentes usam o método `uuid` do construtor de esquema e
+você optar por usar o novo driver de banco de dados `mariadb`, você deverá
+atualizar as invocações do método `uuid` da sua migração para `char` para evitar
+alterações significativas ou comportamento inesperado:
+
+```php
+Schema::table('usuarios', function (Blueprint $table) {
     $table->char('uuid', 36);
 
     // ...
 });
 ```
 
-<a name="spatial-types"></a>
-
-#### Spatial Types
+#### Tipos Espaciais
 
 **Probabilidade de Impacto: Baixa**
 
-The spatial column types of database migrations have been rewritten to be
-consistent across all databases.
-Therefore, you may
-remove `point`, `lineString`, `polygon`, `geometryCollection`, `multiPoint`, `multiLineString`, `multiPolygon`,
-and `multiPolygonZ` methods from your migrations and use `geometry`
-or `geography` methods instead:
+Os tipos de colunas espaciais de migrações de banco de dados foram reescritos
+para serem consistentes em todos os bancos de dados.
+Portanto, você pode remover os métodos `point`, `lineString`, `polygon`,
+`geometryCollection`, `multiPoint`, `multiLineString`, `multiPolygon` e
+`multiPolygonZ` das suas migrações e usar os métodos `geometry` ou `geography`:
 
 ```php
-$table->geometry('shapes');
-$table->geography('coordinates');
+$table->geometry('formas');
+$table->geography('coordenadas');
 ```
 
-To explicitly restrict the type or the spatial reference system identifier for
-values stored in the column on MySQL, MariaDB, and PostgreSQL, you may pass
-the `subtype` and `srid` to the method:
+Para restringir explicitamente o tipo ou o identificador do sistema de
+referência espacial para valores armazenados na coluna no MySQL, MariaDB e
+PostgreSQL, você pode passar o `subtype` e o `srid` para o método:
 
 ```php
-$table->geometry('dimension', subtype: 'polygon', srid: 0);
+$table->geometry('dimensao', subtype: 'polygon', srid: 0);
 $table->geography('latitude', subtype: 'point', srid: 4326);
 ```
 
-The `isGeometry` and `projection` column modifiers of the PostgreSQL grammar
-have been removed accordingly.
+Os modificadores de coluna `isGeometry` e `projection` da gramática do
+PostgreSQL foram removidos de acordo.
 
-<a name="doctrine-dbal-removal"></a>
-
-#### Doctrine DBAL Removal
+#### Remoção do Doctrine DBAL
 
 **Probabilidade de Impacto: Baixa**
 
-The following list of Doctrine DBAL related classes and methods have been
-removed.
-Laravel is no longer dependent on this package and registering custom Doctrines
-types is no longer necessary for the proper creation and alteration of various
-column types that previously required custom types:
+A lista de classes e métodos relacionados ao Doctrine DBAL a seguir foi
+removida.
+O Laravel não depende mais deste pacote e registrar tipos customizados do
+Doctrine não é mais necessário para a criação e alteração adequada de vários
+tipos de colunas que anteriormente exigiam tipos customizados:
 
-<div class="content-list" markdown="1">
+- Propriedade de classe
+  `Illuminate\Database\Schema\Builder::$alwaysUsesNativeSchemaOperationsIfPossible`
+- Método
+  `Illuminate\Database\Schema\Builder::useNativeSchemaOperationsIfPossible()`
+- Método `Illuminate\Database\Connection::usingNativeSchemaOperations()`
+- Método `Illuminate\Database\Connection::isDoctrineAvailable()`
+- Método `Illuminate\Database\Connection::getDoctrineConnection()`
+- Método `Illuminate\Database\Connection::getDoctrineSchemaManager()`
+- Método `Illuminate\Database\Connection::getDoctrineColumn()`
+- Método `Illuminate\Database\Connection::registerDoctrineType()`
+- Método `Illuminate\Database\DatabaseManager::registerDoctrineType()`
+- Diretório `Illuminate\Database\PDO`
+- Classe `Illuminate\Database\DBAL\TimestampType`
+- Classe `Illuminate\Database\Schema\Grammars\ChangeColumn`
+- Classe `Illuminate\Database\Schema\Grammars\RenameColumn`
+- Método `Illuminate\Database\Schema\Grammars\Grammar::getDoctrineTableDiff()`
 
-- `Illuminate\Database\Schema\Builder::$alwaysUsesNativeSchemaOperationsIfPossible`
-  class property
-- `Illuminate\Database\Schema\Builder::useNativeSchemaOperationsIfPossible()`
-  method
-- `Illuminate\Database\Connection::usingNativeSchemaOperations()` method
-- `Illuminate\Database\Connection::isDoctrineAvailable()` method
-- `Illuminate\Database\Connection::getDoctrineConnection()` method
-- `Illuminate\Database\Connection::getDoctrineSchemaManager()` method
-- `Illuminate\Database\Connection::getDoctrineColumn()` method
-- `Illuminate\Database\Connection::registerDoctrineType()` method
-- `Illuminate\Database\DatabaseManager::registerDoctrineType()` method
-- `Illuminate\Database\PDO` directory
-- `Illuminate\Database\DBAL\TimestampType` class
-- `Illuminate\Database\Schema\Grammars\ChangeColumn` class
-- `Illuminate\Database\Schema\Grammars\RenameColumn` class
-- `Illuminate\Database\Schema\Grammars\Grammar::getDoctrineTableDiff()` method
+Além disso, não é mais necessário registrar os tipos customizados do Doctrine
+via `dbal.types` no arquivo de configuração `database` da sua aplicação.
 
-</div>
+Se você estava usando o Doctrine DBAL anteriormente para inspecionar seu banco
+de dados e suas tabelas associadas, em vez disso, você pode usar os novos
+métodos de esquema nativos do Laravel (`Schema::getTables()`,
+`Schema::getColumns()`, `Schema::getIndexes()`, `Schema::getForeignKeys()`,
+etc.).
 
-In addition, registering custom Doctrine types via `dbal.types` in your
-application's `database` configuration file is no longer required.
-
-If you were previously using Doctrine DBAL to inspect your database and its
-associated tables, you may use Laravel's new native schema
-methods (`Schema::getTables()`, `Schema::getColumns()`, `Schema::getIndexes()`, `Schema::getForeignKeys()`,
-etc.) instead.
-
-<a name="deprecated-schema-methods"></a>
-
-#### Deprecated Schema Methods
+#### Métodos de Esquema Obsoletos
 
 **Probabilidade de Impacto: Muito Baixa**
 
-The deprecated, Doctrine
-based `Schema::getAllTables()`, `Schema::getAllViews()`,
-and `Schema::getAllTypes()` methods have been removed in favor of new Laravel
-native `Schema::getTables()`, `Schema::getViews()`, and `Schema::getTypes()`
-methods.
+Os métodos obsoletos `Schema::getAllTables()`, `Schema::getAllViews()`
+e `Schema::getAllTypes()` baseados no Doctrine foram removidos em favor dos
+novos métodos nativos do Laravel `Schema::getTables()`, `Schema::getViews()` e
+`Schema::getTypes()`.
 
-When using PostgreSQL and SQL Server, none of the new schema methods will accept
-a three-part reference (e.g. `database.schema.table`).
-Therefore, you should use `connection()` to declare the database instead:
+Ao usar o PostgreSQL e o SQL Server, nenhum dos novos métodos de esquema
+aceitará uma referência de três partes (por exemplo,
+`banco-de-dados.esquema.tabela`).
+Portanto, você deve usar `connection()` para declarar o banco de dados:
 
 ```php
-Schema::connection('database')->hasTable('schema.table');
+Schema::connection('banco-de-dados')->hasTable('esquema.tabela');
 ```
 
-<a name="get-column-types"></a>
-
-#### Schema Builder `getColumnType()` Method
+#### Método `getColumnType()` do Construtor de Esquema
 
 **Probabilidade de Impacto: Muito Baixa**
 
-The `Schema::getColumnType()` method now always returns actual type of the given
-column, not the Doctrine DBAL equivalent type.
+O método `Schema::getColumnType()` agora sempre retorna o tipo real da coluna
+fornecida, não o tipo equivalente do Doctrine DBAL.
 
-<a name="database-connection-interface"></a>
-
-#### Database Connection Interface
+#### Interface de Conexão com Banco de Dados
 
 **Probabilidade de Impacto: Muito Baixa**
 
-The `Illuminate\Database\ConnectionInterface` interface has received a
-new `scalar` method.
-If you are defining your own implementation of this interface, you should add
-the `scalar` method to your implementation:
+A interface `Illuminate\Database\ConnectionInterface` recebeu um novo método
+`scalar`.
+Se você estiver definindo sua implementação desta interface, deverá adicionar o
+método `scalar` à sua implementação:
 
 ```php
 public function scalar($query, $bindings = [], $useReadPdo = true);
 ```
 
-<a name="dates"></a>
-
-### Dates
-
-<a name="carbon-3"></a>
+### Datas
 
 #### Carbon 3
 
 **Probabilidade de Impacto: Média**
 
-Laravel 11 supports both Carbon 2 and Carbon 3.
-Carbon is a date manipulation library utilized extensively by Laravel and
-packages throughout the ecosystem.
-If you install Carbon 3, you should review
-Carbon's [change log](https://github.com/briannesbitt/Carbon/releases/tag/3.0.0).
+O Laravel 11 suporta Carbon 2 e Carbon 3.
+Carbon é uma biblioteca de manipulação de datas usada amplamente pelo Laravel e
+por pacotes em todo o ecossistema.
+Se você instalar o Carbon 3, deverá revisar o
+[log de alterações](https://github.com/briannesbitt/Carbon/releases/tag/3.0.0)
+do Carbon.
 
-<a name="mail"></a>
-
-### Mail
+### Correio
 
 <a name="the-mailer-contract"></a>
 
-#### The `Mailer` Contract
+#### O Contrato `Mailer`
 
 **Probabilidade de Impacto: Muito Baixa**
 
-The `Illuminate\Contracts\Mail\Mailer` contract has received a new `sendNow`
-method.
-If your application or package is manually implementing this contract, you
-should add the new `sendNow` method to your implementation:
+O contrato `Illuminate\Contracts\Mail\Mailer` recebeu um novo método `sendNow`.
+Se sua aplicação ou pacote estiver implementando manualmente este contrato, você
+deverá adicionar o novo método `sendNow` à sua implementação:
 
 ```php
 public function sendNow($mailable, array $data = [], $callback = null);
 ```
 
-<a name="packages"></a>
+### Pacotes
 
-### Packages
-
-<a name="publishing-service-providers"></a>
-
-#### Publishing Service Providers to the Application
+#### Publicando Provedores de Serviços na Aplicação
 
 **Probabilidade de Impacto: Muito Baixa**
 
-If you have written a Laravel package that manually publishes a service provider
-to the application's `app/Providers` directory and manually modifies the
-application's `config/app.php` configuration file to register the service
-provider, you should update your package to utilize the
-new `ServiceProvider::addProviderToBootstrapFile` method.
+Se você escreveu um pacote Laravel que publica manualmente um provedor de
+serviços no diretório `app/Providers` da aplicação e modifica manualmente o
+arquivo de configuração `config/app.php` da aplicação para registrar o provedor
+de serviços, você deve atualizar seu pacote para usar o novo método
+`ServiceProvider::addProviderToBootstrapFile`.
 
-The `addProviderToBootstrapFile` method will automatically add the service
-provider you have published to the application's `bootstrap/providers.php` file,
-since the `providers` array does not exist within the `config/app.php`
-configuration file in new Laravel 11 applications.
+O método `addProviderToBootstrapFile` adicionará automaticamente o provedor de
+serviços que você publicou ao arquivo `bootstrap/providers.php` da aplicação,
+uma vez que o array `providers` não existe no arquivo de configuração
+`config/app.php` das novas aplicações Laravel 11.
 
 ```php
 use Illuminate\Support\ServiceProvider;
@@ -564,248 +542,219 @@ use Illuminate\Support\ServiceProvider;
 ServiceProvider::addProviderToBootstrapFile(Provider::class);
 ```
 
-<a name="queues"></a>
+### Filas
 
-### Queues
-
-<a name="the-batch-repository-interface"></a>
-
-#### The `BatchRepository` Interface
+#### A Interface `BatchRepository`
 
 **Probabilidade de Impacto: Muito Baixa**
 
-The `Illuminate\Bus\BatchRepository` interface has received a new `rollBack`
-method.
-If you are implementing this interface within your own package or application,
-you should add this method to your implementation:
+A interface `Illuminate\Bus\BatchRepository` recebeu um novo método `rollBack`.
+Se você estiver implementando essa interface no seu pacote ou aplicação, deverá
+adicionar este método à sua implementação:
 
 ```php
 public function rollBack();
 ```
 
-<a name="synchronous-jobs-in-database-transactions"></a>
-
-#### Synchronous Jobs in Database Transactions
+#### Trabalhos Síncronos em Transações de Banco de Dados
 
 **Probabilidade de Impacto: Muito Baixa**
 
-Previously, synchronous jobs (jobs using the `sync` queue driver) would execute
-immediately, regardless of whether the `after_commit` configuration option of
-the queue connection was set to `true` or the `afterCommit` method was invoked
-on the job.
+Anteriormente, os trabalhos síncronos (trabalhos que usavam o driver de
+fila `sync`) seriam executados imediatamente, independentemente da opção de
+configuração `after_commit` da conexão da fila ter sido definida como `true` ou
+o método `afterCommit` ter sido invocado no trabalho.
 
-In Laravel 11, synchronous queue jobs will now respect the "after commit"
-configuration of the queue connection or job.
+No Laravel 11, os trabalhos de fila síncronos agora respeitarão a configuração
+"after commit" da conexão da fila ou do trabalho.
 
-<a name="rate-limiting"></a>
+### Limitação de Taxa
 
-### Rate Limiting
-
-<a name="per-second-rate-limiting"></a>
-
-#### Per-Second Rate Limiting
+#### Limitação de Taxa por Segundo
 
 **Probabilidade de Impacto: Média**
 
-Laravel 11 supports per-second rate limiting instead of being limited to
-per-minute granularity.
-There are a variety of potential breaking changes you should be aware of related
-to this change.
+O Laravel 11 suporta limitação de taxa por segundo em vez de ser limitado à
+granularidade por minuto.
+Há uma variedade de possíveis alterações significativas das quais você deve
+estar ciente em relação a essa alteração.
 
-The `GlobalLimit` class constructor now accepts seconds instead of minutes.
-This class is not documented and would not typically be used by your
-application:
+O construtor da classe `GlobalLimit` agora aceita segundos em vez de minutos.
+Esta classe não está documentada e normalmente não seria usada pela sua
+aplicação:
 
 ```php
 new GlobalLimit($attempts, 2 * 60);
 ```
 
-The `Limit` class constructor now accepts seconds instead of minutes.
-All documented usages of this class are limited to static constructors such
-as `Limit::perMinute` and `Limit::perSecond`.
-However, if you are instantiating this class manually, you should update your
-application to provide seconds to the class's constructor:
+O construtor da classe `Limit` agora aceita segundos em vez de minutos.
+Todos os usos documentados desta classe são limitados a construtores estáticos
+como `Limit::perMinute` e `Limit::perSecond`.
+No entanto, se você estiver instanciando esta classe manualmente, deverá
+atualizar sua aplicação para fornecer segundos ao construtor da classe:
 
 ```php
 new Limit($key, $attempts, 2 * 60);
 ```
 
-The `Limit` class's `decayMinutes` property has been renamed to `decaySeconds`
-and now contains seconds instead of minutes.
+A propriedade `decayMinutes` da classe `Limit` foi renomeada para `decaySeconds`
+e agora contém segundos em vez de minutos.
 
-The `Illuminate\Queue\Middleware\ThrottlesExceptions`
-and `Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis` class
-constructors now accept seconds instead of minutes:
+Os construtores das classes `Illuminate\Queue\Middleware\ThrottlesExceptions` e
+`Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis` agora aceitam
+segundos em vez de minutos:
 
 ```php
 new ThrottlesExceptions($attempts, 2 * 60);
 new ThrottlesExceptionsWithRedis($attempts, 2 * 60);
 ```
 
-<a name="cashier-stripe"></a>
-
 ### Cashier Stripe
 
-<a name="updating-cashier-stripe"></a>
-
-#### Updating Cashier Stripe
+#### Atualizando o Cashier Stripe
 
 **Probabilidade de Impacto: Alta**
 
-Laravel 11 no longer supports Cashier Stripe 14.x.
-Therefore, you should update your application's Laravel Cashier Stripe
-dependency to `^15.0` in your `composer.json` file.
+O Laravel 11 não suporta mais o Cashier Stripe 14.x.
+Portanto, você deve atualizar a dependência do Laravel Cashier Stripe da sua
+aplicação para `^15.0` no seu arquivo `composer.json`.
 
-Cashier Stripe 15.0 no longer automatically loads migrations from its own
-migrations directory.
-Instead, you should run the following command to publish Cashier Stripe's
-migrations to your application:
+O Cashier Stripe 15.0 não carrega mais as migrações automaticamente do seu
+diretório de migrações.
+Em vez disso, você deve executar o seguinte comando para publicar as migrações
+do Cashier Stripe na sua aplicação:
 
 ```shell
 php artisan vendor:publish --tag=cashier-migrations
 ```
 
-Please review the
-complete [Cashier Stripe upgrade guide](https://github.com/laravel/cashier-stripe/blob/15.x/UPGRADE.md)
-for additional breaking changes.
-
-<a name="spark-stripe"></a>
+Revise o guia completo de
+[atualização do Cashier Stripe](https://github.com/laravel/cashier-stripe/blob/15.x/UPGRADE.md)
+para saber sobre alterações adicionais.
 
 ### Spark (Stripe)
 
-<a name="updating-spark-stripe"></a>
-
-#### Updating Spark Stripe
+#### Atualizando o Spark Stripe
 
 **Probabilidade de Impacto: Alta**
 
-Laravel 11 no longer supports Laravel Spark Stripe 4.x.
-Therefore, you should update your application's Laravel Spark Stripe dependency
-to `^5.0` in your `composer.json` file.
+O Laravel 11 não suporta mais o Laravel Spark Stripe 4.x.
+Portanto, você deve atualizar a dependência do Laravel Spark Stripe da sua
+aplicação para `^5.0` no seu arquivo `composer.json`.
 
-Spark Stripe 5.0 no longer automatically loads migrations from its own
-migrations directory.
-Instead, you should run the following command to publish Spark Stripe's
-migrations to your application:
+O Spark Stripe 5.0 não carrega mais as migrações automaticamente do seu
+diretório
+de migrações.
+Em vez disso, você deve executar o seguinte comando para publicar as migrações
+do Spark Stripe na sua aplicação:
 
 ```shell
 php artisan vendor:publish --tag=spark-migrations
 ```
 
-Please review the
-complete [Spark Stripe upgrade guide](https://spark.laravel.com/docs/spark-stripe/upgrade.html)
-for additional breaking changes.
-
-<a name="passport"></a>
+Revise o guia completo de
+[atualização do Spark Stripe](https://spark.laravel.com/docs/spark-stripe/upgrade.html)
+para saber sobre alterações adicionais.
 
 ### Passport
 
-<a name="updating-telescope"></a>
-
-#### Updating Passport
+#### Atualizando o Passport
 
 **Probabilidade de Impacto: Alta**
 
-Laravel 11 no longer supports Laravel Passport 11.x.
-Therefore, you should update your application's Laravel Passport dependency
-to `^12.0` in your `composer.json` file.
+O Laravel 11 não suporta mais o Laravel Passport 11.x.
+Portanto, você deve atualizar a dependência do Laravel Passport da sua aplicação
+para `^12.0` no seu arquivo `composer.json`.
 
-Passport 12.0 no longer automatically loads migrations from its own migrations
-directory.
-Instead, you should run the following command to publish Passport's migrations
-to your application:
+O Passport 12.0 não carrega mais as migrações automaticamente do seu diretório
+de
+migrações.
+Em vez disso, você deve executar o seguinte comando para publicar as migrações
+do Passport na sua aplicação:
 
 ```shell
 php artisan vendor:publish --tag=passport-migrations
 ```
 
-In addition, the password grant type is disabled by default.
-You may enable it by invoking the `enablePasswordGrant` method in the `boot`
-method of your application's `AppServiceProvider`:
+Além disso, o tipo de concessão com senha está desabilitado por padrão.
+Você pode habilitá-lo invocando o método `enablePasswordGrant` no método `boot`
+do `AppServiceProvider` da sua aplicação:
 
-    public function boot(): void
-    {
-        Passport::enablePasswordGrant();
-    }
-
-<a name="sanctum"></a>
+```php
+public function boot(): void
+{
+    Passport::enablePasswordGrant();
+}
+```
 
 ### Sanctum
 
-<a name="updating-sanctum"></a>
-
-#### Updating Sanctum
+#### Atualizando o Sanctum
 
 **Probabilidade de Impacto: Alta**
 
-Laravel 11 no longer supports Laravel Sanctum 3.x.
-Therefore, you should update your application's Laravel Sanctum dependency
-to `^4.0` in your `composer.json` file.
+O Laravel 11 não suporta mais o Laravel Sanctum 3.x.
+Portanto, você deve atualizar a dependência do Laravel Sanctum da sua aplicação
+para `^4.0` no seu arquivo `composer.json`.
 
-Sanctum 4.0 no longer automatically loads migrations from its own migrations
-directory.
-Instead, you should run the following command to publish Sanctum's migrations to
-your application:
+O Sanctum 4.0 não carrega mais as migrações automaticamente do seu diretório de
+migrações.
+Em vez disso, você deve executar o seguinte comando para publicar as migrações
+do Sanctum na sua aplicação:
 
 ```shell
 php artisan vendor:publish --tag=sanctum-migrations
 ```
 
-Then, in your application's `config/sanctum.php` configuration file, you should
-update the references to the `authenticate_session`, `encrypt_cookies`,
-and `validate_csrf_token` middleware to the following:
+Em seguida, no arquivo de configuração `config/sanctum.php` da sua aplicação,
+você deve atualizar as referências aos middlewares `authenticate_session`,
+`encrypt_cookies` e `validate_csrf_token` para o seguinte:
 
-    'middleware' => [
-        'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
-        'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
-        'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
-    ],
-
-<a name="telescope"></a>
+```php
+'middleware' => [
+    'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
+    'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
+    'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+],
+```
 
 ### Telescope
 
-<a name="updating-telescope"></a>
-
-#### Updating Telescope
+#### Atualizando o Telescope
 
 **Probabilidade de Impacto: Alta**
 
-Laravel 11 no longer supports Laravel Telescope 4.x.
-Therefore, you should update your application's Laravel Telescope dependency
-to `^5.0` in your `composer.json` file.
+O Laravel 11 não suporta mais o Laravel Telescope 4.x.
+Portanto, você deve atualizar a dependência do Telescópio Laravel da sua
+aplicação para `^5.0` no seu arquivo `composer.json`.
 
-Telescope 5.0 no longer automatically loads migrations from its own migrations
-directory.
-Instead, you should run the following command to publish Telescope's migrations
-to your application:
+O Telescope 5.0 não carrega mais as migrações automaticamente do seu diretório
+de migrações.
+Em vez disso, você deve executar o seguinte comando para publicar as migrações
+do Telescope na sua aplicação:
 
 ```shell
 php artisan vendor:publish --tag=telescope-migrations
 ```
 
-<a name="spatie-once-package"></a>
-
-### Spatie Once Package
+### Pacote Spatie Once
 
 **Probabilidade de Impacto: Média**
 
-Laravel 11 now provides its own [`once` function](../helpers.md#method-once) to
-ensure that a given closure is only executed once.
-Therefore, if your application has a dependency on the `spatie/once` package,
-you should remove it from your application's `composer.json` file to avoid
-conflicts.
+O Laravel 11 agora fornece sua própria
+[função `once`](../helpers.md#method-once) para garantir que uma determinada
+closure seja executada apenas uma vez.
+Portanto, se sua aplicação depende do pacote `spatie/once`, você deve removê-lo
+do arquivo `composer.json` da sua aplicação para evitar conflitos.
 
-<a name="miscellaneous"></a>
+### Diversos
 
-### Miscellaneous
-
-We also encourage you to view the changes in
-the `laravel/laravel` [GitHub repository](https://github.com/laravel/laravel).
-While many of these changes are not required, you may wish to keep these files
-in sync with your application.
-Some of these changes will be covered in this upgrade guide, but others, such as
-changes to configuration files or comments, will not be.
-You can easily view the changes with
-the [GitHub comparison tool](https://github.com/laravel/laravel/compare/10.x...11.x)
-and choose which updates are important to you.
+Também encorajamos você a visualizar as mudanças no repositório
+`laravel/laravel` no [GitHub](https://github.com/laravel/laravel).
+Embora muitas dessas alterações não sejam necessárias, você pode querer manter
+esses arquivos sincronizados com sua aplicação.
+Algumas dessas alterações serão abordadas neste guia de atualização, mas outras,
+como alterações nos arquivos de configuração ou comentários, não serão.
+Você pode visualizar facilmente as alterações com a
+[ferramenta de comparação do GitHub](https://github.com/laravel/laravel/compare/10.x...11.x) e escolher quais atualizações são
+importantes para você.

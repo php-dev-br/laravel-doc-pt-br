@@ -367,7 +367,7 @@ $name = text(
 
 No entanto, isso pode se tornar trabalhoso ao lidar com muitas entradas ou
 cenários de validação complicados.
-Portanto, no Laravel 11, você pode utilizar todo o poder do
+Portanto, no Laravel 11, você pode usar todo o poder do
 [validador](../validation.md) do Laravel ao validar entradas de prompt:
 
 ```php
