@@ -13,7 +13,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel is a backend framework that provides all of the features you need to build modern web applications, such as [routing](routing.md), [validation](validation.md), [caching](/docs/{{version}}/cache), [queues](/docs/{{version}}/queues), [file storage](/docs/{{version}}/filesystem), and more. However, we believe it's important to offer developers a beautiful full-stack experience, including powerful approaches for building your application's frontend.
+Laravel is a backend framework that provides all of the features you need to build modern web applications, such as [routing](routing.md), [validation](validation.md), [caching](cache.md), [queues](queues.md), [file storage](filesystem.md), and more. However, we believe it's important to offer developers a beautiful full-stack experience, including powerful approaches for building your application's frontend.
 
 There are two primary ways to tackle frontend development when building an application with Laravel, and which approach you choose is determined by whether you would like to build your frontend by leveraging PHP or by using JavaScript frameworks such as Vue and React. We'll discuss both of these options below so that you can make an informed decision regarding the best approach to frontend development for your application.
 

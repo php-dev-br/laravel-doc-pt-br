@@ -38,7 +38,7 @@ There are a variety of tools and frameworks available to you when building a web
 
 We like to call Laravel a "progressive" framework. By that, we mean that Laravel grows with you. If you're just taking your first steps into web development, Laravel's vast library of documentation, guides, and [video tutorials](https://laracasts.com) will help you learn the ropes without becoming overwhelmed.
 
-If you're a senior developer, Laravel gives you robust tools for [dependency injection](container.md), [unit testing](testing.md), [queues](/docs/{{version}}/queues), [real-time events](/docs/{{version}}/broadcasting), and more. Laravel is fine-tuned for building professional web applications and ready to handle enterprise work loads.
+If you're a senior developer, Laravel gives you robust tools for [dependency injection](container.md), [unit testing](testing.md), [queues](queues.md), [real-time events](broadcasting.md), and more. Laravel is fine-tuned for building professional web applications and ready to handle enterprise work loads.
 
 #### A Scalable Framework
 
@@ -308,7 +308,7 @@ How you want to use Laravel will also dictate the next steps on your journey. Th
 
 Laravel may serve as a full stack framework. By "full stack" framework we mean that you are going to use Laravel to route requests to your application and render your frontend via [Blade templates](blade.md) or a single-page application hybrid technology like [Inertia](https://inertiajs.com). This is the most common way to use the Laravel framework, and, in our opinion, the most productive way to use Laravel.
 
-If this is how you plan to use Laravel, you may want to check out our documentation on [frontend development](frontend.md), [routing](routing.md), [views](/docs/{{version}}/views), or the [Eloquent ORM](/docs/{{version}}/eloquent). In addition, you might be interested in learning about community packages like [Livewire](https://livewire.laravel.com) and [Inertia](https://inertiajs.com). These packages allow you to use Laravel as a full-stack framework while enjoying many of the UI benefits provided by single-page JavaScript applications.
+If this is how you plan to use Laravel, you may want to check out our documentation on [frontend development](frontend.md), [routing](routing.md), [views](views.md), or the [Eloquent ORM](eloquent.md). In addition, you might be interested in learning about community packages like [Livewire](https://livewire.laravel.com) and [Inertia](https://inertiajs.com). These packages allow you to use Laravel as a full-stack framework while enjoying many of the UI benefits provided by single-page JavaScript applications.
 
 If you are using Laravel as a full stack framework, we also strongly encourage you to learn how to compile your application's CSS and JavaScript using [Vite](vite.md).
 
@@ -320,7 +320,7 @@ If you are using Laravel as a full stack framework, we also strongly encourage y
 
 Laravel may also serve as an API backend to a JavaScript single-page application or mobile application. For example, you might use Laravel as an API backend for your [Next.js](https://nextjs.org) application. In this context, you may use Laravel to provide [authentication](sanctum.md) and data storage / retrieval for your application, while also taking advantage of Laravel's powerful services such as queues, emails, notifications, and more.
 
-If this is how you plan to use Laravel, you may want to check out our documentation on [routing](routing.md), [Laravel Sanctum](sanctum.md), and the [Eloquent ORM](/docs/{{version}}/eloquent).
+If this is how you plan to use Laravel, you may want to check out our documentation on [routing](routing.md), [Laravel Sanctum](sanctum.md), and the [Eloquent ORM](eloquent.md).
 
 > [!NOTE]
 > Need a head start scaffolding your Laravel backend and Next.js frontend? Laravel Breeze offers an [API stack](starter-kits.md#breeze-and-next) as well as a [Next.js frontend implementation](https://github.com/laravel/breeze-next) so you can get started in minutes.

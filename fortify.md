@@ -32,14 +32,14 @@
 Since Fortify does not provide its own user interface, it is meant to be paired with your own user interface which makes requests to the routes it registers. We will discuss exactly how to make requests to these routes in the remainder of this documentation.
 
 > [!NOTE]
-> Remember, Fortify is a package that is meant to give you a head start implementing Laravel's authentication features. **You are not required to use it.** You are always free to manually interact with Laravel's authentication services by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](/docs/{{version}}/verification) documentation.
+> Remember, Fortify is a package that is meant to give you a head start implementing Laravel's authentication features. **You are not required to use it.** You are always free to manually interact with Laravel's authentication services by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](verification.md) documentation.
 
 <a name="what-is-fortify"></a>
 ### What is Fortify?
 
 As mentioned previously, Laravel Fortify is a frontend agnostic authentication backend implementation for Laravel. Fortify registers the routes and controllers needed to implement all of Laravel's authentication features, including login, registration, password reset, email verification, and more.
 
-**You are not required to use Fortify in order to use Laravel's authentication features.** You are always free to manually interact with Laravel's authentication services by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](/docs/{{version}}/verification) documentation.
+**You are not required to use Fortify in order to use Laravel's authentication features.** You are always free to manually interact with Laravel's authentication services by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](verification.md) documentation.
 
 If you are new to Laravel, you may wish to explore the [Laravel Breeze](starter-kits.md) application starter kit before attempting to use Laravel Fortify. Laravel Breeze provides an authentication scaffolding for your application that includes a user interface built with [Tailwind CSS](https://tailwindcss.com). Unlike Fortify, Breeze publishes its routes and controllers directly into your application. This allows you to study and get comfortable with Laravel's authentication features before allowing Laravel Fortify to implement these features for you.
 
@@ -54,7 +54,7 @@ If you are not using an application starter kit and your application needs authe
 
 If you choose to install Fortify, your user interface will make requests to Fortify's authentication routes that are detailed in this documentation in order to authenticate and register users.
 
-If you choose to manually interact with Laravel's authentication services instead of using Fortify, you may do so by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](/docs/{{version}}/verification) documentation.
+If you choose to manually interact with Laravel's authentication services instead of using Fortify, you may do so by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](verification.md) documentation.
 
 <a name="laravel-fortify-and-laravel-sanctum"></a>
 #### Laravel Fortify and Laravel Sanctum

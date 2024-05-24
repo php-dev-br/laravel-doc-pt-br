@@ -7,7 +7,7 @@
 ## Prólogo
 
 - [Notas de Versão](prologo/versoes.md)
-- [Guia de Atualização](upgrade.md)
+- [Guia de Atualização](prologo/atualizacao.md)
 - [Guia de Contribuição](contributions.md)
 
 ## Começando

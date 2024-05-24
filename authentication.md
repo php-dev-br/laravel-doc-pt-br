@@ -75,7 +75,7 @@ Laravel includes built-in authentication and session services which are typicall
 
 **Application Starter Kits**
 
-As discussed in this documentation, you can interact with these authentication services manually to build your application's own authentication layer. However, to help you get started more quickly, we have released [free packages](starter-kits.md) that provide robust, modern scaffolding of the entire authentication layer. These packages are [Laravel Breeze](starter-kits.md#laravel-breeze), [Laravel Jetstream](/docs/{{version}}/starter-kits#laravel-jetstream), and [Laravel Fortify](/docs/{{version}}/fortify).
+As discussed in this documentation, you can interact with these authentication services manually to build your application's own authentication layer. However, to help you get started more quickly, we have released [free packages](starter-kits.md) that provide robust, modern scaffolding of the entire authentication layer. These packages are [Laravel Breeze](starter-kits.md#laravel-breeze), [Laravel Jetstream](starter-kits.md#laravel-jetstream), and [Laravel Fortify](fortify.md).
 
 _Laravel Breeze_ is a simple, minimal implementation of all of Laravel's authentication features, including login, registration, password reset, email verification, and password confirmation. Laravel Breeze's view layer is comprised of simple [Blade templates](blade.md) styled with [Tailwind CSS](https://tailwindcss.com). To get started, check out the documentation on Laravel's [application starter kits](starter-kits.md).
 

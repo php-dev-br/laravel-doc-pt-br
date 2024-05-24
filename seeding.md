@@ -24,7 +24,7 @@ To generate a seeder, execute the `make:seeder` [Artisan command](artisan.md). A
 php artisan make:seeder UserSeeder
 ```
 
-A seeder class only contains one method by default: `run`. This method is called when the `db:seed` [Artisan command](artisan.md) is executed. Within the `run` method, you may insert data into your database however you wish. You may use the [query builder](queries.md) to manually insert data or you may use [Eloquent model factories](/docs/{{version}}/eloquent-factories).
+A seeder class only contains one method by default: `run`. This method is called when the `db:seed` [Artisan command](artisan.md) is executed. Within the `run` method, you may insert data into your database however you wish. You may use the [query builder](queries.md) to manually insert data or you may use [Eloquent model factories](eloquent-factories.md).
 
 As an example, let's modify the default `DatabaseSeeder` class and add a database insert statement to the `run` method:
 
