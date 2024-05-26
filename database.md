@@ -51,7 +51,7 @@ DB_FOREIGN_KEYS=false
 ```
 
 > [!NOTE]
-> If you use the [Laravel installer](installation.md#creating-a-laravel-project) to create your Laravel application and select SQLite as your database, Laravel will automatically create a `database/database.sqlite` file and run the default [database migrations](migrations.md) for you.
+> If you use the [Laravel installer](comecando/instalacao.md#creating-a-laravel-project) to create your Laravel application and select SQLite as your database, Laravel will automatically create a `database/database.sqlite` file and run the default [database migrations](migrations.md) for you.
 
 <a name="mssql-configuration"></a>
 #### Microsoft SQL Server Configuration

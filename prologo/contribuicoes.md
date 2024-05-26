@@ -1,19 +1,19 @@
 <!-- source_url: https://github.com/laravel/docs/blob/11.x/contributions.md -->
 <!-- revision: fbf431b3d30df9fbb3ac58194c752619b6c354a2 -->
-<!-- status: wip -->
+<!-- status: ready -->
 
 # Guia de Contribuição
 
 - [Relatório de Erro](#relatorio-de-erro)
 - [Perguntas de Suporte](#perguntas-de-suporte)
 - [Discussão do Desenvolvimento Principal](#discussao-do-desenvolvimento-principal)
-- [Which Branch?](#which-branch)
-- [Compiled Assets](#compiled-assets)
-- [Security Vulnerabilities](#security-vulnerabilities)
-- [Coding Style](#coding-style)
+- [Qual _Branch_?](#qual-branch)
+- [Arquivos Compilados](#arquivos-compilados)
+- [Vulnerabilidades de Segurança](#vulnerabilidades-de-seguranca)
+- [Estilo de Código](#estilo-de-codigo)
   - [PHPDoc](#phpdoc)
   - [StyleCI](#styleci)
-- [Code of Conduct](#code-of-conduct)
+- [Código de Conduta](#codigo-de-conduta)
 
 ## Relatório de Erro
 

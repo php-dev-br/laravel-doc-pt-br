@@ -32,7 +32,7 @@ If you're new to Laravel, feel free to jump into the [Laravel Bootcamp](https://
 <a name="laravel-breeze-installation"></a>
 ### Installation
 
-First, you should [create a new Laravel application](installation.md). If you create your application using the [Laravel installer](installation.md#creating-a-laravel-project), you will be prompted to install Laravel Breeze during the installation process. Otherwise, you will need to follow the manual installation instructions below.
+First, you should [create a new Laravel application](comecando/instalacao.md). If you create your application using the [Laravel installer](comecando/instalacao.md#creating-a-laravel-project), you will be prompted to install Laravel Breeze during the installation process. Otherwise, you will need to follow the manual installation instructions below.
 
 If you have already created a new Laravel application without a starter kit, you may manually install Laravel Breeze using Composer:
 

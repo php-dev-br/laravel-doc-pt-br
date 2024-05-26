@@ -12,7 +12,7 @@
 
 ## Começando
 
-- [Instalação](installation.md)
+- [Instalação](comecando/instalacao.md)
 - [Configuração](configuration.md)
 - [Estrutura de diretório](structure.md)
 - [Front-end](frontend.md)
