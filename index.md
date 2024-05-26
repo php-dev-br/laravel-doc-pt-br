@@ -8,7 +8,7 @@
 
 - [Notas de Versão](prologo/versoes.md)
 - [Guia de Atualização](prologo/atualizacao.md)
-- [Guia de Contribuição](contributions.md)
+- [Guia de Contribuição](prologo/contribuicoes.md)
 
 ## Começando
 

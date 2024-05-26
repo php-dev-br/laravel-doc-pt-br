@@ -1,6 +1,6 @@
 <!-- source_url: https://github.com/laravel/docs/blob/11.x/upgrade.md -->
 <!-- revision: b8bf6ca8a64bd05c27e4ef2b6eddbd961d02bf2b -->
-<!-- status: wip -->
+<!-- status: ready -->
 
 # Guia de Atualização
 
@@ -18,7 +18,7 @@
 ## Mudanças de Médio Impacto
 
 - [Carbon 3](#carbon-3)
-- [Atualização do Hash da Senha](#atualizacao-do-hash-da-senha)
+- [Atualização do _Hash_ de Senha](#atualizacao-do-hash-de-senha)
 - [Limitação de Taxa por Segundo](#limitacao-de-taxa-por-segundo)
 
 ## Mudanças de Baixo Impacto
@@ -26,7 +26,7 @@
 - [Remoção do Doctrine DBAL](#remocao-do-doctrine-dbal)
 - [Método `casts` do Modelo do Eloquent](#metodo-casts-do-modelo-do-eloquent)
 - [Tipos Espaciais](#tipos-espaciais)
-- [Spatie Once Package](#spatie-once-package)
+- [Pacote Spatie Once](#pacote-spatie-once)
 - [O Contrato `Enumerable`](#o-contrato-enumerable)
 - [O Contrato `UserProvider`](#o-contrato-userprovider)
 - [O Contrato `Authenticatable`](#o-contrato-authenticatable)
@@ -37,7 +37,7 @@
 
 > **Nota:** Tentamos documentar todas as alterações significativas possíveis.
 > Como algumas dessas alterações importantes estão em partes obscuras do
-> framework, apenas uma parte dessas alterações pode realmente afetar sua
+> _framework_, apenas uma parte dessas alterações pode realmente afetar sua
 > aplicação.
 > Quer economizar tempo? Você pode usar o
 > [Laravel Shift](https://laravelshift.com/) para automatizar as atualizações da
@@ -113,7 +113,7 @@ deste pacote.
 O Laravel 11 introduz uma nova estrutura de aplicação padrão com menos arquivos
 padrão.
 Ou seja, as novas aplicações Laravel contêm menos provedores de serviços,
-middlewares e arquivos de configuração.
+_middlewares_ e arquivos de configuração.
 
 No entanto, **não recomendamos** que as aplicações do Laravel 10 sendo
 atualizadas para o Laravel 11 tentem migrar sua estrutura de aplicação, pois o
@@ -122,11 +122,11 @@ aplicação do Laravel 10.
 
 ### Autenticação
 
-#### Atualização do Hash da Senha
+#### Atualização do _Hash_ de Senha
 
-O Laravel 11 irá atualizar automaticamente o hash das senhas dos seus usuários
-durante a autenticação se o "fator de trabalho" do seu algoritmo de hash tiver
-sido atualizado desde o último hash da senha.
+O Laravel 11 irá atualizar automaticamente o _hash_ das senhas dos seus usuários
+durante a autenticação se o "fator de trabalho" do seu algoritmo de _hash_ tiver
+sido atualizado desde que o último _hash_ de senha foi feito.
 
 Normalmente, isso não deve quebrar sua aplicação; entretanto, você pode
 desabilitar este comportamento adicionando a opção `rehash_on_login` ao arquivo
@@ -142,8 +142,8 @@ de configuração `config/hashing.php` da sua aplicação:
 
 O contrato `Illuminate\Contracts\Auth\UserProvider` recebeu um novo método
 `rehashPasswordIfRequired`.
-Este método é responsável por refazer o hash e armazenar a senha do usuário no
-armazenamento quando o fator de trabalho do algoritmo de hash da aplicação for
+Este método é responsável por refazer o _hash_ e armazenar a senha do usuário no
+armazenamento quando o fator de trabalho do algoritmo de _hash_ da aplicação for
 alterado.
 
 Se sua aplicação ou pacote definir uma classe que implemente essa interface,
@@ -176,7 +176,7 @@ public function getAuthPasswordName()
 ```
 
 O modelo `User` padrão incluído no Laravel recebe este método automaticamente,
-uma vez que o método está incluído na trait `Illuminate\Auth\Authenticatable`.
+uma vez que o método está incluído na _trait_ `Illuminate\Auth\Authenticatable`.
 
 #### A Classe `AuthenticationException`
 
@@ -193,18 +193,18 @@ if ($e instanceof AuthenticationException) {
 }
 ```
 
-### Cache
+### _Cache_
 
-#### Prefixos de Chave de Cache
+#### Prefixos de Chave de _Cache_
 
 **Probabilidade de Impacto: Muito Baixa**
 
-Anteriormente, se um prefixo de chave de cache fosse definido para os
-armazenamentos de cache DynamoDB, Memcached ou Redis, o Laravel acrescentaria
+Anteriormente, se um prefixo de chave de _cache_ fosse definido para os
+armazenamentos de _cache_ DynamoDB, Memcached ou Redis, o Laravel acrescentaria
 um `:` ao prefixo.
-No Laravel 11, o prefixo da chave de cache não recebe o sufixo `:`.
+No Laravel 11, o prefixo da chave de _cache_ não recebe o sufixo `:`.
 Se desejar manter o comportamento de prefixo anterior, você pode adicionar
-manualmente o sufixo `:` ao prefixo da chave de cache.
+manualmente o sufixo `:` ao prefixo da chave de _cache_.
 
 ### Coleções
 
@@ -246,7 +246,7 @@ de modelo do Eloquent.
 
 Ao modificar uma coluna, agora você deve incluir explicitamente todos os
 modificadores que deseja manter na definição da coluna após ela ser alterada.
-Quaisquer atributos ausentes serão descartados.
+Qualquer atributo ausente será descartado.
 Por exemplo, para manter os atributos `unsigned`, `default` e `comment`, você
 deve chamar cada modificador explicitamente ao alterar a coluna, mesmo que esses
 atributos tenham sido atribuídos à coluna por uma migração anterior.
@@ -329,8 +329,8 @@ $table->double('valor');
 O tipo de coluna `float` agora cria uma coluna equivalente `FLOAT` sem o total
 de dígitos e casas decimais (dígitos após o ponto decimal), mas com uma
 especificação `$precision` opcional para determinar o tamanho do armazenamento
-como uma coluna de precisão simples de 4 bytes ou uma coluna de precisão dupla
-de 8 bytes.
+como uma coluna de precisão simples de 4 _bytes_ ou uma coluna de precisão dupla
+de 8 _bytes_.
 Portanto, você pode remover os argumentos `$total` e `$places` e especificar o
 argumento opcional `$precision` para o valor desejado e conforme a documentação
 do seu banco de dados:
@@ -353,15 +353,15 @@ $table->double('valor')->unsigned();
 $table->float('valor', precision: 53)->unsigned();
 ```
 
-#### Driver Dedicado MariaDB
+#### _Driver_ Dedicado MariaDB
 
 **Probabilidade de Impacto: Muito Baixa**
 
-Em vez de sempre usar o driver MySQL ao conectar-se a bancos de dados MariaDB, o
-Laravel 11 adiciona um driver de banco de dados dedicado para o MariaDB.
+Em vez de sempre usar o _driver_ MySQL ao conectar-se a bancos de dados MariaDB,
+o Laravel 11 adiciona um _driver_ de banco de dados dedicado para o MariaDB.
 
 Se a sua aplicação se conecta a um banco de dados MariaDB, você poderá atualizar
-a configuração da conexão para o novo driver `mariadb` para se beneficiar dos
+a configuração da conexão para o novo _driver_ `mariadb` para se beneficiar dos
 recursos específicos do MariaDB no futuro:
 
 ```php
@@ -372,12 +372,12 @@ recursos específicos do MariaDB no futuro:
 // ...
 ```
 
-Atualmente, o novo driver MariaDB se comporta como o driver MySQL atual com uma
-exceção: o método `uuid` do construtor de esquema cria colunas UUID nativas em
-vez de colunas `char(36)`.
+Atualmente, o novo _driver_ MariaDB se comporta como o _driver_ MySQL atual com
+uma exceção: o método `uuid` do construtor de esquema cria colunas UUID nativas
+em vez de colunas `char(36)`.
 
 Se suas migrações existentes usam o método `uuid` do construtor de esquema e
-você optar por usar o novo driver de banco de dados `mariadb`, você deverá
+você optar por usar o novo _driver_ de banco de dados `mariadb`, você deverá
 atualizar as invocações do método `uuid` da sua migração para `char` para evitar
 alterações significativas ou comportamento inesperado:
 
@@ -422,9 +422,9 @@ PostgreSQL foram removidos de acordo.
 
 A lista de classes e métodos relacionados ao Doctrine DBAL a seguir foi
 removida.
-O Laravel não depende mais deste pacote e registrar tipos customizados do
+O Laravel não depende mais deste pacote e registrar tipos personalizados do
 Doctrine não é mais necessário para a criação e alteração adequada de vários
-tipos de colunas que anteriormente exigiam tipos customizados:
+tipos de colunas que anteriormente exigiam tipos personalizados:
 
 - Propriedade de classe
   `Illuminate\Database\Schema\Builder::$alwaysUsesNativeSchemaOperationsIfPossible`
@@ -443,11 +443,11 @@ tipos de colunas que anteriormente exigiam tipos customizados:
 - Classe `Illuminate\Database\Schema\Grammars\RenameColumn`
 - Método `Illuminate\Database\Schema\Grammars\Grammar::getDoctrineTableDiff()`
 
-Além disso, não é mais necessário registrar os tipos customizados do Doctrine
+Além disso, não é mais necessário registrar os tipos personalizados do Doctrine
 via `dbal.types` no arquivo de configuração `database` da sua aplicação.
 
 Se você estava usando o Doctrine DBAL anteriormente para inspecionar seu banco
-de dados e suas tabelas associadas, em vez disso, você pode usar os novos
+de dados e suas tabelas associativas, em vez disso, você pode usar os novos
 métodos de esquema nativos do Laravel (`Schema::getTables()`,
 `Schema::getColumns()`, `Schema::getIndexes()`, `Schema::getForeignKeys()`,
 etc.).
@@ -499,13 +499,11 @@ public function scalar($query, $bindings = [], $useReadPdo = true);
 O Laravel 11 suporta Carbon 2 e Carbon 3.
 Carbon é uma biblioteca de manipulação de datas usada amplamente pelo Laravel e
 por pacotes em todo o ecossistema.
-Se você instalar o Carbon 3, deverá revisar o
-[log de alterações](https://github.com/briannesbitt/Carbon/releases/tag/3.0.0)
+Se você instalar o Carbon 3, deverá revisar a
+[lista de alterações](https://github.com/briannesbitt/Carbon/releases/tag/3.0.0)
 do Carbon.
 
 ### Correio
-
-<a name="the-mailer-contract"></a>
 
 #### O Contrato `Mailer`
 
@@ -533,7 +531,7 @@ de serviços, você deve atualizar seu pacote para usar o novo método
 
 O método `addProviderToBootstrapFile` adicionará automaticamente o provedor de
 serviços que você publicou ao arquivo `bootstrap/providers.php` da aplicação,
-uma vez que o array `providers` não existe no arquivo de configuração
+uma vez que o _array_ `providers` não existe no arquivo de configuração
 `config/app.php` das novas aplicações Laravel 11.
 
 ```php
@@ -560,7 +558,7 @@ public function rollBack();
 
 **Probabilidade de Impacto: Muito Baixa**
 
-Anteriormente, os trabalhos síncronos (trabalhos que usavam o driver de
+Anteriormente, os trabalhos síncronos (trabalhos que usavam o _driver_ de
 fila `sync`) seriam executados imediatamente, independentemente da opção de
 configuração `after_commit` da conexão da fila ter sido definida como `true` ou
 o método `afterCommit` ter sido invocado no trabalho.
@@ -643,8 +641,7 @@ Portanto, você deve atualizar a dependência do Laravel Spark Stripe da sua
 aplicação para `^5.0` no seu arquivo `composer.json`.
 
 O Spark Stripe 5.0 não carrega mais as migrações automaticamente do seu
-diretório
-de migrações.
+diretório de migrações.
 Em vez disso, você deve executar o seguinte comando para publicar as migrações
 do Spark Stripe na sua aplicação:
 
@@ -667,8 +664,7 @@ Portanto, você deve atualizar a dependência do Laravel Passport da sua aplica�
 para `^12.0` no seu arquivo `composer.json`.
 
 O Passport 12.0 não carrega mais as migrações automaticamente do seu diretório
-de
-migrações.
+de migrações.
 Em vez disso, você deve executar o seguinte comando para publicar as migrações
 do Passport na sua aplicação:
 
@@ -707,7 +703,7 @@ php artisan vendor:publish --tag=sanctum-migrations
 ```
 
 Em seguida, no arquivo de configuração `config/sanctum.php` da sua aplicação,
-você deve atualizar as referências aos middlewares `authenticate_session`,
+você deve atualizar as referências aos _middlewares_ `authenticate_session`,
 `encrypt_cookies` e `validate_csrf_token` para o seguinte:
 
 ```php
@@ -743,7 +739,7 @@ php artisan vendor:publish --tag=telescope-migrations
 
 O Laravel 11 agora fornece sua própria
 [função `once`](../helpers.md#method-once) para garantir que uma determinada
-closure seja executada apenas uma vez.
+_closure_ seja executada apenas uma vez.
 Portanto, se sua aplicação depende do pacote `spatie/once`, você deve removê-lo
 do arquivo `composer.json` da sua aplicação para evitar conflitos.
 
@@ -756,5 +752,5 @@ esses arquivos sincronizados com sua aplicação.
 Algumas dessas alterações serão abordadas neste guia de atualização, mas outras,
 como alterações nos arquivos de configuração ou comentários, não serão.
 Você pode visualizar facilmente as alterações com a
-[ferramenta de comparação do GitHub](https://github.com/laravel/laravel/compare/10.x...11.x) e escolher quais atualizações são
-importantes para você.
+[ferramenta de comparação do GitHub](https://github.com/laravel/laravel/compare/10.x...11.x)
+e escolher quais atualizações são importantes para você.
