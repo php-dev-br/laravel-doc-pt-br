@@ -35,7 +35,8 @@
 
 #### Tempo estimado de atualização: 15 minutos
 
-> **Nota:** Tentamos documentar todas as alterações significativas possíveis.
+> **Nota:**
+> Tentamos documentar todas as alterações significativas possíveis.
 > Como algumas dessas alterações importantes estão em partes obscuras do
 > _framework_, apenas uma parte dessas alterações pode realmente afetar sua
 > aplicação.
@@ -98,7 +99,7 @@ para garantir que está ciente de quaisquer alterações significativas adiciona
 - [Laravel Telescope](#telescope)
 
 Se você instalou manualmente o instalador do Laravel, você deve atualizar o
-instalador via Composer:
+instalador usando o Composer:
 
 ```bash
 composer global require laravel/installer:^5.6

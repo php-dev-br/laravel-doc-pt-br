@@ -249,7 +249,7 @@ php artisan reverb:start
 
 Além disso, o Reverb oferece suporte ao dimensionamento horizontal por meio dos
 recursos de publicação/assinatura do Redis, permitindo distribuir o tráfego
-WebSocket por vários servidores Reverb de _back-end_, todos suportando uma única
+WebSocket por vários servidores Reverb de _backend_, todos suportando uma única
 aplicação de alta demanda.
 
 Para mais informações sobre o Laravel Reverb, consulte a
