@@ -32,8 +32,11 @@
 
 The default Laravel application structure is intended to provide a great starting point for both large and small applications. But you are free to organize your application however you like. Laravel imposes almost no restrictions on where any given class is located - as long as Composer can autoload the class.
 
-> [!NOTE]
-> New to Laravel? Check out the [Laravel Bootcamp](https://bootcamp.laravel.com) for a hands-on tour of the framework while we walk you through building your first Laravel application.
+> **Nota:**
+> Começando agora com o Laravel?
+> Confira o [Bootcamp Laravel](https://bootcamp.laravel.com) para uma jornada
+> prática pelo _framework_ enquanto orientamos você na construção da sua
+> primeira aplicação Laravel.
 
 <a name="the-root-directory"></a>
 ## The Root Directory

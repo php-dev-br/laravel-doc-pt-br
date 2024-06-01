@@ -148,7 +148,7 @@ If you plan to broadcast your events using [Ably](https://ably.com), you should 
 composer require ably/ably-php
 ```
 
-Next, you should configure your Ably credentials in the `config/broadcasting.php` configuration file. An example Ably configuration is already included in this file, allowing you to quickly specify your key. Typically, this value should be set via the `ABLY_KEY` [environment variable](configuration.md#environment-configuration):
+Next, you should configure your Ably credentials in the `config/broadcasting.php` configuration file. An example Ably configuration is already included in this file, allowing you to quickly specify your key. Typically, this value should be set via the `ABLY_KEY` [environment variable](comecando/configuracao.md#configuracao-do-ambiente):
 
 ```ini
 ABLY_KEY=your-ably-key

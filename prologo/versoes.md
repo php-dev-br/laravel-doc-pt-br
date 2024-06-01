@@ -67,7 +67,7 @@ Além disso, revise as versões do banco de dados
 
 O Laravel 11 continua as melhorias feitas no Laravel 10.x, introduzindo uma
 estrutura de aplicação simplificada, limitação de taxa por segundo, roteamento
-de integridade, rotação elegante de chaves de criptografia, melhorias nos testes
+de integridade, rotação elegante de chaves de encriptação, melhorias nos testes
 de fila, transporte de e-mail [Resend](https://resend.com), integração do
 validador do Prompts, novos comandos do Artisan e muito mais.
 Além disso, o Laravel Reverb, um servidor WebSocket próprio escalonável, foi
@@ -298,35 +298,35 @@ Quando requisições HTTP forem feitas a esta rota, o Laravel também despachar�
 evento `DiagnosingHealth`, permitindo realizar verificações de integridade
 adicionais relevantes para sua aplicação.
 
-### Rotação Elegante das Chaves de Criptografia
+### Rotação Elegante das Chaves de Encriptação
 
-_A rotação elegante das chaves de criptografia foi contribuída por
+_A rotação elegante das chaves de encriptação foi contribuída por
 [Taylor Otwell](https://github.com/taylorotwell)_.
 
-Como o Laravel criptografa todos os _cookies_, incluindo o _cookie_ de sessão da
+Como o Laravel encripta todos os _cookies_, incluindo o _cookie_ de sessão da
 sua aplicação, essencialmente toda requisição para uma aplicação Laravel depende
-de criptografia.
-No entanto, por causa disso, a rotação da chave de criptografia da sua aplicação
-desconectaria todos os usuários da sua aplicação.
-Além disso, torna-se impossível descriptografar os dados criptografados pela
-chave de criptografia anterior.
+de encriptação.
+No entanto, por causa disso, a rotação da chave de encriptação da sua aplicação
+desconectaria todas as pessoas usuárias da sua aplicação.
+Além disso, torna-se impossível desencriptar os dados encriptados pela chave de
+encriptação anterior.
 
-O Laravel 11 permite que você defina as chaves de criptografia anteriores da sua
+O Laravel 11 permite que você defina as chaves de encriptação anteriores da sua
 aplicação como uma lista delimitada por vírgula através da variável de ambiente
 `APP_PREVIOUS_KEYS`.
 
-Ao criptografar valores, o Laravel sempre usará a chave de criptografia "atual",
-que está na variável de ambiente `APP_KEY`.
-Ao descriptografar valores, o Laravel tentará primeiro a chave atual.
-Se a descriptografia falhar usando a chave atual, o Laravel tentará todas as
-chaves anteriores até que uma das chaves seja capaz de descriptografar o valor.
+Ao encriptar valores, o Laravel sempre usará a chave de encriptação atual, que
+está na variável de ambiente `APP_KEY`.
+Ao desencriptar valores, o Laravel tentará primeiro a chave atual.
+Se a desencriptação falhar usando a chave atual, o Laravel tentará todas as
+chaves anteriores até que uma das chaves seja capaz de desencriptar o valor.
 
-Essa abordagem de descriptografia elegante permite que os usuários continuem
-usando sua aplicação ininterruptamente, mesmo que sua chave de criptografia
-seja alternada.
+Essa abordagem de desencriptação elegante permite que as pessoas usuárias
+continuem usando sua aplicação ininterruptamente, mesmo que sua chave de
+encriptação seja alternada.
 
-Para mais informações sobre criptografia no Laravel, confira a
-[documentação sobre criptografia](../encryption.md).
+Para mais informações sobre encriptação no Laravel, confira a
+[documentação sobre encriptação](../encryption.md).
 
 ### Atualização Automática do _Hash_ de Senha
 
@@ -340,8 +340,8 @@ de configuração `config/hashing.php` ou da variável de ambiente `BCRYPT_ROUND
 Normalmente, o fator de trabalho do bcrypt deve ser aumentado ao longo do tempo
 à medida que o poder de processamento das CPUs/GPUs aumenta.
 Se você aumentar o fator de trabalho do bcrypt para sua aplicação, o Laravel irá
-refazer as senhas dos usuários de maneira elegante e automática à medida que os
-usuários se autenticam na sua aplicação.
+refazer as senhas das pessoas usuárias de maneira elegante e automática à medida
+que as pessoas usuárias se autenticam na sua aplicação.
 
 ### Validação de _Prompt_
 
@@ -350,7 +350,7 @@ _A integração com o validador do Prompts foi contribuída por
 
 [Laravel Prompts](../prompts.md) é um pacote PHP para adicionar formulários
 bonitos e fáceis de usar às suas aplicações de linha de comando, com recursos
-semelhantes aos de navegador, incluindo texto de espaço reservado e validação.
+semelhantes aos de navegador, incluindo texto de sugestão e validação.
 
 O Laravel Prompts suporta validação de entrada por meio de _closures_:
 

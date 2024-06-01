@@ -77,7 +77,7 @@ aplicação:
 Se sua aplicação estiver usando Laravel Cashier Stripe, Passport, Sanctum, Spark
 Stripe ou Telescope, você precisará publicar suas migrações na sua aplicação.
 Cashier Stripe, Passport, Sanctum, Spark Stripe e Telescope **não carregam mais
-migrações automaticamente do seu diretório de migrações**.
+migrações automaticamente do diretório de migrações**.
 Portanto, você deve executar o seguinte comando para publicar suas migrações na
 sua aplicação:
 
@@ -125,9 +125,9 @@ aplicação do Laravel 10.
 
 #### Atualização do _Hash_ de Senha
 
-O Laravel 11 irá atualizar automaticamente o _hash_ das senhas dos seus usuários
-durante a autenticação se o "fator de trabalho" do seu algoritmo de _hash_ tiver
-sido atualizado desde que o último _hash_ de senha foi feito.
+O Laravel 11 irá atualizar automaticamente o _hash_ das senhas das pessoas
+usuárias durante a autenticação se o fator de trabalho do algoritmo de _hash_
+tiver sido atualizado desde que o último _hash_ de senha foi feito.
 
 Normalmente, isso não deve quebrar sua aplicação; entretanto, você pode
 desabilitar este comportamento adicionando a opção `rehash_on_login` ao arquivo
@@ -143,9 +143,9 @@ de configuração `config/hashing.php` da sua aplicação:
 
 O contrato `Illuminate\Contracts\Auth\UserProvider` recebeu um novo método
 `rehashPasswordIfRequired`.
-Este método é responsável por refazer o _hash_ e armazenar a senha do usuário no
-armazenamento quando o fator de trabalho do algoritmo de _hash_ da aplicação for
-alterado.
+Este método é responsável por refazer o _hash_ e armazenar a senha da pessoa
+usuária no armazenamento quando o fator de trabalho do algoritmo de _hash_ da
+aplicação for alterado.
 
 Se sua aplicação ou pacote definir uma classe que implemente essa interface,
 você deverá adicionar o novo método `rehashPasswordIfRequired` à sua
@@ -616,7 +616,7 @@ new ThrottlesExceptionsWithRedis($attempts, 2 * 60);
 
 O Laravel 11 não suporta mais o Cashier Stripe 14.x.
 Portanto, você deve atualizar a dependência do Laravel Cashier Stripe da sua
-aplicação para `^15.0` no seu arquivo `composer.json`.
+aplicação para `^15.0` no arquivo `composer.json`.
 
 O Cashier Stripe 15.0 não carrega mais as migrações automaticamente do seu
 diretório de migrações.
@@ -639,7 +639,7 @@ para saber sobre alterações adicionais.
 
 O Laravel 11 não suporta mais o Laravel Spark Stripe 4.x.
 Portanto, você deve atualizar a dependência do Laravel Spark Stripe da sua
-aplicação para `^5.0` no seu arquivo `composer.json`.
+aplicação para `^5.0` no arquivo `composer.json`.
 
 O Spark Stripe 5.0 não carrega mais as migrações automaticamente do seu
 diretório de migrações.
@@ -662,10 +662,10 @@ para saber sobre alterações adicionais.
 
 O Laravel 11 não suporta mais o Laravel Passport 11.x.
 Portanto, você deve atualizar a dependência do Laravel Passport da sua aplicação
-para `^12.0` no seu arquivo `composer.json`.
+para `^12.0` no arquivo `composer.json`.
 
-O Passport 12.0 não carrega mais as migrações automaticamente do seu diretório
-de migrações.
+O Passport 12.0 não carrega mais as migrações automaticamente do diretório de
+migrações.
 Em vez disso, você deve executar o seguinte comando para publicar as migrações
 do Passport na sua aplicação:
 
@@ -692,9 +692,9 @@ public function boot(): void
 
 O Laravel 11 não suporta mais o Laravel Sanctum 3.x.
 Portanto, você deve atualizar a dependência do Laravel Sanctum da sua aplicação
-para `^4.0` no seu arquivo `composer.json`.
+para `^4.0` no arquivo `composer.json`.
 
-O Sanctum 4.0 não carrega mais as migrações automaticamente do seu diretório de
+O Sanctum 4.0 não carrega mais as migrações automaticamente do diretório de
 migrações.
 Em vez disso, você deve executar o seguinte comando para publicar as migrações
 do Sanctum na sua aplicação:
@@ -723,10 +723,10 @@ você deve atualizar as referências aos _middlewares_ `authenticate_session`,
 
 O Laravel 11 não suporta mais o Laravel Telescope 4.x.
 Portanto, você deve atualizar a dependência do Telescópio Laravel da sua
-aplicação para `^5.0` no seu arquivo `composer.json`.
+aplicação para `^5.0` no arquivo `composer.json`.
 
-O Telescope 5.0 não carrega mais as migrações automaticamente do seu diretório
-de migrações.
+O Telescope 5.0 não carrega mais as migrações automaticamente do diretório de
+migrações.
 Em vez disso, você deve executar o seguinte comando para publicar as migrações
 do Telescope na sua aplicação:
 

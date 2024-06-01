@@ -257,7 +257,7 @@ When using chained `when` methods, the scheduled command will only execute if al
 <a name="environment-constraints"></a>
 #### Environment Constraints
 
-The `environments` method may be used to execute tasks only on the given environments (as defined by the `APP_ENV` [environment variable](configuration.md#environment-configuration)):
+The `environments` method may be used to execute tasks only on the given environments (as defined by the `APP_ENV` [environment variable](comecando/configuracao.md#configuracao-do-ambiente)):
 
     Schedule::command('emails:send')
                 ->daily()
@@ -361,7 +361,7 @@ By default, multiple tasks scheduled at the same time will execute sequentially 
 <a name="maintenance-mode"></a>
 ### Maintenance Mode
 
-Your application's scheduled tasks will not run when the application is in [maintenance mode](configuration.md#maintenance-mode), since we don't want your tasks to interfere with any unfinished maintenance you may be performing on your server. However, if you would like to force a task to run even in maintenance mode, you may call the `evenInMaintenanceMode` method when defining the task:
+Your application's scheduled tasks will not run when the application is in [maintenance mode](comecando/configuracao.md#modo-de-manutencao), since we don't want your tasks to interfere with any unfinished maintenance you may be performing on your server. However, if you would like to force a task to run even in maintenance mode, you may call the `evenInMaintenanceMode` method when defining the task:
 
     Schedule::command('emails:send')->evenInMaintenanceMode();
 

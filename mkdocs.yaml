@@ -7,14 +7,14 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - index.md
+  - Documentação do Laravel: index.md
   - Prólogo:
       - 'Notas de Versão': prologo/versoes.md
       - 'Guia de Atualização': prologo/atualizacao.md
       - 'Guia de Contribuição': prologo/contribuicoes.md
   - Começando:
       - 'Instalação': comecando/instalacao.md
-      - 'Configuração': configuration.md
+      - 'Configuração': comecando/configuracao.md
       - 'Estrutura de diretório': structure.md
       - 'Front-end': frontend.md
       - 'Kits de iniciante': starter-kits.md
@@ -26,6 +26,7 @@ nav:
       - 'Fachadas': facades.md
   - O Básico:
       - 'Roteamento': routing.md
+      - 'Redirecionamentos': redirects.md
       - 'Middleware': middleware.md
       - 'Proteção contra CSRF': csrf.md
       - 'Controladores': controllers.md
@@ -63,7 +64,7 @@ nav:
       - 'Autenticação': authentication.md
       - 'Autorização': authorization.md
       - 'Verificação de e-mail': verification.md
-      - 'Criptografia': encryption.md
+      - 'Encriptação': encryption.md
       - 'Hashing': hashing.md
       - 'Redefinição de senha': passwords.md
   - Banco de dados:

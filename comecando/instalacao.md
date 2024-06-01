@@ -157,9 +157,9 @@ dependendo se a sua aplicação está sendo executada na sua máquina local ou e
 servidor _web_ de produção, muitos valores de configuração importantes são
 definidos usando o arquivo `.env` que existe na raiz da sua aplicação.
 
-Seu arquivo `.env` não deve ser enviado para o controle de versão da sua
-aplicação, pois cada pessoa desenvolvedora e servidor que usa sua aplicação pode
-exigir uma configuração de ambiente diferente.
+O arquivo `.env` não deve ser enviado para o controle de versão da sua
+aplicação, pois cada pessoa desenvolvedora ou servidor que usa sua aplicação
+pode exigir uma configuração de ambiente diferente.
 Além disso, isso seria um risco de segurança caso alguém sem autorização
 obtivesse acesso ao repositório do seu controle de versão, uma vez que quaisquer
 credenciais confidenciais seriam expostas.
@@ -167,7 +167,7 @@ credenciais confidenciais seriam expostas.
 > **Nota:**
 > Para obter mais informações sobre o arquivo `.env` e a configuração baseada em
 > ambiente, verifique a
-> [documentação completa de configuração](../configuration.md#environment-configuration).
+> [documentação completa da configuração](configuracao.md#configuracao-do-ambiente).
 
 ### Bancos de Dados e Migrações
 
@@ -181,8 +181,8 @@ Durante a criação do projeto, o Laravel criou um arquivo
 criar as tabelas do banco de dados da aplicação.
 
 Se preferir usar outro _driver_ de banco de dados, como MySQL ou PostgreSQL,
-você pode atualizar seu arquivo de configuração `.env` para usar o banco de
-dados apropriado.
+você pode atualizar o arquivo de configuração `.env` para usar o banco de dados
+apropriado.
 Por exemplo, se você deseja usar o MySQL, atualize as variáveis `DB_*` do seu
 arquivo de configuração `.env` assim:
 
@@ -301,7 +301,7 @@ Em seguida, você deve garantir que o Windows Subsystem for Linux 2 (WSL2) estej
 instalado e habilitado.
 O WSL permite que você execute binários do Linux nativamente no Windows 10.
 Informações sobre como instalar e habilitar o WSL2 podem ser encontradas na
-[documentação do ambiente de desenvolvedor da Microsoft](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+[documentação do ambiente de pessoa desenvolvedora da Microsoft](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
 > **Nota:**
 > Após instalar e habilitar o WSL2, você deve garantir que o Docker Desktop
@@ -467,12 +467,12 @@ aprender a seguir.
 Primeiro, recomendamos fortemente que você se familiarize com o funcionamento do
 Laravel lendo a seguinte documentação:
 
-- [Request Lifecycle](../lifecycle.md)
-- [Configuration](../configuration.md)
-- [Directory Structure](../structure.md)
+- [Ciclo de Vida da Requisição](../lifecycle.md)
+- [Configuração](configuracao.md)
+- [Estrutura de Diretório](../structure.md)
 - [Frontend](../frontend.md)
-- [Service Container](../container.md)
-- [Facades](../facades.md)
+- [Contêiner de Serviço](../container.md)
+- [Fachadas](../facades.md)
 
 A maneira como você deseja usar o Laravel também ditará os próximos passos em
 sua jornada.

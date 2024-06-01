@@ -13,7 +13,7 @@
 ## Começando
 
 - [Instalação](comecando/instalacao.md)
-- [Configuração](configuration.md)
+- [Configuração](comecando/configuracao.md)
 - [Estrutura de diretório](structure.md)
 - [Front-end](frontend.md)
 - [Kits de iniciante](starter-kits.md)
@@ -70,7 +70,7 @@
 - [Autenticação](authentication.md)
 - [Autorização](authorization.md)
 - [Verificação de e-mail](verification.md)
-- [Criptografia](encryption.md)
+- [Encriptação](encryption.md)
 - [Hashing](hashing.md)
 - [Redefinição de senha](passwords.md)
 

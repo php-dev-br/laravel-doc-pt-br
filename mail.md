@@ -1240,7 +1240,7 @@ When developing an application that sends email, you probably don't want to actu
 <a name="log-driver"></a>
 #### Log Driver
 
-Instead of sending your emails, the `log` mail driver will write all email messages to your log files for inspection. Typically, this driver would only be used during local development. For more information on configuring your application per environment, check out the [configuration documentation](configuration.md#environment-configuration).
+Instead of sending your emails, the `log` mail driver will write all email messages to your log files for inspection. Typically, this driver would only be used during local development. For more information on configuring your application per environment, check out the [configuration documentation](comecando/configuracao.md#configuracao-do-ambiente).
 
 <a name="mailtrap"></a>
 #### HELO / Mailtrap / Mailpit

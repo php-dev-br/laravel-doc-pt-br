@@ -1741,7 +1741,7 @@ php artisan queue:work --sleep=3
 <a name="maintenance-mode-queues"></a>
 #### Maintenance Mode and Queues
 
-While your application is in [maintenance mode](configuration.md#maintenance-mode), no queued jobs will be handled. The jobs will continue to be handled as normal once the application is out of maintenance mode.
+While your application is in [maintenance mode](comecando/configuracao.md#modo-de-manutencao), no queued jobs will be handled. The jobs will continue to be handled as normal once the application is out of maintenance mode.
 
 To force your queue workers to process jobs even if maintenance mode is enabled, you may use `--force` option:
 

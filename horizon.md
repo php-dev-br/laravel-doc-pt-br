@@ -74,10 +74,10 @@ After installation, the primary Horizon configuration option that you should fam
         ],
     ],
 
-When you start Horizon, it will use the worker process configuration options for the environment that your application is running on. Typically, the environment is determined by the value of the `APP_ENV` [environment variable](configuration.md#determining-the-current-environment). For example, the default `local` Horizon environment is configured to start three worker processes and automatically balance the number of worker processes assigned to each queue. The default `production` environment is configured to start a maximum of 10 worker processes and automatically balance the number of worker processes assigned to each queue.
+When you start Horizon, it will use the worker process configuration options for the environment that your application is running on. Typically, the environment is determined by the value of the `APP_ENV` [environment variable](comecando/configuracao.md#determinando-o-ambiente-atual). For example, the default `local` Horizon environment is configured to start three worker processes and automatically balance the number of worker processes assigned to each queue. The default `production` environment is configured to start a maximum of 10 worker processes and automatically balance the number of worker processes assigned to each queue.
 
 > [!WARNING]
-> You should ensure that the `environments` portion of your `horizon` configuration file contains an entry for each [environment](configuration.md#environment-configuration) on which you plan to run Horizon.
+> You should ensure that the `environments` portion of your `horizon` configuration file contains an entry for each [environment](comecando/configuracao.md#configuracao-do-ambiente) on which you plan to run Horizon.
 
 <a name="supervisors"></a>
 #### Supervisors
@@ -89,7 +89,7 @@ You may add additional supervisors to a given environment if you would like to d
 <a name="maintenance-mode"></a>
 #### Maintenance Mode
 
-While your application is in [maintenance mode](configuration.md#maintenance-mode), queued jobs will not be processed by Horizon unless the supervisor's `force` option is defined as `true` within the Horizon configuration file:
+While your application is in [maintenance mode](comecando/configuracao.md#modo-de-manutencao), queued jobs will not be processed by Horizon unless the supervisor's `force` option is defined as `true` within the Horizon configuration file:
 
     'environments' => [
         'production' => [

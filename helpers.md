@@ -1697,7 +1697,7 @@ The `collect` function creates a [collection](collections.md) instance from the 
 <a name="method-config"></a>
 #### `config()` {.collection-method}
 
-The `config` function gets the value of a [configuration](configuration.md) variable. The configuration values may be accessed using "dot" syntax, which includes the name of the file and the option you wish to access. A default value may be specified and is returned if the configuration option does not exist:
+The `config` function gets the value of a [configuration](comecando/configuracao.md) variable. The configuration values may be accessed using "dot" syntax, which includes the name of the file and the option you wish to access. A default value may be specified and is returned if the configuration option does not exist:
 
     $value = config('app.timezone');
 
@@ -1796,7 +1796,7 @@ The `encrypt` function [encrypts](encryption.md) the given value. You may use th
 <a name="method-env"></a>
 #### `env()` {.collection-method}
 
-The `env` function retrieves the value of an [environment variable](configuration.md#environment-configuration) or returns a default value:
+The `env` function retrieves the value of an [environment variable](comecando/configuracao.md#configuracao-do-ambiente) or returns a default value:
 
     $env = env('APP_ENV');
 
