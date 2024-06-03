@@ -14,7 +14,7 @@
 
 - [Instalação](comecando/instalacao.md)
 - [Configuração](comecando/configuracao.md)
-- [Estrutura de diretório](structure.md)
+- [Estrutura de Diretório](comecando/estrutura.md)
 - [Front-end](frontend.md)
 - [Kits de iniciante](starter-kits.md)
 - [Implantação](deployment.md)

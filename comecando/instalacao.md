@@ -469,7 +469,7 @@ Laravel lendo a seguinte documentação:
 
 - [Ciclo de Vida da Requisição](../lifecycle.md)
 - [Configuração](configuracao.md)
-- [Estrutura de Diretório](../structure.md)
+- [Estrutura de Diretório](estrutura.md)
 - [Frontend](../frontend.md)
 - [Contêiner de Serviço](../container.md)
 - [Fachadas](../facades.md)
