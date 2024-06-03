@@ -299,7 +299,7 @@ $table->bigIncrements('id')->primary()->change();
 $table->char('codigo_postal', 10)->unique(false)->change();
 ```
 
-Se você não quiser atualizar todas as migrações de "alteração" existentes na sua
+Se você não quiser atualizar todas as migrações de alteração existentes na sua
 aplicação para manter os atributos existentes da coluna, você pode simplesmente
 [comprimir suas migrações](../migrations.md#squashing-migrations):
 
@@ -307,7 +307,7 @@ aplicação para manter os atributos existentes da coluna, você pode simplesmen
 php artisan schema:dump
 ```
 
-Depois que suas migrações forem comprimidas, o Laravel irá "migrar" o banco de
+Depois que suas migrações forem comprimidas, o Laravel irá migrar o banco de
 dados usando o arquivo de esquema da sua aplicação antes de executar qualquer
 migração pendente.
 
@@ -565,7 +565,7 @@ configuração `after_commit` da conexão da fila ter sido definida como `true` 
 o método `afterCommit` ter sido invocado no trabalho.
 
 No Laravel 11, os trabalhos de fila síncronos agora respeitarão a configuração
-"after commit" da conexão da fila ou do trabalho.
+`after_commit` da conexão da fila ou do trabalho.
 
 ### Limitação de Taxa
 

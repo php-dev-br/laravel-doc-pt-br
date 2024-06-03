@@ -19,7 +19,7 @@
 - [Suporte à IDE](#suporte-a-ide)
 - [Próximos Passos](#proximos-passos)
   - [Laravel, o _Framework Full-Stack_](#laravel-o-framework-full-stack)
-  - [Laravel, o _Backend_ de API](#laravel-o-backend-de-api)
+  - [Laravel, o _Back-end_ de API](#laravel-o-back-end-de-api)
 
 ## Conheça o Laravel
 
@@ -55,7 +55,7 @@ aplicações _web_ modernas e completas.
 
 #### Um _Framework_ Progressivo
 
-Gostamos de chamar o Laravel de _framework_ "progressivo".
+Gostamos de chamar o Laravel de _framework_ progressivo.
 Com isso queremos dizer que o Laravel cresce com você.
 Se você está apenas dando os primeiros passos no desenvolvimento _web_, a vasta
 biblioteca de documentação, guias e [tutoriais em vídeo](https://laracasts.com)
@@ -134,7 +134,7 @@ Claro, você também pode querer
 > Se você quiser sair na frente no desenvolvimento da sua aplicação Laravel,
 > confira um dos nossos [pacotes oficiais para iniciantes](../starter-kits.md).
 > Os pacotes para iniciantes do Laravel fornecem estruturas de autenticação de
-> _backend_ e _frontend_ para sua nova aplicação Laravel.
+> _back-end_ e _front-end_ para sua nova aplicação Laravel.
 
 ## Configuração Inicial
 
@@ -209,10 +209,10 @@ php artisan migrate
 
 ### Configuração de Diretório
 
-O Laravel deve sempre ser servido a partir da raiz do "diretório _web_"
+O Laravel deve sempre ser servido a partir da raiz do diretório _web_
 configurado para o seu servidor _web_.
 Você não deve tentar servir uma aplicação Laravel a partir de um subdiretório
-do "diretório _web_".
+do diretório _web_.
 Tentar fazer isso pode expor arquivos confidenciais presentes na sua aplicação.
 
 ## Instalação do Docker Usando o Sail
@@ -225,7 +225,7 @@ Embora você possa querer explorar essas opções posteriormente, o Laravel forn
 o [Sail](../sail.md), uma solução integrada para executar seu projeto Laravel
 usando o [Docker](https://www.docker.com).
 
-O Docker é uma ferramenta para executar aplicações e serviços em "contêineres"
+O Docker é uma ferramenta para executar aplicações e serviços em contêineres
 pequenos e leves que não interferem no software instalado ou na configuração da
 sua máquina local.
 Isso significa que você não precisa se preocupar em instalar ou configurar
@@ -307,7 +307,7 @@ Informações sobre como instalar e habilitar o WSL2 podem ser encontradas na
 > Após instalar e habilitar o WSL2, você deve garantir que o Docker Desktop
 > esteja
 > [configurado para usar o
-_backend_ do WSL2](https://docs.docker.com/docker-for-windows/wsl/).
+_back-end_ do WSL2](https://docs.docker.com/docker-for-windows/wsl/).
 
 A seguir, você já pode criar seu primeiro projeto Laravel.
 Inicie o
@@ -470,7 +470,7 @@ Laravel lendo a seguinte documentação:
 - [Ciclo de Vida da Requisição](../lifecycle.md)
 - [Configuração](configuracao.md)
 - [Estrutura de Diretório](estrutura.md)
-- [Frontend](../frontend.md)
+- [_Front-end_](front-end.md)
 - [Contêiner de Serviço](../container.md)
 - [Fachadas](../facades.md)
 
@@ -488,15 +488,15 @@ principais para o _framework_ abaixo.
 ### Laravel, o _Framework Full-Stack_
 
 O Laravel pode servir como um _framework full-stack_.
-Por _framework_ "_full-stack_" queremos dizer que você usará o Laravel para
-rotear requisições para sua aplicação e renderizar seu _frontend_ usando
+Por _framework full-stack_ queremos dizer que você usará o Laravel para rotear
+requisições para sua aplicação e renderizar seu _front-end_ usando
 [_templates_ Blade](../blade.md) ou uma tecnologia híbrida de aplicação de
 página única como o [Inertia](https://inertiajs.com).
 Esta é a forma mais comum de usar o _framework_ Laravel e, em nossa opinião, a
 forma mais produtiva de usar o Laravel.
 
 Se você planeja usar o Laravel dessa forma, você pode querer verificar nossa
-documentação sobre [desenvolvimento _frontend_](../frontend.md),
+documentação sobre [desenvolvimento _front-end_](front-end.md),
 [roteamento](../routing.md), [visualizações](../views.md) ou o
 [ORM Eloquent](../eloquent.md).
 Além disso, você pode estar interessado em aprender sobre pacotes comunitários
@@ -514,11 +514,11 @@ sua aplicação usando o [Vite](../vite.md).
 > Se você quiser sair na frente no desenvolvimento da sua aplicação, confira um
 > dos nossos [pacotes oficiais para iniciantes](../starter-kits.md).
 
-### Laravel, o _Backend_ de API
+### Laravel, o _Back-end_ de API
 
-O Laravel também pode servir como _backend_ de API para uma aplicação JavaScript
-de página única ou aplicativo móvel.
-Por exemplo, você pode usar o Laravel como _backend_ de API para sua aplicação
+O Laravel também pode servir como _back-end_ de API para uma aplicação
+JavaScript de página única ou aplicativo móvel.
+Por exemplo, você pode usar o Laravel como _back-end_ de API para sua aplicação
 [Next.js](https://nextjs.org).
 Neste contexto, você pode usar o Laravel para fornecer
 [autenticação](../sanctum.md) e armazenamento e recuperação de dados para sua
@@ -530,9 +530,9 @@ documentação sobre [roteamento](../routing.md), o
 [Laravel Sanctum](../sanctum.md) e o [ORM Eloquent](../eloquent.md).
 
 > **Nota:**
-> Precisa sair na frente na estruturação do seu _backend_ Laravel e _frontend_
+> Precisa sair na frente na estruturação do seu _back-end_ Laravel e _front-end_
 > Next.js?
 > O Laravel Breeze oferece uma
 > [_stack_ de API](../starter-kits.md#breeze-and-next), bem como uma
-> [implementação de _frontend_ Next.js](https://github.com/laravel/breeze-next)
+> [implementação de _front-end_ Next.js](https://github.com/laravel/breeze-next)
 > para que você possa começar em minutos.

@@ -170,14 +170,14 @@ adicionados ao _framework_ e podem ser invocados a partir do arquivo
 ```
 
 Como todo _middleware_ pode ser facilmente personalizado por meio do arquivo
-`bootstrap/app.php` da sua aplicação, a necessidade de uma classe de "_kernel_"
-HTTP separada foi eliminada.
+`bootstrap/app.php` da sua aplicação, a necessidade de uma classe _kernel_ HTTP
+separada foi eliminada.
 
 #### Agendamento
 
 Usando uma nova fachada `Schedule`, as tarefas agendadas agora podem ser
 definidas diretamente no arquivo `routes/console.php` da sua aplicação,
-eliminando a necessidade de uma classe "_kernel_" de console separada:
+eliminando a necessidade de uma classe _kernel_ de console separada:
 
 ```php
 use Illuminate\Support\Facades\Schedule;
@@ -249,7 +249,7 @@ php artisan reverb:start
 
 Além disso, o Reverb oferece suporte ao dimensionamento horizontal por meio dos
 recursos de publicação/assinatura do Redis, permitindo distribuir o tráfego
-WebSocket por vários servidores Reverb de _backend_, todos suportando uma única
+WebSocket por vários servidores Reverb de _back-end_, todos suportando uma única
 aplicação de alta demanda.
 
 Para mais informações sobre o Laravel Reverb, consulte a
@@ -260,11 +260,10 @@ Para mais informações sobre o Laravel Reverb, consulte a
 _A limitação de taxa por segundo foi contribuída por
 [Tim MacDonald](https://github.com/timacdonald)_.
 
-O Laravel agora suporta limitação de taxa "por segundo" para todos os
-limitadores de taxa, incluindo aqueles para requisições HTTP e trabalhos em
-fila.
+O Laravel agora suporta limitação de taxa por segundo para todos os limitadores
+de taxa, incluindo aqueles para requisições HTTP e trabalhos em fila.
 Anteriormente, os limitadores de taxa do Laravel eram limitados à granularidade
-"por minuto":
+por minuto:
 
 ```php
 RateLimiter::for('faturas', function (Request $request) {
@@ -334,7 +333,7 @@ _A atualização automática do hash de senha foi contribuída por
 [Stephen Rees-Carter](https://github.com/valorin)_.
 
 O algoritmo de _hash_ de senha padrão do Laravel é o bcrypt.
-O "fator de trabalho" para _hashes_ bcrypt pode ser ajustado através do arquivo
+O fator de trabalho para _hashes_ bcrypt pode ser ajustado através do arquivo
 de configuração `config/hashing.php` ou da variável de ambiente `BCRYPT_ROUNDS`.
 
 Normalmente, o fator de trabalho do bcrypt deve ser aumentado ao longo do tempo
