@@ -19,8 +19,8 @@ nav:
       - Front-end: comecando/front-end.md
       - Kits para Iniciantes: comecando/kits-para-iniciantes.md
       - Implantação: comecando/implantacao.md
-  - Conceitos de arquitetura:
-      - Ciclo de vida da requisição: lifecycle.md
+  - Conceitos de Arquitetura:
+      - Ciclo de Vida da Requisição: arquitetura/ciclo-de-vida.md
       - Contêiner de serviço: container.md
       - Provedores de serviço: providers.md
       - Fachadas: facades.md

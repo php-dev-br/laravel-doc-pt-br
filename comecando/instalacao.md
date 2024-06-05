@@ -467,7 +467,7 @@ aprender a seguir.
 Primeiro, recomendamos fortemente que você se familiarize com o funcionamento do
 Laravel lendo a seguinte documentação:
 
-- [Ciclo de Vida da Requisição](../lifecycle.md)
+- [Ciclo de Vida da Requisição](../arquitetura/ciclo-de-vida.md)
 - [Configuração](configuracao.md)
 - [Estrutura de Diretório](estrutura.md)
 - [_Front-end_](front-end.md)

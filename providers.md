@@ -19,7 +19,7 @@ Laravel uses dozens of service providers internally to bootstrap its core servic
 All user-defined service providers are registered in the `bootstrap/providers.php` file. In the following documentation, you will learn how to write your own service providers and register them with your Laravel application.
 
 > [!NOTE]
-> If you would like to learn more about how Laravel handles requests and works internally, check out our documentation on the Laravel [request lifecycle](lifecycle.md).
+> If you would like to learn more about how Laravel handles requests and works internally, check out our documentation on the Laravel [request lifecycle](arquitetura/ciclo-de-vida.md).
 
 <a name="writing-service-providers"></a>
 ## Writing Service Providers

@@ -19,9 +19,9 @@
 - [_Kits_ para Iniciantes](comecando/kits-para-iniciantes.md)
 - [Implantação](comecando/implantacao.md)
 
-## Conceitos de arquitetura
+## Conceitos de Arquitetura
 
-- [Ciclo de vida da requisição](lifecycle.md)
+- [Ciclo de Vida da Requisição](arquitetura/ciclo-de-vida.md)
 - [Contêiner de serviço](container.md)
 - [Provedores de serviço](providers.md)
 - [Fachadas](facades.md)
