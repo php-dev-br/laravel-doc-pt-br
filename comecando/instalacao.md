@@ -533,6 +533,6 @@ documentação sobre [roteamento](../routing.md), o
 > Precisa sair na frente na geração do código do seu _back-end_ Laravel e
 > _front-end_ Next.js?
 > O Laravel Breeze oferece uma
-> [_stack_ de API](kits-para-iniciantes.md#breeze-and-next), bem como uma
+> [_stack_ de API](kits-para-iniciantes.md#breeze-e-next), bem como uma
 > [implementação de _front-end_ Next.js](https://github.com/laravel/breeze-next)
 > para que você possa começar em minutos.

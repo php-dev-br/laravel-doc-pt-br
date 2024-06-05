@@ -153,7 +153,7 @@ Em seguida, consulte a
 para saber como levar sua aplicação para o próximo nível com componentes
 interativos do Livewire.
 
-### _Kits_ para Iniciantes { #kits-php-para-iniciantes }
+### _Kits_ para Iniciantes {: #kits-php-para-iniciantes }
 
 Se desejar construir seu _front-end_ usando PHP e Livewire, você pode aproveitar
 nossos [_kits_ Breeze e Jetstream para iniciantes](kits-para-iniciantes.md)
@@ -271,7 +271,7 @@ E, ao implantar sua aplicação via [Laravel Forge](https://forge.laravel.com), 
 muito fácil garantir que o processo de renderização do lado do servidor do
 Inertia esteja sempre em execução.
 
-### _Kits_ para Iniciantes { #kits-inertia-para-iniciantes }
+### _Kits_ para Iniciantes {: #kits-inertia-para-iniciantes }
 
 Se desejar construir seu _front-end_ usando Inertia e Vue/React, você pode
 aproveitar nossos _kits_ [Breeze](kits-para-iniciantes.md#laravel-breeze) e

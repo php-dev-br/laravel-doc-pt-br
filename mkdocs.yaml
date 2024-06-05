@@ -18,7 +18,7 @@ nav:
       - Estrutura de Diretório: comecando/estrutura.md
       - Front-end: comecando/front-end.md
       - Kits para Iniciantes: comecando/kits-para-iniciantes.md
-      - Implantação: deployment.md
+      - Implantação: comecando/implantacao.md
   - Conceitos de arquitetura:
       - Ciclo de vida da requisição: lifecycle.md
       - Contêiner de serviço: container.md

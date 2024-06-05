@@ -94,8 +94,8 @@ A seguir discutiremos os destaques da nova estrutura de aplicação do Laravel.
 
 O arquivo `bootstrap/app.php` foi revitalizado como um arquivo de configuração
 da aplicação com foco em código.
-A partir deste arquivo, agora você pode personalizar o roteamento, o
-_middleware_, os provedores de serviços, o tratamento de exceções da sua
+A partir deste arquivo, agora você pode personalizar o roteamento, os
+_middlewares_, os provedores de serviços, o tratamento de exceções da sua
 aplicação e muito mais.
 Este arquivo unifica uma variedade de configurações de comportamento de alto
 nível das aplicações que antes estavam espalhadas pela estrutura de arquivos da
@@ -133,7 +133,7 @@ Da mesma forma, os vínculos de modelo de rota ou portas de autorização que vo
 pode ter registrado anteriormente no `AuthServiceProvider` também podem ser
 registradas no `AppServiceProvider`.
 
-#### Desabilitação do Roteamento de _Broadcast_ e da API
+#### Desabilitação das Rotas de _Broadcast_ e da API
 
 Os arquivos de rotas `api.php` e `channels.php` não estão mais presentes por
 padrão, pois muitas aplicações não requerem esses arquivos.
@@ -187,7 +187,7 @@ Schedule::command('emails:send')->daily();
 
 #### Tratamento de Exceções
 
-Assim como o roteamento e o _middleware_, o tratamento de exceções agora pode
+Assim como o roteamento e os _middlewares_, o tratamento de exceções agora pode
 ser personalizado a partir do arquivo `bootstrap/app.php` da sua aplicação, em
 vez de uma classe separada do manipulador de exceções, reduzindo o número total
 de arquivos incluídos em uma nova aplicação Laravel:
@@ -274,12 +274,12 @@ RateLimiter::for('faturas', function (Request $request) {
 Para obter mais informações sobre limitação de taxa no Laravel, verifique a
 [documentação sobre limitação de taxa](../routing.md#rate-limiting).
 
-### Roteamento de Integridade
+### Rota de Integridade
 
-_O roteamento de integridade foi contribuído por
+_A rota de integridade foi contribuído por
 [Taylor Otwell](https://github.com/taylorotwell)_.
 
-As novas aplicações Laravel 11 incluem uma diretiva de roteamento `health`, que
+As novas aplicações Laravel 11 incluem uma diretiva de rota `health`, que
 instrui o Laravel a definir um _endpoint_ de verificação de integridade simples
 que pode ser invocado por serviços de monitoramento de integridade de aplicações
 de terceiros ou sistemas de orquestração como o Kubernetes.

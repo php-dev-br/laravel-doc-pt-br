@@ -17,7 +17,7 @@
 - [Estrutura de Diretório](comecando/estrutura.md)
 - [_Front-end_](comecando/front-end.md)
 - [_Kits_ para Iniciantes](comecando/kits-para-iniciantes.md)
-- [Implantação](deployment.md)
+- [Implantação](comecando/implantacao.md)
 
 ## Conceitos de arquitetura
 

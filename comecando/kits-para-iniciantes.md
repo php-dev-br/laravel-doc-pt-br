@@ -26,7 +26,7 @@ Você está livre para construir sua própria aplicação do zero, simplesmente
 instalando uma nova cópia do Laravel.
 De qualquer forma, sabemos que você construirá algo incrível!
 
-## Laravel Breeze { #laravel-breeze }
+## Laravel Breeze
 
 O [Laravel Breeze](https://github.com/laravel/breeze) é uma implementação mínima
 e simples de todos os [recursos de autenticação](../authentication.md) do
@@ -135,7 +135,7 @@ php artisan breeze:install
 php artisan migrate
 ```
 
-### Breeze e React / Vue { #breeze-e-inertia }
+### Breeze e React / Vue {: #breeze-e-inertia }
 
 O Laravel Breeze também oferece geração de código React e Vue por meio de uma
 implementação de _front-end_ do [Inertia](https://inertiajs.com).
@@ -166,7 +166,7 @@ Em seguida, você pode navegar até as URLs `/login` ou `/register` da sua
 aplicação no seu navegador _web_.
 Todas as rotas do Breeze são definidas no arquivo `routes/auth.php`.
 
-### Breeze e Next.js / API { #breeze-e-next }
+### Breeze e Next.js / API {: #breeze-e-next }
 
 O Laravel Breeze também pode gerar o código de uma API de autenticação pronta
 para autenticar aplicações JavaScript modernas, como aquelas baseadas em

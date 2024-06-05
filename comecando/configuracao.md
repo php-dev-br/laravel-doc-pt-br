@@ -327,8 +327,8 @@ aplicação não será carregado pelo _framework_ durante requisições ou coman
 Artisan; portanto, a função `env` retornará apenas variáveis de ambiente
 externas no nível do sistema.
 
-Por esse motivo, você deve garantir que está chamando a função `env` apenas nos
-arquivos de configuração (`config`) da sua aplicação.
+Por esse motivo, você deve garantir que está chamando a função `env` apenas de
+dentro dos arquivos de configuração (`config`) da sua aplicação.
 Você pode ver muitos exemplos disso examinando os arquivos de configuração
 padrão do Laravel.
 Os valores de configuração podem ser acessados de qualquer lugar na sua

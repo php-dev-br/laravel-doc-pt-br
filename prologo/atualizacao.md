@@ -224,7 +224,7 @@ public function dump(...$args);
 
 ### Banco de Dados
 
-#### SQLite 3.35.0+ { #versao-minima-do-sqlite }
+#### SQLite 3.35.0+ {: #versao-minima-do-sqlite }
 
 **Probabilidade de Impacto: Alta**
 
