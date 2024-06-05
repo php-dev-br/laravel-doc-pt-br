@@ -386,8 +386,8 @@ Quando sua aplicação estiver em modo de manutenção, uma visualização
 personalizada será exibida para todas as requisições da aplicação.
 Isso facilita desabilitar a aplicação durante a atualização ou durante a
 manutenção.
-Uma verificação do modo de manutenção está incluída na _stack_ de _middleware_
-padrão da sua aplicação.
+Uma verificação do modo de manutenção está incluída na _stack middleware_ padrão
+da sua aplicação.
 Se a aplicação estiver em modo de manutenção, uma instância
 `Symfony\Component\HttpKernel\Exception\HttpException` será lançada com um
 código de _status_ `503`.

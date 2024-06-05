@@ -55,7 +55,7 @@ Have you started a new Laravel application using our Vite scaffolding but need t
 ## Installation & Setup
 
 > [!NOTE]
-> The following documentation discusses how to manually install and configure the Laravel Vite plugin. However, Laravel's [starter kits](starter-kits.md) already include all of this scaffolding and are the fastest way to get started with Laravel and Vite.
+> The following documentation discusses how to manually install and configure the Laravel Vite plugin. However, Laravel's [starter kits](comecando/kits-para-iniciantes.md) already include all of this scaffolding and are the fastest way to get started with Laravel and Vite.
 
 <a name="installing-node"></a>
 ### Installing Node
@@ -345,7 +345,7 @@ export default defineConfig({
 ```
 
 > [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, Vue, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, Vue, and Vite.
+> Laravel's [starter kits](comecando/kits-para-iniciantes.md) already include the proper Laravel, Vue, and Vite configuration. Check out [Laravel Breeze](comecando/kits-para-iniciantes.md#breeze-and-inertia) for the fastest way to get started with Laravel, Vue, and Vite.
 
 <a name="react"></a>
 ### React
@@ -383,7 +383,7 @@ You will also need to include the additional `@viteReactRefresh` Blade directive
 The `@viteReactRefresh` directive must be called before the `@vite` directive.
 
 > [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, React, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, React, and Vite.
+> Laravel's [starter kits](comecando/kits-para-iniciantes.md) already include the proper Laravel, React, and Vite configuration. Check out [Laravel Breeze](comecando/kits-para-iniciantes.md#breeze-and-inertia) for the fastest way to get started with Laravel, React, and Vite.
 
 <a name="inertia"></a>
 ### Inertia
@@ -406,7 +406,7 @@ createInertiaApp({
 ```
 
 > [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, Inertia, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia, and Vite.
+> Laravel's [starter kits](comecando/kits-para-iniciantes.md) already include the proper Laravel, Inertia, and Vite configuration. Check out [Laravel Breeze](comecando/kits-para-iniciantes.md#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia, and Vite.
 
 <a name="url-processing"></a>
 ### URL Processing
@@ -453,7 +453,7 @@ export default {
 ```
 
 > [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the proper Tailwind, PostCSS, and Vite configuration. Or, if you would like to use Tailwind and Laravel without using one of our starter kits, check out [Tailwind's installation guide for Laravel](https://tailwindcss.com/docs/guides/laravel).
+> Laravel's [starter kits](comecando/kits-para-iniciantes.md) already include the proper Tailwind, PostCSS, and Vite configuration. Or, if you would like to use Tailwind and Laravel without using one of our starter kits, check out [Tailwind's installation guide for Laravel](https://tailwindcss.com/docs/guides/laravel).
 
 <a name="working-with-blade-and-routes"></a>
 ## Working With Blade and Routes
@@ -685,7 +685,7 @@ php artisan inertia:start-ssr
 ```
 
 > [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the proper Laravel, Inertia SSR, and Vite configuration. Check out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia SSR, and Vite.
+> Laravel's [starter kits](comecando/kits-para-iniciantes.md) already include the proper Laravel, Inertia SSR, and Vite configuration. Check out [Laravel Breeze](comecando/kits-para-iniciantes.md#breeze-and-inertia) for the fastest way to get started with Laravel, Inertia SSR, and Vite.
 
 <a name="script-and-style-attributes"></a>
 ## Script and Style Tag Attributes
@@ -725,7 +725,7 @@ class AddContentSecurityPolicyHeaders
 
 After invoking the `useCspNonce` method, Laravel will automatically include the `nonce` attributes on all generated script and style tags.
 
-If you need to specify the nonce elsewhere, including the [Ziggy `@route` directive](https://github.com/tighten/ziggy#using-routes-with-a-content-security-policy) included with Laravel's [starter kits](starter-kits.md), you may retrieve it using the `cspNonce` method:
+If you need to specify the nonce elsewhere, including the [Ziggy `@route` directive](https://github.com/tighten/ziggy#using-routes-with-a-content-security-policy) included with Laravel's [starter kits](comecando/kits-para-iniciantes.md), you may retrieve it using the `cspNonce` method:
 
 ```blade
 @routes(nonce: Vite::cspNonce())

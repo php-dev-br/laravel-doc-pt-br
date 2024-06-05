@@ -17,7 +17,7 @@ nav:
       - Configuração: comecando/configuracao.md
       - Estrutura de Diretório: comecando/estrutura.md
       - Front-end: comecando/front-end.md
-      - Kits para Iniciantes: starter-kits.md
+      - Kits para Iniciantes: comecando/kits-para-iniciantes.md
       - Implantação: deployment.md
   - Conceitos de arquitetura:
       - Ciclo de vida da requisição: lifecycle.md
@@ -90,7 +90,7 @@ nav:
       - Banco de dados: database-testing.md
       - Simulação: mocking.md
   - Pacotes:
-      - Breeze: starter-kits.md#laravel-breeze
+      - Breeze: comecando/kits-para-iniciantes.html#laravel-breeze
       - Cashier (Stripe): billing.md
       - Cashier (Paddle): cashier-paddle.md
       - Dusk: dusk.md

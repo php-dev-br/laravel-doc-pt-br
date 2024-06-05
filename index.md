@@ -16,7 +16,7 @@
 - [Configuração](comecando/configuracao.md)
 - [Estrutura de Diretório](comecando/estrutura.md)
 - [_Front-end_](comecando/front-end.md)
-- [_Kits_ para Iniciantes](starter-kits.md)
+- [_Kits_ para Iniciantes](comecando/kits-para-iniciantes.md)
 - [Implantação](deployment.md)
 
 ## Conceitos de arquitetura
@@ -104,7 +104,7 @@
 
 ## Pacotes
 
-- [Breeze](starter-kits.md#laravel-breeze)
+- [Breeze](comecando/kits-para-iniciantes.md#laravel-breeze)
 - [Cashier (Stripe)](billing.md)
 - [Cashier (Paddle)](cashier-paddle.md)
 - [Dusk](dusk.md)

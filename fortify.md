@@ -41,14 +41,14 @@ As mentioned previously, Laravel Fortify is a frontend agnostic authentication b
 
 **You are not required to use Fortify in order to use Laravel's authentication features.** You are always free to manually interact with Laravel's authentication services by following the documentation available in the [authentication](authentication.md), [password reset](passwords.md), and [email verification](verification.md) documentation.
 
-If you are new to Laravel, you may wish to explore the [Laravel Breeze](starter-kits.md) application starter kit before attempting to use Laravel Fortify. Laravel Breeze provides an authentication scaffolding for your application that includes a user interface built with [Tailwind CSS](https://tailwindcss.com). Unlike Fortify, Breeze publishes its routes and controllers directly into your application. This allows you to study and get comfortable with Laravel's authentication features before allowing Laravel Fortify to implement these features for you.
+If you are new to Laravel, you may wish to explore the [Laravel Breeze](comecando/kits-para-iniciantes.md) application starter kit before attempting to use Laravel Fortify. Laravel Breeze provides an authentication scaffolding for your application that includes a user interface built with [Tailwind CSS](https://tailwindcss.com). Unlike Fortify, Breeze publishes its routes and controllers directly into your application. This allows you to study and get comfortable with Laravel's authentication features before allowing Laravel Fortify to implement these features for you.
 
 Laravel Fortify essentially takes the routes and controllers of Laravel Breeze and offers them as a package that does not include a user interface. This allows you to still quickly scaffold the backend implementation of your application's authentication layer without being tied to any particular frontend opinions.
 
 <a name="when-should-i-use-fortify"></a>
 ### When Should I Use Fortify?
 
-You may be wondering when it is appropriate to use Laravel Fortify. First, if you are using one of Laravel's [application starter kits](starter-kits.md), you do not need to install Laravel Fortify since all of Laravel's application starter kits already provide a full authentication implementation.
+You may be wondering when it is appropriate to use Laravel Fortify. First, if you are using one of Laravel's [application starter kits](comecando/kits-para-iniciantes.md), you do not need to install Laravel Fortify since all of Laravel's application starter kits already provide a full authentication implementation.
 
 If you are not using an application starter kit and your application needs authentication features, you have two options: manually implement your application's authentication features or use Laravel Fortify to provide the backend implementation of these features.
 
@@ -118,7 +118,7 @@ If you choose to disable Fortify's views and you will be implementing password r
 <a name="authentication"></a>
 ## Authentication
 
-To get started, we need to instruct Fortify how to return our "login" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](starter-kits.md).
+To get started, we need to instruct Fortify how to return our "login" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](comecando/kits-para-iniciantes.md).
 
 All of the authentication view's rendering logic may be customized using the appropriate methods available via the `Laravel\Fortify\Fortify` class. Typically, you should call this method from the `boot` method of your application's `App\Providers\FortifyServiceProvider` class. Fortify will take care of defining the `/login` route that returns this view:
 
@@ -354,7 +354,7 @@ To disable two factor authentication, your application should make a DELETE requ
 <a name="registration"></a>
 ## Registration
 
-To begin implementing our application's registration functionality, we need to instruct Fortify how to return our "register" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](starter-kits.md).
+To begin implementing our application's registration functionality, we need to instruct Fortify how to return our "register" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](comecando/kits-para-iniciantes.md).
 
 All of Fortify's view rendering logic may be customized using the appropriate methods available via the `Laravel\Fortify\Fortify` class. Typically, you should call this method from the `boot` method of your `App\Providers\FortifyServiceProvider` class:
 
@@ -393,7 +393,7 @@ The user validation and creation process may be customized by modifying the `App
 <a name="requesting-a-password-reset-link"></a>
 ### Requesting a Password Reset Link
 
-To begin implementing our application's password reset functionality, we need to instruct Fortify how to return our "forgot password" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](starter-kits.md).
+To begin implementing our application's password reset functionality, we need to instruct Fortify how to return our "forgot password" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](comecando/kits-para-iniciantes.md).
 
 All of Fortify's view rendering logic may be customized using the appropriate methods available via the `Laravel\Fortify\Fortify` class. Typically, you should call this method from the `boot` method of your application's `App\Providers\FortifyServiceProvider` class:
 
@@ -546,7 +546,7 @@ Route::get('/dashboard', function () {
 
 While building your application, you may occasionally have actions that should require the user to confirm their password before the action is performed. Typically, these routes are protected by Laravel's built-in `password.confirm` middleware.
 
-To begin implementing password confirmation functionality, we need to instruct Fortify how to return our application's "password confirmation" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](starter-kits.md).
+To begin implementing password confirmation functionality, we need to instruct Fortify how to return our application's "password confirmation" view. Remember, Fortify is a headless authentication library. If you would like a frontend implementation of Laravel's authentication features that are already completed for you, you should use an [application starter kit](comecando/kits-para-iniciantes.md).
 
 All of Fortify's view rendering logic may be customized using the appropriate methods available via the `Laravel\Fortify\Fortify` class. Typically, you should call this method from the `boot` method of your application's `App\Providers\FortifyServiceProvider` class:
 

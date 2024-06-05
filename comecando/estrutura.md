@@ -41,7 +41,7 @@ classe - desde que o Composer possa carregar automaticamente a classe.
 
 > **Nota:**
 > Começando agora com o Laravel?
-> Confira o [Bootcamp Laravel](https://bootcamp.laravel.com) para uma jornada
+> Confira o [Laravel Bootcamp](https://bootcamp.laravel.com) para uma jornada
 > prática pelo _framework_ enquanto orientamos você na construção da sua
 > primeira aplicação Laravel.
 

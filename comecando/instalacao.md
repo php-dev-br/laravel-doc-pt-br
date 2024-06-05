@@ -42,7 +42,7 @@ Mal podemos esperar para ver o que você construirá.
 
 > **Nota:**
 > Começando agora com o Laravel?
-> Confira o [Bootcamp Laravel](https://bootcamp.laravel.com) para uma jornada
+> Confira o [Laravel Bootcamp](https://bootcamp.laravel.com) para uma jornada
 > prática pelo _framework_ enquanto orientamos você na construção da sua
 > primeira aplicação Laravel.
 
@@ -132,9 +132,9 @@ Claro, você também pode querer
 
 > **Nota:**
 > Se você quiser sair na frente no desenvolvimento da sua aplicação Laravel,
-> confira um dos nossos [pacotes oficiais para iniciantes](../starter-kits.md).
-> Os pacotes para iniciantes do Laravel fornecem estruturas de autenticação de
-> _back-end_ e _front-end_ para sua nova aplicação Laravel.
+> confira um dos nossos [_kits_ para iniciantes](kits-para-iniciantes.md).
+> Os _kits_ para iniciantes do Laravel fornecem geração do código de
+> autenticação do _back-end_ e do _front-end_ para sua nova aplicação Laravel.
 
 ## Configuração Inicial
 
@@ -481,7 +481,7 @@ principais para o _framework_ abaixo.
 
 > **Nota:**
 > Começando agora com o Laravel?
-> Confira o [Bootcamp Laravel](https://bootcamp.laravel.com) para uma jornada
+> Confira o [Laravel Bootcamp](https://bootcamp.laravel.com) para uma jornada
 > prática pelo _framework_ enquanto orientamos você na construção da sua
 > primeira aplicação Laravel.
 
@@ -512,7 +512,7 @@ sua aplicação usando o [Vite](../vite.md).
 
 > **Nota:**
 > Se você quiser sair na frente no desenvolvimento da sua aplicação, confira um
-> dos nossos [pacotes oficiais para iniciantes](../starter-kits.md).
+> dos nossos [_kits_ para iniciantes](kits-para-iniciantes.md).
 
 ### Laravel, o _Back-end_ de API
 
@@ -530,9 +530,9 @@ documentação sobre [roteamento](../routing.md), o
 [Laravel Sanctum](../sanctum.md) e o [ORM Eloquent](../eloquent.md).
 
 > **Nota:**
-> Precisa sair na frente na estruturação do seu _back-end_ Laravel e _front-end_
-> Next.js?
+> Precisa sair na frente na geração do código do seu _back-end_ Laravel e
+> _front-end_ Next.js?
 > O Laravel Breeze oferece uma
-> [_stack_ de API](../starter-kits.md#breeze-and-next), bem como uma
+> [_stack_ de API](kits-para-iniciantes.md#breeze-and-next), bem como uma
 > [implementação de _front-end_ Next.js](https://github.com/laravel/breeze-next)
 > para que você possa começar em minutos.

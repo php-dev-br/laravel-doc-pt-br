@@ -146,20 +146,20 @@ Normalmente, as pessoas desenvolvedoras que usam Livewire também usarão
 [Alpine.js](https://alpinejs.dev/) para espalhar JavaScript pelo _front-end_
 apenas onde for necessário, como para renderizar uma janela de diálogo.
 
-Se você está começando no Laravel, recomendamos se familiarizar com o uso básico
-de [visualizações](../views.md) e do [Blade](../blade.md).
+Se você está começando agora no Laravel, recomendamos se familiarizar com o uso
+básico das [visualizações](../views.md) e do [Blade](../blade.md).
 Em seguida, consulte a
-[documentação oficial do Laravel Livewire](https://livewire.laravel.com/docs)
+[documentação do Laravel Livewire](https://livewire.laravel.com/docs)
 para saber como levar sua aplicação para o próximo nível com componentes
 interativos do Livewire.
 
 ### _Kits_ para Iniciantes { #kits-php-para-iniciantes }
 
 Se desejar construir seu _front-end_ usando PHP e Livewire, você pode aproveitar
-nossos [_kits_ Breeze ou Jetstream para iniciantes](../starter-kits.md) para
-iniciar o desenvolvimento da sua aplicação.
-Ambos os _kits_ para iniciantes estruturam o fluxo de autenticação do _back-end_
-e _front-end_ da sua aplicação usando [Blade](../blade.md) e
+nossos [_kits_ Breeze e Jetstream para iniciantes](kits-para-iniciantes.md)
+para iniciar o desenvolvimento da sua aplicação.
+Ambos os _kits_ para iniciantes geram o código do fluxo de autenticação do
+_back-end_ e do _front-end_ da sua aplicação usando [Blade](../blade.md) e
 [Tailwind](https://tailwindcss.com) para que você possa simplesmente começar a
 construir sua próxima grande ideia.
 
@@ -274,11 +274,11 @@ Inertia esteja sempre em execução.
 ### _Kits_ para Iniciantes { #kits-inertia-para-iniciantes }
 
 Se desejar construir seu _front-end_ usando Inertia e Vue/React, você pode
-aproveitar nossos _kits_ [Breeze](../starter-kits.md#laravel-breeze) ou
-[Jetstream](../starter-kits.md#laravel-jetstream) para iniciantes para iniciar o
-desenvolvimento da sua aplicação.
-Ambos os _kits_ para iniciantes estruturam o fluxo de autenticação _back-end_ e
-_front-end_ da sua aplicação usando Inertia, Vue/React,
+aproveitar nossos _kits_ [Breeze](kits-para-iniciantes.md#laravel-breeze) e
+[Jetstream](kits-para-iniciantes.md#laravel-jetstream) para iniciantes para
+iniciar o desenvolvimento da sua aplicação.
+Ambos os _kits_ para iniciantes geram o código do fluxo de autenticação do
+_back-end_ e do _front-end_ da sua aplicação usando Inertia, Vue/React,
 [Tailwind](https://tailwindcss.com) e [Vite](https://vitejs.dev) para que você
 possa começar a construir sua próxima grande ideia.
 
@@ -296,15 +296,15 @@ ativos.
 O Vite fornece tempos de construção extremamente rápidos e Hot Module
 Replacement (HMR) quase instantânea durante o desenvolvimento local.
 Em todas as novas aplicações Laravel, incluindo aquelas que usam nossos
-[_kits_ para iniciantes](../starter-kits.md), você encontrará um arquivo
+[_kits_ para iniciantes](kits-para-iniciantes.md), você encontrará um arquivo
 `vite.config.js` que carrega nosso _plug-in_ leve do Laravel Vite que torna o
 Vite uma alegria de usar com aplicações Laravel.
 
 A forma mais rápida de começar a usar o Laravel e o Vite é iniciar o
 desenvolvimento da sua aplicação usando o
-[Laravel Breeze](../starter-kits.md#laravel-breeze), nosso _kit_ para iniciantes
-mais simples que dá início à sua aplicação fornecendo estruturas de
-autenticação _front-end_ e _back-end_.
+[Laravel Breeze](kits-para-iniciantes.md#laravel-breeze), nosso _kit_ para
+iniciantes mais simples que dá início à sua aplicação fornecendo a geração do
+código de autenticação do _front-end_ e do _back-end_.
 
 > **Nota:**
 > Para mais detalhes sobre o uso do Vite com Laravel, consulte nossa

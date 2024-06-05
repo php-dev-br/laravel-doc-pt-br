@@ -46,9 +46,9 @@ Your application's authentication configuration file is located at `config/auth.
 <a name="starter-kits"></a>
 ### Starter Kits
 
-Want to get started fast? Install a [Laravel application starter kit](starter-kits.md) in a fresh Laravel application. After migrating your database, navigate your browser to `/register` or any other URL that is assigned to your application. The starter kits will take care of scaffolding your entire authentication system!
+Want to get started fast? Install a [Laravel application starter kit](comecando/kits-para-iniciantes.md) in a fresh Laravel application. After migrating your database, navigate your browser to `/register` or any other URL that is assigned to your application. The starter kits will take care of scaffolding your entire authentication system!
 
-**Even if you choose not to use a starter kit in your final Laravel application, installing the [Laravel Breeze](starter-kits.md#laravel-breeze) starter kit can be a wonderful opportunity to learn how to implement all of Laravel's authentication functionality in an actual Laravel project.** Since Laravel Breeze creates authentication controllers, routes, and views for you, you can examine the code within these files to learn how Laravel's authentication features may be implemented.
+**Even if you choose not to use a starter kit in your final Laravel application, installing the [Laravel Breeze](comecando/kits-para-iniciantes.md#laravel-breeze) starter kit can be a wonderful opportunity to learn how to implement all of Laravel's authentication functionality in an actual Laravel project.** Since Laravel Breeze creates authentication controllers, routes, and views for you, you can examine the code within these files to learn how Laravel's authentication features may be implemented.
 
 <a name="introduction-database-considerations"></a>
 ### Database Considerations
@@ -75,9 +75,9 @@ Laravel includes built-in authentication and session services which are typicall
 
 **Application Starter Kits**
 
-As discussed in this documentation, you can interact with these authentication services manually to build your application's own authentication layer. However, to help you get started more quickly, we have released [free packages](starter-kits.md) that provide robust, modern scaffolding of the entire authentication layer. These packages are [Laravel Breeze](starter-kits.md#laravel-breeze), [Laravel Jetstream](starter-kits.md#laravel-jetstream), and [Laravel Fortify](fortify.md).
+As discussed in this documentation, you can interact with these authentication services manually to build your application's own authentication layer. However, to help you get started more quickly, we have released [free packages](comecando/kits-para-iniciantes.md) that provide robust, modern scaffolding of the entire authentication layer. These packages are [Laravel Breeze](comecando/kits-para-iniciantes.md#laravel-breeze), [Laravel Jetstream](comecando/kits-para-iniciantes.md#laravel-jetstream), and [Laravel Fortify](fortify.md).
 
-_Laravel Breeze_ is a simple, minimal implementation of all of Laravel's authentication features, including login, registration, password reset, email verification, and password confirmation. Laravel Breeze's view layer is comprised of simple [Blade templates](blade.md) styled with [Tailwind CSS](https://tailwindcss.com). To get started, check out the documentation on Laravel's [application starter kits](starter-kits.md).
+_Laravel Breeze_ is a simple, minimal implementation of all of Laravel's authentication features, including login, registration, password reset, email verification, and password confirmation. Laravel Breeze's view layer is comprised of simple [Blade templates](blade.md) styled with [Tailwind CSS](https://tailwindcss.com). To get started, check out the documentation on Laravel's [application starter kits](comecando/kits-para-iniciantes.md).
 
 _Laravel Fortify_ is a headless authentication backend for Laravel that implements many of the features found in this documentation, including cookie-based authentication as well as other features such as two-factor authentication and email verification. Fortify provides the authentication backend for Laravel Jetstream or may be used independently in combination with [Laravel Sanctum](sanctum.md) to provide authentication for an SPA that needs to authenticate with Laravel.
 
@@ -111,18 +111,18 @@ If you are building a single-page application (SPA) that will be powered by a La
 
 Passport may be chosen when your application absolutely needs all of the features provided by the OAuth2 specification.
 
-And, if you would like to get started quickly, we are pleased to recommend [Laravel Breeze](starter-kits.md#laravel-breeze) as a quick way to start a new Laravel application that already uses our preferred authentication stack of Laravel's built-in authentication services and Laravel Sanctum.
+And, if you would like to get started quickly, we are pleased to recommend [Laravel Breeze](comecando/kits-para-iniciantes.md#laravel-breeze) as a quick way to start a new Laravel application that already uses our preferred authentication stack of Laravel's built-in authentication services and Laravel Sanctum.
 
 <a name="authentication-quickstart"></a>
 ## Authentication Quickstart
 
 > [!WARNING]
-> This portion of the documentation discusses authenticating users via the [Laravel application starter kits](starter-kits.md), which includes UI scaffolding to help you get started quickly. If you would like to integrate with Laravel's authentication systems directly, check out the documentation on [manually authenticating users](#authenticating-users).
+> This portion of the documentation discusses authenticating users via the [Laravel application starter kits](comecando/kits-para-iniciantes.md), which includes UI scaffolding to help you get started quickly. If you would like to integrate with Laravel's authentication systems directly, check out the documentation on [manually authenticating users](#authenticating-users).
 
 <a name="install-a-starter-kit"></a>
 ### Install a Starter Kit
 
-First, you should [install a Laravel application starter kit](starter-kits.md). Our current starter kits, Laravel Breeze and Laravel Jetstream, offer beautifully designed starting points for incorporating authentication into your fresh Laravel application.
+First, you should [install a Laravel application starter kit](comecando/kits-para-iniciantes.md). Our current starter kits, Laravel Breeze and Laravel Jetstream, offer beautifully designed starting points for incorporating authentication into your fresh Laravel application.
 
 Laravel Breeze is a minimal, simple implementation of all of Laravel's authentication features, including login, registration, password reset, email verification, and password confirmation. Laravel Breeze's view layer is made up of simple [Blade templates](blade.md) styled with [Tailwind CSS](https://tailwindcss.com). Additionally, Breeze provides scaffolding options based on [Livewire](https://livewire.laravel.com) or [Inertia](https://inertiajs.com), with the choice of using Vue or React for the Inertia-based scaffolding.
 
@@ -214,7 +214,7 @@ When attaching the `auth` middleware to a route, you may also specify which "gua
 <a name="login-throttling"></a>
 ### Login Throttling
 
-If you are using the Laravel Breeze or Laravel Jetstream [starter kits](starter-kits.md), rate limiting will automatically be applied to login attempts. By default, the user will not be able to login for one minute if they fail to provide the correct credentials after several attempts. The throttling is unique to the user's username / email address and their IP address.
+If you are using the Laravel Breeze or Laravel Jetstream [starter kits](comecando/kits-para-iniciantes.md), rate limiting will automatically be applied to login attempts. By default, the user will not be able to login for one minute if they fail to provide the correct credentials after several attempts. The throttling is unique to the user's username / email address and their IP address.
 
 > [!NOTE]
 > If you would like to rate limit other routes in your application, check out the [rate limiting documentation](routing.md#rate-limiting).
@@ -222,7 +222,7 @@ If you are using the Laravel Breeze or Laravel Jetstream [starter kits](starter-
 <a name="authenticating-users"></a>
 ## Manually Authenticating Users
 
-You are not required to use the authentication scaffolding included with Laravel's [application starter kits](starter-kits.md). If you choose not to use this scaffolding, you will need to manage user authentication using the Laravel authentication classes directly. Don't worry, it's a cinch!
+You are not required to use the authentication scaffolding included with Laravel's [application starter kits](comecando/kits-para-iniciantes.md). If you choose not to use this scaffolding, you will need to manage user authentication using the Laravel authentication classes directly. Don't worry, it's a cinch!
 
 We will access Laravel's authentication services via the `Auth` [facade](facades.md), so we'll need to make sure to import the `Auth` facade at the top of the class. Next, let's check out the `attempt` method. The `attempt` method is normally used to handle authentication attempts from your application's "login" form. If authentication is successful, you should regenerate the user's [session](session.md) to prevent [session fixation](https://en.wikipedia.org/wiki/Session_fixation):
 
@@ -480,7 +480,7 @@ When the `logoutOtherDevices` method is invoked, the user's other sessions will 
 While building your application, you may occasionally have actions that should require the user to confirm their password before the action is performed or before the user is redirected to a sensitive area of the application. Laravel includes built-in middleware to make this process a breeze. Implementing this feature will require you to define two routes: one route to display a view asking the user to confirm their password and another route to confirm that the password is valid and redirect the user to their intended destination.
 
 > [!NOTE]
-> The following documentation discusses how to integrate with Laravel's password confirmation features directly; however, if you would like to get started more quickly, the [Laravel application starter kits](starter-kits.md) include support for this feature!
+> The following documentation discusses how to integrate with Laravel's password confirmation features directly; however, if you would like to get started more quickly, the [Laravel application starter kits](comecando/kits-para-iniciantes.md) include support for this feature!
 
 <a name="password-confirmation-configuration"></a>
 ### Configuration
