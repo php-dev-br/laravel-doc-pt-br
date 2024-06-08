@@ -32,7 +32,7 @@ Laravel's `Illuminate\Http\Request` class provides an object-oriented way to int
 <a name="accessing-the-request"></a>
 ### Accessing the Request
 
-To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `Illuminate\Http\Request` class on your route closure or controller method. The incoming request instance will automatically be injected by the Laravel [service container](container.md):
+To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `Illuminate\Http\Request` class on your route closure or controller method. The incoming request instance will automatically be injected by the Laravel [service container](arquitetura/conteiner.md):
 
     <?php
 

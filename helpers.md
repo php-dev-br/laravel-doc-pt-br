@@ -1601,7 +1601,7 @@ Like the `abort` method, you may also provide the exception's response text as t
 <a name="method-app"></a>
 #### `app()` {.collection-method}
 
-The `app` function returns the [service container](container.md) instance:
+The `app` function returns the [service container](arquitetura/conteiner.md) instance:
 
     $container = app();
 
@@ -2067,7 +2067,7 @@ A `report` argument may be provided to the `rescue` function to determine if the
 <a name="method-resolve"></a>
 #### `resolve()` {.collection-method}
 
-The `resolve` function resolves a given class or interface name to an instance using the [service container](container.md):
+The `resolve` function resolves a given class or interface name to an instance using the [service container](arquitetura/conteiner.md):
 
     $api = resolve('HelpSpot\API');
 
@@ -2392,7 +2392,7 @@ As you can see, each invokable class or closure in the pipeline is provided the 
 
 When the last callable in the pipeline invokes the `$next` closure, the callable provided to the `then` method will be invoked. Typically, this callable will simply return the given input.
 
-Of course, as discussed previously, you are not limited to providing closures to your pipeline. You may also provide invokable classes. If a class name is provided, the class will be instantiated via Laravel's [service container](container.md), allowing dependencies to be injected into the invokable class:
+Of course, as discussed previously, you are not limited to providing closures to your pipeline. You may also provide invokable classes. If a class name is provided, the class will be instantiated via Laravel's [service container](arquitetura/conteiner.md), allowing dependencies to be injected into the invokable class:
 
 ```php
 $user = Pipeline::send($user)

@@ -16,7 +16,7 @@ Laravel provides helpful methods for mocking events, jobs, and other facades out
 <a name="mocking-objects"></a>
 ## Mocking Objects
 
-When mocking an object that is going to be injected into your application via Laravel's [service container](container.md), you will need to bind your mocked instance into the container as an `instance` binding. This will instruct the container to use your mocked instance of the object instead of constructing the object itself:
+When mocking an object that is going to be injected into your application via Laravel's [service container](arquitetura/conteiner.md), you will need to bind your mocked instance into the container as an `instance` binding. This will instruct the container to use your mocked instance of the object instead of constructing the object itself:
 
 ```php tab=Pest
 use App\Service;
@@ -103,7 +103,7 @@ Unlike traditional static method calls, [facades](facades.md) (including [real-t
         }
     }
 
-We can mock the call to the `Cache` facade by using the `shouldReceive` method, which will return an instance of a [Mockery](https://github.com/padraic/mockery) mock. Since facades are actually resolved and managed by the Laravel [service container](container.md), they have much more testability than a typical static class. For example, let's mock our call to the `Cache` facade's `get` method:
+We can mock the call to the `Cache` facade by using the `shouldReceive` method, which will return an instance of a [Mockery](https://github.com/padraic/mockery) mock. Since facades are actually resolved and managed by the Laravel [service container](arquitetura/conteiner.md), they have much more testability than a typical static class. For example, let's mock our call to the `Cache` facade's `get` method:
 
 ```php tab=Pest
 <?php

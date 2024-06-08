@@ -377,7 +377,7 @@ Once you have configured the `tap` option on your channel, you're ready to defin
     }
 
 > [!NOTE]
-> All of your "tap" classes are resolved by the [service container](container.md), so any constructor dependencies they require will automatically be injected.
+> All of your "tap" classes are resolved by the [service container](arquitetura/conteiner.md), so any constructor dependencies they require will automatically be injected.
 
 <a name="creating-monolog-handler-channels"></a>
 ### Creating Monolog Handler Channels

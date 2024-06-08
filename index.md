@@ -22,7 +22,7 @@
 ## Conceitos de Arquitetura
 
 - [Ciclo de Vida da Requisição](arquitetura/ciclo-de-vida.md)
-- [Contêiner de serviço](container.md)
+- [Contêiner de Serviço](arquitetura/conteiner.md)
 - [Provedores de serviço](providers.md)
 - [Fachadas](facades.md)
 

@@ -235,7 +235,7 @@ Next, let's take a look at the listener for our example event. Event listeners r
     }
 
 > [!NOTE]
-> Your event listeners may also type-hint any dependencies they need on their constructors. All event listeners are resolved via the Laravel [service container](container.md), so dependencies will be injected automatically.
+> Your event listeners may also type-hint any dependencies they need on their constructors. All event listeners are resolved via the Laravel [service container](arquitetura/conteiner.md), so dependencies will be injected automatically.
 
 <a name="stopping-the-propagation-of-an-event"></a>
 #### Stopping The Propagation Of An Event

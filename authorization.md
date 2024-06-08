@@ -345,7 +345,7 @@ You may continue to define additional methods on the policy as needed for the va
 If you used the `--model` option when generating your policy via the Artisan console, it will already contain methods for the `viewAny`, `view`, `create`, `update`, `delete`, `restore`, and `forceDelete` actions.
 
 > [!NOTE]
-> All policies are resolved via the Laravel [service container](container.md), allowing you to type-hint any needed dependencies in the policy's constructor to have them automatically injected.
+> All policies are resolved via the Laravel [service container](arquitetura/conteiner.md), allowing you to type-hint any needed dependencies in the policy's constructor to have them automatically injected.
 
 <a name="policy-responses"></a>
 ### Policy Responses

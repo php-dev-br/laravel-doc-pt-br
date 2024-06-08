@@ -95,7 +95,7 @@ A seguir discutiremos os destaques da nova estrutura de aplicação do Laravel.
 O arquivo `bootstrap/app.php` foi revitalizado como um arquivo de configuração
 da aplicação com foco em código.
 A partir deste arquivo, agora você pode personalizar o roteamento, os
-_middlewares_, os provedores de serviços, o tratamento de exceções da sua
+_middlewares_, os provedores de serviço, o tratamento de exceções da sua
 aplicação e muito mais.
 Este arquivo unifica uma variedade de configurações de comportamento de alto
 nível das aplicações que antes estavam espalhadas pela estrutura de arquivos da
@@ -119,8 +119,8 @@ return Application::configure(basePath: dirname(__DIR__))
 #### Provedores de Serviço
 
 Em vez da estrutura padrão da aplicação Laravel contendo cinco provedores de
-serviços, o Laravel 11 inclui apenas um único `AppServiceProvider`.
-A funcionalidade dos provedores de serviços anteriores foi incorporada ao
+serviço, o Laravel 11 inclui apenas um único `AppServiceProvider`.
+A funcionalidade dos provedores de serviço anteriores foi incorporada ao
 `bootstrap/app.php`, é tratada automaticamente pelo _framework_ ou pode ser
 colocada no `AppServiceProvider` da sua aplicação.
 

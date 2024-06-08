@@ -103,7 +103,7 @@ Sometimes you may need to register a route that responds to multiple HTTP verbs.
 <a name="dependency-injection"></a>
 #### Dependency Injection
 
-You may type-hint any dependencies required by your route in your route's callback signature. The declared dependencies will automatically be resolved and injected into the callback by the Laravel [service container](container.md). For example, you may type-hint the `Illuminate\Http\Request` class to have the current HTTP request automatically injected into your route callback:
+You may type-hint any dependencies required by your route in your route's callback signature. The declared dependencies will automatically be resolved and injected into the callback by the Laravel [service container](arquitetura/conteiner.md). For example, you may type-hint the `Illuminate\Http\Request` class to have the current HTTP request automatically injected into your route callback:
 
     use Illuminate\Http\Request;
 

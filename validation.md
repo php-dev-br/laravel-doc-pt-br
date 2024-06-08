@@ -322,7 +322,7 @@ As you might have guessed, the `authorize` method is responsible for determining
     }
 
 > [!NOTE]
-> You may type-hint any dependencies you require within the `rules` method's signature. They will automatically be resolved via the Laravel [service container](container.md).
+> You may type-hint any dependencies you require within the `rules` method's signature. They will automatically be resolved via the Laravel [service container](arquitetura/conteiner.md).
 
 So, how are the validation rules evaluated? All you need to do is type-hint the request on your controller method. The incoming form request is validated before the controller method is called, meaning you do not need to clutter your controller with any validation logic:
 
@@ -469,7 +469,7 @@ If you plan to handle authorization logic for the request in another part of you
     }
 
 > [!NOTE]
-> You may type-hint any dependencies you need within the `authorize` method's signature. They will automatically be resolved via the Laravel [service container](container.md).
+> You may type-hint any dependencies you need within the `authorize` method's signature. They will automatically be resolved via the Laravel [service container](arquitetura/conteiner.md).
 
 <a name="customizing-the-error-messages"></a>
 ### Customizing the Error Messages

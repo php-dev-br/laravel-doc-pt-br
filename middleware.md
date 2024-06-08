@@ -59,7 +59,7 @@ As you can see, if the given `token` does not match our secret token, the middle
 It's best to envision middleware as a series of "layers" HTTP requests must pass through before they hit your application. Each layer can examine the request and even reject it entirely.
 
 > [!NOTE]
-> All middleware are resolved via the [service container](container.md), so you may type-hint any dependencies you need within a middleware's constructor.
+> All middleware are resolved via the [service container](arquitetura/conteiner.md), so you may type-hint any dependencies you need within a middleware's constructor.
 
 <a name="before-after-middleware"></a>
 <a name="middleware-and-responses"></a>
@@ -430,7 +430,7 @@ Sometimes a middleware may need to do some work after the HTTP response has been
 
 The `terminate` method should receive both the request and the response. Once you have defined a terminable middleware, you should add it to the list of routes or global middleware in your application's `bootstrap/app.php` file.
 
-When calling the `terminate` method on your middleware, Laravel will resolve a fresh instance of the middleware from the [service container](container.md). If you would like to use the same middleware instance when the `handle` and `terminate` methods are called, register the middleware with the container using the container's `singleton` method. Typically this should be done in the `register` method of your `AppServiceProvider`:
+When calling the `terminate` method on your middleware, Laravel will resolve a fresh instance of the middleware from the [service container](arquitetura/conteiner.md). If you would like to use the same middleware instance when the `handle` and `terminate` methods are called, register the middleware with the container using the container's `singleton` method. Typically this should be done in the `register` method of your `AppServiceProvider`:
 
     use App\Http\Middleware\TerminatingMiddleware;
 

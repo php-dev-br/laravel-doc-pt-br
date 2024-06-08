@@ -80,7 +80,7 @@ You may disable package discovery for all packages using the `*` character insid
 <a name="service-providers"></a>
 ## Service Providers
 
-[Service providers](providers.md) are the connection point between your package and Laravel. A service provider is responsible for binding things into Laravel's [service container](container.md) and informing Laravel where to load package resources such as views, configuration, and language files.
+[Service providers](providers.md) are the connection point between your package and Laravel. A service provider is responsible for binding things into Laravel's [service container](arquitetura/conteiner.md) and informing Laravel where to load package resources such as views, configuration, and language files.
 
 A service provider extends the `Illuminate\Support\ServiceProvider` class and contains two methods: `register` and `boot`. The base `ServiceProvider` class is located in the `illuminate/support` Composer package, which you should add to your own package's dependencies. To learn more about the structure and purpose of service providers, check out [their documentation](providers.md).
 

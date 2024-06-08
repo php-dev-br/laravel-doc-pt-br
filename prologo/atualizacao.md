@@ -113,7 +113,7 @@ deste pacote.
 
 O Laravel 11 introduz uma nova estrutura de aplicação padrão com menos arquivos
 padrão.
-Ou seja, as novas aplicações Laravel contêm menos provedores de serviços,
+Ou seja, as novas aplicações Laravel contêm menos provedores de serviço,
 _middlewares_ e arquivos de configuração.
 
 No entanto, **não recomendamos** que as aplicações do Laravel 10 sendo
@@ -520,18 +520,18 @@ public function sendNow($mailable, array $data = [], $callback = null);
 
 ### Pacotes
 
-#### Publicando Provedores de Serviços na Aplicação
+#### Publicando Provedores de Serviço na Aplicação
 
 **Probabilidade de Impacto: Muito Baixa**
 
 Se você escreveu um pacote Laravel que publica manualmente um provedor de
-serviços no diretório `app/Providers` da aplicação e modifica manualmente o
+serviço no diretório `app/Providers` da aplicação e modifica manualmente o
 arquivo de configuração `config/app.php` da aplicação para registrar o provedor
-de serviços, você deve atualizar seu pacote para usar o novo método
+de serviço, você deve atualizar seu pacote para usar o novo método
 `ServiceProvider::addProviderToBootstrapFile`.
 
 O método `addProviderToBootstrapFile` adicionará automaticamente o provedor de
-serviços que você publicou ao arquivo `bootstrap/providers.php` da aplicação,
+serviço que você publicou ao arquivo `bootstrap/providers.php` da aplicação,
 uma vez que o _array_ `providers` não existe no arquivo de configuração
 `config/app.php` das novas aplicações Laravel 11.
 

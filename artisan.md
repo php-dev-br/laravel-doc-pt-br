@@ -120,7 +120,7 @@ php artisan make:command SendEmails
 
 After generating your command, you should define appropriate values for the `signature` and `description` properties of the class. These properties will be used when displaying your command on the `list` screen. The `signature` property also allows you to define [your command's input expectations](#defining-input-expectations). The `handle` method will be called when your command is executed. You may place your command logic in this method.
 
-Let's take a look at an example command. Note that we are able to request any dependencies we need via the command's `handle` method. The Laravel [service container](container.md) will automatically inject all dependencies that are type-hinted in this method's signature:
+Let's take a look at an example command. Note that we are able to request any dependencies we need via the command's `handle` method. The Laravel [service container](arquitetura/conteiner.md) will automatically inject all dependencies that are type-hinted in this method's signature:
 
     <?php
 
@@ -174,7 +174,7 @@ The closure is bound to the underlying command instance, so you have full access
 <a name="type-hinting-dependencies"></a>
 #### Type-Hinting Dependencies
 
-In addition to receiving your command's arguments and options, command closures may also type-hint additional dependencies that you would like resolved out of the [service container](container.md):
+In addition to receiving your command's arguments and options, command closures may also type-hint additional dependencies that you would like resolved out of the [service container](arquitetura/conteiner.md):
 
     use App\Models\User;
     use App\Support\DripEmailer;
@@ -656,7 +656,7 @@ If necessary, you may also manually register commands by providing the command's
         SendEmails::class,
     ])
 
- When Artisan boots, all the commands in your application will be resolved by the [service container](container.md) and registered with Artisan.
+ When Artisan boots, all the commands in your application will be resolved by the [service container](arquitetura/conteiner.md) and registered with Artisan.
 
 <a name="programmatically-executing-commands"></a>
 ## Programmatically Executing Commands

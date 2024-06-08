@@ -11,7 +11,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Throughout the Laravel documentation, you will see examples of code that interacts with Laravel's features via "facades". Facades provide a "static" interface to classes that are available in the application's [service container](container.md). Laravel ships with many facades which provide access to almost all of Laravel's features.
+Throughout the Laravel documentation, you will see examples of code that interacts with Laravel's features via "facades". Facades provide a "static" interface to classes that are available in the application's [service container](arquitetura/conteiner.md). Laravel ships with many facades which provide access to almost all of Laravel's features.
 
 Laravel facades serve as "static proxies" to underlying classes in the service container, providing the benefit of a terse, expressive syntax while maintaining more testability and flexibility than traditional static methods. It's perfectly fine if you don't totally understand how facades work - just go with the flow and continue learning about Laravel.
 
@@ -177,7 +177,7 @@ If we look at that `Illuminate\Support\Facades\Cache` class, you'll see that the
         }
     }
 
-Instead, the `Cache` facade extends the base `Facade` class and defines the method `getFacadeAccessor()`. This method's job is to return the name of a service container binding. When a user references any static method on the `Cache` facade, Laravel resolves the `cache` binding from the [service container](container.md) and runs the requested method (in this case, `get`) against that object.
+Instead, the `Cache` facade extends the base `Facade` class and defines the method `getFacadeAccessor()`. This method's job is to return the name of a service container binding. When a user references any static method on the `Cache` facade, Laravel resolves the `cache` binding from the [service container](arquitetura/conteiner.md) and runs the requested method (in this case, `get`) against that object.
 
 <a name="real-time-facades"></a>
 ## Real-Time Facades
@@ -280,7 +280,7 @@ class PodcastTest extends TestCase
 <a name="facade-class-reference"></a>
 ## Facade Class Reference
 
-Below you will find every facade and its underlying class. This is a useful tool for quickly digging into the API documentation for a given facade root. The [service container binding](container.md) key is also included where applicable.
+Below you will find every facade and its underlying class. This is a useful tool for quickly digging into the API documentation for a given facade root. The [service container binding](arquitetura/conteiner.md) key is also included where applicable.
 
 <div class="overflow-auto">
 

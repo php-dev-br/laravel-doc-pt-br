@@ -6,30 +6,30 @@
 
 - [Introdução](#introducao)
 - [O Diretório Raiz](#o-diretorio-raiz)
-  - [O Diretório `app`](#o-diretorio-app)
-  - [O Diretório `bootstrap`](#o-diretorio-bootstrap)
-  - [O Diretório `config`](#o-diretorio-config)
-  - [O Diretório `database`](#o-diretorio-database)
-  - [O Diretório `public`](#o-diretorio-public)
-  - [O Diretório `resources`](#o-diretorio-resources)
-  - [O Diretório `routes`](#o-diretorio-routes)
-  - [O Diretório `storage`](#o-diretorio-storage)
-  - [O Diretório `tests`](#o-diretorio-tests)
-  - [O Diretório `vendor`](#o-diretorio-vendor)
+    - [O Diretório `app`](#o-diretorio-app)
+    - [O Diretório `bootstrap`](#o-diretorio-bootstrap)
+    - [O Diretório `config`](#o-diretorio-config)
+    - [O Diretório `database`](#o-diretorio-database)
+    - [O Diretório `public`](#o-diretorio-public)
+    - [O Diretório `resources`](#o-diretorio-resources)
+    - [O Diretório `routes`](#o-diretorio-routes)
+    - [O Diretório `storage`](#o-diretorio-storage)
+    - [O Diretório `tests`](#o-diretorio-tests)
+    - [O Diretório `vendor`](#o-diretorio-vendor)
 - [O Namespace `App`](#o-namespace-app)
-  - [O Diretório `Broadcasting`](#o-diretorio-broadcasting)
-  - [O Diretório `Console`](#o-diretorio-console)
-  - [O Diretório `Events`](#o-diretorio-events)
-  - [O Diretório `Exceptions`](#o-diretorio-exceptions)
-  - [O Diretório `Http`](#o-diretorio-http)
-  - [O Diretório `Jobs`](#o-diretorio-jobs)
-  - [O Diretório `Listeners`](#o-diretorio-listeners)
-  - [O Diretório `Mail`](#o-diretorio-mail)
-  - [O Diretório `Models`](#o-diretorio-models)
-  - [O Diretório `Notifications`](#o-diretorio-notifications)
-  - [O Diretório `Policies`](#o-diretorio-policies)
-  - [O Diretório `Providers`](#o-diretorio-providers)
-  - [O Diretório `Rules`](#o-diretorio-rules)
+    - [O Diretório `Broadcasting`](#o-diretorio-broadcasting)
+    - [O Diretório `Console`](#o-diretorio-console)
+    - [O Diretório `Events`](#o-diretorio-events)
+    - [O Diretório `Exceptions`](#o-diretorio-exceptions)
+    - [O Diretório `Http`](#o-diretorio-http)
+    - [O Diretório `Jobs`](#o-diretorio-jobs)
+    - [O Diretório `Listeners`](#o-diretorio-listeners)
+    - [O Diretório `Mail`](#o-diretorio-mail)
+    - [O Diretório `Models`](#o-diretorio-models)
+    - [O Diretório `Notifications`](#o-diretorio-notifications)
+    - [O Diretório `Policies`](#o-diretorio-policies)
+    - [O Diretório `Providers`](#o-diretorio-providers)
+    - [O Diretório `Rules`](#o-diretorio-rules)
 
 ## Introdução
 
@@ -288,8 +288,8 @@ determinada ação em um recurso.
 #### O Diretório `Providers`
 
 O diretório `Providers` contém todos os
-[provedores de serviços](../providers.md) da sua aplicação.
-Os provedores de serviços inicializam sua aplicação vinculando serviços no
+[provedores de serviço](../providers.md) da sua aplicação.
+Os provedores de serviço inicializam sua aplicação vinculando serviços no
 contêiner de serviço, registrando eventos ou executando qualquer outra tarefa
 para preparar sua aplicação para as requisições recebidas.
 

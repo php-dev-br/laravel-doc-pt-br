@@ -219,7 +219,7 @@ Now that we have registered the composer, the `compose` method of the `App\View\
         }
     }
 
-As you can see, all view composers are resolved via the [service container](container.md), so you may type-hint any dependencies you need within a composer's constructor.
+As you can see, all view composers are resolved via the [service container](arquitetura/conteiner.md), so you may type-hint any dependencies you need within a composer's constructor.
 
 <a name="attaching-a-composer-to-multiple-views"></a>
 #### Attaching a Composer to Multiple Views

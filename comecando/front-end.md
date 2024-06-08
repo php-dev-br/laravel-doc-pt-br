@@ -6,12 +6,12 @@
 
 - [Introdução](#introducao)
 - [Usando PHP](#usando-php)
-  - [PHP e Blade](#php-e-blade)
-  - [Livewire](#livewire)
-  - [_Kits_ para Iniciantes](#kits-php-para-iniciantes)
+    - [PHP e Blade](#php-e-blade)
+    - [Livewire](#livewire)
+    - [_Kits_ para Iniciantes](#kits-php-para-iniciantes)
 - [Usando Vue / React](#usando-vue-react)
-  - [Inertia](#inertia)
-  - [_Kits_ para Iniciantes](#kits-inertia-para-iniciantes)
+    - [Inertia](#inertia)
+    - [_Kits_ para Iniciantes](#kits-inertia-para-iniciantes)
 - [Empacotando Ativos](#empacotando-ativos)
 
 ## Introdução
@@ -234,26 +234,26 @@ para hidratar as `props` do componente da página:
 ```vue
 
 <script setup>
-  import Layout from '@/Layouts/Authenticated.vue';
-  import {Head} from '@inertiajs/vue3';
+    import Layout from '@/Layouts/Authenticated.vue';
+    import {Head} from '@inertiajs/vue3';
 
-  const props = defineProps(['user']);
+    const props = defineProps(['user']);
 </script>
 
 <template>
-  <Head title="Perfil da Pessoa Usuária"/>
+    <Head title="Perfil da Pessoa Usuária"/>
 
-  <Layout>
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Perfil
-      </h2>
-    </template>
+    <Layout>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Perfil
+            </h2>
+        </template>
 
-    <div class="py-12">
-      Olá, {{ user.name }}
-    </div>
-  </Layout>
+        <div class="py-12">
+            Olá, {{ user.name }}
+        </div>
+    </Layout>
 </template>
 ```
 

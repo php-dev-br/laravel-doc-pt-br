@@ -214,7 +214,7 @@ If your queued job accepts an Eloquent model in its constructor, only the identi
 <a name="handle-method-dependency-injection"></a>
 #### `handle` Method Dependency Injection
 
-The `handle` method is invoked when the job is processed by the queue. Note that we are able to type-hint dependencies on the `handle` method of the job. The Laravel [service container](container.md) automatically injects these dependencies.
+The `handle` method is invoked when the job is processed by the queue. Note that we are able to type-hint dependencies on the `handle` method of the job. The Laravel [service container](arquitetura/conteiner.md) automatically injects these dependencies.
 
 If you would like to take total control over how the container injects dependencies into the `handle` method, you may use the container's `bindMethod` method. The `bindMethod` method accepts a callback which receives the job and the container. Within the callback, you are free to invoke the `handle` method however you wish. Typically, you should call this method from the `boot` method of your `App\Providers\AppServiceProvider` [service provider](providers.md):
 

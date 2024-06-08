@@ -141,7 +141,7 @@ class NewApi
 }
 ```
 
-> [!NOTE] Feature classes are resolved via the [container](container.md), so you may inject dependencies into the feature class's constructor when needed.
+> [!NOTE] Feature classes are resolved via the [container](arquitetura/conteiner.md), so you may inject dependencies into the feature class's constructor when needed.
 
 #### Customizing the Stored Feature Name
 

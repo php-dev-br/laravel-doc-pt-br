@@ -5,21 +5,21 @@
 # Instalação
 
 - [Conheça o Laravel](#conheca-o-laravel)
-  - [Por que Laravel?](#por-que-laravel)
+    - [Por que Laravel?](#por-que-laravel)
 - [Criando um Projeto Laravel](#criando-um-projeto-laravel)
 - [Configuração Inicial](#configuracao-inicial)
-  - [Configuração Baseada em Ambiente](#configuracao-baseada-em-ambiente)
-  - [Bancos de Dados e Migrações](#bancos-de-dados-e-migracoes)
-  - [Configuração de Diretório](#configuracao-de-diretorio)
+    - [Configuração Baseada em Ambiente](#configuracao-baseada-em-ambiente)
+    - [Bancos de Dados e Migrações](#bancos-de-dados-e-migracoes)
+    - [Configuração de Diretório](#configuracao-de-diretorio)
 - [Instalação do Docker Usando o Sail](#instalacao-do-docker-usando-o-sail)
-  - [Sail no macOS](#sail-no-macos)
-  - [Sail no Windows](#sail-no-windows)
-  - [Sail no Linux](#sail-no-linux)
-  - [Escolhendo Seus Serviços Sail](#escolhendo-seus-servicos-sail)
+    - [Sail no macOS](#sail-no-macos)
+    - [Sail no Windows](#sail-no-windows)
+    - [Sail no Linux](#sail-no-linux)
+    - [Escolhendo Seus Serviços Sail](#escolhendo-seus-servicos-sail)
 - [Suporte à IDE](#suporte-a-ide)
 - [Próximos Passos](#proximos-passos)
-  - [Laravel, o _Framework Full-Stack_](#laravel-o-framework-full-stack)
-  - [Laravel, o _Back-end_ de API](#laravel-o-back-end-de-api)
+    - [Laravel, o _Framework Full-Stack_](#laravel-o-framework-full-stack)
+    - [Laravel, o _Back-end_ de API](#laravel-o-back-end-de-api)
 
 ## Conheça o Laravel
 
@@ -62,7 +62,7 @@ biblioteca de documentação, guias e [tutoriais em vídeo](https://laracasts.co
 do Laravel te ajudará a aprender o básico sem se sobrecarregar.
 
 Se você é uma pessoa desenvolvedora sênior, o Laravel oferece ferramentas
-robustas para [injeção de dependência](../container.md),
+robustas para [injeção de dependência](../arquitetura/conteiner.md),
 [testes unitários](../testing.md), [filas](../queues.md),
 [eventos em tempo real](../broadcasting.md), e muito mais.
 O Laravel vem ajustado para construir aplicações _web_ profissionais e está
@@ -471,7 +471,7 @@ Laravel lendo a seguinte documentação:
 - [Configuração](configuracao.md)
 - [Estrutura de Diretório](estrutura.md)
 - [_Front-end_](front-end.md)
-- [Contêiner de Serviço](../container.md)
+- [Contêiner de Serviço](../arquitetura/conteiner.md)
 - [Fachadas](../facades.md)
 
 A maneira como você deseja usar o Laravel também ditará os próximos passos em

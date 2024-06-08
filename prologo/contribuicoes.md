@@ -11,8 +11,8 @@
 - [Arquivos Compilados](#arquivos-compilados)
 - [Vulnerabilidades de Segurança](#vulnerabilidades-de-seguranca)
 - [Estilo de Código](#estilo-de-codigo)
-  - [PHPDoc](#phpdoc)
-  - [StyleCI](#styleci)
+    - [PHPDoc](#phpdoc)
+    - [StyleCI](#styleci)
 - [Código de Conduta](#codigo-de-conduta)
 
 ## Relatório de Erro

@@ -24,7 +24,7 @@ All user-defined service providers are registered in the `bootstrap/providers.ph
 <a name="writing-service-providers"></a>
 ## Writing Service Providers
 
-All service providers extend the `Illuminate\Support\ServiceProvider` class. Most service providers contain a `register` and a `boot` method. Within the `register` method, you should **only bind things into the [service container](container.md)**. You should never attempt to register any event listeners, routes, or any other piece of functionality within the `register` method.
+All service providers extend the `Illuminate\Support\ServiceProvider` class. Most service providers contain a `register` and a `boot` method. Within the `register` method, you should **only bind things into the [service container](arquitetura/conteiner.md)**. You should never attempt to register any event listeners, routes, or any other piece of functionality within the `register` method.
 
 The Artisan CLI can generate a new provider via the `make:provider` command. Laravel will automatically register your new provider in your application's `bootstrap/providers.php` file:
 
@@ -35,7 +35,7 @@ php artisan make:provider RiakServiceProvider
 <a name="the-register-method"></a>
 ### The Register Method
 
-As mentioned previously, within the `register` method, you should only bind things into the [service container](container.md). You should never attempt to register any event listeners, routes, or any other piece of functionality within the `register` method. Otherwise, you may accidentally use a service that is provided by a service provider which has not loaded yet.
+As mentioned previously, within the `register` method, you should only bind things into the [service container](arquitetura/conteiner.md). You should never attempt to register any event listeners, routes, or any other piece of functionality within the `register` method. Otherwise, you may accidentally use a service that is provided by a service provider which has not loaded yet.
 
 Let's take a look at a basic service provider. Within any of your service provider methods, you always have access to the `$app` property which provides access to the service container:
 
@@ -60,7 +60,7 @@ Let's take a look at a basic service provider. Within any of your service provid
         }
     }
 
-This service provider only defines a `register` method, and uses that method to define an implementation of `App\Services\Riak\Connection` in the service container. If you're not yet familiar with Laravel's service container, check out [its documentation](container.md).
+This service provider only defines a `register` method, and uses that method to define an implementation of `App\Services\Riak\Connection` in the service container. If you're not yet familiar with Laravel's service container, check out [its documentation](arquitetura/conteiner.md).
 
 <a name="the-bindings-and-singletons-properties"></a>
 #### The `bindings` and `singletons` Properties
@@ -128,7 +128,7 @@ So, what if we need to register a [view composer](views.md#view-composers) withi
 <a name="boot-method-dependency-injection"></a>
 #### Boot Method Dependency Injection
 
-You may type-hint dependencies for your service provider's `boot` method. The [service container](container.md) will automatically inject any dependencies you need:
+You may type-hint dependencies for your service provider's `boot` method. The [service container](arquitetura/conteiner.md) will automatically inject any dependencies you need:
 
     use Illuminate\Contracts\Routing\ResponseFactory;
 
@@ -169,7 +169,7 @@ When you invoke the `make:provider` Artisan command, Laravel will automatically 
 <a name="deferred-providers"></a>
 ## Deferred Providers
 
-If your provider is **only** registering bindings in the [service container](container.md), you may choose to defer its registration until one of the registered bindings is actually needed. Deferring the loading of such a provider will improve the performance of your application, since it is not loaded from the filesystem on every request.
+If your provider is **only** registering bindings in the [service container](arquitetura/conteiner.md), you may choose to defer its registration until one of the registered bindings is actually needed. Deferring the loading of such a provider will improve the performance of your application, since it is not loaded from the filesystem on every request.
 
 Laravel compiles and stores a list of all of the services supplied by deferred service providers, along with the name of its service provider class. Then, only when you attempt to resolve one of these services does Laravel load the service provider.
 

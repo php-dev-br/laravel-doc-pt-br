@@ -474,7 +474,7 @@ Route::apiSingleton('photos.thumbnail', ProfileController::class)->creatable();
 <a name="constructor-injection"></a>
 #### Constructor Injection
 
-The Laravel [service container](container.md) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
+The Laravel [service container](arquitetura/conteiner.md) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
 
     <?php
 

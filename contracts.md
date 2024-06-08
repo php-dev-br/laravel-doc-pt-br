@@ -34,7 +34,7 @@ In general, most applications can use facades without issue during development. 
 
 So, how do you get an implementation of a contract? It's actually quite simple.
 
-Many types of classes in Laravel are resolved through the [service container](container.md), including controllers, event listeners, middleware, queued jobs, and even route closures. So, to get an implementation of a contract, you can just "type-hint" the interface in the constructor of the class being resolved.
+Many types of classes in Laravel are resolved through the [service container](arquitetura/conteiner.md), including controllers, event listeners, middleware, queued jobs, and even route closures. So, to get an implementation of a contract, you can just "type-hint" the interface in the constructor of the class being resolved.
 
 For example, take a look at this event listener:
 
@@ -64,7 +64,7 @@ For example, take a look at this event listener:
         }
     }
 
-When the event listener is resolved, the service container will read the type-hints on the constructor of the class, and inject the appropriate value. To learn more about registering things in the service container, check out [its documentation](container.md).
+When the event listener is resolved, the service container will read the type-hints on the constructor of the class, and inject the appropriate value. To learn more about registering things in the service container, check out [its documentation](arquitetura/conteiner.md).
 
 <a name="contract-reference"></a>
 ## Contract Reference

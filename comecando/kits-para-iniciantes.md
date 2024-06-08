@@ -6,11 +6,11 @@
 
 - [Introdução](#introducao)
 - [Laravel Breeze](#laravel-breeze)
-  - [Instalação](#instalacao-do-laravel-breeze)
-  - [Breeze e Blade](#breeze-e-blade)
-  - [Breeze e Livewire](#breeze-e-livewire)
-  - [Breeze e React / Vue](#breeze-e-inertia)
-  - [Breeze e Next.js / API](#breeze-e-next)
+    - [Instalação](#instalacao-do-laravel-breeze)
+    - [Breeze e Blade](#breeze-e-blade)
+    - [Breeze e Livewire](#breeze-e-livewire)
+    - [Breeze e React / Vue](#breeze-e-inertia)
+    - [Breeze e Next.js / API](#breeze-e-next)
 - [Laravel Jetstream](#laravel-jetstream)
 
 ## Introdução

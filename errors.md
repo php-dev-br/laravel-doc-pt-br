@@ -308,7 +308,7 @@ If your exception contains custom reporting logic that is only necessary when ce
     }
 
 > [!NOTE]
-> You may type-hint any required dependencies of the `report` method and they will automatically be injected into the method by Laravel's [service container](container.md).
+> You may type-hint any required dependencies of the `report` method and they will automatically be injected into the method by Laravel's [service container](arquitetura/conteiner.md).
 
 <a name="throttling-reported-exceptions"></a>
 ### Throttling Reported Exceptions

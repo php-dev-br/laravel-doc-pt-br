@@ -890,7 +890,7 @@ The closure should return a string. If the returned string corresponds to an exi
 <a name="additional-dependencies"></a>
 #### Additional Dependencies
 
-If your component requires dependencies from Laravel's [service container](container.md), you may list them before any of the component's data attributes and they will automatically be injected by the container:
+If your component requires dependencies from Laravel's [service container](arquitetura/conteiner.md), you may list them before any of the component's data attributes and they will automatically be injected by the container:
 
 ```php
 use App\Services\AlertCreator;
@@ -1711,7 +1711,7 @@ If you would like to prepend content onto the beginning of a stack, you should u
 <a name="service-injection"></a>
 ## Service Injection
 
-The `@inject` directive may be used to retrieve a service from the Laravel [service container](container.md). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
+The `@inject` directive may be used to retrieve a service from the Laravel [service container](arquitetura/conteiner.md). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
 
 ```blade
 @inject('metrics', 'App\Services\MetricsService')

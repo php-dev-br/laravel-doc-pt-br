@@ -219,7 +219,7 @@ Some applications may require a different approach to throttling authentication 
 
 If the login attempt is successful, Fortify will redirect you to the URI configured via the `home` configuration option within your application's `fortify` configuration file. If the login request was an XHR request, a 200 HTTP response will be returned. After a user logs out of the application, the user will be redirected to the `/` URI.
 
-If you need advanced customization of this behavior, you may bind implementations of the `LoginResponse` and `LogoutResponse` contracts into the Laravel [service container](container.md). Typically, this should be done within the `register` method of your application's `App\Providers\FortifyServiceProvider` class:
+If you need advanced customization of this behavior, you may bind implementations of the `LoginResponse` and `LogoutResponse` contracts into the Laravel [service container](arquitetura/conteiner.md). Typically, this should be done within the `register` method of your application's `App\Providers\FortifyServiceProvider` class:
 
 ```php
 use Laravel\Fortify\Contracts\LogoutResponse;

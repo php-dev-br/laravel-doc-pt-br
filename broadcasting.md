@@ -687,7 +687,7 @@ Finally, you may place the authorization logic for your channel in the channel c
     }
 
 > [!NOTE]
-> Like many other classes in Laravel, channel classes will automatically be resolved by the [service container](container.md). So, you may type-hint any dependencies required by your channel in its constructor.
+> Like many other classes in Laravel, channel classes will automatically be resolved by the [service container](arquitetura/conteiner.md). So, you may type-hint any dependencies required by your channel in its constructor.
 
 <a name="broadcasting-events"></a>
 ## Broadcasting Events
