@@ -461,7 +461,7 @@ You may use the `move` method to move the browser window to a different position
 <a name="browser-macros"></a>
 ### Browser Macros
 
-If you would like to define a custom browser method that you can re-use in a variety of your tests, you may use the `macro` method on the `Browser` class. Typically, you should call this method from a [service provider's](providers.md) `boot` method:
+If you would like to define a custom browser method that you can re-use in a variety of your tests, you may use the `macro` method on the `Browser` class. Typically, you should call this method from a [service provider's](arquitetura/provedores.md) `boot` method:
 
     <?php
 
@@ -772,7 +772,7 @@ Dusk also provides a `withKeyboard` method, allowing you to fluently perform com
 <a name="keyboard-macros"></a>
 #### Keyboard Macros
 
-If you would like to define custom keyboard interactions that you can easily re-use throughout your test suite, you may use the `macro` method provided by the `Keyboard` class. Typically, you should call this method from a [service provider's](providers.md) `boot` method:
+If you would like to define custom keyboard interactions that you can easily re-use throughout your test suite, you may use the `macro` method provided by the `Keyboard` class. Typically, you should call this method from a [service provider's](arquitetura/provedores.md) `boot` method:
 
     <?php
 

@@ -23,7 +23,7 @@
 
 - [Ciclo de Vida da Requisição](arquitetura/ciclo-de-vida.md)
 - [Contêiner de Serviço](arquitetura/conteiner.md)
-- [Provedores de serviço](providers.md)
+- [Provedores de Serviços](arquitetura/provedores.md)
 - [Fachadas](facades.md)
 
 ## O Básico

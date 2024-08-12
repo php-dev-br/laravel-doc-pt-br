@@ -54,7 +54,7 @@ Collections are "macroable", which allows you to add additional methods to the `
 
     // ['FIRST', 'SECOND']
 
-Typically, you should declare collection macros in the `boot` method of a [service provider](providers.md).
+Typically, you should declare collection macros in the `boot` method of a [service provider](arquitetura/provedores.md).
 
 <a name="macro-arguments"></a>
 #### Macro Arguments

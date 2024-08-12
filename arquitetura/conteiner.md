@@ -153,7 +153,7 @@ necessário vincular os serviços do seu pacote ao contêiner.
 #### Vinculações Simples
 
 Quase todas as suas vinculações de contêiner de serviço serão registradas nos
-[provedores de serviços](../providers.md), portanto, a maioria desses exemplos
+[provedores de serviços](provedores.md), portanto, a maioria desses exemplos
 demonstrará o uso do contêiner nesse contexto.
 
 Em um provedor de serviço, você sempre tem acesso ao contêiner por meio da

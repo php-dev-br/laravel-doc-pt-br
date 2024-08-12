@@ -736,7 +736,7 @@ In order to define a custom filesystem you will need a Flysystem adapter. Let's 
 composer require spatie/flysystem-dropbox
 ```
 
-Next, you can register the driver within the `boot` method of one of your application's [service providers](providers.md). To accomplish this, you should use the `extend` method of the `Storage` facade:
+Next, you can register the driver within the `boot` method of one of your application's [service providers](arquitetura/provedores.md). To accomplish this, you should use the `extend` method of the `Storage` facade:
 
     <?php
 

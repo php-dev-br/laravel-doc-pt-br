@@ -310,7 +310,7 @@ Since the purpose of these methods is not readily understandable, let's quickly 
 <a name="registering-the-driver"></a>
 ### Registering the Driver
 
-Once your driver has been implemented, you are ready to register it with Laravel. To add additional drivers to Laravel's session backend, you may use the `extend` method provided by the `Session` [facade](facades.md). You should call the `extend` method from the `boot` method of a [service provider](providers.md). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
+Once your driver has been implemented, you are ready to register it with Laravel. To add additional drivers to Laravel's session backend, you may use the `extend` method provided by the `Session` [facade](facades.md). You should call the `extend` method from the `boot` method of a [service provider](arquitetura/provedores.md). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
 
     <?php
 

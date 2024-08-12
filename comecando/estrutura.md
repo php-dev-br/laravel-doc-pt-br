@@ -288,7 +288,7 @@ determinada ação em um recurso.
 #### O Diretório `Providers`
 
 O diretório `Providers` contém todos os
-[provedores de serviço](../providers.md) da sua aplicação.
+[provedores de serviço](../arquitetura/provedores.md) da sua aplicação.
 Os provedores de serviço inicializam sua aplicação vinculando serviços no
 contêiner de serviço, registrando eventos ou executando qualquer outra tarefa
 para preparar sua aplicação para as requisições recebidas.

@@ -150,7 +150,7 @@ Occasionally, you may need to share data with all views that are rendered by you
 
 View composers are callbacks or class methods that are called when a view is rendered. If you have data that you want to be bound to a view each time that view is rendered, a view composer can help you organize that logic into a single location. View composers may prove particularly useful if the same view is returned by multiple routes or controllers within your application and always needs a particular piece of data.
 
-Typically, view composers will be registered within one of your application's [service providers](providers.md). In this example, we'll assume that the `App\Providers\AppServiceProvider` will house this logic.
+Typically, view composers will be registered within one of your application's [service providers](arquitetura/provedores.md). In this example, we'll assume that the `App\Providers\AppServiceProvider` will house this logic.
 
 We'll use the `View` facade's `composer` method to register the view composer. Laravel does not include a default directory for class based view composers, so you are free to organize them however you wish. For example, you could create an `app/View/Composers` directory to house all of your application's view composers:
 

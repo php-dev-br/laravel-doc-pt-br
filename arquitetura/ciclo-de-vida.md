@@ -81,7 +81,7 @@ Alimente-o com requisições HTTP e ele retornará respostas HTTP.
 ### Provedores de Serviço
 
 Uma das ações mais importantes de inicialização do _kernel_ é carregar os
-[provedores de serviço](../providers.md) da sua aplicação.
+[provedores de serviço](provedores.md) da sua aplicação.
 Os provedores de serviço são responsáveis pela inicialização de todos os vários
 componentes do _framework_, como componentes de banco de dados, fila, validação
 e de roteamento.

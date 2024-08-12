@@ -540,7 +540,7 @@ You should ensure that any route that performs an action which requires recent p
 <a name="adding-custom-guards"></a>
 ## Adding Custom Guards
 
-You may define your own authentication guards using the `extend` method on the `Auth` facade. You should place your call to the `extend` method within a [service provider](providers.md). Since Laravel already ships with an `AppServiceProvider`, we can place the code in that provider:
+You may define your own authentication guards using the `extend` method on the `Auth` facade. You should place your call to the `extend` method within a [service provider](arquitetura/provedores.md). Since Laravel already ships with an `AppServiceProvider`, we can place the code in that provider:
 
     <?php
 
