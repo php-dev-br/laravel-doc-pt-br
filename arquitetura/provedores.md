@@ -1,6 +1,6 @@
 <!-- source_url: https://github.com/laravel/docs/blob/11.x/providers.md -->
 <!-- revision: 910898f77947c560ed9e1017b15314229a4bd1b6 -->
-<!-- status: wip -->
+<!-- status: ready -->
 
 # Provedores de Serviços
 
