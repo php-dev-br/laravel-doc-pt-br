@@ -15,7 +15,6 @@
 - [Instalação](contributions.md)
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
-- [_Front-end_](frontend.md)
 - [_Kits_ para Iniciantes](starter-kits.md)
 - [Implantação](deployment.md)
 
