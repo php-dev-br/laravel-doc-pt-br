@@ -11,7 +11,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Accessors and mutators allow you to format Eloquent attribute values when you retrieve or set them on model instances. For example, you may want to use the [Laravel encrypter](/docs/{{version}}/encryption) to encrypt a value while it is stored in the database, and then automatically decrypt the attribute when you access it on an Eloquent model.
+Accessors and mutators allow you to format Eloquent attribute values when you retrieve or set them on model instances. For example, you may want to use the [Laravel encrypter](encryption.md) to encrypt a value while it is stored in the database, and then automatically decrypt the attribute when you access it on an Eloquent model.
 
 In addition to custom accessors and mutators, Eloquent can also automatically cast date fields to [Carbon](https://github.com/briannesbitt/Carbon) instances or even [cast text fields to JSON](#attribute-casting).
 
@@ -61,7 +61,7 @@ You may also use accessors to return new, computed values from existing attribut
         return "{$this->first_name} {$this->last_name}";
     }
 
-> {tip} If you would like these computed values to be added to the array / JSON representations of your model, [you will need to append them](https://laravel.com/docs/{{version}}/eloquent-serialization#appending-values-to-json).
+> {tip} If you would like these computed values to be added to the array / JSON representations of your model, [you will need to append them](https://laravel.comeloquent-serialization.md#appending-values-to-json).
 
 <a name="defining-a-mutator"></a>
 ### Defining A Mutator
@@ -226,7 +226,7 @@ Once the cast is defined, you may access the `options` attribute and it will aut
 <a name="date-casting"></a>
 ### Date Casting
 
-When using the `date` or `datetime` cast type, you may specify the date's format. This format will be used when the [model is serialized to an array or JSON](/docs/{{version}}/eloquent-serialization):
+When using the `date` or `datetime` cast type, you may specify the date's format. This format will be used when the [model is serialized to an array or JSON](eloquent-serialization.md):
 
     /**
      * The attributes that should be cast to native types.

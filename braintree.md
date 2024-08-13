@@ -37,7 +37,7 @@
 
 Laravel Cashier Braintree provides an expressive, fluent interface to [Braintree's](https://www.braintreepayments.com) subscription billing services. It handles almost all of the boilerplate subscription billing code you are dreading writing. In addition to basic subscription management, Cashier can handle coupons, swapping subscription, subscription "quantities", cancellation grace periods, and even generate invoice PDFs.
 
-> {note} These are the docs for the Cashier integration with Braintree. You may find the Stripe integration docs [here](/docs/{{version}}/billing).
+> {note} These are the docs for the Cashier integration with Braintree. You may find the Stripe integration docs [here](billing.md).
 
 > {note} If you're only performing "one-off" charges and do not offer subscriptions, you should not use Cashier. Instead, use the Braintree SDK directly.
 
@@ -74,7 +74,7 @@ The discount amount configured in the Braintree control panel can be any value y
 <a name="database-migrations"></a>
 ### Database Migrations
 
-Before using Cashier, we'll need to [prepare the database](/docs/{{version}}/migrations). We need to add several columns to your `users` table and create a new `subscriptions` table to hold all of our customer's subscriptions:
+Before using Cashier, we'll need to [prepare the database](migrations.md). We need to add several columns to your `users` table and create a new `subscriptions` table to hold all of our customer's subscriptions:
 
     Schema::table('users', function (Blueprint $table) {
         $table->string('braintree_id')->nullable();
@@ -182,7 +182,7 @@ Once a user is subscribed to your application, you may easily check their subscr
         //
     }
 
-The `subscribed` method also makes a great candidate for a [route middleware](/docs/{{version}}/middleware), allowing you to filter access to routes and controllers based on the user's subscription status:
+The `subscribed` method also makes a great candidate for a [route middleware](middleware.md), allowing you to filter access to routes and controllers based on the user's subscription status:
 
     public function handle($request, Closure $next)
     {
@@ -329,7 +329,7 @@ If you would like to offer trial periods without collecting the user's payment m
         'trial_ends_at' => now()->addDays(10),
     ]);
 
-> {note}  Be sure to add a [date mutator](/docs/{{version}}/eloquent-mutators#date-mutators) for `trial_ends_at` to your model definition.
+> {note}  Be sure to add a [date mutator](eloquent-mutators.md#date-mutators) for `trial_ends_at` to your model definition.
 
 Cashier refers to this type of trial as a "generic trial", since it is not attached to any existing subscription. The `onTrial` method on the `User` instance will return `true` if the current date is not past the value of `trial_ends_at`:
 
@@ -387,7 +387,7 @@ By default, this controller will automatically handle cancelling subscriptions t
 
 #### Webhooks & CSRF Protection
 
-Since webhooks need to bypass Laravel's [CSRF protection](/docs/{{version}}/csrf), be sure to list the URI as an exception in your `VerifyCsrfToken` middleware or list the route outside of the `web` middleware group:
+Since webhooks need to bypass Laravel's [CSRF protection](csrf.md), be sure to list the URI as an exception in your `VerifyCsrfToken` middleware or list the route outside of the `web` middleware group:
 
     protected $except = [
         'braintree/*',

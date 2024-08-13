@@ -727,7 +727,7 @@ This route may be used to delete personal access tokens:
 <a name="via-middleware"></a>
 ### Via Middleware
 
-Passport includes an [authentication guard](/docs/{{version}}/authentication#adding-custom-guards) that will validate access tokens on incoming requests. Once you have configured the `api` guard to use the `passport` driver, you only need to specify the `auth:api` middleware on any routes that require a valid access token:
+Passport includes an [authentication guard](authentication.md#adding-custom-guards) that will validate access tokens on incoming requests. Once you have configured the `api` guard to use the `passport` driver, you only need to specify the `auth:api` middleware on any routes that require a valid access token:
 
     Route::get('/user', function () {
         //
@@ -893,7 +893,7 @@ If needed, you can customize the `laravel_token` cookie's name using the `Passpo
 
 #### CSRF Protection
 
-When using this method of authentication, the default Laravel JavaScript scaffolding instructs Axios to always send the `X-CSRF-TOKEN` and `X-Requested-With` headers. However, you should be sure to include your CSRF token in a [HTML meta tag](/docs/{{version}}/csrf#csrf-x-csrf-token):
+When using this method of authentication, the default Laravel JavaScript scaffolding instructs Axios to always send the `X-CSRF-TOKEN` and `X-Requested-With` headers. However, you should be sure to include your CSRF token in a [HTML meta tag](csrf.md#csrf-x-csrf-token):
 
     // In your application layout...
     <meta name="csrf-token" content="{{ csrf_token() }}">

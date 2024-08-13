@@ -51,7 +51,7 @@ Database tables are often related to one another. For example, a blog post may h
 <a name="defining-relationships"></a>
 ## Defining Relationships
 
-Eloquent relationships are defined as methods on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](/docs/{{version}}/queries), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
+Eloquent relationships are defined as methods on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](queries.md), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
 
     $user->posts()->where('active', 1)->get();
 
@@ -806,7 +806,7 @@ You may register the `morphMap` in the `boot` function of your `AppServiceProvid
 <a name="querying-relations"></a>
 ## Querying Relations
 
-Since all types of Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing the relationship queries. In addition, all types of Eloquent relationships also serve as [query builders](/docs/{{version}}/queries), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL against your database.
+Since all types of Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing the relationship queries. In addition, all types of Eloquent relationships also serve as [query builders](queries.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL against your database.
 
 For example, imagine a blog system in which a `User` model has many associated `Post` models:
 
@@ -833,7 +833,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     $user->posts()->where('active', 1)->get();
 
-You are able to use any of the [query builder](/docs/{{version}}/queries) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the [query builder](queries.md) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
 #### Chaining `orWhere` Clauses After Relationships
 
@@ -847,7 +847,7 @@ As demonstrated in the example above, you are free to add additional constraints
     // select * from posts
     // where user_id = ? and active = 1 or votes >= 100
 
-In most situations, you likely intend to use [constraint groups](/docs/{{version}}/queries#parameter-grouping) to logically group the conditional checks between parentheses:
+In most situations, you likely intend to use [constraint groups](queries.md#parameter-grouping) to logically group the conditional checks between parentheses:
 
     use Illuminate\Database\Eloquent\Builder;
 
@@ -1164,7 +1164,7 @@ Sometimes you may wish to eager load a relationship, but also specify additional
         $query->where('title', 'like', '%first%');
     }])->get();
 
-In this example, Eloquent will only eager load posts where the post's `title` column contains the word `first`. You may call other [query builder](/docs/{{version}}/queries) methods to further customize the eager loading operation:
+In this example, Eloquent will only eager load posts where the post's `title` column contains the word `first`. You may call other [query builder](queries.md) methods to further customize the eager loading operation:
 
     $users = App\User::with(['posts' => function ($query) {
         $query->orderBy('created_at', 'desc');
@@ -1282,7 +1282,7 @@ In addition to the `save` and `saveMany` methods, you may also use the `create` 
         'message' => 'A new comment.',
     ]);
 
-> {tip} Before using the `create` method, be sure to review the documentation on attribute [mass assignment](/docs/{{version}}/eloquent#mass-assignment).
+> {tip} Before using the `create` method, be sure to review the documentation on attribute [mass assignment](eloquent.md#mass-assignment).
 
 You may use the `createMany` method to create multiple related models:
 
@@ -1297,7 +1297,7 @@ You may use the `createMany` method to create multiple related models:
         ],
     ]);
 
-You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate` and `updateOrCreate` methods to [create and update models on relationships](https://laravel.com/docs/{{version}}/eloquent#other-creation-methods).
+You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate` and `updateOrCreate` methods to [create and update models on relationships](https://laravel.comeloquent.md#other-creation-methods).
 
 <a name="updating-belongs-to-relationships"></a>
 ### Belongs To Relationships

@@ -51,7 +51,7 @@ Laravel includes the `Auth\VerificationController` class that contains the neces
 <a name="protecting-routes"></a>
 ### Protecting Routes
 
-[Route middleware](/docs/{{version}}/middleware) can be used to only allow verified users to access a given route. Laravel ships with a `verified` middleware, which is defined at `Illuminate\Auth\Middleware\EnsureEmailIsVerified`. Since this middleware is already registered in your application's HTTP kernel, all you need to do is attach the middleware to a route definition:
+[Route middleware](middleware.md) can be used to only allow verified users to access a given route. Laravel ships with a `verified` middleware, which is defined at `Illuminate\Auth\Middleware\EnsureEmailIsVerified`. Since this middleware is already registered in your application's HTTP kernel, all you need to do is attach the middleware to a route definition:
 
     Route::get('profile', function () {
         // Only verified users may enter...
@@ -72,7 +72,7 @@ After an email address is verified, the user will automatically be redirected to
 <a name="events"></a>
 ## Events
 
-Laravel dispatches [events](/docs/{{version}}/events) during the email verification process. You may attach listeners to these events in your `EventServiceProvider`:
+Laravel dispatches [events](events.md) during the email verification process. You may attach listeners to these events in your `EventServiceProvider`:
 
     /**
      * The event listener mappings for the application.

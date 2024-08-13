@@ -34,7 +34,7 @@ The `assertDatabaseHas` method and other helpers like it are for convenience. Yo
 <a name="generating-factories"></a>
 ## Generating Factories
 
-To create a factory, use the `make:factory` [Artisan command](/docs/{{version}}/artisan):
+To create a factory, use the `make:factory` [Artisan command](artisan.md):
 
     php artisan make:factory PostFactory
 
@@ -77,7 +77,7 @@ It is often useful to reset your database after each test so that data from a pr
 <a name="writing-factories"></a>
 ## Writing Factories
 
-When testing, you may need to insert a few records into your database before executing your test. Instead of manually specifying the value of each column when you create this test data, Laravel allows you to define a default set of attributes for each of your [Eloquent models](/docs/{{version}}/eloquent) using model factories. To get started, take a look at the `database/factories/UserFactory.php` file in your application. Out of the box, this file contains one factory definition:
+When testing, you may need to insert a few records into your database before executing your test. Instead of manually specifying the value of each column when you create this test data, Laravel allows you to define a default set of attributes for each of your [Eloquent models](eloquent.md) using model factories. To get started, take a look at the `database/factories/UserFactory.php` file in your application. Out of the box, this file contains one factory definition:
 
     use Illuminate\Support\Str;
     use Faker\Generator as Faker;
@@ -174,7 +174,7 @@ If you would like to override some of the default values of your models, you may
         'name' => 'Abigail',
     ]);
 
-> {tip} [Mass assignment protection](/docs/{{version}}/eloquent#mass-assignment) is automatically disabled when creating models using factories.
+> {tip} [Mass assignment protection](eloquent.md#mass-assignment) is automatically disabled when creating models using factories.
 
 <a name="persisting-models"></a>
 ### Persisting Models
@@ -201,14 +201,14 @@ You may override attributes on the model by passing an array to the `create` met
 <a name="relationships"></a>
 ### Relationships
 
-In this example, we'll attach a relation to some created models. When using the `create` method to create multiple models, an Eloquent [collection instance](/docs/{{version}}/eloquent-collections) is returned, allowing you to use any of the convenient functions provided by the collection, such as `each`:
+In this example, we'll attach a relation to some created models. When using the `create` method to create multiple models, an Eloquent [collection instance](eloquent-collections.md) is returned, allowing you to use any of the convenient functions provided by the collection, such as `each`:
 
     $users = factory(App\User::class, 3)
                ->create()
                ->each(function ($user) {
                     $user->posts()->save(factory(App\Post::class)->make());
                 });
-                
+
 You may use the `createMany` method to create multiple related models:
 
     $user->posts()->createMany(
@@ -247,7 +247,7 @@ These Closures also receive the evaluated attribute array of the factory that de
 <a name="using-seeds"></a>
 ## Using Seeds
 
-If you would like to use [database seeders](/docs/{{version}}/seeding) to populate your database during a test, you may use the `seed` method. By default, the `seed` method will return the `DatabaseSeeder`, which should execute all of your other seeders. Alternatively, you pass a specific seeder class name to the `seed` method:
+If you would like to use [database seeders](seeding.md) to populate your database during a test, you may use the `seed` method. By default, the `seed` method will return the `DatabaseSeeder`, which should execute all of your other seeders. Alternatively, you pass a specific seeder class name to the `seed` method:
 
     <?php
 

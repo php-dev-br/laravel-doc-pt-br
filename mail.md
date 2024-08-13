@@ -154,7 +154,7 @@ In addition, you may define a global "reply_to" address within your `config/mail
 <a name="configuring-the-view"></a>
 ### Configuring The View
 
-Within a mailable class' `build` method, you may use the `view` method to specify which template should be used when rendering the email's contents. Since each email typically uses a [Blade template](/docs/{{version}}/blade) to render its contents, you have the full power and convenience of the Blade templating engine when building your email's HTML:
+Within a mailable class' `build` method, you may use the `view` method to specify which template should be used when rendering the email's contents. Since each email typically uses a [Blade template](blade.md) to render its contents, you have the full power and convenience of the Blade templating engine when building your email's HTML:
 
     /**
      * Build the message.
@@ -326,7 +326,7 @@ When attaching files to a message, you may also specify the display name and / o
 
 #### Attaching Files from Disk
 
-If you have stored a file on one of your [filesystem disks](/docs/{{version}}/filesystem), you may attach it to the email using the `attachFromStorage` method:
+If you have stored a file on one of your [filesystem disks](filesystem.md), you may attach it to the email using the `attachFromStorage` method:
 
     /**
      * Build the message.
@@ -519,7 +519,7 @@ To customize the theme for an individual mailable, you may set the `$theme` prop
 <a name="sending-mail"></a>
 ## Sending Mail
 
-To send a message, use the `to` method on the `Mail` [facade](/docs/{{version}}/facades). The `to` method accepts an email address, a user instance, or a collection of users. If you pass an object or collection of objects, the mailer will automatically use their `email` and `name` properties when setting the email recipients, so make sure these attributes are available on your objects. Once you have specified your recipients, you may pass an instance of your mailable class to the `send` method:
+To send a message, use the `to` method on the `Mail` [facade](facades.md). The `to` method accepts an email address, a user instance, or a collection of users. If you pass an object or collection of objects, the mailer will automatically use their `email` and `name` properties when setting the email recipients, so make sure these attributes are available on your objects. Once you have specified your recipients, you may pass an instance of your mailable class to the `send` method:
 
     <?php
 
@@ -582,14 +582,14 @@ When designing a mailable's template, it is convenient to quickly preview the re
 
 #### Queueing A Mail Message
 
-Since sending email messages can drastically lengthen the response time of your application, many developers choose to queue email messages for background sending. Laravel makes this easy using its built-in [unified queue API](/docs/{{version}}/queues). To queue a mail message, use the `queue` method on the `Mail` facade after specifying the message's recipients:
+Since sending email messages can drastically lengthen the response time of your application, many developers choose to queue email messages for background sending. Laravel makes this easy using its built-in [unified queue API](queues.md). To queue a mail message, use the `queue` method on the `Mail` facade after specifying the message's recipients:
 
     Mail::to($request->user())
         ->cc($moreUsers)
         ->bcc($evenMoreUsers)
         ->queue(new OrderShipped($order));
 
-This method will automatically take care of pushing a job onto the queue so the message is sent in the background. You will need to [configure your queues](/docs/{{version}}/queues) before using this feature.
+This method will automatically take care of pushing a job onto the queue so the message is sent in the background. You will need to [configure your queues](queues.md) before using this feature.
 
 #### Delayed Message Queueing
 
@@ -667,7 +667,7 @@ When developing an application that sends email, you probably don't want to actu
 
 #### Log Driver
 
-Instead of sending your emails, the `log` mail driver will write all email messages to your log files for inspection. For more information on configuring your application per environment, check out the [configuration documentation](/docs/{{version}}/configuration#environment-configuration).
+Instead of sending your emails, the `log` mail driver will write all email messages to your log files for inspection. For more information on configuring your application per environment, check out the [configuration documentation](configuration.md#environment-configuration).
 
 #### Universal To
 

@@ -39,7 +39,7 @@
     - [Codeship](#running-tests-on-codeship)
     - [Heroku CI](#running-tests-on-heroku-ci)
     - [Travis CI](#running-tests-on-travis-ci)
-    - [GitHub Actions](#running-tests-on-github-actions)    
+    - [GitHub Actions](#running-tests-on-github-actions)
 
 <a name="introduction"></a>
 ## Introduction
@@ -253,7 +253,7 @@ The `maximize` method may be used to maximize the browser window:
 <a name="browser-macros"></a>
 ### Browser Macros
 
-If you would like to define a custom browser method that you can re-use in a variety of your tests, you may use the `macro` method on the `Browser` class. Typically, you should call this method from a [service provider's](/docs/{{version}}/providers) `boot` method:
+If you would like to define a custom browser method that you can re-use in a variety of your tests, you may use the `macro` method on the `Browser` class. Typically, you should call this method from a [service provider's](providers.md) `boot` method:
 
     <?php
 
@@ -479,7 +479,7 @@ Dusk provides various methods to interact with JavaScript Dialogs:
 
     // Wait for a dialog to appear:
     $browser->waitForDialog($seconds = null);
-    
+
     // Assert that a dialog has been displayed and that its message matches the given value:
     $browser->assertDialogOpened('value');
 
@@ -1384,17 +1384,17 @@ If you are using CircleCI to run your Dusk tests, you may use this configuration
                 - run: npm install
                 - run: npm run production
                 - run: vendor/bin/phpunit
-       
+
                 - run:
                     name: Start Chrome Driver
                     command: ./vendor/laravel/dusk/bin/chromedriver-linux
                     background: true
-       
+
                 - run:
                     name: Run Laravel Server
                     command: php artisan serve
                     background: true
-       
+
                 - run:
                     name: Run Laravel Dusk Tests
                     command: php artisan dusk
@@ -1456,7 +1456,7 @@ To run your Dusk tests on [Travis CI](https://travis-ci.org), use the following 
 
     script:
       - php artisan dusk
-      
+
 <a name="running-tests-on-github-actions"></a>
 ### GitHub Actions
 

@@ -31,7 +31,7 @@ After installing Horizon, publish its assets using the `horizon:install` Artisan
 
     php artisan horizon:install
 
-You should also create the `failed_jobs` table which Laravel will use to store any [failed queue jobs](/docs/{{version}}/queues#dealing-with-failed-jobs):
+You should also create the `failed_jobs` table which Laravel will use to store any [failed queue jobs](queues.md#dealing-with-failed-jobs):
 
     php artisan queue:failed-table
 
@@ -220,7 +220,7 @@ If you would like to manually define the tags for one of your queueable objects,
 <a name="notifications"></a>
 ## Notifications
 
-> **Note:** When configuring Horizon to send Slack or SMS notifications, you should review the [prerequisites for the relevant notification driver](/docs/{{version}}/notifications).
+> **Note:** When configuring Horizon to send Slack or SMS notifications, you should review the [prerequisites for the relevant notification driver](notifications.md).
 
 If you would like to be notified when one of your queues has a long wait time, you may use the `Horizon::routeMailNotificationsTo`, `Horizon::routeSlackNotificationsTo`, and `Horizon::routeSmsNotificationsTo` methods. You may call these methods from your application's `HorizonServiceProvider`:
 
@@ -239,7 +239,7 @@ You may configure how many seconds are considered a "long wait" within your `con
 <a name="metrics"></a>
 ## Metrics
 
-Horizon includes a metrics dashboard which provides information on your job and queue wait times and throughput. In order to populate this dashboard, you should configure Horizon's `snapshot` Artisan command to run every five minutes via your application's [scheduler](/docs/{{version}}/scheduling):
+Horizon includes a metrics dashboard which provides information on your job and queue wait times and throughput. In order to populate this dashboard, you should configure Horizon's `snapshot` Artisan command to run every five minutes via your application's [scheduler](scheduling.md):
 
     /**
      * Define the application's command schedule.

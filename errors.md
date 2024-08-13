@@ -48,7 +48,7 @@ For example, if you need to report different types of exceptions in different wa
         parent::report($exception);
     }
 
-> {tip} Instead of making a lot of `instanceof` checks in your `report` method, consider using [reportable exceptions](/docs/{{version}}/errors#renderable-exceptions)
+> {tip} Instead of making a lot of `instanceof` checks in your `report` method, consider using [reportable exceptions](errors.md#renderable-exceptions)
 
 #### Global Log Context
 
@@ -154,7 +154,7 @@ Instead of type-checking exceptions in the exception handler's `report` and `ren
         }
     }
 
-> {tip} You may type-hint any required dependencies of the `report` method and they will automatically be injected into the method by Laravel's [service container](/docs/{{version}}/container).
+> {tip} You may type-hint any required dependencies of the `report` method and they will automatically be injected into the method by Laravel's [service container](container.md).
 
 <a name="http-exceptions"></a>
 ## HTTP Exceptions

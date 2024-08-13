@@ -49,7 +49,7 @@ Eloquent now provides support for the `hasOneThrough` relationship type. For exa
 
 ### Auto-Discovery Of Model Policies
 
-When using Laravel 5.7, each model's corresponding [authorization policy](/docs/{{version}}/authorization#creating-policies) needed to be explicitly registered in your application's `AuthServiceProvider`:
+When using Laravel 5.7, each model's corresponding [authorization policy](authorization.md#creating-policies) needed to be explicitly registered in your application's `AuthServiceProvider`:
 
     /**
      * The policy mappings for the application.
@@ -97,9 +97,9 @@ In previous releases of Laravel, private and presence broadcast channels authent
 
 ### Token Guard Token Hashing
 
-Laravel's `token` guard, which provides basic API authentication, now supports storing API tokens as SHA-256 hashes. This provides improved security over storing plain-text tokens. To learn more about hashed tokens, please review the full [API authentication documentation](/docs/{{version}}/api-authentication).
+Laravel's `token` guard, which provides basic API authentication, now supports storing API tokens as SHA-256 hashes. This provides improved security over storing plain-text tokens. To learn more about hashed tokens, please review the full [API authentication documentation](api-authentication.md).
 
-> **Note:** While Laravel ships with a simple, token based authentication guard, we strongly recommend you consider using [Laravel Passport](/docs/{{version}}/passport) for robust, production applications that offer API authentication.
+> **Note:** While Laravel ships with a simple, token based authentication guard, we strongly recommend you consider using [Laravel Passport](passport.md) for robust, production applications that offer API authentication.
 
 ### Improved Email Validation
 
@@ -127,7 +127,7 @@ However, this can become cumbersome and repetitive if you are specifying the sam
 
 ### Intermediate Table / Pivot Model Events
 
-In previous versions of Laravel, [Eloquent model events](/docs/{{version}}/eloquent#events) were not dispatched when attaching, detaching, or syncing custom intermediate table / "pivot" models of a many-to-many relationship. When using [custom intermediate table models](/docs/{{version}}/eloquent-relationships#defining-custom-intermediate-table-models) in Laravel 5.8, the applicable model events will now be dispatched.
+In previous versions of Laravel, [Eloquent model events](eloquent.md#events) were not dispatched when attaching, detaching, or syncing custom intermediate table / "pivot" models of a many-to-many relationship. When using [custom intermediate table models](eloquent-relationships.md#defining-custom-intermediate-table-models) in Laravel 5.8, the applicable model events will now be dispatched.
 
 ### Artisan Call Improvements
 
@@ -157,7 +157,7 @@ In order to make mocking objects more convenient, new `mock` and `spy` methods h
 
 ### Eloquent Resource Key Preservation
 
-When returning an [Eloquent resource collection](/docs/{{version}}/eloquent-resources) from a route, Laravel resets the collection's keys so that they are in simple numerical order:
+When returning an [Eloquent resource collection](eloquent-resources.md) from a route, Laravel resets the collection's keys so that they are in simple numerical order:
 
     use App\User;
     use App\Http\Resources\User as UserResource;

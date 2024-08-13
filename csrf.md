@@ -19,7 +19,7 @@ Anytime you define an HTML form in your application, you should include a hidden
         ...
     </form>
 
-The `VerifyCsrfToken` [middleware](/docs/{{version}}/middleware), which is included in the `web` middleware group, will automatically verify that the token in the request input matches the token stored in the session.
+The `VerifyCsrfToken` [middleware](middleware.md), which is included in the `web` middleware group, will automatically verify that the token in the request input matches the token stored in the session.
 
 #### CSRF Tokens & JavaScript
 
@@ -52,7 +52,7 @@ Typically, you should place these kinds of routes outside of the `web` middlewar
         ];
     }
 
-> {tip} The CSRF middleware is automatically disabled when [running tests](/docs/{{version}}/testing).
+> {tip} The CSRF middleware is automatically disabled when [running tests](testing.md).
 
 <a name="csrf-x-csrf-token"></a>
 ## X-CSRF-TOKEN

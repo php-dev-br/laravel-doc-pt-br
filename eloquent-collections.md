@@ -7,7 +7,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-All multi-result sets returned by Eloquent are instances of the `Illuminate\Database\Eloquent\Collection` object, including results retrieved via the `get` method or accessed via a relationship. The Eloquent collection object extends the Laravel [base collection](/docs/{{version}}/collections), so it naturally inherits dozens of methods used to fluently work with the underlying array of Eloquent models.
+All multi-result sets returned by Eloquent are instances of the `Illuminate\Database\Eloquent\Collection` object, including results retrieved via the `get` method or accessed via a relationship. The Eloquent collection object extends the Laravel [base collection](collections.md), so it naturally inherits dozens of methods used to fluently work with the underlying array of Eloquent models.
 
 All collections also serve as iterators, allowing you to loop over them as if they were simple PHP arrays:
 
@@ -28,12 +28,12 @@ However, collections are much more powerful than arrays and expose a variety of 
         return $user->name;
     });
 
-> {note} While most Eloquent collection methods return a new instance of an Eloquent collection, the `pluck`, `keys`, `zip`, `collapse`, `flatten` and `flip` methods return a [base collection](/docs/{{version}}/collections) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be automatically cast to a base collection.
+> {note} While most Eloquent collection methods return a new instance of an Eloquent collection, the `pluck`, `keys`, `zip`, `collapse`, `flatten` and `flip` methods return a [base collection](collections.md) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be automatically cast to a base collection.
 
 <a name="available-methods"></a>
 ## Available Methods
 
-All Eloquent collections extend the base [Laravel collection](/docs/{{version}}/collections#available-methods) object; therefore, they inherit all of the powerful methods provided by the base collection class.
+All Eloquent collections extend the base [Laravel collection](collections.md#available-methods) object; therefore, they inherit all of the powerful methods provided by the base collection class.
 
 In addition, the `Illuminate\Database\Eloquent\Collection` class provides a superset of methods to aid with managing your model collections. Most methods return `Illuminate\Database\Eloquent\Collection` instances; however, some methods return a base `Illuminate\Support\Collection` instance.
 
@@ -42,7 +42,7 @@ In addition, the `Illuminate\Database\Eloquent\Collection` class provides a supe
 The `contains` method may be used to determine if a given model instance is contained by the collection. This method accepts a primary key or a model instance:
 
     $users->contains(1);
-    
+
     $users->contains(User::find(1));
 
 #### `diff($items)`
@@ -106,7 +106,7 @@ The `modelKeys` method returns the primary keys for all models in the collection
     $users->modelKeys();
 
     // [1, 2, 3, 4, 5]
-    
+
 #### `makeVisible($attributes)`
 
 The `makeVisible` method makes attributes visible that are typically "hidden" on each model in the collection:

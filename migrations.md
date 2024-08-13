@@ -24,12 +24,12 @@
 
 Migrations are like version control for your database, allowing your team to easily modify and share the application's database schema. Migrations are typically paired with Laravel's schema builder to easily build your application's database schema. If you have ever had to tell a teammate to manually add a column to their local database schema, you've faced the problem that database migrations solve.
 
-The Laravel `Schema` [facade](/docs/{{version}}/facades) provides database agnostic support for creating and manipulating tables across all of Laravel's supported database systems.
+The Laravel `Schema` [facade](facades.md) provides database agnostic support for creating and manipulating tables across all of Laravel's supported database systems.
 
 <a name="generating-migrations"></a>
 ## Generating Migrations
 
-To create a migration, use the `make:migration` [Artisan command](/docs/{{version}}/artisan):
+To create a migration, use the `make:migration` [Artisan command](artisan.md):
 
     php artisan make:migration create_users_table
 
@@ -91,7 +91,7 @@ To run all of your outstanding migrations, execute the `migrate` Artisan command
 
     php artisan migrate
 
-> {note} If you are using the [Homestead virtual machine](/docs/{{version}}/homestead), you should run this command from within your virtual machine.
+> {note} If you are using the [Homestead virtual machine](homestead.md), you should run this command from within your virtual machine.
 
 #### Forcing Migrations To Run In Production
 
@@ -472,4 +472,4 @@ You may enable or disable foreign key constraints within your migrations by usin
 
     Schema::disableForeignKeyConstraints();
 
-> {note} SQLite disables foreign key constraints by default. When using SQLite, make sure to [enable foreign key support](/docs/{{version}}/database#configuration) in your database configuration before attempting to create them in your migrations.
+> {note} SQLite disables foreign key constraints by default. When using SQLite, make sure to [enable foreign key support](database.md#configuration) in your database configuration before attempting to create them in your migrations.

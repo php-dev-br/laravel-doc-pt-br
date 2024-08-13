@@ -15,7 +15,7 @@
 <a name="server-requirements"></a>
 ### Server Requirements
 
-The Laravel framework has a few system requirements. All of these requirements are satisfied by the [Laravel Homestead](/docs/{{version}}/homestead) virtual machine, so it's highly recommended that you use Homestead as your local Laravel development environment.
+The Laravel framework has a few system requirements. All of these requirements are satisfied by the [Laravel Homestead](homestead.md) virtual machine, so it's highly recommended that you use Homestead as your local Laravel development environment.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
 
@@ -69,7 +69,7 @@ If you have PHP installed locally and you would like to use PHP's built-in devel
 
     php artisan serve
 
-More robust local development options are available via [Homestead](/docs/{{version}}/homestead) and [Valet](/docs/{{version}}/valet).
+More robust local development options are available via [Homestead](homestead.md) and [Valet](valet.md).
 
 <a name="configuration"></a>
 ### Configuration
@@ -84,7 +84,7 @@ All of the configuration files for the Laravel framework are stored in the `conf
 
 #### Directory Permissions
 
-After installing Laravel, you may need to configure some permissions. Directories within the `storage` and the `bootstrap/cache` directories should be writable by your web server or Laravel will not run. If you are using the [Homestead](/docs/{{version}}/homestead) virtual machine, these permissions should already be set.
+After installing Laravel, you may need to configure some permissions. Directories within the `storage` and the `bootstrap/cache` directories should be writable by your web server or Laravel will not run. If you are using the [Homestead](homestead.md) virtual machine, these permissions should already be set.
 
 #### Application Key
 
@@ -100,9 +100,9 @@ You may also want to configure a few additional components of Laravel, such as:
 
 <div class="content-list" markdown="1">
 
-- [Cache](/docs/{{version}}/cache#configuration)
-- [Database](/docs/{{version}}/database#configuration)
-- [Session](/docs/{{version}}/session#configuration)
+- [Cache](cache.md#configuration)
+- [Database](database.md#configuration)
+- [Session](session.md#configuration)
 
 </div>
 
@@ -136,4 +136,4 @@ If you are using Nginx, the following directive in your site configuration will 
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-When using [Homestead](/docs/{{version}}/homestead) or [Valet](/docs/{{version}}/valet), pretty URLs will be automatically configured.
+When using [Homestead](homestead.md) or [Valet](valet.md), pretty URLs will be automatically configured.

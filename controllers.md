@@ -103,7 +103,7 @@ You may generate an invokable controller by using the `--invokable` option of th
 <a name="controller-middleware"></a>
 ## Controller Middleware
 
-[Middleware](/docs/{{version}}/middleware) may be assigned to the controller's routes in your route files:
+[Middleware](middleware.md) may be assigned to the controller's routes in your route files:
 
     Route::get('profile', 'UserController@show')->middleware('auth');
 
@@ -278,7 +278,7 @@ If you need to add additional routes to a resource controller beyond the default
 
 #### Constructor Injection
 
-The Laravel [service container](/docs/{{version}}/container) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
+The Laravel [service container](container.md) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
 
     <?php
 
@@ -305,7 +305,7 @@ The Laravel [service container](/docs/{{version}}/container) is used to resolve 
         }
     }
 
-You may also type-hint any [Laravel contract](/docs/{{version}}/contracts). If the container can resolve it, you can type-hint it. Depending on your application, injecting your dependencies into your controller may provide better testability.
+You may also type-hint any [Laravel contract](contracts.md). If the container can resolve it, you can type-hint it. Depending on your application, injecting your dependencies into your controller may provide better testability.
 
 #### Method Injection
 

@@ -116,7 +116,7 @@ Laravel provides several helpers for working with the session during HTTP testin
         }
     }
 
-One common use of the session is for maintaining state for the authenticated user. The `actingAs` helper method provides a simple way to authenticate a given user as the current user. For example, we may use a [model factory](/docs/{{version}}/database-testing#writing-factories) to generate and authenticate a user:
+One common use of the session is for maintaining state for the authenticated user. The `actingAs` helper method provides a simple way to authenticate a given user as the current user. For example, we may use a [model factory](database-testing.md#writing-factories) to generate and authenticate a user:
 
     <?php
 

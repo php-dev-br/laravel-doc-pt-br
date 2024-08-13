@@ -26,7 +26,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel Scout provides a simple, driver based solution for adding full-text search to your [Eloquent models](/docs/{{version}}/eloquent). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records.
+Laravel Scout provides a simple, driver based solution for adding full-text search to your [Eloquent models](eloquent.md). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records.
 
 Currently, Scout ships with an [Algolia](https://www.algolia.com/) driver; however, writing custom drivers is simple and you are free to extend Scout with your own search implementations.
 
@@ -58,7 +58,7 @@ Finally, add the `Laravel\Scout\Searchable` trait to the model you would like to
 <a name="queueing"></a>
 ### Queueing
 
-While not strictly required to use Scout, you should strongly consider configuring a [queue driver](/docs/{{version}}/queues) before using the library. Running a queue worker will allow Scout to queue all operations that sync your model information to your search indexes, providing much better response times for your application's web interface.
+While not strictly required to use Scout, you should strongly consider configuring a [queue driver](queues.md) before using the library. Running a queue worker will allow Scout to queue all operations that sync your model information to your search indexes, providing much better response times for your application's web interface.
 
 Once you have configured a queue driver, set the value of the `queue` option in your `config/scout.php` configuration file to `true`:
 
@@ -188,7 +188,7 @@ Once you have added the `Laravel\Scout\Searchable` trait to a model, all you nee
 
 #### Adding Via Query
 
-If you would like to add a collection of models to your search index via an Eloquent query, you may chain the `searchable` method onto an Eloquent query. The `searchable` method will [chunk the results](/docs/{{version}}/eloquent#chunking-results) of the query and add the records to your search index. Again, if you have configured Scout to use queues, all of the chunks will be added in the background by your queue workers:
+If you would like to add a collection of models to your search index via an Eloquent query, you may chain the `searchable` method onto an Eloquent query. The `searchable` method will [chunk the results](eloquent.md#chunking-results) of the query and add the records to your search index. Again, if you have configured Scout to use queues, all of the chunks will be added in the background by your queue workers:
 
     // Adding via Eloquent query...
     App\Order::where('price', '>', 100)->searchable();
@@ -226,7 +226,7 @@ You may also use the `searchable` method on an Eloquent query to update a collec
 <a name="removing-records"></a>
 ### Removing Records
 
-To remove a record from your index, `delete` the model from the database. This form of removal is even compatible with [soft deleted](/docs/{{version}}/eloquent#soft-deleting) models:
+To remove a record from your index, `delete` the model from the database. This form of removal is even compatible with [soft deleted](eloquent.md#soft-deleting) models:
 
     $order = App\Order::find(1);
 
@@ -311,7 +311,7 @@ Scout allows you to add simple "where" clauses to your search queries. Currently
 <a name="pagination"></a>
 ### Pagination
 
-In addition to retrieving a collection of models, you may paginate your search results using the `paginate` method. This method will return a `Paginator` instance just as if you had [paginated a traditional Eloquent query](/docs/{{version}}/pagination):
+In addition to retrieving a collection of models, you may paginate your search results using the `paginate` method. This method will return a `Paginator` instance just as if you had [paginated a traditional Eloquent query](pagination.md):
 
     $orders = App\Order::search('Star Trek')->paginate();
 
@@ -319,7 +319,7 @@ You may specify how many models to retrieve per page by passing the amount as th
 
     $orders = App\Order::search('Star Trek')->paginate(15);
 
-Once you have retrieved the results, you may display the results and render the page links using [Blade](/docs/{{version}}/blade) just as if you had paginated a traditional Eloquent query:
+Once you have retrieved the results, you may display the results and render the page links using [Blade](blade.md) just as if you had paginated a traditional Eloquent query:
 
     <div class="container">
         @foreach ($orders as $order)
@@ -332,7 +332,7 @@ Once you have retrieved the results, you may display the results and render the 
 <a name="soft-deleting"></a>
 ### Soft Deleting
 
-If your indexed models are [soft deleting](/docs/{{version}}/eloquent#soft-deleting) and you need to search your soft deleted models, set the `soft_delete` option of the `config/scout.php` configuration file to `true`:
+If your indexed models are [soft deleting](eloquent.md#soft-deleting) and you need to search your soft deleted models, set the `soft_delete` option of the `config/scout.php` configuration file to `true`:
 
     'soft_delete' => true,
 
@@ -407,7 +407,7 @@ Once your engine has been registered, you may specify it as your default Scout `
 <a name="builder-macros"></a>
 ## Builder Macros
 
-If you would like to define a custom builder method, you may use the `macro` method on the `Laravel\Scout\Builder` class. Typically, "macros" should be defined within a [service provider's](/docs/{{version}}/providers) `boot` method:
+If you would like to define a custom builder method, you may use the `macro` method on the `Laravel\Scout\Builder` class. Typically, "macros" should be defined within a [service provider's](providers.md) `boot` method:
 
     <?php
 
