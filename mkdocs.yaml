@@ -7,7 +7,7 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel 7.0: index.md
+  - Documentação do Laravel 4.0: index.md
   - Prefácio:
       - Introdução: introduction.md
       - Início Rápido: quick.md
