@@ -11,44 +11,17 @@
 
 Laravel provides a clean, simple API over the popular [SwiftMailer](http://swiftmailer.org) library. The mail configuration file is `app/config/mail.php`, and contains options allowing you to change your SMTP host, port, and credentials, as well as set a global `from` address for all messages delivered by the library. You may use any SMTP server you wish. If you wish to use the PHP `mail` function to send mail, you may change the `driver` to `mail` in the configuration file. A `sendmail` driver is also available.
 
-### API Drivers
-
-Laravel also includes drivers for the Mailgun and Mandrill HTTP APIs. These APIs are often simpler and quicker than the SMTP servers. Both of these drivers require that the Guzzle 4 HTTP library be installed into your application. You can add Guzzle 4 to your project by adding the following line to your `composer.json` file:
-
-	"guzzlehttp/guzzle": "~4.0"
-
-#### Mailgun Driver
-
-To use the Mailgun driver, set the `driver` option to `mailgun` in your `app/config/mail.php` configuration file. Next, create an `app/config/services.php` configuration file if one does not already exist for your project. Verify that it contains the following options:
-
-	'mailgun' => array(
-		'domain' => 'your-mailgun-domain',
-		'secret' => 'your-mailgun-key',
-	),
-
-#### Mandrill Driver
-
-To use the Mandrill driver, set the `driver` option to `mandrill` in your `app/config/mail.php` configuration file. Next, create an `app/config/services.php` configuration file if one does not already exist for your project. Verify that it contains the following options:
-
-	'mandrill' => array(
-		'secret' => 'your-mandrill-key',
-	),
-
-### Log Driver
-
-If the `driver` option of your `app/config/mail.php` configuration file is set to `log`, all e-mails will be written to your log files, and will not actually be sent to any of the recipients. This is primarily useful for quick, local debugging and content verification.
-
 <a name="basic-usage"></a>
 ## Basic Usage
 
 The `Mail::send` method may be used to send an e-mail message:
 
-	Mail::send('emails.welcome', array('key' => 'value'), function($message)
+	Mail::send('emails.welcome', $data, function($message)
 	{
 		$message->to('foo@example.com', 'John Smith')->subject('Welcome!');
 	});
 
-The first argument passed to the `send` method is the name of the view that should be used as the e-mail body. The second is the data to be passed to the view, often as an associative array where the data items are available to the view by `$key`. The third is a Closure allowing you to specify various options on the e-mail message.
+The first argument passed to the `send` method is the name of the view that should be used as the e-mail body. The second is the `$data` that should be passed to the view, and the third is a Closure allowing you to specify various options on the e-mail message.
 
 > **Note:** A `$message` variable is always passed to e-mail views, and allows the inline embedding of attachments. So, it is best to avoid passing a `message` variable in your view payload.
 
@@ -105,7 +78,7 @@ Note that the `$message` variable is always passed to e-mail views by the `Mail`
 
 #### Queueing A Mail Message
 
-Since sending e-mail messages can drastically lengthen the response time of your application, many developers choose to queue e-mail messages for background sending. Laravel makes this easy using its built-in [unified queue API](/docs/4.2/queues). To queue a mail message, simply use the `queue` method on the `Mail` class:
+Since sending e-mail messages can drastically lengthen the response time of your application, many developers choose to queue e-mail messages for background sending. Laravel makes this easy using its built-in [unified queue API](queues.md). To queue a mail message, simply use the `queue` method on the `Mail` class:
 
 	Mail::queue('emails.welcome', $data, function($message)
 	{

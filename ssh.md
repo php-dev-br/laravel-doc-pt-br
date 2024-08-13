@@ -47,8 +47,8 @@ You may catch the "live" output of your remote commands by passing a Closure int
 		echo $line.PHP_EOL;
 	});
 
-## Tasks
 <a name="tasks"></a>
+## Tasks
 
 If you need to define a group of commands that should always be run together, you may use the `define` method to define a `task`:
 
@@ -103,7 +103,7 @@ Laravel includes a helpful command for tailing the `laravel.log` files on any of
 - [Notifications](#envoy-notifications)
 - [Updating Envoy](#envoy-updating-envoy)
 
-Laravel Envoy provides a clean, minimal syntax for defining common tasks you run on your remote servers. Using a [Blade](/docs/4.2/templates#blade-templating) style syntax, you can easily setup tasks for deployment, Artisan commands, and more.
+Laravel Envoy provides a clean, minimal syntax for defining common tasks you run on your remote servers. Using a [Blade](templates.md#blade-templating) style syntax, you can easily setup tasks for deployment, Artisan commands, and more.
 
 > **Note:** Envoy requires PHP version 5.4 or greater, and only runs on Mac / Linux operating systems.
 
@@ -220,6 +220,7 @@ The `deploy` macro can now be run via a single, simple command:
 <a name="envoy-notifications"></a>
 ### Notifications
 
+<a name="envoy-hipchat-notifications"></a>
 #### HipChat
 
 After running a task, you may send a notification to your team's HipChat room using the simple `@hipchat` directive:
@@ -259,4 +260,4 @@ To update Envoy, simply run the `self-update` command:
 
 If your Envoy installation is in `/usr/local/bin`, you may need to use `sudo`:
 
-	composer global update
+	sudo envoy self-update

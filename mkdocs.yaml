@@ -7,17 +7,15 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel 7.2: index.md
+  - Documentação do Laravel 7.1: index.md
   - Prefácio:
       - Introdução: introduction.md
       - Início Rápido: quick.md
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
-      - Guia de Contribuição: contributions.md
   - Começando:
       - Instalação: installation.md
       - Configuration: configuration.md
-      - Homestead: homestead.md
       - Ciclo de Vida da Requisição: lifecycle.md
       - Roteamento: routing.md
       - Requisições e Entradas: requests.md
@@ -26,7 +24,6 @@ nav:
       - Erros e Logging: errors.md
   - Aprendendo Mais:
       - Authentication: security.md
-      - Cobrança: billing.md
       - Cache: cache.md
       - Core Extension: extending.md
       - Eventos: events.md

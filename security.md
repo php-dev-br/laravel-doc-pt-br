@@ -19,7 +19,7 @@ By default, Laravel includes a `User` model in your `app/models` directory which
 
 If your application is not using Eloquent, you may use the `database` authentication driver which uses the Laravel query builder.
 
-> **Note:** Before getting started, make sure that your `users` (or equivalent) table contains a nullable, string `remember_token` column of 100 characters. This column will be used to store a token for "remember me" sessions being maintained by your application. This can be done by using `$table->rememberToken();` in a migration.
+> **Note:** Before getting started, make sure that your `users` (or equivalent) table contains a nullable, string `remember_token` column of 100 characters. This column will be used to store a token for "remember me" sessions being maintained by your application.
 
 <a name="storing-passwords"></a>
 ## Storing Passwords
@@ -56,7 +56,7 @@ To log a user into your application, you may use the `Auth::attempt` method.
 
 Take note that `email` is not a required option, it is merely used for example. You should use whatever column name corresponds to a "username" in your database. The `Redirect::intended` function will redirect the user to the URL they were trying to access before being caught by the authentication filter. A fallback URI may be given to this method in case the intended destination is not available.
 
-When the `attempt` method is called, the `auth.attempt` [event](/docs/4.2/events) will be fired. If the authentication attempt is successful and the user is logged in, the `auth.login` event will be fired as well.
+When the `attempt` method is called, the `auth.attempt` [event](events.md) will be fired. If the authentication attempt is successful and the user is logged in, the `auth.login` event will be fired as well.
 
 #### Determining If A User Is Authenticated
 
@@ -102,10 +102,6 @@ You also may add extra conditions to the authenticating query:
 Once a user is authenticated, you may access the User model / record:
 
 	$email = Auth::user()->email;
-
-To retrieve the authenticated user's ID, you may use the `id` method:
-
-	$id = Auth::id();
 
 To simply log a user into the application by their ID, use the `loginUsingId` method:
 
@@ -209,16 +205,16 @@ If you are using PHP FastCGI, HTTP Basic authentication will not work correctly 
 
 ### Model & Table
 
-Most web applications provide a way for users to reset their forgotten passwords. Rather than forcing you to re-implement this on each application, Laravel provides convenient methods for sending password reminders and performing password resets. To get started, verify that your `User` model implements the `Illuminate\Auth\Reminders\RemindableInterface` contract. Of course, the `User` model included with the framework already implements this interface, and uses the `Illuminate\Auth\Reminders\RemindableTrait` to include the methods needed to implement the interface.
+Most web applications provide a way for users to reset their forgotten passwords. Rather than forcing you to re-implement this on each application, Laravel provides convenient methods for sending password reminders and performing password resets. To get started, verify that your `User` model implements the `Illuminate\Auth\Reminders\RemindableInterface` contract. Of course, the `User` model included with the framework already implements this interface.
 
 #### Implementing The RemindableInterface
 
-	use Illuminate\Auth\Reminders\RemindableTrait;
-	use Illuminate\Auth\Reminders\RemindableInterface;
-
 	class User extends Eloquent implements RemindableInterface {
 
-		use RemindableTrait;
+		public function getReminderEmail()
+		{
+			return $this->email;
+		}
 
 	}
 
@@ -236,8 +232,7 @@ Now we're ready to generate the password reminder controller. To automatically g
 
 	php artisan auth:reminders-controller
 
-The generated controller will already have a `getRemind` method that handles showing your password reminder form. All you need to do is create a `password.remind` [Template](/docs/4.2/templates) by creating a file `remind.blade.php` in the `app/views/password/` directory.
-This view should have a basic form with an `email` field. The form should POST to the `RemindersController@postRemind` action.
+The generated controller will already have a `getRemind` method that handles showing your password reminder form. All you need to do is create a `password.remind` [view](responses.md#views). This view should have a basic form with an `email` field. The form should POST to the `RemindersController@postRemind` action.
 
 A simple form on the `password.remind` view might look like this:
 
@@ -255,7 +250,7 @@ Within the `postRemind` controller method you may modify the message instance be
 		$message->subject('Password Reminder');
 	});
 
-Your user will receive an e-mail with a link that points to the `getReset` method of the controller. The password reminder token, which is used to identify a given password reminder attempt, will also be passed to the controller method. The action is already configured to return a `password.reset` template which you should build. The `token` will be passed to the view, and you should place this token in a hidden form field named `token`. In addition to the `token`, your password reset form should contain `email`, `password`, and `password_confirmation` fields. The form should POST to the `RemindersController@postReset` method.
+Your user will receive an e-mail with a link that points to the `getReset` method of the controller. The password reminder token, which is used to identify a given password reminder attempt, will also be passed to the controller method. The action is already configured to return a `password.reset` view which you should build. The `token` will be passed to the view, and you should place this token in a hidden form field named `token`. In addition to the `token`, your password reset form should contain `email`, `password`, and `password_confirmation` fields. The form should POST to the `RemindersController@postReset` method.
 
 A simple form on the `password.reset` view might look like this:
 
@@ -267,7 +262,7 @@ A simple form on the `password.reset` view might look like this:
 		<input type="submit" value="Reset Password">
 	</form>
 
-Finally, the `postReset` method is responsible for actually changing the password in storage. In this controller action, the Closure passed to the `Password::reset` method sets the `password` attribute on the `User` and calls the `save` method. Of course, this Closure is assuming your `User` model is an [Eloquent model](/docs/4.2/eloquent); however, you are free to change this Closure as needed to be compatible with your application's database storage system.
+Finally, the `postReset` method is responsible for actually changing the password in storage. In this controller action, the Closure passed to the `Password::reset` method sets the `password` attribute on the `User` and calls the `save` method. Of course, this Closure is assuming your `User` model is an [Eloquent model](eloquent.md); however, you are free to change this Closure as needed to be compatible with your application's database storage system.
 
 If the password is successfully reset, the user will be redirected to the root of your application. Again, you are free to change this redirect URL. If the password reset fails, the user will be redirect back to the reset form, and an `error` message will be flashed to the session.
 
@@ -285,13 +280,13 @@ By default, the `Password::reset` method will verify that the passwords match an
 <a name="encryption"></a>
 ## Encryption
 
-Laravel provides facilities for strong AES encryption via the mcrypt PHP extension:
+Laravel provides facilities for strong AES-256 encryption via the mcrypt PHP extension:
 
 #### Encrypting A Value
 
 	$encrypted = Crypt::encrypt('secret');
 
-> **Note:** Be sure to set a 16, 24, or 32 character random string in the `key` option of the `app/config/app.php` file. Otherwise, encrypted values will not be secure.
+> **Note:** Be sure to set a 32 character, random string in the `key` option of the `app/config/app.php` file. Otherwise, encrypted values will not be secure.
 
 #### Decrypting A Value
 
@@ -308,4 +303,4 @@ You may also set the cipher and mode used by the encrypter:
 <a name="authentication-drivers"></a>
 ## Authentication Drivers
 
-Laravel offers the `database` and `eloquent` authentication drivers out of the box. For more information about adding additional authentication drivers, check out the [Authentication extension documentation](/docs/4.2/extending#authentication).
+Laravel offers the `database` and `eloquent` authentication drivers out of the box. For more information about adding additional authentication drivers, check out the [Authentication extension documentation](extending.md#authentication).

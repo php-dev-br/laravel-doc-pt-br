@@ -38,10 +38,6 @@ The Laravel framework uses the `flash` session key internally, so you should not
 
 	$value = Session::get('key', function() { return 'default'; });
 
-#### Retrieving An Item And Forgetting It
-
-	$value = Session::pull('key', 'default');
-
 #### Retrieving All Data From The Session
 
 	$data = Session::all();
@@ -111,4 +107,4 @@ The session "driver" defines where session data will be stored for each request.
 - `memcached` / `redis` - sessions will be stored in one of these fast, cached based stores.
 - `array` - sessions will be stored in a simple PHP array and will not be persisted across requests.
 
-> **Note:** The array driver is typically used for running [unit tests](/docs/4.2/testing), so no session data will be persisted.
+> **Note:** The array driver is typically used for running [unit tests](testing.md), so no session data will be persisted.

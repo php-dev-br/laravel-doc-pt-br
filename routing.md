@@ -129,8 +129,6 @@ If you need to access a route parameter value outside of a route, you may use th
 
 Route filters provide a convenient way of limiting access to a given route, which is useful for creating areas of your site which require authentication. There are several filters included in the Laravel framework, including an `auth` filter, an `auth.basic` filter, a `guest` filter, and a `csrf` filter. These are located in the `app/filters.php` file.
 
-> **Note:** Filters are disabled when the application environment is `testing`.
-
 #### Defining A Route Filter
 
 	Route::filter('old', function()
@@ -206,7 +204,7 @@ You may also constrain pattern filters by HTTP verbs:
 
 #### Filter Classes
 
-For advanced filtering, you may wish to use a class instead of a Closure. Since filter classes are resolved out of the application [IoC Container](/docs/4.2/ioc), you will be able to utilize dependency injection in these filters for greater testability.
+For advanced filtering, you may wish to use a class instead of a Closure. Since filter classes are resolved out of the application [IoC Container](ioc.md), you will be able to utilize dependency injection in these filters for greater testability.
 
 #### Registering A Class Based Filter
 
@@ -279,7 +277,7 @@ You may also use the `namespace` parameter within your `group` array to specify 
 <a name="sub-domain-routing"></a>
 ## Sub-Domain Routing
 
-Laravel routes are also able to handle wildcard sub-domains, and will pass your wildcard parameters from the domain:
+Laravel routes are also able to handle wildcard sub-domains, and pass you wildcard parameters from the domain:
 
 #### Registering Sub-Domain Routes
 
@@ -351,11 +349,11 @@ There are two ways to manually trigger a 404 error from a route. First, you may 
 
 Second, you may throw an instance of `Symfony\Component\HttpKernel\Exception\NotFoundHttpException`.
 
-More information on handling 404 exceptions and using custom responses for these errors may be found in the [errors](/docs/4.2/errors#handling-404-errors) section of the documentation.
+More information on handling 404 exceptions and using custom responses for these errors may be found in the [errors](errors.md#handling-404-errors) section of the documentation.
 
 <a name="routing-to-controllers"></a>
 ## Routing To Controllers
 
-Laravel allows you to not only route to Closures, but also to controller classes, and even allows the creation of [resource controllers](/docs/4.2/controllers#restful-resource-controllers).
+Laravel allows you to not only route to Closures, but also to controller classes, and even allows the creation of [resource controllers](controllers.md#resource-controllers).
 
-See the documentation on [Controllers](/docs/4.2/controllers) for more details.
+See the documentation on [Controllers](controllers.md) for more details.

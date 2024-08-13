@@ -1,8 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/4.2/documentation.md -->
-<!-- revision: 6290902c11147389b2a5867de03e3217d5acd595 -->
+<!-- source_url: https://github.com/laravel/docs/blob/4.1/documentation.md -->
+<!-- revision: 9e13e8a3fa59ce24976eb4594a15e0437dcd92b7 -->
 <!-- status: ready -->
 
-# Documentação do Laravel 4.2
+# Documentação do Laravel 4.1
 
 ## Prefácio
 
@@ -10,13 +10,11 @@
 - [Início Rápido](quick.md)
 - [Notas de Versão](releases.md)
 - [Guia de Atualização](upgrade.md)
-- [Guia de Contribuição](contributions.md)
 
 ## Começando
 
 - [Instalação](installation.md)
 - [Configuration](configuration.md)
-- [Homestead](homestead.md)
 - [Ciclo de Vida da Requisição](lifecycle.md)
 - [Roteamento](routing.md)
 - [Requisições e Entradas](requests.md)
@@ -27,7 +25,6 @@
 ## Aprendendo Mais
 
 - [Authentication](security.md)
-- [Cobrança](billing.md)
 - [Cache](cache.md)
 - [Core Extension](extending.md)
 - [Eventos](events.md)

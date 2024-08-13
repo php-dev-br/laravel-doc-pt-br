@@ -9,7 +9,6 @@
 - [Adding Indexes](#adding-indexes)
 - [Foreign Keys](#foreign-keys)
 - [Dropping Indexes](#dropping-indexes)
-- [Dropping Timestamps & Soft Deletes](#dropping-timestamps)
 - [Storage Engines](#storage-engines)
 
 <a name="introduction"></a>
@@ -68,16 +67,14 @@ Command  | Description
 `$table->date('created_at');`  |  DATE equivalent to the table
 `$table->dateTime('created_at');`  |  DATETIME equivalent to the table
 `$table->decimal('amount', 5, 2);`  |  DECIMAL equivalent with a precision and scale
-`$table->double('column', 15, 8);`  |  DOUBLE equivalent with precision, 15 digits in total and 8 after the decimal point 
+`$table->double('column', 15, 8);`  |  DOUBLE equivalent with precision
 `$table->enum('choices', array('foo', 'bar'));` | ENUM equivalent to the table
 `$table->float('amount');`  |  FLOAT equivalent to the table
 `$table->increments('id');`  |  Incrementing ID to the table (primary key).
 `$table->integer('votes');`  |  INTEGER equivalent to the table
 `$table->longText('description');`  |  LONGTEXT equivalent to the table
-`$table->mediumInteger('numbers');`  |  MEDIUMINT equivalent to the table
 `$table->mediumText('description');`  |  MEDIUMTEXT equivalent to the table
 `$table->morphs('taggable');`  |  Adds INTEGER `taggable_id` and STRING `taggable_type`
-`$table->nullableTimestamps();`  |  Same as `timestamps()`, except allows NULLs
 `$table->smallInteger('votes');`  |  SMALLINT equivalent to the table
 `$table->tinyInteger('numbers');`  |  TINYINT equivalent to the table
 `$table->softDeletes();`  |  Adds **deleted\_at** column for soft deletes
@@ -87,7 +84,6 @@ Command  | Description
 `$table->time('sunrise');`  |  TIME equivalent to the table
 `$table->timestamp('added_on');`  |  TIMESTAMP equivalent to the table
 `$table->timestamps();`  |  Adds **created\_at** and **updated\_at** columns
-`$table->rememberToken();`  |  Adds `remember_token` as VARCHAR(100) NULL
 `->nullable()`  |  Designate that the column allows NULL values
 `->default($value)`  |  Declare a default value for a column
 `->unsigned()`  |  Set INTEGER to UNSIGNED
@@ -113,8 +109,6 @@ To rename a column, you may use the `renameColumn` method on the Schema builder.
 <a name="dropping-columns"></a>
 ## Dropping Columns
 
-To drop a column, you may use the `dropColumn` method on the Schema builder. Before dropping a column, be sure to add the `doctrine/dbal` dependency to your `composer.json` file.
-
 #### Dropping A Column From A Database Table
 
 	Schema::table('users', function($table)
@@ -126,7 +120,7 @@ To drop a column, you may use the `dropColumn` method on the Schema builder. Bef
 
 	Schema::table('users', function($table)
 	{
-		$table->dropColumn(array('votes', 'avatar', 'location'));
+		$table->dropColumn('votes', 'avatar', 'location');
 	});
 
 <a name="checking-existence"></a>
@@ -169,10 +163,9 @@ Command  | Description
 
 Laravel also provides support for adding foreign key constraints to your tables:
 
-	$table->integer('user_id')->unsigned();
 	$table->foreign('user_id')->references('id')->on('users');
 
-In this example, we are stating that the `user_id` column references the `id` column on the `users` table. Make sure to create the foreign key column first!
+In this example, we are stating that the `user_id` column references the `id` column on the `users` table.
 
 You may also specify options for the "on delete" and "on update" actions of the constraint:
 
@@ -196,16 +189,6 @@ Command  | Description
 `$table->dropPrimary('users_id_primary');`  |  Dropping a primary key from the "users" table
 `$table->dropUnique('users_email_unique');`  |  Dropping a unique index from the "users" table
 `$table->dropIndex('geo_state_index');`  |  Dropping a basic index from the "geo" table
-
-<a name="dropping-timestamps"></a>
-## Dropping Timestamps & SoftDeletes
-
-To drop the `timestamps`, `nullableTimestamps` or `softDeletes` column types, you may use the following methods:
-
-Command  | Description
-------------- | -------------
-`$table->dropTimestamps();`  |  Dropping the **created\_at** and **updated\_at** columns from the table
-`$table->dropSoftDeletes();`  |  Dropping **deleted\_at** column from the table
 
 <a name="storage-engines"></a>
 ## Storage Engines

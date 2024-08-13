@@ -16,23 +16,17 @@ Laravel utilizes [Composer](http://getcomposer.org) to manage its dependencies. 
 
 ### Via Laravel Installer
 
-First, download the Laravel installer using Composer.
-
-	composer global require "laravel/installer=~1.1"
-
-Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the `laravel` executable is found when you run the `laravel` command in your terminal.
-
-Once installed, the simple `laravel new` command will create a fresh Laravel installation in the directory you specify. For instance, `laravel new blog` would create a directory named `blog` containing a fresh Laravel installation with all dependencies installed. This method of installation is much faster than installing via Composer.
+First, download the [Laravel installer PHAR archive](http://laravel.com/laravel.phar). For convenience, rename the file to `laravel` and move it to `/usr/local/bin`. Once installed, the simple `laravel new` command will create a fresh Laravel installation in the directory you specify. For instance, `laravel new blog` would create a directory named `blog` containing a fresh Laravel installation with all dependencies installed. This method of installation is much faster than installing via Composer.
 
 ### Via Composer Create-Project
 
 You may also install Laravel by issuing the Composer `create-project` command in your terminal:
 
-	composer create-project laravel/laravel {directory} 4.2 --prefer-dist
+	composer create-project laravel/laravel --prefer-dist
 
 ### Via Download
 
-Once Composer is installed, download the [4.2 version](https://github.com/laravel/laravel/archive/v4.2.11.zip) of the Laravel framework and extract its contents into a directory on your server. Next, in the root of your Laravel application, run the `php composer.phar install` (or `composer install`) command to install all of the framework's dependencies. This process requires Git to be installed on the server to successfully complete the installation.
+Once Composer is installed, download the [latest version](https://github.com/laravel/laravel/archive/master.zip) of the Laravel framework and extract its contents into a directory on your server. Next, in the root of your Laravel application, run the `php composer.phar install` (or `composer install`) command to install all of the framework's dependencies. This process requires Git to be installed on the server to successfully complete the installation.
 
 If you want to update the Laravel framework, you may issue the `php composer.phar update` command.
 
@@ -41,7 +35,7 @@ If you want to update the Laravel framework, you may issue the `php composer.pha
 
 The Laravel framework has a few system requirements:
 
-- PHP >= 5.4
+- PHP >= 5.3.7
 - MCrypt PHP Extension
 
 As of PHP 5.5, some OS distributions may require you to manually install the PHP JSON extension. When using Ubuntu, this can be done via `apt-get install php5-json`.
@@ -49,17 +43,15 @@ As of PHP 5.5, some OS distributions may require you to manually install the PHP
 <a name="configuration"></a>
 ## Configuration
 
-The first thing you should do after installing Laravel is set your application key to a random string. If you installed Laravel via Composer, this key has probably already been set for you by the `key:generate` command. Typically, this string should be 32 characters long. The key can be set in the `app.php` configuration file. **If the application key is not set, your user sessions and other encrypted data will not be secure.**
+Laravel needs almost no configuration out of the box. You are free to get started developing! However, you may wish to review the `app/config/app.php` file and its documentation. It contains several options such as `timezone` and `locale` that you may wish to change according to your application.
 
-Laravel needs almost no other configuration out of the box. You are free to get started developing! However, you may wish to review the `app/config/app.php` file and its documentation. It contains several options such as `timezone` and `locale` that you may wish to change according to your application.
-
-Once Laravel is installed, you should also [configure your local environment](/docs/4.2/configuration#environment-configuration). This will allow you to receive detailed error messages when developing on your local machine. By default, detailed error reporting is disabled in your production configuration file.
+Once Laravel is installed, you should also [configure your local environment](configuration.md#environment-configuration). This will allow you to receive detailed error messages when developing on your local machine. By default, detailed error reporting is disabled in your production configuration file.
 
 > **Note:** You should never have `app.debug` set to `true` for a production application. Never, ever do it.
 
 <a name="permissions"></a>
 ### Permissions
-Laravel may require one set of permissions to be configured: folders within `app/storage` require write access by the web server.
+Laravel may require one set of permissions to be configured: folders within app/storage require write access by the web server.
 
 <a name="paths"></a>
 ### Paths

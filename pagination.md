@@ -22,11 +22,9 @@ There are several ways to paginate items. The simplest is by using the `paginate
 
 	$users = DB::table('users')->paginate(15);
 
-> **Note:** Currently, pagination operations that use a `groupBy` statement cannot be executed efficiently by Laravel. If you need to use a `groupBy` with a paginated result set, it is recommended that you query the database manually and use `Paginator::make`.
-
 #### Paginating An Eloquent Model
 
-You may also paginate [Eloquent](/docs/4.2/eloquent) models:
+You may also paginate [Eloquent](eloquent.md) models:
 
 	$allUsers = User::paginate(15);
 
@@ -57,13 +55,6 @@ You may also access additional pagination information via the following methods:
 - `getFrom`
 - `getTo`
 - `count`
-
-
-#### "Simple Pagination"
-
-If you are only showing "Next" and "Previous" links in your pagination view, you have the option of using the `simplePaginate` method to perform a more efficient query. This is useful for larger datasets when you do not require the display of exact page numbers on your view:
-
-	$someUsers = User::where('votes', '>', 100)->simplePaginate(15);
 
 #### Creating A Paginator Manually
 
@@ -118,15 +109,15 @@ Extend the `Illuminate\Pagination\Presenter` class and implement its abstract me
 
         public function getActivePageWrapper($text)
         {
-            return '<li class="current"><a href="">'.$text.'</a></li>';
+            return '<li class="current">'.$text.'</li>';
         }
 
         public function getDisabledTextWrapper($text)
         {
-            return '<li class="unavailable"><a href="">'.$text.'</a></li>';
+            return '<li class="unavailable">'.$text.'</li>';
         }
 
-        public function getPageLinkWrapper($url, $page, $rel = null)
+        public function getPageLinkWrapper($url, $page)
         {
             return '<li><a href="'.$url.'">'.$page.'</a></li>';
         }

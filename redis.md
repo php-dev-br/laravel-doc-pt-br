@@ -62,7 +62,7 @@ When you are simply executing commands against the default connection, just use 
 
 	$values = Redis::lrange('names', 5, 10);
 
-> **Note:** Redis [cache](/docs/4.2/cache) and [session](/docs/4.2/session) drivers are included with Laravel.
+> **Note:** Redis [cache](cache.md) and [session](session.md) drivers are included with Laravel.
 
 <a name="pipelining"></a>
 ## Pipelining

@@ -4,7 +4,6 @@
 - [Basic Usage](#basic-usage)
 - [Queueing Closures](#queueing-closures)
 - [Running The Queue Listener](#running-the-queue-listener)
-- [Daemon Queue Worker](#daemon-queue-worker)
 - [Push Queues](#push-queues)
 - [Failed Jobs](#failed-jobs)
 
@@ -17,7 +16,7 @@ The queue configuration file is stored in `app/config/queue.php`. In this file y
 
 The following dependencies are needed for the listed queue drivers:
 
-- Beanstalkd: `pda/pheanstalk ~2.0`
+- Beanstalkd: `pda/pheanstalk`
 - Amazon SQS: `aws/aws-sdk-php`
 - IronMQ: `iron-io/iron_mq`
 
@@ -72,8 +71,6 @@ Sometimes you may wish to delay the execution of a queued job. For instance, you
 	Queue::later($date, 'SendEmail@send', array('message' => $message));
 
 In this example, we're using the [Carbon](https://github.com/briannesbitt/Carbon) date library to specify the delay we wish to assign to the job. Alternatively, you may pass the number of seconds you wish to delay as an integer.
-
-> **Note:** The Amazon SQS service has a delay limit of 900 seconds (15 minutes).
 
 #### Deleting A Processed Job
 
@@ -174,39 +171,6 @@ Note that the queue only "sleeps" if no jobs are on the queue. If more jobs are 
 To process only the first job on the queue, you may use the `queue:work` command:
 
 	php artisan queue:work
-
-<a name="daemon-queue-worker"></a>
-## Daemon Queue Worker
-
-The `queue:work` also includes a `--daemon` option for forcing the queue worker to continue processing jobs without ever re-booting the framework. This results in a significant reduction of CPU usage when compared to the `queue:listen` command, but at the added complexity of needing to drain the queues of currently executing jobs during your deployments.
-
-To start a queue worker in daemon mode, use the `--daemon` flag:
-
-	php artisan queue:work connection --daemon
-
-	php artisan queue:work connection --daemon --sleep=3
-
-	php artisan queue:work connection --daemon --sleep=3 --tries=3
-
-As you can see, the `queue:work` command supports most of the same options available to `queue:listen`. You may use the `php artisan help queue:work` command to view all of the available options.
-
-### Deploying With Daemon Queue Workers
-
-The simplest way to deploy an application using daemon queue workers is to put the application in maintenance mode at the beginning of your deployment. This can be done using the `php artisan down` command. Once the application is in maintenance mode, Laravel will not accept any new jobs off of the queue, but will continue to process existing jobs.
-
-The easiest way to restart your workers is to include the following command in your deployment script:
-
-	php artisan queue:restart
-
-This command will instruct all queue workers to restart after they finish processing their current job.
-
-> **Note:** This command relies on the cache system to schedule the restart. By default, APCu does not work for CLI commands. If you are using APCu, add `apc.enable_cli=1` to your APCu configuration.
-
-### Coding For Daemon Queue Workers
-
-Daemon queue workers do not restart the framework before processing each job. Therefore, you should be careful to free any heavy resources before your job finishes. For example, if you are doing image manipulation with the GD library, you should free the memory with `imagedestroy` when you are done.
-
-Similarly, your database connection may disconnect when being used by long-running daemon. You may use the `DB::reconnect` method to ensure you have a fresh connection.
 
 <a name="push-queues"></a>
 ## Push Queues

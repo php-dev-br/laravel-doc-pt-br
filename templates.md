@@ -55,7 +55,7 @@ Blade is a simple, yet powerful templating engine provided with Laravel. Unlike 
 	@extends('layouts.master')
 
 	@section('sidebar')
-		@@parent
+		@parent
 
 		<p>This is appended to the master sidebar.</p>
 	@stop
@@ -64,11 +64,11 @@ Blade is a simple, yet powerful templating engine provided with Laravel. Unlike 
 		<p>This is my body content.</p>
 	@stop
 
-Note that views which `extend` a Blade layout simply override sections from the layout. Content of the layout can be included in a child view using the `@@parent` directive in a section, allowing you to append to the contents of a layout section such as a sidebar or footer.
+Note that views which `extend` a Blade layout simply override sections from the layout. Content of the layout can be included in a child view using the `@parent` directive in a section, allowing you to append to the contents of a layout section such as a sidebar or footer.
 
 Sometimes, such as when you are not sure if a section has been defined, you may wish to pass a default value to the `@yield` directive. You may pass the default value as the second argument:
 
-	@yield('section', 'Default Content')
+	@yield('section', 'Default Content');
 
 <a name="other-blade-control-structures"></a>
 ## Other Blade Control Structures
@@ -129,12 +129,6 @@ If you don't want the data to be escaped, you may use double curly-braces:
 		<p>This is user {{ $user->id }}</p>
 	@endforeach
 
-	@forelse($users as $user)
-	  	<li>{{ $user->name }}</li>
-	@empty
-	  	<p>No users</p>
-	@endforelse
-
 	@while (true)
 		<p>I'm looping forever.</p>
 	@endwhile
@@ -149,7 +143,7 @@ You may also pass an array of data to the included view:
 
 #### Overwriting Sections
 
-To overwrite a section entirely, you may use the `overwrite` statement:
+By default, sections are appended to any previous content that exists in the section. To overwrite a section entirely, you may use the `overwrite` statement:
 
 	@extends('list.item.container')
 
@@ -161,7 +155,7 @@ To overwrite a section entirely, you may use the `overwrite` statement:
 
 	@lang('language.line')
 
-	@choice('language.line', 1)
+	@choice('language.line', 1);
 
 #### Comments
 

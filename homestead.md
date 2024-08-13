@@ -32,7 +32,7 @@ Homestead is currently built and tested using Vagrant 1.6.
 - Redis
 - Memcached
 - Beanstalkd
-- [Laravel Envoy](/docs/4.2/ssh#envoy-task-runner)
+- [Laravel Envoy](/docs/4.1/4.2/ssh#envoy-task-runner)
 - Fabric + HipChat Extension
 
 <a name="installation-and-setup"></a>
@@ -47,10 +47,6 @@ Before launching your Homestead environment, you must install [VirtualBox](https
 Once VirtualBox and Vagrant have been installed, you should add the `laravel/homestead` box to your Vagrant installation using the following command in your terminal. It will take a few minutes to download the box, depending on your Internet connection speed:
 
 	vagrant box add laravel/homestead
-
-If this fails, you may have an older version of vagrant that requires the url of the box. The following should work:
-
-	vagrant box add laravel/homestead https://atlas.hashicorp.com/laravel/boxes/homestead
 
 ### Installing Homestead
 

@@ -138,16 +138,6 @@ So, after redirection, you may utilize the automatically bound `$errors` variabl
 
 	<?php echo $errors->first('email'); ?>
 
-### Named Error Bags
-
-If you have multiple forms on a single page, you may wish to name the `MessageBag` of errors. This will allow you to retrieve the error messages for a specific form. Simply pass a name as the second argument to `withErrors`:
-
-	return Redirect::to('register')->withErrors($validator, 'login');
-
-You may then access the named `MessageBag` instance from the `$errors` variable:
-
-	<?php echo $errors->login->first('email'); ?>
-
 <a name="available-validation-rules"></a>
 ## Available Validation Rules
 
@@ -162,7 +152,6 @@ Below is a list of all available validation rules and their function:
 - [Array](#rule-array)
 - [Before (Date)](#rule-before)
 - [Between](#rule-between)
-- [Boolean](#rule-boolean)
 - [Confirmed](#rule-confirmed)
 - [Date](#rule-date)
 - [Date Format](#rule-date-format)
@@ -189,8 +178,6 @@ Below is a list of all available validation rules and their function:
 - [Required Without All](#rule-required-without-all)
 - [Same](#rule-same)
 - [Size](#rule-size)
-- [String](#rule-string)
-- [Timezone](#rule-timezone)
 - [Unique (Database)](#rule-unique)
 - [URL](#rule-url)
 
@@ -238,11 +225,6 @@ The field under validation must be a value preceding the given date. The dates w
 #### between:_min_,_max_
 
 The field under validation must have a size between the given _min_ and _max_. Strings, numerics, and files are evaluated in the same fashion as the `size` rule.
-
-<a name="rule-boolean"></a>
-#### boolean
-
-The field under validation must be able to be cast as a boolean. Accepted input are `true`, `false`, `1`, `0`, `"1"` and `"0"`.
 
 <a name="rule-confirmed"></a>
 #### confirmed
@@ -323,7 +305,7 @@ The field under validation must be formatted as an IP address.
 <a name="rule-max"></a>
 #### max:_value_
 
-The field under validation must be less than or equal to a maximum _value_. Strings, numerics, and files are evaluated in the same fashion as the [`size`](#rule-size) rule.
+The field under validation must be less than or equal to a maximum _value_. Strings, numerics, and files are evaluated in the same fashion as the `size` rule.
 
 <a name="rule-mimes"></a>
 #### mimes:_foo_,_bar_,...
@@ -337,7 +319,7 @@ The file under validation must have a MIME type corresponding to one of the list
 <a name="rule-min"></a>
 #### min:_value_
 
-The field under validation must have a minimum _value_. Strings, numerics, and files are evaluated in the same fashion as the [`size`](#rule-size) rule.
+The field under validation must have a minimum _value_. Strings, numerics, and files are evaluated in the same fashion as the `size` rule.
 
 <a name="rule-not-in"></a>
 #### not_in:_foo_,_bar_,...
@@ -362,9 +344,9 @@ The field under validation must match the given regular expression.
 The field under validation must be present in the input data.
 
 <a name="rule-required-if"></a>
-#### required_if:_field_,_value_,...
+#### required\_if:_field_,_value_
 
-The field under validation must be present if the _field_ field is equal to any _value_.
+The field under validation must be present if the _field_ field is equal to _value_.
 
 <a name="rule-required-with"></a>
 #### required_with:_foo_,_bar_,...
@@ -384,7 +366,7 @@ The field under validation must be present _only when_ any of the other specifie
 <a name="rule-required-without-all"></a>
 #### required_without_all:_foo_,_bar_,...
 
-The field under validation must be present _only when_ all of the other specified fields are not present.
+The field under validation must be present _only when_ the all of the other specified fields are not present.
 
 <a name="rule-same"></a>
 #### same:_field_
@@ -395,16 +377,6 @@ The given _field_ must match the field under validation.
 #### size:_value_
 
 The field under validation must have a size matching the given _value_. For string data, _value_ corresponds to the number of characters. For numeric data, _value_ corresponds to a given integer value. For files, _size_ corresponds to the file size in kilobytes.
-
-<a name="rule-string"></a>
-#### string:_value_
-
-The field under validation must be a string type.
-
-<a name="rule-timezone"></a>
-#### timezone
-
-The field under validation must be a valid timezone identifier according to the `timezone_identifiers_list` PHP function.
 
 <a name="rule-unique"></a>
 #### unique:_table_,_column_,_except_,_idColumn_

@@ -2,14 +2,14 @@
 
 - [Basic Controllers](#basic-controllers)
 - [Controller Filters](#controller-filters)
-- [Implicit Controllers](#implicit-controllers)
-- [RESTful Resource Controllers](#restful-resource-controllers)
+- [RESTful Controllers](#restful-controllers)
+- [Resource Controllers](#resource-controllers)
 - [Handling Missing Methods](#handling-missing-methods)
 
 <a name="basic-controllers"></a>
 ## Basic Controllers
 
-Instead of defining all of your route-level logic in a single `routes.php` file, you may wish to organize this behavior using Controller classes. Controllers can group related route logic into a class, as well as take advantage of more advanced framework features such as automatic [dependency injection](/docs/4.2/ioc).
+Instead of defining all of your route-level logic in a single `routes.php` file, you may wish to organize this behavior using Controller classes. Controllers can group related route logic into a class, as well as take advantage of more advanced framework features such as automatic [dependency injection](ioc.md).
 
 Controllers are typically stored in the `app/controllers` directory, and this directory is registered in the `classmap` option of your `composer.json` file by default. However, controllers can technically live in any directory or any sub-directory. Route declarations are not dependent on the location of the controller class file on disk. So, as long as Composer knows how to autoload the controller class, it may be placed anywhere you wish.
 
@@ -41,7 +41,8 @@ If you choose to nest or organize your controller using PHP namespaces, simply u
 
 You may also specify names on controller routes:
 
-	Route::get('foo', array('uses' => 'FooController@method', 'as' => 'name'));
+	Route::get('foo', array('uses' => 'FooController@method',
+											'as' => 'name'));
 
 To generate a URL to a controller action, you may use the `URL::action` method or the `action` helper method:
 
@@ -56,7 +57,7 @@ You may access the name of the controller action being run using the `currentRou
 <a name="controller-filters"></a>
 ## Controller Filters
 
-[Filters](/docs/4.2/routing#route-filters) may be specified on controller routes similar to "regular" routes:
+[Filters](routing.md#route-filters) may be specified on controller routes similar to "regular" routes:
 
 	Route::get('profile', array('before' => 'auth',
 				'uses' => 'UserController@showProfile'));
@@ -119,10 +120,10 @@ If you would like to use another method on the controller as a filter, you may u
 
 	}
 
-<a name="implicit-controllers"></a>
-## Implicit Controllers
+<a name="restful-controllers"></a>
+## RESTful Controllers
 
-Laravel allows you to easily define a single route to handle every action in a controller. First, define the route using the `Route::controller` method:
+Laravel allows you to easily define a single route to handle every action in a controller using simple, REST naming conventions. First, define the route using the `Route::controller` method:
 
 	Route::controller('users', 'UserController');
 
@@ -153,8 +154,8 @@ If your controller action contains multiple words, you may access the action usi
 
 	public function getAdminProfile() {}
 
-<a name="restful-resource-controllers"></a>
-## RESTful Resource Controllers
+<a name="resource-controllers"></a>
+## Resource Controllers
 
 Resource controllers make it easier to build RESTful controllers around resources. For example, you may wish to create a controller that manages "photos" stored by your application. Using the `controller:make` command via the Artisan CLI and the `Route::resource` method, we can quickly create such a controller.
 
@@ -199,34 +200,10 @@ By default, all resource controller actions have a route name; however, you can 
 	Route::resource('photo', 'PhotoController',
 					array('names' => array('create' => 'photo.build')));
 
-#### Handling Nested Resource Controllers
-
-To "nest" resource controllers, use "dot" notation in your route declaration:
-
-	Route::resource('photos.comments', 'PhotoCommentController');
-
-This route will register a "nested" resource that may be accessed with URLs like the following: `photos/{photoResource}/comments/{commentResource}`.
-
-	class PhotoCommentController extends BaseController {
-
-		public function show($photoId, $commentId)
-		{
-			//
-		}
-
-	}
-
-#### Adding Additional Routes To Resource Controllers
-
-If it becomes necessary for you to add additional routes to a resource controller beyond the default resource routes, you should define those routes before your call to `Route::resource`:
-
-	Route::get('photos/popular', 'PhotoController@method');
-	Route::resource('photos', 'PhotoController');
-
 <a name="handling-missing-methods"></a>
 ## Handling Missing Methods
 
-When using `Route::controller`, a catch-all method may be defined which will be called when no other matching method is found on a given controller. The method should be named `missingMethod`, and receives the method and parameter array for the request:
+A catch-all method may be defined which will be called when no other matching method is found on a given controller. The method should be named `missingMethod`, and receives the method and parameter array for the request:
 
 #### Defining A Catch-All Method
 
@@ -234,5 +211,3 @@ When using `Route::controller`, a catch-all method may be defined which will be 
 	{
 		//
 	}
-
-If you are using resource controllers, you should define a `__call` magic method on the controller to handle any missing methods.

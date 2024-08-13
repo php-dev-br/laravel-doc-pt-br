@@ -1,4 +1,4 @@
-# Testing
+# Unit Testing
 
 - [Introduction](#introduction)
 - [Defining & Running Tests](#defining-and-running-tests)
@@ -202,15 +202,15 @@ You may set the currently authenticated user using the `be` method:
 
 	$this->be($user);
 
-#### Re-Seeding Database From Tests
-
 You may re-seed your database from a test using the `seed` method:
+
+#### Re-Seeding Database From Tests
 
 	$this->seed();
 
-	$this->seed('DatabaseSeeder');
+	$this->seed($connection);
 
-More information on creating seeds may be found in the [migrations and seeding](/docs/4.2/migrations#database-seeding) section of the documentation.
+More information on creating seeds may be found in the [migrations and seeding](migrations.md#database-seeding) section of the documentation.
 
 <a name="refreshing-the-application"></a>
 ## Refreshing The Application
