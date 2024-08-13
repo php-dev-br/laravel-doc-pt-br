@@ -11,28 +11,48 @@
 - [Retrieving User Details](#retrieving-user-details)
 
 <a name="introduction"></a>
+
 ## Introduction
 
-In addition to typical, form based authentication, Laravel also provides a simple, convenient way to authenticate with OAuth providers using [Laravel Socialite](https://github.com/laravel/socialite). Socialite currently supports authentication with Facebook, Twitter, LinkedIn, Google, GitHub, GitLab and Bitbucket.
+In addition to typical, form based authentication, Laravel also provides a
+simple, convenient way to authenticate with OAuth providers
+using [Laravel Socialite](https://github.com/laravel/socialite). Socialite
+currently supports authentication with Facebook, Twitter, LinkedIn, Google,
+GitHub, GitLab and Bitbucket.
 
-> {tip} Adapters for other platforms are listed at the community driven [Socialite Providers](https://socialiteproviders.netlify.com/) website.
+> {tip} Adapters for other platforms are listed at the community
+> driven [Socialite Providers](https://socialiteproviders.netlify.com/) website.
 
 <a name="upgrading-socialite"></a>
+
 ## Upgrading Socialite
 
-When upgrading to a new major version of Socialite, it's important that you carefully review [the upgrade guide](https://github.com/laravel/socialite/blob/master/UPGRADE.md).
+When upgrading to a new major version of Socialite, it's important that you
+carefully
+review [the upgrade guide](https://github.com/laravel/socialite/blob/master/UPGRADE.md).
 
 <a name="installation"></a>
+
 ## Installation
 
-To get started with Socialite, use Composer to add the package to your project's dependencies:
+To get started with Socialite, use Composer to add the package to your project's
+dependencies:
 
-    composer require laravel/socialite
+    composer require laravel/socialite:4.4.1
+
+> {note} The latest version Socialite does not support Laravel 5.7. The last
+> supported version is Socialite 4.4.1.
 
 <a name="configuration"></a>
+
 ## Configuration
 
-Before using Socialite, you will also need to add credentials for the OAuth services your application utilizes. These credentials should be placed in your `config/services.php` configuration file, and should use the key `facebook`, `twitter`, `linkedin`, `google`, `github`, `gitlab` or `bitbucket`, depending on the providers your application requires. For example:
+Before using Socialite, you will also need to add credentials for the OAuth
+services your application utilizes. These credentials should be placed in
+your `config/services.php` configuration file, and should use the
+key `facebook`, `twitter`, `linkedin`, `google`, `github`, `gitlab`
+or `bitbucket`, depending on the providers your application requires. For
+example:
 
     'github' => [
         'client_id' => env('GITHUB_CLIENT_ID'),
@@ -40,12 +60,17 @@ Before using Socialite, you will also need to add credentials for the OAuth serv
         'redirect' => 'http://your-callback-url',
     ],
 
-> {tip} If the `redirect` option contains a relative path, it will automatically be resolved to a fully qualified URL.
+> {tip} If the `redirect` option contains a relative path, it will automatically
+> be resolved to a fully qualified URL.
 
 <a name="routing"></a>
+
 ## Routing
 
-Next, you are ready to authenticate users! You will need two routes: one for redirecting the user to the OAuth provider, and another for receiving the callback from the provider after authentication. We will access Socialite using the `Socialite` facade:
+Next, you are ready to authenticate users! You will need two routes: one for
+redirecting the user to the OAuth provider, and another for receiving the
+callback from the provider after authentication. We will access Socialite using
+the `Socialite` facade:
 
     <?php
 
@@ -78,7 +103,9 @@ Next, you are ready to authenticate users! You will need two routes: one for red
         }
     }
 
-The `redirect` method takes care of sending the user to the OAuth provider, while the `user` method will read the incoming request and retrieve the user's information from the provider.
+The `redirect` method takes care of sending the user to the OAuth provider,
+while the `user` method will read the incoming request and retrieve the user's
+information from the provider.
 
 You will need to define routes to your controller methods:
 
@@ -86,20 +113,27 @@ You will need to define routes to your controller methods:
     Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback');
 
 <a name="optional-parameters"></a>
+
 ## Optional Parameters
 
-A number of OAuth providers support optional parameters in the redirect request. To include any optional parameters in the request, call the `with` method with an associative array:
+A number of OAuth providers support optional parameters in the redirect request.
+To include any optional parameters in the request, call the `with` method with
+an associative array:
 
     return Socialite::driver('google')
         ->with(['hd' => 'example.com'])
         ->redirect();
 
-> {note} When using the `with` method, be careful not to pass any reserved keywords such as `state` or `response_type`.
+> {note} When using the `with` method, be careful not to pass any reserved
+> keywords such as `state` or `response_type`.
 
 <a name="access-scopes"></a>
+
 ## Access Scopes
 
-Before redirecting the user, you may also add additional "scopes" on the request using the `scopes` method. This method will merge all existing scopes with the ones you supply:
+Before redirecting the user, you may also add additional "scopes" on the request
+using the `scopes` method. This method will merge all existing scopes with the
+ones you supply:
 
     return Socialite::driver('github')
         ->scopes(['read:user', 'public_repo'])
@@ -112,13 +146,16 @@ You can overwrite all existing scopes using the `setScopes` method:
         ->redirect();
 
 <a name="stateless-authentication"></a>
+
 ## Stateless Authentication
 
-The `stateless` method may be used to disable session state verification. This is useful when adding social authentication to an API:
+The `stateless` method may be used to disable session state verification. This
+is useful when adding social authentication to an API:
 
     return Socialite::driver('google')->stateless()->user();
 
 <a name="retrieving-user-details"></a>
+
 ## Retrieving User Details
 
 Once you have a user instance, you can grab a few more details about the user:
@@ -143,12 +180,14 @@ Once you have a user instance, you can grab a few more details about the user:
 
 #### Retrieving User Details From A Token (OAuth2)
 
-If you already have a valid access token for a user, you can retrieve their details using the `userFromToken` method:
+If you already have a valid access token for a user, you can retrieve their
+details using the `userFromToken` method:
 
     $user = Socialite::driver('github')->userFromToken($token);
-    
+
 #### Retrieving User Details From A Token And Secret (OAuth1)
 
-If you already have a valid pair of token / secret for a user, you can retrieve their details using the `userFromTokenAndSecret` method:
+If you already have a valid pair of token / secret for a user, you can retrieve
+their details using the `userFromTokenAndSecret` method:
 
     $user = Socialite::driver('twitter')->userFromTokenAndSecret($token, $secret);

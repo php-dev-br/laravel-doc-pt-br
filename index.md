@@ -54,7 +54,7 @@
 ## Security
 
 - [Authentication](authentication.md)
-- [API Authentication](api-authentication.md)
+- [API Authentication](passport.md)
 - [Authorization](authorization.md)
 - [Email Verification](verification.md)
 - [Encryption](encryption.md)

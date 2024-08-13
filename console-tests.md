@@ -3,14 +3,22 @@
 - [Introduction](#introduction)
 - [Expecting Input / Output](#expecting-input-and-output)
 
+<a name="introduction"></a>
+
 ## Introduction
 
-In addition to simplifying HTTP testing, Laravel provides a simple API for testing console applications that ask for user input.
+In addition to simplifying HTTP testing, Laravel provides a simple API for
+testing console applications that ask for user input.
 
 <a name="expecting-input-and-output"></a>
+
 ## Expecting Input / Output
 
-Laravel allows you to easily "mock" user input for your console commands using the `expectsQuestion` method. In addition, you may specify the exit code and text that you expect to be output by the console command using the `assertExitCode` and `expectsOutput` methods. For example, consider the following console command:
+Laravel allows you to easily "mock" user input for your console commands using
+the `expectsQuestion` method. In addition, you may specify the exit code and
+text that you expect to be output by the console command using
+the `assertExitCode` and `expectsOutput` methods. For example, consider the
+following console command:
 
     Artisan::command('question', function () {
         $name = $this->ask('What is your name?');
@@ -24,7 +32,8 @@ Laravel allows you to easily "mock" user input for your console commands using t
         $this->line('Your name is '.$name.' and you program in '.$language.'.');
     });
 
-You may test this command with the following test which utilizes the `expectsQuestion`, `expectsOutput`, and `assertExitCode` methods:
+You may test this command with the following test which utilizes
+the `expectsQuestion`, `expectsOutput`, and `assertExitCode` methods:
 
     /**
      * Test a console command.
