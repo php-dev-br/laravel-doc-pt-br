@@ -108,4 +108,4 @@ nav:
       - Telescope: telescope.md
       - Valet: valet.md
   - API:
-      - Documentação da API: https://laravel.com/api/11.x/index.html
+      - Documentação da API: https://laravel.com/api/9.x/index.html
