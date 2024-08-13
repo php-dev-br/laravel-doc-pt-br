@@ -7,7 +7,7 @@
     - [Service Providers](#service-providers)
     - [Routing](#routing)
     - [Finishing Up](#finishing-up)
-- [Focus on Service Providers](#focus-on-service-providers)
+- [Focus On Service Providers](#focus-on-service-providers)
 
 <a name="introduction"></a>
 
@@ -61,13 +61,12 @@ and perform other tasks that need to be done before the request is actually
 handled. Typically, these classes handle internal Laravel configuration that you
 do not need to worry about.
 
-The HTTP kernel also defines a list of
-HTTP [middleware](middleware.md) that all requests must pass
-through before being handled by the application. These middleware handle reading
-and writing the [HTTP session](session.md), determining if the
-application is in maintenance
-mode, [verifying the CSRF token](csrf.md), and more. We'll talk
-more about these soon.
+The HTTP kernel also defines a list of HTTP [middleware](middleware.md) that all
+requests must pass through before being handled by the application. These
+middleware handle reading and writing the [HTTP session](session.md),
+determining if the application is in maintenance
+mode, [verifying the CSRF token](csrf.md), and more. We'll talk more about these
+soon.
 
 The method signature for the HTTP kernel's `handle` method is quite simple: it
 receives a `Request` and returns a `Response`. Think of the kernel as being a
@@ -79,11 +78,11 @@ it will return HTTP responses.
 ### Service Providers
 
 One of the most important kernel bootstrapping actions is loading
-the [service providers](providers.md) for your application.
-Service providers are responsible for bootstrapping all of the framework's
-various components, such as the database, queue, validation, and routing
-components. All of the service providers for the application are configured in
-the `config/app.php` configuration file's `providers` array.
+the [service providers](providers.md) for your application. Service providers
+are responsible for bootstrapping all of the framework's various components,
+such as the database, queue, validation, and routing components. All of the
+service providers for the application are configured in the `config/app.php`
+configuration file's `providers` array.
 
 Laravel will iterate through this list of providers and instantiate each of
 them. After instantiating the providers, the `register` method will be called on
@@ -143,7 +142,7 @@ the entire Laravel request lifecycle!
 
 <a name="focus-on-service-providers"></a>
 
-## Focus on Service Providers
+## Focus On Service Providers
 
 Service providers are truly the key to bootstrapping a Laravel application. The
 application instance is created, the service providers are registered, and the

@@ -11,11 +11,10 @@
 All Eloquent methods that return more than one model result will return
 instances of the `Illuminate\Database\Eloquent\Collection` class, including
 results retrieved via the `get` method or accessed via a relationship. The
-Eloquent collection object extends
-Laravel's [base collection](collections.md), so it naturally
-inherits dozens of methods used to fluently work with the underlying array of
-Eloquent models. Be sure to review the Laravel collection documentation to learn
-all about these helpful methods!
+Eloquent collection object extends Laravel's [base collection](collections.md),
+so it naturally inherits dozens of methods used to fluently work with the
+underlying array of Eloquent models. Be sure to review the Laravel collection
+documentation to learn all about these helpful methods!
 
 All collections also serve as iterators, allowing you to loop over them as if
 they were simple PHP arrays:
@@ -33,9 +32,9 @@ and expose a variety of map / reduce operations that may be chained using an
 intuitive interface. For example, we may remove all inactive models and then
 gather the first name for each remaining user:
 
-    $names = User::all()->reject(function (User $user) {
+    $names = User::all()->reject(function ($user) {
         return $user->active === false;
-    })->map(function (User $user) {
+    })->map(function ($user) {
         return $user->name;
     });
 
@@ -45,18 +44,17 @@ gather the first name for each remaining user:
 
 While most Eloquent collection methods return a new instance of an Eloquent
 collection, the `collapse`, `flatten`, `flip`, `keys`, `pluck`, and `zip`
-methods return a [base collection](collections.md) instance.
-Likewise, if a `map` operation returns a collection that does not contain any
-Eloquent models, it will be converted to a base collection instance.
+methods return a [base collection](collections.md) instance. Likewise, if
+a `map` operation returns a collection that does not contain any Eloquent
+models, it will be converted to a base collection instance.
 
 <a name="available-methods"></a>
 
 ## Available Methods
 
 All Eloquent collections extend the
-base [Laravel collection](collections.md#available-methods)
-object; therefore, they inherit all of the powerful methods provided by the base
-collection class.
+base [Laravel collection](collections.md#available-methods) object; therefore,
+they inherit all of the powerful methods provided by the base collection class.
 
 In addition, the `Illuminate\Database\Eloquent\Collection` class provides a
 superset of methods to aid with managing your model collections. Most methods
@@ -111,9 +109,9 @@ methods, like `modelKeys`, return an `Illuminate\Support\Collection` instance.
 #### `append($attributes)` {.collection-method .first-collection-method}
 
 The `append` method may be used to indicate that an attribute should
-be [appended](eloquent-serialization.md#appending-values-to-json)
-for every model in the collection. This method accepts an array of attributes or
-a single attribute:
+be [appended](eloquent-serialization.md#appending-values-to-json) for every
+model in the collection. This method accepts an array of attributes or a single
+attribute:
 
     $users->append('team');
 
@@ -309,7 +307,6 @@ given model, you may define a `newCollection` method on your model:
     namespace App\Models;
 
     use App\Support\UserCollection;
-    use Illuminate\Database\Eloquent\Collection;
     use Illuminate\Database\Eloquent\Model;
 
     class User extends Model
@@ -317,10 +314,10 @@ given model, you may define a `newCollection` method on your model:
         /**
          * Create a new Eloquent Collection instance.
          *
-         * @param  array<int, \Illuminate\Database\Eloquent\Model>  $models
-         * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model>
+         * @param  array  $models
+         * @return \Illuminate\Database\Eloquent\Collection
          */
-        public function newCollection(array $models = []): Collection
+        public function newCollection(array $models = [])
         {
             return new UserCollection($models);
         }

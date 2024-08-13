@@ -21,9 +21,9 @@ We'll use the `collect` helper to create a new collection instance from the
 array, run the `strtoupper` function on each element, and then remove all empty
 elements:
 
-    $collection = collect(['taylor', 'abigail', null])->map(function (?string $name) {
+    $collection = collect(['taylor', 'abigail', null])->map(function ($name) {
         return strtoupper($name);
-    })->reject(function (string $name) {
+    })->reject(function ($name) {
         return empty($name);
     });
 
@@ -42,9 +42,9 @@ collection is as simple as:
 
     $collection = collect([1, 2, 3]);
 
-> [!NOTE]
-> The results of [Eloquent](eloquent.md) queries are always
-> returned as `Collection` instances.
+> **Note**
+> The results of [Eloquent](eloquent.md) queries are always returned
+> as `Collection` instances.
 
 <a name="extending-collections"></a>
 
@@ -61,7 +61,7 @@ following code adds a `toUpper` method to the `Collection` class:
     use Illuminate\Support\Str;
 
     Collection::macro('toUpper', function () {
-        return $this->map(function (string $value) {
+        return $this->map(function ($value) {
             return Str::upper($value);
         });
     });
@@ -84,8 +84,8 @@ If necessary, you may define macros that accept additional arguments:
     use Illuminate\Support\Collection;
     use Illuminate\Support\Facades\Lang;
 
-    Collection::macro('toLocale', function (string $locale) {
-        return $this->map(function (string $value) use ($locale) {
+    Collection::macro('toLocale', function ($locale) {
+        return $this->map(function ($value) use ($locale) {
             return Lang::get($value, [], $locale);
         });
     });
@@ -137,16 +137,13 @@ original copy of the collection when necessary:
 [dd](#method-dd)
 [diff](#method-diff)
 [diffAssoc](#method-diffassoc)
-[diffAssocUsing](#method-diffassocusing)
 [diffKeys](#method-diffkeys)
 [doesntContain](#method-doesntcontain)
-[dot](#method-dot)
 [dump](#method-dump)
 [duplicates](#method-duplicates)
 [duplicatesStrict](#method-duplicatesstrict)
 [each](#method-each)
 [eachSpread](#method-eachspread)
-[ensure](#method-ensure)
 [every](#method-every)
 [except](#method-except)
 [filter](#method-filter)
@@ -164,7 +161,6 @@ original copy of the collection when necessary:
 [hasAny](#method-hasany)
 [implode](#method-implode)
 [intersect](#method-intersect)
-[intersectAssoc](#method-intersectAssoc)
 [intersectByKeys](#method-intersectbykeys)
 [isEmpty](#method-isempty)
 [isNotEmpty](#method-isnotempty)
@@ -190,7 +186,6 @@ original copy of the collection when necessary:
 [only](#method-only)
 [pad](#method-pad)
 [partition](#method-partition)
-[percentage](#method-percentage)
 [pipe](#method-pipe)
 [pipeInto](#method-pipeinto)
 [pipeThrough](#method-pipethrough)
@@ -209,7 +204,6 @@ original copy of the collection when necessary:
 [replaceRecursive](#method-replacerecursive)
 [reverse](#method-reverse)
 [search](#method-search)
-[select](#method-select)
 [shift](#method-shift)
 [shuffle](#method-shuffle)
 [skip](#method-skip)
@@ -332,11 +326,10 @@ given size:
 
     // [[1, 2, 3, 4], [5, 6, 7]]
 
-This method is especially useful in [views](views.md) when
-working with a grid system such
-as [Bootstrap](https://getbootstrap.com/docs/4.1/layout/grid/). For example,
-imagine you have a collection of [Eloquent](eloquent.md) models
-you want to display in a grid:
+This method is especially useful in [views](views.md) when working with a grid
+system such as [Bootstrap](https://getbootstrap.com/docs/4.1/layout/grid/). For
+example, imagine you have a collection of [Eloquent](eloquent.md) models you
+want to display in a grid:
 
 ```blade
 @foreach ($products->chunk(3) as $chunk)
@@ -358,7 +351,7 @@ the closure may be used to inspect the previous element:
 
     $collection = collect(str_split('AABBCCCD'));
 
-    $chunks = $collection->chunkWhile(function (string $value, int $key, Collection $chunk) {
+    $chunks = $collection->chunkWhile(function ($value, $key, $chunk) {
         return $value === $chunk->last();
     });
 
@@ -412,7 +405,7 @@ instances:
 
     $collection = $lazyCollection->collect();
 
-    $collection::class;
+    get_class($collection);
 
     // 'Illuminate\Support\Collection'
 
@@ -420,7 +413,7 @@ instances:
 
     // [1, 2, 3]
 
-> [!NOTE]
+> **Note**
 > The `collect` method is especially useful when you have an instance
 > of `Enumerable` and need a non-lazy collection instance. Since `collect()` is
 > part of the `Enumerable` contract, you can safely use it to get a `Collection`
@@ -470,7 +463,7 @@ exists in the collection matching a given truth test:
 
     $collection = collect([1, 2, 3, 4, 5]);
 
-    $collection->contains(function (int $value, int $key) {
+    $collection->contains(function ($value, $key) {
         return $value > 5;
     });
 
@@ -535,7 +528,7 @@ item:
 This method has the same signature as the [`contains`](#method-contains) method;
 however, all values are compared using "strict" comparisons.
 
-> [!NOTE]
+> **Note**
 > This method's behavior is modified when
 > using [Eloquent Collections](eloquent-collections.md#method-contains).
 
@@ -571,7 +564,7 @@ You pass a closure to the `countBy` method to count all items by a custom value:
 
     $collection = collect(['alice@gmail.com', 'bob@yahoo.com', 'carlos@gmail.com']);
 
-    $counted = $collection->countBy(function (string $email) {
+    $counted = $collection->countBy(function ($email) {
         return substr(strrchr($email, "@"), 1);
     });
 
@@ -659,7 +652,7 @@ original collection that are not present in the given collection:
 
     // [1, 3, 5]
 
-> [!NOTE]
+> **Note**
 > This method's behavior is modified when
 > using [Eloquent Collections](eloquent-collections.md#method-diff).
 
@@ -688,35 +681,6 @@ collection:
     $diff->all();
 
     // ['color' => 'orange', 'remain' => 6]
-
-<a name="method-diffassocusing"></a>
-
-#### `diffAssocUsing()` {.collection-method}
-
-Unlike `diffAssoc`, `diffAssocUsing` accepts a user supplied callback function
-for the indices comparison:
-
-    $collection = collect([
-        'color' => 'orange',
-        'type' => 'fruit',
-        'remain' => 6,
-    ]);
-
-    $diff = $collection->diffAssocUsing([
-        'Color' => 'yellow',
-        'Type' => 'fruit',
-        'Remain' => 3,
-    ], 'strnatcasecmp');
-
-    $diff->all();
-
-    // ['color' => 'orange', 'remain' => 6]
-
-The callback must be a comparison function that returns an integer less than,
-equal to, or greater than zero. For more information, refer to the PHP
-documentation
-on [`array_diff_uassoc`](https://www.php.net/array_diff_uassoc#refsect1-function.array-diff-uassoc-parameters),
-which is the PHP function that the `diffAssocUsing` method utilizes internally.
 
 <a name="method-diffkeys"></a>
 
@@ -755,7 +719,7 @@ an element does not exist in the collection matching a given truth test:
 
     $collection = collect([1, 2, 3, 4, 5]);
 
-    $collection->doesntContain(function (int $value, int $key) {
+    $collection->doesntContain(function ($value, $key) {
         return $value < 5;
     });
 
@@ -789,21 +753,6 @@ determine if the given pair does not exist in the collection:
 The `doesntContain` method uses "loose" comparisons when checking item values,
 meaning a string with an integer value will be considered equal to an integer of
 the same value.
-
-<a name="method-dot"></a>
-
-#### `dot()` {.collection-method}
-
-The `dot` method flattens a multi-dimensional collection into a single level
-collection that uses "dot" notation to indicate depth:
-
-    $collection = collect(['products' => ['desk' => ['price' => 100]]]);
-
-    $flattened = $collection->dot();
-
-    $flattened->all();
-
-    // ['products.desk.price' => 100]
 
 <a name="method-dump"></a>
 
@@ -867,16 +816,14 @@ method; however, all values are compared using "strict" comparisons.
 The `each` method iterates over the items in the collection and passes each item
 to a closure:
 
-    $collection = collect([1, 2, 3, 4]);
-
-    $collection->each(function (int $item, int $key) {
-        // ...
+    $collection->each(function ($item, $key) {
+        //
     });
 
 If you would like to stop iterating through the items, you may return `false`
 from your closure:
 
-    $collection->each(function (int $item, int $key) {
+    $collection->each(function ($item, $key) {
         if (/* condition */) {
             return false;
         }
@@ -891,36 +838,15 @@ nested item value into the given callback:
 
     $collection = collect([['John Doe', 35], ['Jane Doe', 33]]);
 
-    $collection->eachSpread(function (string $name, int $age) {
-        // ...
+    $collection->eachSpread(function ($name, $age) {
+        //
     });
 
 You may stop iterating through the items by returning `false` from the callback:
 
-    $collection->eachSpread(function (string $name, int $age) {
+    $collection->eachSpread(function ($name, $age) {
         return false;
     });
-
-<a name="method-ensure"></a>
-
-#### `ensure()` {.collection-method}
-
-The `ensure` method may be used to verify that all elements of a collection are
-of a given type or list of types. Otherwise, an `UnexpectedValueException` will
-be thrown:
-
-    return $collection->ensure(User::class);
-
-    return $collection->ensure([User::class, Customer::class]);
-
-Primitive types such as `string`, `int`, `float`, `bool`, and `array` may also
-be specified:
-
-    return $collection->ensure('int');
-
-> [!WARNING]
-> The `ensure` method does not guarantee that elements of different types will
-> not be added to the collection at a later time.
 
 <a name="method-every"></a>
 
@@ -929,7 +855,7 @@ be specified:
 The `every` method may be used to verify that all elements of a collection pass
 a given truth test:
 
-    collect([1, 2, 3, 4])->every(function (int $value, int $key) {
+    collect([1, 2, 3, 4])->every(function ($value, $key) {
         return $value > 2;
     });
 
@@ -939,7 +865,7 @@ If the collection is empty, the `every` method will return true:
 
     $collection = collect([]);
 
-    $collection->every(function (int $value, int $key) {
+    $collection->every(function ($value, $key) {
         return $value > 2;
     });
 
@@ -962,7 +888,7 @@ the specified keys:
 
 For the inverse of `except`, see the [only](#method-only) method.
 
-> [!NOTE]
+> **Note**
 > This method's behavior is modified when
 > using [Eloquent Collections](eloquent-collections.md#method-except).
 
@@ -975,7 +901,7 @@ only those items that pass a given truth test:
 
     $collection = collect([1, 2, 3, 4]);
 
-    $filtered = $collection->filter(function (int $value, int $key) {
+    $filtered = $collection->filter(function ($value, $key) {
         return $value > 2;
     });
 
@@ -1001,7 +927,7 @@ For the inverse of `filter`, see the [reject](#method-reject) method.
 The `first` method returns the first element in the collection that passes a
 given truth test:
 
-    collect([1, 2, 3, 4])->first(function (int $value, int $key) {
+    collect([1, 2, 3, 4])->first(function ($value, $key) {
         return $value > 2;
     });
 
@@ -1022,7 +948,7 @@ The `firstOrFail` method is identical to the `first` method; however, if no
 result is found, an `Illuminate\Support\ItemNotFoundException` exception will be
 thrown:
 
-    collect([1, 2, 3, 4])->firstOrFail(function (int $value, int $key) {
+    collect([1, 2, 3, 4])->firstOrFail(function ($value, $key) {
         return $value > 5;
     });
 
@@ -1083,7 +1009,7 @@ level:
         ['age' => 28]
     ]);
 
-    $flattened = $collection->flatMap(function (array $values) {
+    $flattened = $collection->flatMap(function ($values) {
         return array_map('strtoupper', $values);
     });
 
@@ -1172,7 +1098,7 @@ The `forget` method removes an item from the collection by its key:
 
     // ['framework' => 'laravel']
 
-> [!WARNING]
+> **Warning**
 > Unlike most other collection methods, `forget` does not return a new modified
 > collection; it modifies the collection it is called on.
 
@@ -1253,7 +1179,7 @@ The `groupBy` method groups the collection's items by a given key:
 Instead of passing a string `key`, you may pass a callback. The callback should
 return the value you wish to key the group by:
 
-    $grouped = $collection->groupBy(function (array $item, int $key) {
+    $grouped = $collection->groupBy(function ($item, $key) {
         return substr($item['account_id'], -3);
     });
 
@@ -1281,7 +1207,7 @@ applied to the corresponding level within a multi-dimensional array:
         40 => ['user' => 4, 'skill' => 2, 'roles' => ['Role_2']],
     ]);
 
-    $result = $data->groupBy(['skill', function (array $item) {
+    $result = $data->groupBy(['skill', function ($item) {
         return $item['roles'];
     }], preserveKeys: true);
 
@@ -1375,7 +1301,7 @@ the "glue" as the only argument to the method:
 You may pass a closure to the `implode` method if you would like to format the
 values being imploded:
 
-    $collection->implode(function (array $item, int $key) {
+    $collection->implode(function ($item, $key) {
         return strtoupper($item['product']);
     }, ', ');
 
@@ -1397,33 +1323,9 @@ preserve the original collection's keys:
 
     // [0 => 'Desk', 2 => 'Chair']
 
-> [!NOTE]
+> **Note**
 > This method's behavior is modified when
 > using [Eloquent Collections](eloquent-collections.md#method-intersect).
-
-<a name="method-intersectAssoc"></a>
-
-#### `intersectAssoc()` {.collection-method}
-
-The `intersectAssoc` method compares the original collection against another
-collection or `array`, returning the key / value pairs that are present in all
-of the given collections:
-
-    $collection = collect([
-        'color' => 'red',
-        'size' => 'M',
-        'material' => 'cotton'
-    ]);
-
-    $intersect = $collection->intersectAssoc([
-        'color' => 'blue',
-        'size' => 'M',
-        'material' => 'polyester'
-    ]);
-
-    $intersect->all();
-
-    // ['size' => 'M']
 
 <a name="method-intersectbykeys"></a>
 
@@ -1507,7 +1409,7 @@ the same key, only the last one will appear in the new collection:
 You may also pass a callback to the method. The callback should return the value
 to key the collection by:
 
-    $keyed = $collection->keyBy(function (array $item, int $key) {
+    $keyed = $collection->keyBy(function ($item, $key) {
         return strtoupper($item['product_id']);
     });
 
@@ -1544,7 +1446,7 @@ The `keys` method returns all of the collection's keys:
 The `last` method returns the last element in the collection that passes a given
 truth test:
 
-    collect([1, 2, 3, 4])->last(function (int $value, int $key) {
+    collect([1, 2, 3, 4])->last(function ($value, $key) {
         return $value < 3;
     });
 
@@ -1566,7 +1468,7 @@ from the underlying array of items:
 
     $lazyCollection = collect([1, 2, 3, 4])->lazy();
 
-    $lazyCollection::class;
+    get_class($lazyCollection);
 
     // Illuminate\Support\LazyCollection
 
@@ -1613,7 +1515,7 @@ forming a new collection of modified items:
 
     $collection = collect([1, 2, 3, 4, 5]);
 
-    $multiplied = $collection->map(function (int $item, int $key) {
+    $multiplied = $collection->map(function ($item, $key) {
         return $item * 2;
     });
 
@@ -1621,7 +1523,7 @@ forming a new collection of modified items:
 
     // [2, 4, 6, 8, 10]
 
-> [!WARNING]
+> **Warning**
 > Like most other collection methods, `map` returns a new collection instance;
 > it does not modify the collection it is called on. If you want to transform the
 > original collection, use the [`transform`](#method-transform) method.
@@ -1637,10 +1539,14 @@ the given class by passing the value into the constructor:
     {
         /**
          * Create a new currency instance.
+         *
+         * @param  string  $code
+         * @return void
          */
-        function __construct(
-            public string $code
-        ) {}
+        function __construct(string $code)
+        {
+            $this->code = $code;
+        }
     }
 
     $collection = collect(['USD', 'EUR', 'GBP']);
@@ -1663,7 +1569,7 @@ return it, thus forming a new collection of modified items:
 
     $chunks = $collection->chunk(2);
 
-    $sequence = $chunks->mapSpread(function (int $even, int $odd) {
+    $sequence = $chunks->mapSpread(function ($even, $odd) {
         return $even + $odd;
     });
 
@@ -1694,7 +1600,7 @@ thus forming a new collection of grouped values:
         ]
     ]);
 
-    $grouped = $collection->mapToGroups(function (array $item, int $key) {
+    $grouped = $collection->mapToGroups(function ($item, $key) {
         return [$item['department'] => $item['name']];
     });
 
@@ -1732,7 +1638,7 @@ containing a single key / value pair:
         ]
     ]);
 
-    $keyed = $collection->mapWithKeys(function (array $item, int $key) {
+    $keyed = $collection->mapWithKeys(function ($item, $key) {
         return [$item['email'] => $item['name']];
     });
 
@@ -1909,7 +1815,7 @@ The `only` method returns the items in the collection with the specified keys:
 
 For the inverse of `only`, see the [except](#method-except) method.
 
-> [!NOTE]
+> **Note**
 > This method's behavior is modified when
 > using [Eloquent Collections](eloquent-collections.md#method-only).
 
@@ -1949,7 +1855,7 @@ elements that pass a given truth test from those that do not:
 
     $collection = collect([1, 2, 3, 4, 5, 6]);
 
-    [$underThree, $equalOrAboveThree] = $collection->partition(function (int $i) {
+    [$underThree, $equalOrAboveThree] = $collection->partition(function ($i) {
         return $i < 3;
     });
 
@@ -1961,30 +1867,6 @@ elements that pass a given truth test from those that do not:
 
     // [3, 4, 5, 6]
 
-<a name="method-percentage"></a>
-
-#### `percentage()` {.collection-method}
-
-The `percentage` method may be used to quickly determine the percentage of items
-in the collection that pass a given truth test:
-
-```php
-$collection = collect([1, 1, 2, 2, 2, 3]);
-
-$percentage = $collection->percentage(fn ($value) => $value === 1);
-
-// 33.33
-```
-
-By default, the percentage will be rounded to two decimal places. However, you
-may customize this behavior by providing a second argument to the method:
-
-```php
-$percentage = $collection->percentage(fn ($value) => $value === 1, precision: 3);
-
-// 33.333
-```
-
 <a name="method-pipe"></a>
 
 #### `pipe()` {.collection-method}
@@ -1994,7 +1876,7 @@ result of the executed closure:
 
     $collection = collect([1, 2, 3]);
 
-    $piped = $collection->pipe(function (Collection $collection) {
+    $piped = $collection->pipe(function ($collection) {
         return $collection->sum();
     });
 
@@ -2010,11 +1892,20 @@ collection into the constructor:
     class ResourceCollection
     {
         /**
-         * Create a new ResourceCollection instance.
+         * The Collection instance.
          */
-        public function __construct(
-          public Collection $collection,
-        ) {}
+        public $collection;
+
+        /**
+         * Create a new ResourceCollection instance.
+         *
+         * @param  Collection  $collection
+         * @return void
+         */
+        public function __construct(Collection $collection)
+        {
+            $this->collection = $collection;
+        }
     }
 
     $collection = collect([1, 2, 3]);
@@ -2032,15 +1923,13 @@ collection into the constructor:
 The `pipeThrough` method passes the collection to the given array of closures
 and returns the result of the executed closures:
 
-    use Illuminate\Support\Collection;
-
     $collection = collect([1, 2, 3]);
 
     $result = $collection->pipeThrough([
-        function (Collection $collection) {
+        function ($collection) {
             return $collection->merge([4, 5]);
         },
-        function (Collection $collection) {
+        function ($collection) {
             return $collection->sum();
         },
     ]);
@@ -2236,9 +2125,7 @@ will throw an `InvalidArgumentException`.
 The `random` method also accepts a closure, which will receive the current
 collection instance:
 
-    use Illuminate\Support\Collection;
-
-    $random = $collection->random(fn (Collection $items) => min(10, count($items)));
+    $random = $collection->random(fn ($items) => min(10, count($items)));
 
     $random->all();
 
@@ -2266,7 +2153,7 @@ of each iteration into the subsequent iteration:
 
     $collection = collect([1, 2, 3]);
 
-    $total = $collection->reduce(function (?int $carry, int $item) {
+    $total = $collection->reduce(function ($carry, $item) {
         return $carry + $item;
     });
 
@@ -2275,7 +2162,7 @@ of each iteration into the subsequent iteration:
 The value for `$carry` on the first iteration is `null`; however, you may
 specify its initial value by passing a second argument to `reduce`:
 
-    $collection->reduce(function (int $carry, int $item) {
+    $collection->reduce(function ($carry, $item) {
         return $carry + $item;
     }, 4);
 
@@ -2296,7 +2183,7 @@ given callback:
         'eur' => 1.22,
     ];
 
-    $collection->reduce(function (int $carry, int $value, int $key) use ($ratio) {
+    $collection->reduce(function ($carry, $value, $key) use ($ratio) {
         return $carry + ($value * $ratio[$key]);
     });
 
@@ -2312,7 +2199,7 @@ similar to the `reduce` method; however, it can accept multiple initial values:
 
     [$creditsRemaining, $batch] = Image::where('status', 'unprocessed')
         ->get()
-        ->reduceSpread(function (int $creditsRemaining, Collection $batch, Image $image) {
+        ->reduceSpread(function ($creditsRemaining, $batch, $image) {
             if ($creditsRemaining >= $image->creditsRequired()) {
                 $batch->push($image);
 
@@ -2332,7 +2219,7 @@ collection:
 
     $collection = collect([1, 2, 3, 4]);
 
-    $filtered = $collection->reject(function (int $value, int $key) {
+    $filtered = $collection->reject(function ($value, $key) {
         return $value > 2;
     });
 
@@ -2432,34 +2319,11 @@ comparison, pass `true` as the second argument to the method:
 Alternatively, you may provide your own closure to search for the first item
 that passes a given truth test:
 
-    collect([2, 4, 6, 8])->search(function (int $item, int $key) {
+    collect([2, 4, 6, 8])->search(function ($item, $key) {
         return $item > 5;
     });
 
     // 2
-
-<a name="method-select"></a>
-
-#### `select()` {.collection-method}
-
-The `select` method selects the given keys from the collection, similar to an
-SQL `SELECT` statement:
-
-```php
-$users = collect([
-    ['name' => 'Taylor Otwell', 'role' => 'Developer', 'status' => 'active'],
-    ['name' => 'Victoria Faith', 'role' => 'Researcher', 'status' => 'active'],
-]);
-
-$users->select(['name', 'role']);
-
-/*
-    [
-        ['name' => 'Taylor Otwell', 'role' => 'Developer'],
-        ['name' => 'Victoria Faith', 'role' => 'Researcher'],
-    ],
-*/
-```
 
 <a name="method-shift"></a>
 
@@ -2529,7 +2393,7 @@ as a new collection instance:
 
     $collection = collect([1, 2, 3, 4]);
 
-    $subset = $collection->skipUntil(function (int $item) {
+    $subset = $collection->skipUntil(function ($item) {
         return $item >= 3;
     });
 
@@ -2548,7 +2412,7 @@ until the given value is found:
 
     // [3, 4]
 
-> [!WARNING]
+> **Warning**
 > If the given value is not found or the callback never returns `true`,
 > the `skipUntil` method will return an empty collection.
 
@@ -2562,7 +2426,7 @@ as a new collection:
 
     $collection = collect([1, 2, 3, 4]);
 
-    $subset = $collection->skipWhile(function (int $item) {
+    $subset = $collection->skipWhile(function ($item) {
         return $item <= 3;
     });
 
@@ -2570,7 +2434,7 @@ as a new collection:
 
     // [4]
 
-> [!WARNING]
+> **Warning**
 > If the callback never returns `false`, the `skipWhile` method will return an
 > empty collection.
 
@@ -2620,7 +2484,7 @@ window" view of the items in the collection:
 This is especially useful in conjunction with
 the [`eachSpread`](#method-eachspread) method:
 
-    $transactions->sliding(2)->eachSpread(function (Collection $previous, Collection $current) {
+    $transactions->sliding(2)->eachSpread(function ($previous, $current) {
         $current->total = $previous->total + $current->amount;
     });
 
@@ -2642,7 +2506,7 @@ between the first item of every chunk:
 The `sole` method returns the first element in the collection that passes a
 given truth test, but only if the truth test matches exactly one element:
 
-    collect([1, 2, 3, 4])->sole(function (int $value, int $key) {
+    collect([1, 2, 3, 4])->sole(function ($value, $key) {
         return $value === 2;
     });
 
@@ -2705,7 +2569,7 @@ your own algorithm. Refer to the PHP documentation
 on [`uasort`](https://secure.php.net/manual/en/function.uasort.php#refsect1-function.uasort-parameters),
 which is what the collection's `sort` method calls utilizes internally.
 
-> [!NOTE]
+> **Note**
 > If you need to sort a collection of nested arrays or objects, see
 > the [`sortBy`](#method-sortby) and [`sortByDesc`](#method-sortbydesc) methods.
 
@@ -2767,7 +2631,7 @@ collection's values:
         ['name' => 'Bookcase', 'colors' => ['Red', 'Beige', 'Brown']],
     ]);
 
-    $sorted = $collection->sortBy(function (array $product, int $key) {
+    $sorted = $collection->sortBy(function ($product, $key) {
         return count($product['colors']);
     });
 
@@ -2820,8 +2684,8 @@ that define each sort operation:
     ]);
 
     $sorted = $collection->sortBy([
-        fn (array $a, array $b) => $a['name'] <=> $b['name'],
-        fn (array $a, array $b) => $b['age'] <=> $a['age'],
+        fn ($a, $b) => $a['name'] <=> $b['name'],
+        fn ($a, $b) => $b['age'] <=> $a['age'],
     ]);
 
     $sorted->values()->all();
@@ -3032,7 +2896,7 @@ collection to sum:
         ['name' => 'Bookcase', 'colors' => ['Red', 'Beige', 'Brown']],
     ]);
 
-    $collection->sum(function (array $product) {
+    $collection->sum(function ($product) {
         return count($product['colors']);
     });
 
@@ -3072,7 +2936,7 @@ returns `true`:
 
     $collection = collect([1, 2, 3, 4]);
 
-    $subset = $collection->takeUntil(function (int $item) {
+    $subset = $collection->takeUntil(function ($item) {
         return $item >= 3;
     });
 
@@ -3091,7 +2955,7 @@ until the given value is found:
 
     // [1, 2]
 
-> [!WARNING]
+> **Warning**
 > If the given value is not found or the callback never returns `true`,
 > the `takeUntil` method will return all items in the collection.
 
@@ -3104,7 +2968,7 @@ returns `false`:
 
     $collection = collect([1, 2, 3, 4]);
 
-    $subset = $collection->takeWhile(function (int $item) {
+    $subset = $collection->takeWhile(function ($item) {
         return $item < 3;
     });
 
@@ -3112,7 +2976,7 @@ returns `false`:
 
     // [1, 2]
 
-> [!WARNING]
+> **Warning**
 > If the callback never returns `false`, the `takeWhile` method will return all
 > items in the collection.
 
@@ -3127,7 +2991,7 @@ the `tap` method:
 
     collect([2, 4, 3, 1, 5])
         ->sort()
-        ->tap(function (Collection $collection) {
+        ->tap(function ($collection) {
             Log::debug('Values after sorting', $collection->values()->all());
         })
         ->shift();
@@ -3141,7 +3005,7 @@ the `tap` method:
 The static `times` method creates a new collection by invoking the given closure
 a specified number of times:
 
-    $collection = Collection::times(10, function (int $number) {
+    $collection = Collection::times(10, function ($number) {
         return $number * 9;
     });
 
@@ -3154,8 +3018,8 @@ a specified number of times:
 #### `toArray()` {.collection-method}
 
 The `toArray` method converts the collection into a plain PHP `array`. If the
-collection's values are [Eloquent](eloquent.md) models, the
-models will also be converted to arrays:
+collection's values are [Eloquent](eloquent.md) models, the models will also be
+converted to arrays:
 
     $collection = collect(['name' => 'Desk', 'price' => 200]);
 
@@ -3167,7 +3031,7 @@ models will also be converted to arrays:
         ]
     */
 
-> [!WARNING]
+> **Warning**
 > `toArray` also converts all of the collection's nested objects that are an
 > instance of `Arrayable` to an array. If you want to get the raw array underlying
 > the collection, use the [`all`](#method-all) method instead.
@@ -3194,7 +3058,7 @@ by the values returned by the callback:
 
     $collection = collect([1, 2, 3, 4, 5]);
 
-    $collection->transform(function (int $item, int $key) {
+    $collection->transform(function ($item, $key) {
         return $item * 2;
     });
 
@@ -3202,7 +3066,7 @@ by the values returned by the callback:
 
     // [2, 4, 6, 8, 10]
 
-> [!WARNING]
+> **Warning**
 > Unlike most other collection methods, `transform` modifies the collection
 > itself. If you wish to create a new collection instead, use
 > the [`map`](#method-map) method.
@@ -3302,7 +3166,7 @@ determine uniqueness:
 Finally, you may also pass your own closure to the `unique` method to specify
 which value should determine an item's uniqueness:
 
-    $unique = $collection->unique(function (array $item) {
+    $unique = $collection->unique(function ($item) {
         return $item['brand'].$item['type'];
     });
 
@@ -3322,7 +3186,7 @@ a string with an integer value will be considered equal to an integer of the
 same value. Use the [`uniqueStrict`](#method-uniquestrict) method to filter
 using "strict" comparisons.
 
-> [!NOTE]
+> **Note**
 > This method's behavior is modified when
 > using [Eloquent Collections](eloquent-collections.md#method-unique).
 
@@ -3342,11 +3206,11 @@ given to the method evaluates to `true`:
 
     $collection = collect([1, 2, 3]);
 
-    $collection->unless(true, function (Collection $collection) {
+    $collection->unless(true, function ($collection) {
         return $collection->push(4);
     });
 
-    $collection->unless(false, function (Collection $collection) {
+    $collection->unless(false, function ($collection) {
         return $collection->push(5);
     });
 
@@ -3360,9 +3224,9 @@ to `true`:
 
     $collection = collect([1, 2, 3]);
 
-    $collection->unless(true, function (Collection $collection) {
+    $collection->unless(true, function ($collection) {
         return $collection->push(4);
-    }, function (Collection $collection) {
+    }, function ($collection) {
         return $collection->push(5);
     });
 
@@ -3452,11 +3316,11 @@ argument given to the `when` method will be provided to the closure:
 
     $collection = collect([1, 2, 3]);
 
-    $collection->when(true, function (Collection $collection, int $value) {
+    $collection->when(true, function ($collection, $value) {
         return $collection->push(4);
     });
 
-    $collection->when(false, function (Collection $collection, int $value) {
+    $collection->when(false, function ($collection, $value) {
         return $collection->push(5);
     });
 
@@ -3470,9 +3334,9 @@ to `false`:
 
     $collection = collect([1, 2, 3]);
 
-    $collection->when(false, function (Collection $collection, int $value) {
+    $collection->when(false, function ($collection, $value) {
         return $collection->push(4);
-    }, function (Collection $collection) {
+    }, function ($collection) {
         return $collection->push(5);
     });
 
@@ -3491,7 +3355,7 @@ empty:
 
     $collection = collect(['Michael', 'Tom']);
 
-    $collection->whenEmpty(function (Collection $collection) {
+    $collection->whenEmpty(function ($collection) {
         return $collection->push('Adam');
     });
 
@@ -3502,7 +3366,7 @@ empty:
 
     $collection = collect();
 
-    $collection->whenEmpty(function (Collection $collection) {
+    $collection->whenEmpty(function ($collection) {
         return $collection->push('Adam');
     });
 
@@ -3515,9 +3379,9 @@ when the collection is not empty:
 
     $collection = collect(['Michael', 'Tom']);
 
-    $collection->whenEmpty(function (Collection $collection) {
+    $collection->whenEmpty(function ($collection) {
         return $collection->push('Adam');
-    }, function (Collection $collection) {
+    }, function ($collection) {
         return $collection->push('Taylor');
     });
 
@@ -3537,7 +3401,7 @@ not empty:
 
     $collection = collect(['michael', 'tom']);
 
-    $collection->whenNotEmpty(function (Collection $collection) {
+    $collection->whenNotEmpty(function ($collection) {
         return $collection->push('adam');
     });
 
@@ -3548,7 +3412,7 @@ not empty:
 
     $collection = collect();
 
-    $collection->whenNotEmpty(function (Collection $collection) {
+    $collection->whenNotEmpty(function ($collection) {
         return $collection->push('adam');
     });
 
@@ -3561,9 +3425,9 @@ executed when the collection is empty:
 
     $collection = collect();
 
-    $collection->whenNotEmpty(function (Collection $collection) {
+    $collection->whenNotEmpty(function ($collection) {
         return $collection->push('adam');
-    }, function (Collection $collection) {
+    }, function ($collection) {
         return $collection->push('taylor');
     });
 
@@ -3902,7 +3766,7 @@ of "votes" for a collection of users:
 
 ### Introduction
 
-> [!WARNING]
+> **Warning**
 > Before learning more about Laravel's lazy collections, take some time to
 > familiarize yourself
 > with [PHP generators](https://www.php.net/manual/en/language.generators.overview.php).
@@ -3926,7 +3790,7 @@ used to keep only a small part of the file in memory at a given time:
         while (($line = fgets($handle)) !== false) {
             yield $line;
         }
-    })->chunk(4)->map(function (array $lines) {
+    })->chunk(4)->map(function ($lines) {
         return LogEntry::fromLines($lines);
     })->each(function (LogEntry $logEntry) {
         // Process the log entry...
@@ -3938,7 +3802,7 @@ memory at the same time:
 
     use App\Models\User;
 
-    $users = User::all()->filter(function (User $user) {
+    $users = User::all()->filter(function ($user) {
         return $user->id > 500;
     });
 
@@ -3950,7 +3814,7 @@ each user individually, allowing for a drastic reduction in memory usage:
 
     use App\Models\User;
 
-    $users = User::cursor()->filter(function (User $user) {
+    $users = User::cursor()->filter(function ($user) {
         return $user->id > 500;
     });
 
@@ -4037,7 +3901,6 @@ methods:
 [has](#method-has)
 [implode](#method-implode)
 [intersect](#method-intersect)
-[intersectAssoc](#method-intersectAssoc)
 [intersectByKeys](#method-intersectbykeys)
 [isEmpty](#method-isempty)
 [isNotEmpty](#method-isnotempty)
@@ -4113,7 +3976,7 @@ methods:
 
 </div>
 
-> [!WARNING]
+> **Warning**
 > Methods that mutate the collection (such as `shift`, `pop`, `prepend` etc.)
 > are **not** available on the `LazyCollection` class.
 
@@ -4135,7 +3998,7 @@ enumerating:
     $lazyCollection = LazyCollection::times(INF)
         ->takeUntilTimeout(now()->addMinute());
 
-    $lazyCollection->each(function (int $number) {
+    $lazyCollection->each(function ($number) {
         dump($number);
 
         sleep(1);
@@ -4149,8 +4012,8 @@ enumerating:
 
 To illustrate the usage of this method, imagine an application that submits
 invoices from the database using a cursor. You could define
-a [scheduled task](scheduling.md) that runs every 15 minutes and
-only processes invoices for a maximum of 14 minutes:
+a [scheduled task](scheduling.md) that runs every 15 minutes and only processes
+invoices for a maximum of 14 minutes:
 
     use App\Models\Invoice;
     use Illuminate\Support\Carbon;
@@ -4159,7 +4022,7 @@ only processes invoices for a maximum of 14 minutes:
         ->takeUntilTimeout(
             Carbon::createFromTimestamp(LARAVEL_START)->add(14, 'minutes')
         )
-        ->each(fn (Invoice $invoice) => $invoice->submit());
+        ->each(fn ($invoice) => $invoice->submit());
 
 <a name="method-tapEach"></a>
 
@@ -4170,7 +4033,7 @@ right away, the `tapEach` method only calls the given callback as the items are
 being pulled out of the list one by one:
 
     // Nothing has been dumped so far...
-    $lazyCollection = LazyCollection::times(INF)->tapEach(function (int $value) {
+    $lazyCollection = LazyCollection::times(INF)->tapEach(function ($value) {
         dump($value);
     });
 

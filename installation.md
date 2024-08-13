@@ -2,20 +2,18 @@
 
 - [Meet Laravel](#meet-laravel)
     - [Why Laravel?](#why-laravel)
-- [Creating a Laravel Project](#creating-a-laravel-project)
+- [Your First Laravel Project](#your-first-laravel-project)
+- [Laravel & Docker](#laravel-and-docker)
+    - [Getting Started On macOS](#getting-started-on-macos)
+    - [Getting Started On Windows](#getting-started-on-windows)
+    - [Getting Started On Linux](#getting-started-on-linux)
+    - [Choosing Your Sail Services](#choosing-your-sail-services)
 - [Initial Configuration](#initial-configuration)
     - [Environment Based Configuration](#environment-based-configuration)
-    - [Databases and Migrations](#databases-and-migrations)
-    - [Directory Configuration](#directory-configuration)
-- [Docker Installation Using Sail](#docker-installation-using-sail)
-    - [Sail on macOS](#sail-on-macos)
-    - [Sail on Windows](#sail-on-windows)
-    - [Sail on Linux](#sail-on-linux)
-    - [Choosing Your Sail Services](#choosing-your-sail-services)
-- [IDE Support](#ide-support)
+    - [Databases & Migrations](#databases-and-migrations)
 - [Next Steps](#next-steps)
-    - [Laravel the Full Stack Framework](#laravel-the-fullstack-framework)
-    - [Laravel the API Backend](#laravel-the-api-backend)
+    - [Laravel The Full Stack Framework](#laravel-the-fullstack-framework)
+    - [Laravel The API Backend](#laravel-the-api-backend)
 
 <a name="meet-laravel"></a>
 
@@ -35,7 +33,7 @@ is a framework that can grow with you. We'll help you take your first steps as a
 web developer or give you a boost as you take your expertise to the next level.
 We can't wait to see what you build.
 
-> [!NOTE]
+> **Note**
 > New to Laravel? Check out the [Laravel Bootcamp](https://bootcamp.laravel.com)
 > for a hands-on tour of the framework while we walk you through building your
 > first Laravel application.
@@ -80,26 +78,25 @@ developers from around the world
 have [contributed to the framework](https://github.com/laravel/framework). Who
 knows, maybe you'll even become a Laravel contributor.
 
-<a name="creating-a-laravel-project"></a>
+<a name="your-first-laravel-project"></a>
 
-## Creating a Laravel Project
+## Your First Laravel Project
 
-Before creating your first Laravel project, make sure that your local machine
-has PHP and [Composer](https://getcomposer.org) installed. If you are developing
-on macOS, PHP and Composer can be installed in minutes
-via [Laravel Herd](https://herd.laravel.com). In addition, we
+Before creating your first Laravel project, you should ensure that your local
+machine has PHP and [Composer](https://getcomposer.org) installed. If you are
+developing on macOS, PHP and Composer can be installed
+via [Homebrew](https://brew.sh/). In addition, we
 recommend [installing Node and NPM](https://nodejs.org).
 
 After you have installed PHP and Composer, you may create a new Laravel project
-via Composer's `create-project` command:
+via the Composer `create-project` command:
 
 ```nothing
-composer create-project laravel/laravel:^10.0 example-app
+composer create-project laravel/laravel:^9.0 example-app
 ```
 
-Or, you may create new Laravel projects by globally
-installing [the Laravel installer](https://github.com/laravel/installer) via
-Composer:
+Or, you may create new Laravel projects by globally installing the Laravel
+installer via Composer:
 
 ```nothing
 composer global require laravel/installer
@@ -107,8 +104,8 @@ composer global require laravel/installer
 laravel new example-app
 ```
 
-Once the project has been created, start Laravel's local development server
-using Laravel Artisan's `serve` command:
+After the project has been created, start Laravel's local development server
+using the Laravel's Artisan CLI `serve` command:
 
 ```nothing
 cd example-app
@@ -117,110 +114,26 @@ php artisan serve
 ```
 
 Once you have started the Artisan development server, your application will be
-accessible in your web browser
-at [http://localhost:8000](http://localhost:8000). Next, you're ready
+accessible in your web browser at `http://localhost:8000`. Next, you're ready
 to [start taking your next steps into the Laravel ecosystem](#next-steps). Of
 course, you may also want to [configure a database](#databases-and-migrations).
 
-> [!NOTE]
+> **Note**
 > If you would like a head start when developing your Laravel application,
-> consider using one of our [starter kits](starter-kits.md).
-> Laravel's starter kits provide backend and frontend authentication scaffolding
-> for your new Laravel application.
+> consider using one of our [starter kits](starter-kits.md). Laravel's starter
+> kits provide backend and frontend authentication scaffolding for your new
+> Laravel application.
 
-<a name="initial-configuration"></a>
+<a name="laravel-and-docker"></a>
 
-## Initial Configuration
-
-All of the configuration files for the Laravel framework are stored in
-the `config` directory. Each option is documented, so feel free to look through
-the files and get familiar with the options available to you.
-
-Laravel needs almost no additional configuration out of the box. You are free to
-get started developing! However, you may wish to review the `config/app.php`
-file and its documentation. It contains several options such as `timezone`
-and `locale` that you may wish to change according to your application.
-
-<a name="environment-based-configuration"></a>
-
-### Environment Based Configuration
-
-Since many of Laravel's configuration option values may vary depending on
-whether your application is running on your local machine or on a production web
-server, many important configuration values are defined using the `.env` file
-that exists at the root of your application.
-
-Your `.env` file should not be committed to your application's source control,
-since each developer / server using your application could require a different
-environment configuration. Furthermore, this would be a security risk in the
-event an intruder gains access to your source control repository, since any
-sensitive credentials would get exposed.
-
-> [!NOTE]
-> For more information about the `.env` file and environment based
-> configuration, check out the
-> full [configuration documentation](configuration.md#environment-configuration).
-
-<a name="databases-and-migrations"></a>
-
-### Databases and Migrations
-
-Now that you have created your Laravel application, you probably want to store
-some data in a database. By default, your application's `.env` configuration
-file specifies that Laravel will be interacting with a MySQL database and will
-access the database at `127.0.0.1`.
-
-> [!NOTE]
-> If you are developing on macOS and need to install MySQL, Postgres, or Redis
-> locally, consider using [DBngin](https://dbngin.com/).
-
-If you do not want to install MySQL or Postgres on your local machine, you can
-always use a [SQLite](https://www.sqlite.org/index.html) database. SQLite is a
-small, fast, self-contained database engine. To get started, update your `.env`
-configuration file to use Laravel's `sqlite` database driver. You may remove the
-other database configuration options:
-
-```ini
-DB_CONNECTION=sqlite # [tl! add]
-DB_CONNECTION=mysql # [tl! remove]
-DB_HOST=127.0.0.1 # [tl! remove]
-DB_PORT=3306 # [tl! remove]
-DB_DATABASE=laravel # [tl! remove]
-DB_USERNAME=root # [tl! remove]
-DB_PASSWORD= # [tl! remove]
-```
-
-Once you have configured your SQLite database, you may run your
-application's [database migrations](migrations.md), which will
-create your application's database tables:
-
-```shell
-php artisan migrate
-```
-
-If an SQLite database does not exist for your application, Laravel will ask you
-if you would like the database to be created. Typically, the SQLite database
-file will be created at `database/database.sqlite`.
-
-<a name="directory-configuration"></a>
-
-### Directory Configuration
-
-Laravel should always be served out of the root of the "web directory"
-configured for your web server. You should not attempt to serve a Laravel
-application out of a subdirectory of the "web directory". Attempting to do so
-could expose sensitive files present within your application.
-
-<a name="docker-installation-using-sail"></a>
-
-## Docker Installation Using Sail
+## Laravel & Docker
 
 We want it to be as easy as possible to get started with Laravel regardless of
 your preferred operating system. So, there are a variety of options for
 developing and running a Laravel project on your local machine. While you may
-wish to explore these options at a later time, Laravel
-provides [Sail](sail.md), a built-in solution for running your
-Laravel project using [Docker](https://www.docker.com).
+wish to explore these options at a later time, Laravel provides [Sail](sail.md),
+a built-in solution for running your Laravel project
+using [Docker](https://www.docker.com).
 
 Docker is a tool for running applications and services in small, light-weight "
 containers" which do not interfere with your local machine's installed software
@@ -234,13 +147,13 @@ Laravel's default Docker configuration. Sail provides a great starting point for
 building a Laravel application using PHP, MySQL, and Redis without requiring
 prior Docker experience.
 
-> [!NOTE]
+> **Note**
 > Already a Docker expert? Don't worry! Everything about Sail can be customized
 > using the `docker-compose.yml` file included with Laravel.
 
-<a name="sail-on-macos"></a>
+<a name="getting-started-on-macos"></a>
 
-### Sail on macOS
+### Getting Started On macOS
 
 If you're developing on a Mac
 and [Docker Desktop](https://www.docker.com/products/docker-desktop) is already
@@ -273,13 +186,13 @@ cd example-app
 Once the application's Docker containers have been started, you can access the
 application in your web browser at: http://localhost.
 
-> [!NOTE]
+> **Note**
 > To continue learning more about Laravel Sail, review
 > its [complete documentation](sail.md).
 
-<a name="sail-on-windows"></a>
+<a name="getting-started-on-windows"></a>
 
-### Sail on Windows
+### Getting Started On Windows
 
 Before we create a new Laravel application on your Windows machine, make sure to
 install [Docker Desktop](https://www.docker.com/products/docker-desktop). Next,
@@ -288,7 +201,7 @@ enabled. WSL allows you to run Linux binary executables natively on Windows 10.
 Information on how to install and enable WSL2 can be found within
 Microsoft's [developer environment documentation](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
-> [!NOTE]
+> **Note**
 > After installing and enabling WSL2, you should ensure that Docker Desktop
 > is [configured to use the WSL2 backend](https://docs.docker.com/docker-for-windows/wsl/).
 
@@ -324,7 +237,7 @@ cd example-app
 Once the application's Docker containers have been started, you can access the
 application in your web browser at: http://localhost.
 
-> [!NOTE]
+> **Note**
 > To continue learning more about Laravel Sail, review
 > its [complete documentation](sail.md).
 
@@ -340,25 +253,15 @@ Once these tools are installed, you may open any Laravel project by executing
 the `code .` command from your application's root directory using Windows
 Terminal.
 
-<a name="sail-on-linux"></a>
+<a name="getting-started-on-linux"></a>
 
-### Sail on Linux
+### Getting Started On Linux
 
 If you're developing on Linux
 and [Docker Compose](https://docs.docker.com/compose/install/) is already
 installed, you can use a simple terminal command to create a new Laravel
-project.
-
-First, if you are using Docker Desktop for Linux, you should execute the
-following command. If you are not using Docker Desktop for Linux, you may skip
-this step:
-
-```shell
-docker context use default
-```
-
-Then, to create a new Laravel application in a directory named "example-app",
-you may run the following command in your terminal:
+project. For example, to create a new Laravel application in a directory named "
+example-app", you may run the following command in your terminal:
 
 ```shell
 curl -s https://laravel.build/example-app | bash
@@ -385,7 +288,7 @@ cd example-app
 Once the application's Docker containers have been started, you can access the
 application in your web browser at: http://localhost.
 
-> [!NOTE]
+> **Note**
 > To continue learning more about Laravel Sail, review
 > its [complete documentation](sail.md).
 
@@ -396,7 +299,7 @@ application in your web browser at: http://localhost.
 When creating a new Laravel application via Sail, you may use the `with` query
 string variable to choose which services should be configured in your new
 application's `docker-compose.yml` file. Available services
-include `mysql`, `pgsql`, `mariadb`, `redis`, `memcached`, `meilisearch`, `typesense`, `minio`, `selenium`,
+include `mysql`, `pgsql`, `mariadb`, `redis`, `memcached`, `meilisearch`, `minio`, `selenium`,
 and `mailpit`:
 
 ```shell
@@ -408,25 +311,84 @@ of `mysql`, `redis`, `meilisearch`, `mailpit`, and `selenium` will be
 configured.
 
 You may instruct Sail to install a
-default [Devcontainer](sail.md#using-devcontainers) by adding
-the `devcontainer` parameter to the URL:
+default [Devcontainer](sail.md#using-devcontainers) by adding the `devcontainer`
+parameter to the URL:
 
 ```shell
 curl -s "https://laravel.build/example-app?with=mysql,redis&devcontainer" | bash
 ```
 
-<a name="ide-support"></a>
+<a name="initial-configuration"></a>
 
-## IDE Support
+## Initial Configuration
 
-You are free to use any code editor you wish when developing Laravel
-applications; however, [PhpStorm](https://www.jetbrains.com/phpstorm/laravel/)
-offers extensive support for Laravel and its ecosystem,
-including [Laravel Pint](https://www.jetbrains.com/help/phpstorm/using-laravel-pint.html).
+All of the configuration files for the Laravel framework are stored in
+the `config` directory. Each option is documented, so feel free to look through
+the files and get familiar with the options available to you.
 
-In addition, the community maintained [Laravel Idea](https://laravel-idea.com/)
-PhpStorm plugin offers a variety of helpful IDE augmentations, including code
-generation, Eloquent syntax completion, validation rule completion, and more.
+Laravel needs almost no additional configuration out of the box. You are free to
+get started developing! However, you may wish to review the `config/app.php`
+file and its documentation. It contains several options such as `timezone`
+and `locale` that you may wish to change according to your application.
+
+<a name="environment-based-configuration"></a>
+
+### Environment Based Configuration
+
+Since many of Laravel's configuration option values may vary depending on
+whether your application is running on your local machine or on a production web
+server, many important configuration values are defined using the `.env` file
+that exists at the root of your application.
+
+Your `.env` file should not be committed to your application's source control,
+since each developer / server using your application could require a different
+environment configuration. Furthermore, this would be a security risk in the
+event an intruder gains access to your source control repository, since any
+sensitive credentials would get exposed.
+
+> **Note**
+> For more information about the `.env` file and environment based
+> configuration, check out the
+> full [configuration documentation](configuration.md#environment-configuration).
+
+<a name="databases-and-migrations"></a>
+
+### Databases & Migrations
+
+Now that you have created your Laravel application, you probably want to store
+some data in a database. By default, your application's `.env` configuration
+file specifies that Laravel will be interacting with a MySQL database and will
+access the database at `127.0.0.1`. If you are developing on macOS and need to
+install MySQL, Postgres, or Redis locally, you may find it convenient to
+utilize [DBngin](https://dbngin.com/).
+
+If you do not want to install MySQL or Postgres on your local machine, you can
+always use a [SQLite](https://www.sqlite.org/index.html) database. SQLite is a
+small, fast, self-contained database engine. To get started, update your `.env`
+configuration file to use Laravel's `sqlite` database driver. You may remove the
+other database configuration options:
+
+```ini
+DB_CONNECTION=sqlite # [tl! add]
+DB_CONNECTION=mysql # [tl! remove]
+DB_HOST=127.0.0.1 # [tl! remove]
+DB_PORT=3306 # [tl! remove]
+DB_DATABASE=laravel # [tl! remove]
+DB_USERNAME=root # [tl! remove]
+DB_PASSWORD= # [tl! remove]
+```
+
+Once you have configured your SQLite database, you may run your
+application's [database migrations](migrations.md), which will create your
+application's database tables:
+
+```shell
+php artisan migrate
+```
+
+If an SQLite database does not exist for your application, Laravel will ask you
+if you would like the database to be created. Typically, the SQLite database
+file will be created at `database/database.sqlite`.
 
 <a name="next-steps"></a>
 
@@ -451,28 +413,27 @@ How you want to use Laravel will also dictate the next steps on your journey.
 There are a variety of ways to use Laravel, and we'll explore two primary use
 cases for the framework below.
 
-> [!NOTE]
+> **Note**
 > New to Laravel? Check out the [Laravel Bootcamp](https://bootcamp.laravel.com)
 > for a hands-on tour of the framework while we walk you through building your
 > first Laravel application.
 
 <a name="laravel-the-fullstack-framework"></a>
 
-### Laravel the Full Stack Framework
+### Laravel The Full Stack Framework
 
 Laravel may serve as a full stack framework. By "full stack" framework we mean
 that you are going to use Laravel to route requests to your application and
-render your frontend via [Blade templates](blade.md) or a
-single-page application hybrid technology like [Inertia](https://inertiajs.com).
-This is the most common way to use the Laravel framework, and, in our opinion,
-the most productive way to use Laravel.
+render your frontend via [Blade templates](blade.md) or a single-page
+application hybrid technology like [Inertia](https://inertiajs.com). This is the
+most common way to use the Laravel framework, and, in our opinion, the most
+productive way to use Laravel.
 
 If this is how you plan to use Laravel, you may want to check out our
 documentation
 on [frontend development](frontend.md), [routing](routing.md), [views](views.md),
-or the [Eloquent ORM](eloquent.md). In addition, you might be
-interested in learning about community packages
-like [Livewire](https://livewire.laravel.com)
+or the [Eloquent ORM](eloquent.md). In addition, you might be interested in
+learning about community packages like [Livewire](https://laravel-livewire.com)
 and [Inertia](https://inertiajs.com). These packages allow you to use Laravel as
 a full-stack framework while enjoying many of the UI benefits provided by
 single-page JavaScript applications.
@@ -481,29 +442,27 @@ If you are using Laravel as a full stack framework, we also strongly encourage
 you to learn how to compile your application's CSS and JavaScript
 using [Vite](vite.md).
 
-> [!NOTE]
+> **Note**
 > If you want to get a head start building your application, check out one of
 > our official [application starter kits](starter-kits.md).
 
 <a name="laravel-the-api-backend"></a>
 
-### Laravel the API Backend
+### Laravel The API Backend
 
 Laravel may also serve as an API backend to a JavaScript single-page application
 or mobile application. For example, you might use Laravel as an API backend for
 your [Next.js](https://nextjs.org) application. In this context, you may use
-Laravel to provide [authentication](sanctum.md) and data
-storage / retrieval for your application, while also taking advantage of
-Laravel's powerful services such as queues, emails, notifications, and more.
+Laravel to provide [authentication](sanctum.md) and data storage / retrieval for
+your application, while also taking advantage of Laravel's powerful services
+such as queues, emails, notifications, and more.
 
 If this is how you plan to use Laravel, you may want to check out our
-documentation
-on [routing](routing.md), [Laravel Sanctum](sanctum.md),
-and the [Eloquent ORM](eloquent.md).
+documentation on [routing](routing.md), [Laravel Sanctum](sanctum.md), and
+the [Eloquent ORM](eloquent.md).
 
-> [!NOTE]
+> **Note**
 > Need a head start scaffolding your Laravel backend and Next.js frontend?
-> Laravel Breeze offers
-> an [API stack](starter-kits.md#breeze-and-next) as well as
+> Laravel Breeze offers an [API stack](starter-kits.md#breeze-and-next) as well as
 > a [Next.js frontend implementation](https://github.com/laravel/breeze-next) so
 > you can get started in minutes.

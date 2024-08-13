@@ -25,7 +25,7 @@ and asset compilation, you will love Laravel Mix. However, you are not required
 to use it while developing your application; you are free to use any asset
 pipeline tool you wish, or even none at all.
 
-> [!NOTE]
+> **Note**
 > Vite has replaced Laravel Mix in new Laravel installations. For Mix
 > documentation, please visit the [official Laravel Mix](https://laravel-mix.com/)
 > website. If you would like to switch to Vite, please see

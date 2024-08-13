@@ -3,40 +3,38 @@
 - [Introduction](#introduction)
 - [Server Side Installation](#server-side-installation)
     - [Configuration](#configuration)
-    - [Reverb](#reverb)
     - [Pusher Channels](#pusher-channels)
     - [Ably](#ably)
     - [Open Source Alternatives](#open-source-alternatives)
 - [Client Side Installation](#client-side-installation)
-    - [Reverb](#client-reverb)
     - [Pusher Channels](#client-pusher-channels)
     - [Ably](#client-ably)
 - [Concept Overview](#concept-overview)
-    - [Using an Example Application](#using-example-application)
+    - [Using An Example Application](#using-example-application)
 - [Defining Broadcast Events](#defining-broadcast-events)
     - [Broadcast Name](#broadcast-name)
     - [Broadcast Data](#broadcast-data)
     - [Broadcast Queue](#broadcast-queue)
     - [Broadcast Conditions](#broadcast-conditions)
-    - [Broadcasting and Database Transactions](#broadcasting-and-database-transactions)
+    - [Broadcasting & Database Transactions](#broadcasting-and-database-transactions)
 - [Authorizing Channels](#authorizing-channels)
     - [Defining Authorization Routes](#defining-authorization-routes)
     - [Defining Authorization Callbacks](#defining-authorization-callbacks)
     - [Defining Channel Classes](#defining-channel-classes)
 - [Broadcasting Events](#broadcasting-events)
-    - [Only to Others](#only-to-others)
-    - [Customizing the Connection](#customizing-the-connection)
+    - [Only To Others](#only-to-others)
+    - [Customizing The Connection](#customizing-the-connection)
 - [Receiving Broadcasts](#receiving-broadcasts)
-    - [Listening for Events](#listening-for-events)
-    - [Leaving a Channel](#leaving-a-channel)
+    - [Listening For Events](#listening-for-events)
+    - [Leaving A Channel](#leaving-a-channel)
     - [Namespaces](#namespaces)
 - [Presence Channels](#presence-channels)
     - [Authorizing Presence Channels](#authorizing-presence-channels)
     - [Joining Presence Channels](#joining-presence-channels)
-    - [Broadcasting to Presence Channels](#broadcasting-to-presence-channels)
+    - [Broadcasting To Presence Channels](#broadcasting-to-presence-channels)
 - [Model Broadcasting](#model-broadcasting)
     - [Model Broadcasting Conventions](#model-broadcasting-conventions)
-    - [Listening for Model Broadcasts](#listening-for-model-broadcasts)
+    - [Listening For Model Broadcasts](#listening-for-model-broadcasts)
 - [Client Events](#client-events)
 - [Notifications](#notifications)
 
@@ -52,19 +50,18 @@ your application's server for data changes that should be reflected in your UI.
 
 For example, imagine your application is able to export a user's data to a CSV
 file and email it to them. However, creating this CSV file takes several minutes
-so you choose to create and mail the CSV within
-a [queued job](queues.md). When the CSV has been created and
-mailed to the user, we can use event broadcasting to dispatch
-an `App\Events\UserDataExported` event that is received by our application's
-JavaScript. Once the event is received, we can display a message to the user
-that their CSV has been emailed to them without them ever needing to refresh the
-page.
+so you choose to create and mail the CSV within a [queued job](queues.md). When
+the CSV has been created and mailed to the user, we can use event broadcasting
+to dispatch a `App\Events\UserDataExported` event that is received by our
+application's JavaScript. Once the event is received, we can display a message
+to the user that their CSV has been emailed to them without them ever needing to
+refresh the page.
 
 To assist you in building these types of features, Laravel makes it easy to "
-broadcast" your server-side Laravel [events](events.md) over a
-WebSocket connection. Broadcasting your Laravel events allows you to share the
-same event names and data between your server-side Laravel application and your
-client-side JavaScript application.
+broadcast" your server-side Laravel [events](events.md) over a WebSocket
+connection. Broadcasting your Laravel events allows you to share the same event
+names and data between your server-side Laravel application and your client-side
+JavaScript application.
 
 The core concepts behind broadcasting are simple: clients connect to named
 channels on the frontend, while your Laravel application broadcasts events to
@@ -75,12 +72,14 @@ wish to make available to the frontend.
 
 #### Supported Drivers
 
-By default, Laravel includes three server-side broadcasting drivers for you to
-choose
-from: [Laravel Reverb](https://reverb.laravel.com), [Pusher Channels](https://pusher.com/channels),
-and [Ably](https://ably.com).
+By default, Laravel includes two server-side broadcasting drivers for you to
+choose from: [Pusher Channels](https://pusher.com/channels)
+and [Ably](https://ably.com). However, community driven packages such
+as [laravel-websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction)
+and [soketi](https://docs.soketi.app/) provide additional broadcasting drivers
+that do not require commercial broadcasting providers.
 
-> [!NOTE]
+> **Note**
 > Before diving into event broadcasting, make sure you have read Laravel's
 > documentation on [events and listeners](events.md).
 
@@ -103,8 +102,8 @@ part of the installation process step-by-step.
 All of your application's event broadcasting configuration is stored in
 the `config/broadcasting.php` configuration file. Laravel supports several
 broadcast drivers out of the
-box: [Pusher Channels](https://pusher.com/channels), [Redis](redis.md),
-and a `log` driver for local development and debugging. Additionally, a `null`
+box: [Pusher Channels](https://pusher.com/channels), [Redis](redis.md), and
+a `log` driver for local development and debugging. Additionally, a `null`
 driver is included which allows you to totally disable broadcasting during
 testing. A configuration example is included for each of these drivers in
 the `config/broadcasting.php` configuration file.
@@ -124,31 +123,9 @@ callbacks.
 
 #### Queue Configuration
 
-You will also need to configure and run
-a [queue worker](queues.md). All event broadcasting is done via
-queued jobs so that the response time of your application is not seriously
-affected by events being broadcast.
-
-<a name="reverb"></a>
-
-### Reverb
-
-You may install Reverb using the Composer package manager:
-
-```sh
-composer require laravel/reverb
-```
-
-Once the package is installed, you may run Reverb's installation command to
-publish the configuration, update your applications's broadcasting
-configuration, and add Reverb's required environment variables:
-
-```sh
-php artisan reverb:install
-```
-
-You can find detailed Reverb installation and usage instructions in
-the [Reverb documentation](reverb.md).
+You will also need to configure and run a [queue worker](queues.md). All event
+broadcasting is done via queued jobs so that the response time of your
+application is not seriously affected by events being broadcast.
 
 <a name="pusher-channels"></a>
 
@@ -195,22 +172,16 @@ broadcast events on the client-side.
 
 #### Open Source Pusher Alternatives
 
-[soketi](https://docs.soketi.app/) provides a Pusher compatible WebSocket server
-for Laravel, allowing you to leverage the full power of Laravel broadcasting
-without a commercial WebSocket provider. For more information on installing and
-using open source packages for broadcasting, please consult our documentation
-on [open source alternatives](#open-source-alternatives).
+The [laravel-websockets](https://github.com/beyondcode/laravel-websockets)
+and [soketi](https://docs.soketi.app/) packages provide Pusher compatible
+WebSocket servers for Laravel. These packages allow you to leverage the full
+power of Laravel broadcasting without a commercial WebSocket provider. For more
+information on installing and using these packages, please consult our
+documentation on [open source alternatives](#open-source-alternatives).
 
 <a name="ably"></a>
 
 ### Ably
-
-> [!NOTE]
-> The documentation below discusses how to use Ably in "Pusher compatibility"
-> mode. However, the Ably team recommends and maintains a broadcaster and Echo
-> client that is able to take advantage of the unique capabilities offered by
-> Ably. For more information on using the Ably maintained drivers,
-> please [consult Ably's Laravel broadcaster documentation](https://github.com/ably/laravel-broadcaster).
 
 If you plan to broadcast your events using [Ably](https://ably.com), you should
 install the Ably PHP SDK using the Composer package manager:
@@ -244,6 +215,17 @@ broadcast events on the client-side.
 
 ### Open Source Alternatives
 
+<a name="open-source-alternatives-php"></a>
+
+#### PHP
+
+The [laravel-websockets](https://github.com/beyondcode/laravel-websockets)
+package is a pure PHP, Pusher compatible WebSocket package for Laravel. This
+package allows you to leverage the full power of Laravel broadcasting without a
+commercial WebSocket provider. For more information on installing and using this
+package, please consult
+its [official documentation](https://beyondco.de/docs/laravel-websockets).
+
 <a name="open-source-alternatives-node"></a>
 
 #### Node
@@ -258,54 +240,6 @@ its [official documentation](https://docs.soketi.app/).
 <a name="client-side-installation"></a>
 
 ## Client Side Installation
-
-<a name="client-reverb"></a>
-
-### Reverb
-
-[Laravel Echo](https://github.com/laravel/echo) is a JavaScript library that
-makes it painless to subscribe to channels and listen for events broadcast by
-your server-side broadcasting driver. You may install Echo via the NPM package
-manager. In this example, we will also install the `pusher-js` package since
-Reverb utilizes the Pusher protocol for WebSocket subscriptions, channels, and
-messages:
-
-```shell
-npm install --save-dev laravel-echo pusher-js
-```
-
-Once Echo is installed, you are ready to create a fresh Echo instance in your
-application's JavaScript. A great place to do this is at the bottom of
-the `resources/js/bootstrap.js` file that is included with the Laravel
-framework. By default, an example Echo configuration is already included in this
-file - you simply need to uncomment it and update the `broadcaster`
-configuration option to `reverb`:
-
-```js
-import Echo from 'laravel-echo';
-
-import Pusher from 'pusher-js';
-window.Pusher = Pusher;
-
-window.Echo = new Echo({
-    broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: import.meta.env.VITE_REVERB_PORT,
-    wssPort: import.meta.env.VITE_REVERB_PORT,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-    enabledTransports: ['ws', 'wss'],
-});
-```
-
-Next, you should compile your application's assets:
-
-```shell
-npm run build
-```
-
-> [!WARNING]
-> The Laravel Echo `reverb` broadcaster requires laravel-echo v1.16.0+.
 
 <a name="client-pusher-channels"></a>
 
@@ -345,16 +279,16 @@ Once you have uncommented and adjusted the Echo configuration according to your
 needs, you may compile your application's assets:
 
 ```shell
-npm run build
+npm run dev
 ```
 
-> [!NOTE]
+> **Note**
 > To learn more about compiling your application's JavaScript assets, please
 > consult the documentation on [Vite](vite.md).
 
 <a name="using-an-existing-client-instance"></a>
 
-#### Using an Existing Client Instance
+#### Using An Existing Client Instance
 
 If you already have a pre-configured Pusher Channels client instance that you
 would like Echo to utilize, you may pass it to Echo via the `client`
@@ -378,13 +312,6 @@ window.Echo = new Echo({
 <a name="client-ably"></a>
 
 ### Ably
-
-> [!NOTE]
-> The documentation below discusses how to use Ably in "Pusher compatibility"
-> mode. However, the Ably team recommends and maintains a broadcaster and Echo
-> client that is able to take advantage of the unique capabilities offered by
-> Ably. For more information on using the Ably maintained drivers,
-> please [consult Ably's Laravel broadcaster documentation](https://github.com/ably/laravel-broadcaster).
 
 [Laravel Echo](https://github.com/laravel/echo) is a JavaScript library that
 makes it painless to subscribe to channels and listen for events broadcast by
@@ -439,7 +366,7 @@ needs, you may compile your application's assets:
 npm run dev
 ```
 
-> [!NOTE]
+> **Note**
 > To learn more about compiling your application's JavaScript assets, please
 > consult the documentation on [Vite](vite.md).
 
@@ -460,20 +387,20 @@ without any authentication or authorization; however, in order to subscribe to a
 private channel, a user must be authenticated and authorized to listen on that
 channel.
 
-> [!NOTE]
+> **Note**
 > If you would like to explore open source alternatives to Pusher, check out
 > the [open source alternatives](#open-source-alternatives).
 
 <a name="using-example-application"></a>
 
-### Using an Example Application
+### Using An Example Application
 
 Before diving into each component of event broadcasting, let's take a high level
 overview using an e-commerce store as an example.
 
 In our application, let's assume we have a page that allows users to view the
 shipping status for their orders. Let's also assume that
-an `OrderShipmentStatusUpdated` event is fired when a shipping status update is
+a `OrderShipmentStatusUpdated` event is fired when a shipping status update is
 processed by the application:
 
     use App\Events\OrderShipmentStatusUpdated;
@@ -498,6 +425,7 @@ This will instruct Laravel to broadcast the event when it is fired:
     use Illuminate\Broadcasting\Channel;
     use Illuminate\Broadcasting\InteractsWithSockets;
     use Illuminate\Broadcasting\PresenceChannel;
+    use Illuminate\Broadcasting\PrivateChannel;
     use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
     use Illuminate\Queue\SerializesModels;
 
@@ -506,7 +434,7 @@ This will instruct Laravel to broadcast the event when it is fired:
         /**
          * The order instance.
          *
-         * @var \App\Models\Order
+         * @var \App\Order
          */
         public $order;
     }
@@ -518,33 +446,14 @@ generated event classes, so we only need to fill in its details. We only want
 the creator of the order to be able to view status updates, so we will broadcast
 the event on a private channel that is tied to the order:
 
-    use Illuminate\Broadcasting\Channel;
-    use Illuminate\Broadcasting\PrivateChannel;
-
-    /**
-     * Get the channel the event should broadcast on.
-     */
-    public function broadcastOn(): Channel
-    {
-        return new PrivateChannel('orders.'.$this->order->id);
-    }
-
-If you wish the event to broadcast on multiple channels, you may return
-an `array` instead:
-
-    use Illuminate\Broadcasting\PrivateChannel;
-
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return \Illuminate\Broadcasting\PrivateChannel
      */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new PrivateChannel('orders.'.$this->order->id),
-            // ...
-        ];
+        return new PrivateChannel('orders.'.$this->order->id);
     }
 
 <a name="example-application-authorizing-channels"></a>
@@ -557,9 +466,8 @@ In this example, we need to verify that any user attempting to listen on the
 private `orders.1` channel is actually the creator of the order:
 
     use App\Models\Order;
-    use App\Models\User;
 
-    Broadcast::channel('orders.{orderId}', function (User $user, int $orderId) {
+    Broadcast::channel('orders.{orderId}', function ($user, $orderId) {
         return $user->id === Order::findOrNew($orderId)->user_id;
     });
 
@@ -574,7 +482,7 @@ that the "ID" portion of the channel name is a wildcard.
 
 <a name="listening-for-event-broadcasts"></a>
 
-#### Listening for Event Broadcasts
+#### Listening For Event Broadcasts
 
 Next, all that remains is to listen for the event in our JavaScript application.
 We can do this using [Laravel Echo](#client-side-installation). First, we'll use
@@ -624,29 +532,38 @@ require [channel authorization](#authorizing-channels):
         use SerializesModels;
 
         /**
-         * Create a new event instance.
+         * The user that created the server.
+         *
+         * @var \App\Models\User
          */
-        public function __construct(
-            public User $user,
-        ) {}
+        public $user;
+
+        /**
+         * Create a new event instance.
+         *
+         * @param  \App\Models\User  $user
+         * @return void
+         */
+        public function __construct(User $user)
+        {
+            $this->user = $user;
+        }
 
         /**
          * Get the channels the event should broadcast on.
          *
-         * @return array<int, \Illuminate\Broadcasting\Channel>
+         * @return Channel|array
          */
-        public function broadcastOn(): array
+        public function broadcastOn()
         {
-            return [
-                new PrivateChannel('user.'.$this->user->id),
-            ];
+            return new PrivateChannel('user.'.$this->user->id);
         }
     }
 
 After implementing the `ShouldBroadcast` interface, you only need
-to [fire the event](events.md) as you normally would. Once the
-event has been fired, a [queued job](queues.md) will
-automatically broadcast the event using your specified broadcast driver.
+to [fire the event](events.md) as you normally would. Once the event has been
+fired, a [queued job](queues.md) will automatically broadcast the event using
+your specified broadcast driver.
 
 <a name="broadcast-name"></a>
 
@@ -658,8 +575,10 @@ on the event:
 
     /**
      * The event's broadcast name.
+     *
+     * @return string
      */
-    public function broadcastAs(): string
+    public function broadcastAs()
     {
         return 'server.created';
     }
@@ -699,9 +618,9 @@ return the array of data that you wish to broadcast as the event payload:
     /**
      * Get the data to broadcast.
      *
-     * @return array<string, mixed>
+     * @return array
      */
-    public function broadcastWith(): array
+    public function broadcastWith()
     {
         return ['id' => $this->user->id];
     }
@@ -734,8 +653,10 @@ method on your event:
 
     /**
      * The name of the queue on which to place the broadcasting job.
+     *
+     * @return string
      */
-    public function broadcastQueue(): string
+    public function broadcastQueue()
     {
         return 'default';
     }
@@ -750,7 +671,7 @@ instead of `ShouldBroadcast`:
 
     class OrderShipmentStatusUpdated implements ShouldBroadcastNow
     {
-        // ...
+        //
     }
 
 <a name="broadcast-conditions"></a>
@@ -763,15 +684,17 @@ class:
 
     /**
      * Determine if this event should broadcast.
+     *
+     * @return bool
      */
-    public function broadcastWhen(): bool
+    public function broadcastWhen()
     {
         return $this->order->value > 100;
     }
 
 <a name="broadcasting-and-database-transactions"></a>
 
-#### Broadcasting and Database Transactions
+#### Broadcasting & Database Transactions
 
 When broadcast events are dispatched within database transactions, they may be
 processed by the queue before the database transaction has committed. When this
@@ -783,23 +706,24 @@ when the job that broadcasts the event is processed.
 
 If your queue connection's `after_commit` configuration option is set
 to `false`, you may still indicate that a particular broadcast event should be
-dispatched after all open database transactions have been committed by
-implementing the `ShouldDispatchAfterCommit` interface on the event class:
+dispatched after all open database transactions have been committed by defining
+an `$afterCommit` property on the event class:
 
     <?php
 
     namespace App\Events;
 
     use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-    use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
     use Illuminate\Queue\SerializesModels;
 
-    class ServerCreated implements ShouldBroadcast, ShouldDispatchAfterCommit
+    class ServerCreated implements ShouldBroadcast
     {
         use SerializesModels;
+
+        public $afterCommit = true;
     }
 
-> [!NOTE]
+> **Note**
 > To learn more about working around these issues, please review the
 > documentation
 > regarding [queued jobs and database transactions](queues.md#jobs-and-database-transactions).
@@ -836,7 +760,7 @@ to the method if you would like to customize the assigned attributes:
 
 <a name="customizing-the-authorization-endpoint"></a>
 
-#### Customizing the Authorization Endpoint
+#### Customizing The Authorization Endpoint
 
 By default, Echo will use the `/broadcasting/auth` endpoint to authorize channel
 access. However, you may specify your own authorization endpoint by passing
@@ -852,7 +776,7 @@ window.Echo = new Echo({
 
 <a name="customizing-the-authorization-request"></a>
 
-#### Customizing the Authorization Request
+#### Customizing The Authorization Request
 
 You can customize how Laravel Echo performs authorization requests by providing
 a custom authorizer when initializing Echo:
@@ -889,9 +813,7 @@ the `routes/channels.php` file that is included with your application. In this
 file, you may use the `Broadcast::channel` method to register channel
 authorization callbacks:
 
-    use App\Models\User;
-
-    Broadcast::channel('orders.{orderId}', function (User $user, int $orderId) {
+    Broadcast::channel('orders.{orderId}', function ($user, $orderId) {
         return $user->id === Order::findOrNew($orderId)->user_id;
     });
 
@@ -904,30 +826,22 @@ first argument and any additional wildcard parameters as their subsequent
 arguments. In this example, we are using the `{orderId}` placeholder to indicate
 that the "ID" portion of the channel name is a wildcard.
 
-You may view a list of your application's broadcast authorization callbacks
-using the `channel:list` Artisan command:
-
-```shell
-php artisan channel:list
-```
-
 <a name="authorization-callback-model-binding"></a>
 
 #### Authorization Callback Model Binding
 
 Just like HTTP routes, channel routes may also take advantage of implicit and
-explicit [route model binding](routing.md#route-model-binding).
-For example, instead of receiving a string or numeric order ID, you may request
-an actual `Order` model instance:
+explicit [route model binding](routing.md#route-model-binding). For example,
+instead of receiving a string or numeric order ID, you may request an
+actual `Order` model instance:
 
     use App\Models\Order;
-    use App\Models\User;
 
-    Broadcast::channel('orders.{order}', function (User $user, Order $order) {
+    Broadcast::channel('orders.{order}', function ($user, Order $order) {
         return $user->id === $order->user_id;
     });
 
-> [!WARNING]
+> **Warning**
 > Unlike HTTP route model binding, channel model binding does not support
 > automatic [implicit model binding scoping](routing.md#implicit-model-binding-scoping).
 > However, this is rarely a problem because most channels can be scoped based on a
@@ -983,25 +897,31 @@ advantage of channel model binding:
     {
         /**
          * Create a new channel instance.
+         *
+         * @return void
          */
         public function __construct()
         {
-            // ...
+            //
         }
 
         /**
          * Authenticate the user's access to the channel.
+         *
+         * @param  \App\Models\User  $user
+         * @param  \App\Models\Order  $order
+         * @return array|bool
          */
-        public function join(User $user, Order $order): array|bool
+        public function join(User $user, Order $order)
         {
             return $user->id === $order->user_id;
         }
     }
 
-> [!NOTE]
+> **Note**
 > Like many other classes in Laravel, channel classes will automatically be
-> resolved by the [service container](container.md). So, you may
-> type-hint any dependencies required by your channel in its constructor.
+> resolved by the [service container](container.md). So, you may type-hint any
+> dependencies required by your channel in its constructor.
 
 <a name="broadcasting-events"></a>
 
@@ -1018,7 +938,7 @@ the `ShouldBroadcast` interface and will queue the event for broadcasting:
 
 <a name="only-to-others"></a>
 
-### Only to Others
+### Only To Others
 
 When building an application that utilizes event broadcasting, you may
 occasionally need to broadcast an event to all subscribers to a given channel
@@ -1049,7 +969,7 @@ list, you will have duplicate tasks in your list: one from the end-point and one
 from the broadcast. You may solve this by using the `toOthers` method to
 instruct the broadcaster to not broadcast the event to the current user.
 
-> [!WARNING]
+> **Warning**
 > Your event must use the `Illuminate\Broadcasting\InteractsWithSockets` trait
 > in order to call the `toOthers` method.
 
@@ -1061,7 +981,7 @@ When you initialize a Laravel Echo instance, a socket ID is assigned to the
 connection. If you are using a
 global [Axios](https://github.com/mzabriskie/axios) instance to make HTTP
 requests from your JavaScript application, the socket ID will automatically be
-attached to every outgoing request as an `X-Socket-ID` header. Then, when you
+attached to every outgoing request as a `X-Socket-ID` header. Then, when you
 call the `toOthers` method, Laravel will extract the socket ID from the header
 and instruct the broadcaster to not broadcast to any connections with that
 socket ID.
@@ -1077,7 +997,7 @@ var socketId = Echo.socketId();
 
 <a name="customizing-the-connection"></a>
 
-### Customizing the Connection
+### Customizing The Connection
 
 If your application interacts with multiple broadcast connections and you want
 to broadcast an event using a broadcaster other than your default, you may
@@ -1110,6 +1030,8 @@ trait:
 
         /**
          * Create a new event instance.
+         *
+         * @return void
          */
         public function __construct()
         {
@@ -1123,7 +1045,7 @@ trait:
 
 <a name="listening-for-events"></a>
 
-### Listening for Events
+### Listening For Events
 
 Once you
 have [installed and instantiated Laravel Echo](#client-side-installation), you
@@ -1151,7 +1073,7 @@ Echo.private(`orders.${this.order.id}`)
 
 <a name="stop-listening-for-events"></a>
 
-#### Stop Listening for Events
+#### Stop Listening For Events
 
 If you would like to stop listening to a given event
 without [leaving the channel](#leaving-a-channel), you may use
@@ -1164,7 +1086,7 @@ Echo.private(`orders.${this.order.id}`)
 
 <a name="leaving-a-channel"></a>
 
-### Leaving a Channel
+### Leaving A Channel
 
 To leave a channel, you may call the `leaveChannel` method on your Echo
 instance:
@@ -1205,7 +1127,7 @@ name:
 ```js
 Echo.channel('orders')
     .listen('.Namespace\\Event\\Class', (e) => {
-        // ...
+        //
     });
 ```
 
@@ -1234,9 +1156,7 @@ presence channel event listeners in your JavaScript application. If the user is
 not authorized to join the presence channel, you should return `false`
 or `null`:
 
-    use App\Models\User;
-
-    Broadcast::channel('chat.{roomId}', function (User $user, int $roomId) {
+    Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
         if ($user->canJoinRoom($roomId)) {
             return ['id' => $user->id, 'name' => $user->name];
         }
@@ -1254,7 +1174,7 @@ and `leaving` events.
 ```js
 Echo.join(`chat.${roomId}`)
     .here((users) => {
-        // ...
+        //
     })
     .joining((user) => {
         console.log(user.name);
@@ -1272,12 +1192,12 @@ successfully, and will receive an array containing the user information for all
 of the other users currently subscribed to the channel. The `joining` method
 will be executed when a new user joins a channel, while the `leaving` method
 will be executed when a user leaves the channel. The `error` method will be
-executed when the authentication endpoint returns an HTTP status code other than
+executed when the authentication endpoint returns a HTTP status code other than
 200 or if there is a problem parsing the returned JSON.
 
 <a name="broadcasting-to-presence-channels"></a>
 
-### Broadcasting to Presence Channels
+### Broadcasting To Presence Channels
 
 Presence channels may receive events just like public or private channels. Using
 the example of a chatroom, we may want to broadcast `NewMessage` events to the
@@ -1287,13 +1207,11 @@ from the event's `broadcastOn` method:
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return Channel|array
      */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new PresenceChannel('chat.'.$this->message->room_id),
-        ];
+        return new PresenceChannel('room.'.$this->message->room_id);
     }
 
 As with other events, you may use the `broadcast` helper and the `toOthers`
@@ -1312,7 +1230,7 @@ Echo.join(`chat.${roomId}`)
     .joining(/* ... */)
     .leaving(/* ... */)
     .listen('NewMessage', (e) => {
-        // ...
+        //
     });
 ```
 
@@ -1320,15 +1238,15 @@ Echo.join(`chat.${roomId}`)
 
 ## Model Broadcasting
 
-> [!WARNING]
+> **Warning**
 > Before reading the following documentation about model broadcasting, we
 > recommend you become familiar with the general concepts of Laravel's model
 > broadcasting services as well as how to manually create and listen to broadcast
 > events.
 
 It is common to broadcast events when your
-application's [Eloquent models](eloquent.md) are created,
-updated, or deleted. Of course, this can easily be accomplished by
+application's [Eloquent models](eloquent.md) are created, updated, or deleted.
+Of course, this can easily be accomplished by
 manually [defining custom events for Eloquent model state changes](eloquent.md#events)
 and marking those events with the `ShouldBroadcast` interface.
 
@@ -1347,12 +1265,10 @@ channels that the model's events should broadcast on:
 
 namespace App\Models;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Post extends Model
 {
@@ -1361,7 +1277,7 @@ class Post extends Model
     /**
      * Get the user that the post belongs to.
      */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
@@ -1369,9 +1285,10 @@ class Post extends Model
     /**
      * Get the channels that model events should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel|\Illuminate\Database\Eloquent\Model>
+     * @param  string  $event
+     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn(string $event): array
+    public function broadcastOn($event)
     {
         return [$this, $this->user];
     }
@@ -1393,9 +1310,10 @@ should broadcast to for a particular event:
 /**
  * Get the channels that model events should broadcast on.
  *
- * @return array<string, array<int, \Illuminate\Broadcasting\Channel|\Illuminate\Database\Eloquent\Model>>
+ * @param  string  $event
+ * @return \Illuminate\Broadcasting\Channel|array
  */
-public function broadcastOn(string $event): array
+public function broadcastOn($event)
 {
     return match ($event) {
         'deleted' => [],
@@ -1419,8 +1337,11 @@ use Illuminate\Database\Eloquent\BroadcastableModelEventOccurred;
 
 /**
  * Create a new broadcastable model event for the model.
+ *
+ * @param  string  $event
+ * @return \Illuminate\Database\Eloquent\BroadcastableModelEventOccurred
  */
-protected function newBroadcastableEvent(string $event): BroadcastableModelEventOccurred
+protected function newBroadcastableEvent($event)
 {
     return (new BroadcastableModelEventOccurred(
         $this, $event
@@ -1444,7 +1365,7 @@ instantiate a private channel instance for the model using the model's class
 name and primary key identifier as the channel name.
 
 So, an `App\Models\User` model with an `id` of `1` would be converted into
-an `Illuminate\Broadcasting\PrivateChannel` instance with a name
+a `Illuminate\Broadcasting\PrivateChannel` instance with a name
 of `App.Models.User.1`. Of course, in addition to returning Eloquent model
 instances from your model's `broadcastOn` method, you may return
 complete `Channel` instances in order to have full control over the model's
@@ -1456,13 +1377,12 @@ use Illuminate\Broadcasting\PrivateChannel;
 /**
  * Get the channels that model events should broadcast on.
  *
- * @return array<int, \Illuminate\Broadcasting\Channel>
+ * @param  string  $event
+ * @return \Illuminate\Broadcasting\Channel|array
  */
-public function broadcastOn(string $event): array
+public function broadcastOn($event)
 {
-    return [
-        new PrivateChannel('user.'.$this->id)
-    ];
+    return [new PrivateChannel('user.'.$this->id)];
 }
 ```
 
@@ -1478,7 +1398,7 @@ return [new Channel($this->user)];
 
 If you need to determine the channel name of a model, you may call
 the `broadcastChannel` method on any model instance. For example, this method
-returns the string `App.Models.User.1` for an `App\Models\User` model with
+returns the string `App.Models.User.1` for a `App\Models\User` model with
 an `id` of `1`:
 
 ```php
@@ -1524,8 +1444,11 @@ event name conventions discussed above when broadcasting the event:
 ```php
 /**
  * The model event's broadcast name.
+ *
+ * @param  string  $event
+ * @return string|null
  */
-public function broadcastAs(string $event): string|null
+public function broadcastAs($event)
 {
     return match ($event) {
         'created' => 'post.created',
@@ -1536,9 +1459,10 @@ public function broadcastAs(string $event): string|null
 /**
  * Get the data to broadcast for the model.
  *
- * @return array<string, mixed>
+ * @param  string  $event
+ * @return array
  */
-public function broadcastWith(string $event): array
+public function broadcastWith($event)
 {
     return match ($event) {
         'created' => ['title' => $this->title],
@@ -1549,7 +1473,7 @@ public function broadcastWith(string $event): array
 
 <a name="listening-for-model-broadcasts"></a>
 
-### Listening for Model Broadcasts
+### Listening For Model Broadcasts
 
 Once you have added the `BroadcastsEvents` trait to your model and defined your
 model's `broadcastOn` method, you are ready to start listening for broadcasted
@@ -1581,7 +1505,7 @@ Echo.private(`App.Models.User.${this.user.id}`)
 
 ## Client Events
 
-> [!NOTE]
+> **Note**
 > When using [Pusher Channels](https://pusher.com/channels), you must enable
 > the "Client Events" option in the "App Settings" section of
 > your [application dashboard](https://dashboard.pusher.com/) in order to send
@@ -1614,11 +1538,10 @@ Echo.private(`chat.${roomId}`)
 
 ## Notifications
 
-By pairing event broadcasting
-with [notifications](notifications.md), your JavaScript
-application may receive new notifications as they occur without needing to
-refresh the page. Before getting started, be sure to read over the documentation
-on
+By pairing event broadcasting with [notifications](notifications.md), your
+JavaScript application may receive new notifications as they occur without
+needing to refresh the page. Before getting started, be sure to read over the
+documentation on
 using [the broadcast notification channel](notifications.md#broadcast-notifications).
 
 Once you have configured a notification to use the broadcast channel, you may

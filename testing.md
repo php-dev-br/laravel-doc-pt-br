@@ -4,9 +4,8 @@
 - [Environment](#environment)
 - [Creating Tests](#creating-tests)
 - [Running Tests](#running-tests)
-    - [Running Tests in Parallel](#running-tests-in-parallel)
+    - [Running Tests In Parallel](#running-tests-in-parallel)
     - [Reporting Test Coverage](#reporting-test-coverage)
-    - [Profiling Tests](#profiling-tests)
 
 <a name="introduction"></a>
 
@@ -42,7 +41,8 @@ When running tests, Laravel will automatically set
 the [configuration environment](configuration.md#environment-configuration)
 to `testing` because of the environment variables defined in the `phpunit.xml`
 file. Laravel also automatically configures the session and cache to the `array`
-driver so that no session or cache data will be persisted while testing.
+driver while testing, meaning no session or cache data will be persisted while
+testing.
 
 You are free to define other testing environment configuration values as
 necessary. The `testing` environment variables may be configured in your
@@ -93,7 +93,7 @@ php artisan make:test UserTest --pest
 php artisan make:test UserTest --unit --pest
 ```
 
-> [!NOTE]
+> **Note**
 > Test stubs may be customized
 > using [stub publishing](artisan.md#stub-customization).
 
@@ -111,19 +111,19 @@ the `vendor/bin/phpunit` or `php artisan test` command from your terminal:
     {
         /**
          * A basic test example.
+         *
+         * @return void
          */
-        public function test_basic_test(): void
+        public function test_basic_test()
         {
             $this->assertTrue(true);
         }
     }
 
-> [!WARNING]
+> **Warning**
 > If you define your own `setUp` / `tearDown` methods within a test class, be
 > sure to call the respective `parent::setUp()` / `parent::tearDown()` methods on
-> the parent class. Typically, you should invoke `parent::setUp()` at the start of
-> your own `setUp` method, and `parent::tearDown()` at the end of your `tearDown`
-> method.
+> the parent class.
 
 <a name="running-tests"></a>
 
@@ -153,18 +153,16 @@ php artisan test --testsuite=Feature --stop-on-failure
 
 <a name="running-tests-in-parallel"></a>
 
-### Running Tests in Parallel
+### Running Tests In Parallel
 
 By default, Laravel and PHPUnit execute your tests sequentially within a single
 process. However, you may greatly reduce the amount of time it takes to run your
 tests by running tests simultaneously across multiple processes. To get started,
-you should install the `brianium/paratest` Composer package as a "dev"
-dependency. Then, include the `--parallel` option when executing the `test`
-Artisan command:
+ensure your application depends on version `^5.3` or greater of
+the `nunomaduro/collision` package. Then, include the `--parallel` option when
+executing the `test` Artisan command:
 
 ```shell
-composer require brianium/paratest --dev
-
 php artisan test --parallel
 ```
 
@@ -176,13 +174,13 @@ the `--processes` option:
 php artisan test --parallel --processes=4
 ```
 
-> [!WARNING]
+> **Warning**
 > When running tests in parallel, some PHPUnit options (such
 > as `--do-not-cache-result`) may not be available.
 
 <a name="parallel-testing-and-databases"></a>
 
-#### Parallel Testing and Databases
+#### Parallel Testing & Databases
 
 As long as you have configured a primary database connection, Laravel
 automatically handles creating and migrating a test database for each parallel
@@ -218,33 +216,34 @@ current test case, respectively:
     use Illuminate\Support\Facades\Artisan;
     use Illuminate\Support\Facades\ParallelTesting;
     use Illuminate\Support\ServiceProvider;
-    use PHPUnit\Framework\TestCase;
 
     class AppServiceProvider extends ServiceProvider
     {
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
-            ParallelTesting::setUpProcess(function (int $token) {
+            ParallelTesting::setUpProcess(function ($token) {
                 // ...
             });
 
-            ParallelTesting::setUpTestCase(function (int $token, TestCase $testCase) {
+            ParallelTesting::setUpTestCase(function ($token, $testCase) {
                 // ...
             });
 
             // Executed when a test database is created...
-            ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
+            ParallelTesting::setUpTestDatabase(function ($database, $token) {
                 Artisan::call('db:seed');
             });
 
-            ParallelTesting::tearDownTestCase(function (int $token, TestCase $testCase) {
+            ParallelTesting::tearDownTestCase(function ($token, $testCase) {
                 // ...
             });
 
-            ParallelTesting::tearDownProcess(function (int $token) {
+            ParallelTesting::tearDownProcess(function ($token) {
                 // ...
             });
         }
@@ -252,7 +251,7 @@ current test case, respectively:
 
 <a name="accessing-the-parallel-testing-token"></a>
 
-#### Accessing the Parallel Testing Token
+#### Accessing The Parallel Testing Token
 
 If you would like to access the current parallel process "token" from any other
 location in your application's test code, you may use the `token` method. This
@@ -267,7 +266,7 @@ each parallel testing process:
 
 ### Reporting Test Coverage
 
-> [!WARNING]
+> **Warning**
 > This feature requires [Xdebug](https://xdebug.org)
 > or [PCOV](https://pecl.php.net/package/pcov).
 
@@ -282,24 +281,11 @@ php artisan test --coverage
 
 <a name="enforcing-a-minimum-coverage-threshold"></a>
 
-#### Enforcing a Minimum Coverage Threshold
+#### Enforcing A Minimum Coverage Threshold
 
 You may use the `--min` option to define a minimum test coverage threshold for
 your application. The test suite will fail if this threshold is not met:
 
 ```shell
 php artisan test --coverage --min=80.3
-```
-
-<a name="profiling-tests"></a>
-
-### Profiling Tests
-
-The Artisan test runner also includes a convenient mechanism for listing your
-application's slowest tests. Invoke the `test` command with the `--profile`
-option to be presented with a list of your ten slowest tests, allowing you to
-easily investigate which tests can be improved to speed up your test suite:
-
-```shell
-php artisan test --profile
 ```

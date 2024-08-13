@@ -4,31 +4,28 @@
     - [Configuration](#configuration)
     - [Driver Prerequisites](#driver-prerequisites)
     - [Failover Configuration](#failover-configuration)
-    - [Round Robin Configuration](#round-robin-configuration)
 - [Generating Mailables](#generating-mailables)
 - [Writing Mailables](#writing-mailables)
-    - [Configuring the Sender](#configuring-the-sender)
-    - [Configuring the View](#configuring-the-view)
+    - [Configuring The Sender](#configuring-the-sender)
+    - [Configuring The View](#configuring-the-view)
     - [View Data](#view-data)
     - [Attachments](#attachments)
     - [Inline Attachments](#inline-attachments)
     - [Attachable Objects](#attachable-objects)
     - [Headers](#headers)
-    - [Tags and Metadata](#tags-and-metadata)
-    - [Customizing the Symfony Message](#customizing-the-symfony-message)
+    - [Tags & Metadata](#tags-and-metadata)
+    - [Customizing The Symfony Message](#customizing-the-symfony-message)
 - [Markdown Mailables](#markdown-mailables)
     - [Generating Markdown Mailables](#generating-markdown-mailables)
     - [Writing Markdown Messages](#writing-markdown-messages)
-    - [Customizing the Components](#customizing-the-components)
+    - [Customizing The Components](#customizing-the-components)
 - [Sending Mail](#sending-mail)
     - [Queueing Mail](#queueing-mail)
 - [Rendering Mailables](#rendering-mailables)
-    - [Previewing Mailables in the Browser](#previewing-mailables-in-the-browser)
+    - [Previewing Mailables In The Browser](#previewing-mailables-in-the-browser)
 - [Localizing Mailables](#localizing-mailables)
-- [Testing](#testing-mailables)
-    - [Testing Mailable Content](#testing-mailable-content)
-    - [Testing Mailable Sending](#testing-mailable-sending)
-- [Mail and Local Development](#mail-and-local-development)
+- [Testing Mailables](#testing-mailables)
+- [Mail & Local Development](#mail-and-local-development)
 - [Events](#events)
 - [Custom Transports](#custom-transports)
     - [Additional Symfony Transports](#additional-symfony-transports)
@@ -39,7 +36,7 @@
 
 Sending email doesn't have to be complicated. Laravel provides a clean, simple
 email API powered by the
-popular [Symfony Mailer](https://symfony.com/doc/6.2/mailer.html) component.
+popular [Symfony Mailer](https://symfony.com/doc/6.0/mailer.html) component.
 Laravel and Symfony Mailer provide drivers for sending email via SMTP, Mailgun,
 Postmark, Amazon SES, and `sendmail`, allowing you to quickly get started
 sending mail through a local or cloud based service of your choice.
@@ -65,9 +62,9 @@ application needs to send an email message.
 
 ### Driver / Transport Prerequisites
 
-The API based drivers such as Mailgun, Postmark, and MailerSend are often
-simpler and faster than sending mail via SMTP servers. Whenever possible, we
-recommend that you use one of these drivers.
+The API based drivers such as Mailgun and Postmark are often simpler and faster
+than sending mail via SMTP servers. Whenever possible, we recommend that you use
+one of these drivers.
 
 <a name="mailgun-driver"></a>
 
@@ -86,7 +83,6 @@ mailer, verify that your `config/services.php` configuration file contains the
 following options:
 
     'mailgun' => [
-        'transport' => 'mailgun',
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
     ],
@@ -184,33 +180,6 @@ email, you may define an `options` array within your `ses` configuration:
         ],
     ],
 
-<a name="mailersend-driver"></a>
-
-#### MailerSend Driver
-
-[MailerSend](https://www.mailersend.com/), a transactional email and SMS
-service, maintains their own API based mail driver for Laravel. The package
-containing the driver may be installed via the Composer package manager:
-
-```shell
-composer require mailersend/laravel-driver
-```
-
-Once the package is installed, add the `MAILERSEND_API_KEY` environment variable
-to your application's `.env` file. In addition, the `MAIL_MAILER` environment
-variable should be defined as `mailersend`:
-
-```shell
-MAIL_MAILER=mailersend
-MAIL_FROM_ADDRESS=app@yourdomain.com
-MAIL_FROM_NAME="App Name"
-
-MAILERSEND_API_KEY=your-api-key
-```
-
-To learn more about MailerSend, including how to use hosted templates, consult
-the [MailerSend driver documentation](https://github.com/mailersend/mailersend-laravel-driver#usage).
-
 <a name="failover-configuration"></a>
 
 ### Failover Configuration
@@ -223,8 +192,7 @@ driver is down.
 To accomplish this, you should define a mailer within your application's `mail`
 configuration file that uses the `failover` transport. The configuration array
 for your application's `failover` mailer should contain an array of `mailers`
-that reference the order in which configured mailers should be chosen for
-delivery:
+that reference the order in which mail drivers should be chosen for delivery:
 
     'mailers' => [
         'failover' => [
@@ -245,43 +213,6 @@ the `default` configuration key within your application's `mail` configuration
 file:
 
     'default' => env('MAIL_MAILER', 'failover'),
-
-<a name="round-robin-configuration"></a>
-
-### Round Robin Configuration
-
-The `roundrobin` transport allows you to distribute your mailing workload across
-multiple mailers. To get started, define a mailer within your
-application's `mail` configuration file that uses the `roundrobin` transport.
-The configuration array for your application's `roundrobin` mailer should
-contain an array of `mailers` that reference which configured mailers should be
-used for delivery:
-
-    'mailers' => [
-        'roundrobin' => [
-            'transport' => 'roundrobin',
-            'mailers' => [
-                'ses',
-                'postmark',
-            ],
-        ],
-
-        // ...
-    ],
-
-Once your round robin mailer has been defined, you should set this mailer as the
-default mailer used by your application by specifying its name as the value of
-the `default` configuration key within your application's `mail` configuration
-file:
-
-    'default' => env('MAIL_MAILER', 'roundrobin'),
-
-The round robin transport selects a random mailer from the list of configured
-mailers and then switches to the next available mailer for each subsequent
-email. In contrast to `failover` transport, which helps to achieve
-*[high availability](https://en.wikipedia.org/wiki/High_availability)*,
-the `roundrobin` transport provides
-*[load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing))*.
 
 <a name="generating-mailables"></a>
 
@@ -308,16 +239,16 @@ the `envelope`, `content`, and `attachments` methods.
 The `envelope` method returns an `Illuminate\Mail\Mailables\Envelope` object
 that defines the subject and, sometimes, the recipients of the message.
 The `content` method returns an `Illuminate\Mail\Mailables\Content` object that
-defines the [Blade template](blade.md) that will be used to
-generate the message content.
+defines the [Blade template](blade.md) that will be used to generate the message
+content.
 
 <a name="configuring-the-sender"></a>
 
-### Configuring the Sender
+### Configuring The Sender
 
 <a name="using-the-envelope"></a>
 
-#### Using the Envelope
+#### Using The Envelope
 
 First, let's explore configuring the sender of the email. Or, in other words,
 who the email is going to be "from". There are two ways to configure the sender.
@@ -328,8 +259,10 @@ First, you may specify the "from" address on your message's envelope:
 
     /**
      * Get the message envelope.
+     *
+     * @return \Illuminate\Mail\Mailables\Envelope
      */
-    public function envelope(): Envelope
+    public function envelope()
     {
         return new Envelope(
             from: new Address('jeffrey@example.com', 'Jeffrey Way'),
@@ -349,18 +282,15 @@ If you would like, you may also specify a `replyTo` address:
 
 <a name="using-a-global-from-address"></a>
 
-#### Using a Global `from` Address
+#### Using A Global `from` Address
 
 However, if your application uses the same "from" address for all of its emails,
-it can become cumbersome to add it to each mailable class you generate. Instead,
-you may specify a global "from" address in your `config/mail.php` configuration
-file. This address will be used if no other "from" address is specified within
-the mailable class:
+it can become cumbersome to call the `from` method in each mailable class you
+generate. Instead, you may specify a global "from" address in
+your `config/mail.php` configuration file. This address will be used if no
+other "from" address is specified within the mailable class:
 
-    'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
-    ],
+    'from' => ['address' => 'example@example.com', 'name' => 'App Name'],
 
 In addition, you may define a global "reply_to" address within
 your `config/mail.php` configuration file:
@@ -369,25 +299,27 @@ your `config/mail.php` configuration file:
 
 <a name="configuring-the-view"></a>
 
-### Configuring the View
+### Configuring The View
 
-Within a mailable class's `content` method, you may define the `view`, or which
+Within a mailable class' `content` method, you may define the `view`, or which
 template should be used when rendering the email's contents. Since each email
-typically uses a [Blade template](blade.md) to render its
-contents, you have the full power and convenience of the Blade templating engine
-when building your email's HTML:
+typically uses a [Blade template](blade.md) to render its contents, you have the
+full power and convenience of the Blade templating engine when building your
+email's HTML:
 
     /**
      * Get the message content definition.
+     *
+     * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content(): Content
+    public function content()
     {
         return new Content(
-            view: 'mail.orders.shipped',
+            view: 'emails.orders.shipped',
         );
     }
 
-> [!NOTE]
+> **Note**
 > You may wish to create a `resources/views/emails` directory to house all of
 > your email templates; however, you are free to place them wherever you wish
 > within your `resources/views` directory.
@@ -404,12 +336,14 @@ and plain-text version of your message:
 
     /**
      * Get the message content definition.
+     *
+     * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content(): Content
+    public function content()
     {
         return new Content(
-            view: 'mail.orders.shipped',
-            text: 'mail.orders.shipped-text'
+            view: 'emails.orders.shipped',
+            text: 'emails.orders.shipped-text'
         );
     }
 
@@ -417,8 +351,8 @@ For clarity, the `html` parameter may be used as an alias of the `view`
 parameter:
 
     return new Content(
-        html: 'mail.orders.shipped',
-        text: 'mail.orders.shipped-text'
+        html: 'emails.orders.shipped',
+        text: 'emails.orders.shipped-text'
     );
 
 <a name="view-data"></a>
@@ -433,7 +367,7 @@ Typically, you will want to pass some data to your view that you can utilize
 when rendering the email's HTML. There are two ways you may make data available
 to your view. First, any public property defined on your mailable class will
 automatically be made available to the view. So, for example, you may pass data
-into your mailable class's constructor and set that data to public properties
+into your mailable class' constructor and set that data to public properties
 defined on the class:
 
     <?php
@@ -451,19 +385,32 @@ defined on the class:
         use Queueable, SerializesModels;
 
         /**
-         * Create a new message instance.
+         * The order instance.
+         *
+         * @var \App\Models\Order
          */
-        public function __construct(
-            public Order $order,
-        ) {}
+        public $order;
+
+        /**
+         * Create a new message instance.
+         *
+         * @param  \App\Models\Order  $order
+         * @return void
+         */
+        public function __construct(Order $order)
+        {
+            $this->order = $order;
+        }
 
         /**
          * Get the message content definition.
+         *
+         * @return \Illuminate\Mail\Mailables\Content
          */
-        public function content(): Content
+        public function content()
         {
             return new Content(
-                view: 'mail.orders.shipped',
+                view: 'emails.orders.shipped',
             );
         }
     }
@@ -478,12 +425,12 @@ data in your Blade templates:
 
 <a name="via-the-with-parameter"></a>
 
-#### Via the `with` Parameter:
+#### Via The `with` Parameter:
 
 If you would like to customize the format of your email's data before it is sent
 to the template, you may manually pass your data to the view via the `Content`
 definition's `with` parameter. Typically, you will still pass data via the
-mailable class's constructor; however, you should set this data to `protected`
+mailable class' constructor; however, you should set this data to `protected`
 or `private` properties so the data is not automatically made available to the
 template:
 
@@ -502,19 +449,32 @@ template:
         use Queueable, SerializesModels;
 
         /**
-         * Create a new message instance.
+         * The order instance.
+         *
+         * @var \App\Models\Order
          */
-        public function __construct(
-            protected Order $order,
-        ) {}
+        protected $order;
+
+        /**
+         * Create a new message instance.
+         *
+         * @param  \App\Models\Order  $order
+         * @return void
+         */
+        public function __construct(Order $order)
+        {
+            $this->order = $order;
+        }
 
         /**
          * Get the message content definition.
+         *
+         * @return \Illuminate\Mail\Mailables\Content
          */
-        public function content(): Content
+        public function content()
         {
             return new Content(
-                view: 'mail.orders.shipped',
+                view: 'emails.orders.shipped',
                 with: [
                     'orderName' => $this->order->name,
                     'orderPrice' => $this->order->price,
@@ -545,9 +505,9 @@ class:
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return \Illuminate\Mail\Mailables\Attachment[]
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [
             Attachment::fromPath('/path/to/file'),
@@ -560,9 +520,9 @@ or MIME type for the attachment using the `as` and `withMime` methods:
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return \Illuminate\Mail\Mailables\Attachment[]
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [
             Attachment::fromPath('/path/to/file')
@@ -575,16 +535,15 @@ or MIME type for the attachment using the `as` and `withMime` methods:
 
 #### Attaching Files From Disk
 
-If you have stored a file on one of
-your [filesystem disks](filesystem.md), you may attach it to the
-email using the `fromStorage` attachment method:
+If you have stored a file on one of your [filesystem disks](filesystem.md), you
+may attach it to the email using the `fromStorage` attachment method:
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return \Illuminate\Mail\Mailables\Attachment[]
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [
             Attachment::fromStorage('/path/to/file'),
@@ -596,9 +555,9 @@ Of course, you may also specify the attachment's name and MIME type:
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return \Illuminate\Mail\Mailables\Attachment[]
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [
             Attachment::fromStorage('/path/to/file')
@@ -613,9 +572,9 @@ other than your default disk:
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return \Illuminate\Mail\Mailables\Attachment[]
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [
             Attachment::fromStorageDisk('s3', '/path/to/file')
@@ -637,9 +596,9 @@ well as the name that the attachment should be assigned:
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return \Illuminate\Mail\Mailables\Attachment[]
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [
             Attachment::fromData(fn () => $this->pdf, 'Report.pdf')
@@ -666,7 +625,7 @@ manually:
 </body>
 ```
 
-> [!WARNING]
+> **Warning**
 > The `$message` variable is not available in plain-text message templates since
 > plain-text messages do not utilize inline attachments.
 
@@ -715,8 +674,10 @@ an `Illuminate\Mail\Attachment` instance:
     {
         /**
          * Get the attachable representation of the model.
+         *
+         * @return \Illuminate\Mail\Attachment
          */
-        public function toMailAttachment(): Attachment
+        public function toMailAttachment()
         {
             return Attachment::fromPath('/path/to/file');
         }
@@ -728,9 +689,9 @@ object from the `attachments` method when building an email message:
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array
      */
-    public function attachments(): array
+    public function attachments()
     {
         return [$this->photo];
     }
@@ -777,8 +738,10 @@ provide only the parameters you need for your particular message:
 
     /**
      * Get the message headers.
+     *
+     * @return \Illuminate\Mail\Mailables\Headers
      */
-    public function headers(): Headers
+    public function headers()
     {
         return new Headers(
             messageId: 'custom-message-id@example.com',
@@ -791,7 +754,7 @@ provide only the parameters you need for your particular message:
 
 <a name="tags-and-metadata"></a>
 
-### Tags and Metadata
+### Tags & Metadata
 
 Some third-party email providers such as Mailgun and Postmark support message "
 tags" and "metadata", which may be used to group and track emails sent by your
@@ -805,7 +768,7 @@ your `Envelope` definition:
      *
      * @return \Illuminate\Mail\Mailables\Envelope
      */
-    public function envelope(): Envelope
+    public function envelope()
     {
         return new Envelope(
             subject: 'Order Shipped',
@@ -831,7 +794,7 @@ to the message.
 
 <a name="customizing-the-symfony-message"></a>
 
-### Customizing the Symfony Message
+### Customizing The Symfony Message
 
 Laravel's mail capabilities are powered by Symfony Mailer. Laravel allows you to
 register custom callbacks that will be invoked with the Symfony Message instance
@@ -844,8 +807,10 @@ your `Envelope` definition:
 
     /**
      * Get the message envelope.
+     *
+     * @return \Illuminate\Mail\Mailables\Envelope
      */
-    public function envelope(): Envelope
+    public function envelope()
     {
         return new Envelope(
             subject: 'Order Shipped',
@@ -863,10 +828,10 @@ your `Envelope` definition:
 
 Markdown mailable messages allow you to take advantage of the pre-built
 templates and components
-of [mail notifications](notifications.md#mail-notifications) in
-your mailables. Since the messages are written in Markdown, Laravel is able to
-render beautiful, responsive HTML templates for the messages while also
-automatically generating a plain-text counterpart.
+of [mail notifications](notifications.md#mail-notifications) in your mailables.
+Since the messages are written in Markdown, Laravel is able to render beautiful,
+responsive HTML templates for the messages while also automatically generating a
+plain-text counterpart.
 
 <a name="generating-markdown-mailables"></a>
 
@@ -876,7 +841,7 @@ To generate a mailable with a corresponding Markdown template, you may use
 the `--markdown` option of the `make:mail` Artisan command:
 
 ```shell
-php artisan make:mail OrderShipped --markdown=mail.orders.shipped
+php artisan make:mail OrderShipped --markdown=emails.orders.shipped
 ```
 
 Then, when configuring the mailable `Content` definition within its `content`
@@ -886,11 +851,13 @@ method, use the `markdown` parameter instead of the `view` parameter:
 
     /**
      * Get the message content definition.
+     *
+     * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content(): Content
+    public function content()
     {
         return new Content(
-            markdown: 'mail.orders.shipped',
+            markdown: 'emails.orders.shipped',
             with: [
                 'url' => $this->orderUrl,
             ],
@@ -920,7 +887,7 @@ Thanks,<br>
 </x-mail::message>
 ```
 
-> [!NOTE]
+> **Note**
 > Do not use excess indentation when writing Markdown emails. Per Markdown
 > standards, Markdown parsers will render indented content as code blocks.
 
@@ -972,7 +939,7 @@ is supported using the default Markdown table alignment syntax:
 
 <a name="customizing-the-components"></a>
 
-### Customizing the Components
+### Customizing The Components
 
 You may export all of the Markdown mail components to your own application for
 customization. To export the components, use the `vendor:publish` Artisan
@@ -990,7 +957,7 @@ components however you like.
 
 <a name="customizing-the-css"></a>
 
-#### Customizing the CSS
+#### Customizing The CSS
 
 After exporting the components, the `resources/views/vendor/mail/html/themes`
 directory will contain a `default.css` file. You may customize the CSS in this
@@ -1011,14 +978,13 @@ sending that mailable.
 
 ## Sending Mail
 
-To send a message, use the `to` method on
-the `Mail` [facade](facades.md). The `to` method accepts an email
-address, a user instance, or a collection of users. If you pass an object or
-collection of objects, the mailer will automatically use their `email`
-and `name` properties when determining the email's recipients, so make sure
-these attributes are available on your objects. Once you have specified your
-recipients, you may pass an instance of your mailable class to the `send`
-method:
+To send a message, use the `to` method on the `Mail` [facade](facades.md).
+The `to` method accepts an email address, a user instance, or a collection of
+users. If you pass an object or collection of objects, the mailer will
+automatically use their `email` and `name` properties when determining the
+email's recipients, so make sure these attributes are available on your objects.
+Once you have specified your recipients, you may pass an instance of your
+mailable class to the `send` method:
 
     <?php
 
@@ -1027,7 +993,6 @@ method:
     use App\Http\Controllers\Controller;
     use App\Mail\OrderShipped;
     use App\Models\Order;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Mail;
 
@@ -1035,16 +1000,17 @@ method:
     {
         /**
          * Ship the given order.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $order = Order::findOrFail($request->order_id);
 
             // Ship the order...
 
             Mail::to($request->user())->send(new OrderShipped($order));
-
-            return redirect('/orders');
         }
     }
 
@@ -1073,7 +1039,7 @@ Therefore, you should always re-create the mailable instance for each recipient:
 
 <a name="sending-mail-via-a-specific-mailer"></a>
 
-#### Sending Mail via a Specific Mailer
+#### Sending Mail Via A Specific Mailer
 
 By default, Laravel will send email using the mailer configured as the `default`
 mailer in your application's `mail` configuration file. However, you may use
@@ -1089,13 +1055,13 @@ the `mailer` method to send a message using a specific mailer configuration:
 
 <a name="queueing-a-mail-message"></a>
 
-#### Queueing a Mail Message
+#### Queueing A Mail Message
 
 Since sending email messages can negatively impact the response time of your
 application, many developers choose to queue email messages for background
 sending. Laravel makes this easy using its
-built-in [unified queue API](queues.md). To queue a mail message,
-use the `queue` method on the `Mail` facade after specifying the message's
+built-in [unified queue API](queues.md). To queue a mail message, use
+the `queue` method on the `Mail` facade after specifying the message's
 recipients:
 
     Mail::to($request->user())
@@ -1122,7 +1088,7 @@ a `DateTime` instance indicating when the message should be sent:
 
 <a name="pushing-to-specific-queues"></a>
 
-#### Pushing to Specific Queues
+#### Pushing To Specific Queues
 
 Since all mailable classes generated using the `make:mail` command make use of
 the `Illuminate\Bus\Queueable` trait, you may call the `onQueue`
@@ -1140,7 +1106,7 @@ specify the connection and queue name for the message:
 
 <a name="queueing-by-default"></a>
 
-#### Queueing by Default
+#### Queueing By Default
 
 If you have mailable classes that you want to always be queued, you may
 implement the `ShouldQueue` contract on the class. Now, even if you call
@@ -1151,12 +1117,12 @@ implements the contract:
 
     class OrderShipped extends Mailable implements ShouldQueue
     {
-        // ...
+        //
     }
 
 <a name="queued-mailables-and-database-transactions"></a>
 
-#### Queued Mailables and Database Transactions
+#### Queued Mailables & Database Transactions
 
 When queued mailables are dispatched within database transactions, they may be
 processed by the queue before the database transaction has committed. When this
@@ -1193,6 +1159,8 @@ constructor:
 
         /**
          * Create a new message instance.
+         *
+         * @return void
          */
         public function __construct()
         {
@@ -1200,7 +1168,7 @@ constructor:
         }
     }
 
-> [!NOTE]
+> **Note**
 > To learn more about working around these issues, please review the
 > documentation
 > regarding [queued jobs and database transactions](queues.md#jobs-and-database-transactions).
@@ -1222,7 +1190,7 @@ method will return the evaluated HTML content of the mailable as a string:
 
 <a name="previewing-mailables-in-the-browser"></a>
 
-### Previewing Mailables in the Browser
+### Previewing Mailables In The Browser
 
 When designing a mailable's template, it is convenient to quickly preview the
 rendered mailable in your browser like a typical Blade template. For this
@@ -1236,6 +1204,12 @@ it to an actual email address:
 
         return new App\Mail\InvoicePaid($invoice);
     });
+
+> **Warning**
+> [Inline attachments](#inline-attachments) will not be rendered when a mailable
+> is previewed in your browser. To preview these mailables, you should send them
+> to an email testing application such
+> as [Mailpit](https://github.com/axllent/mailpit) or [HELO](https://usehelo.com).
 
 <a name="localizing-mailables"></a>
 
@@ -1267,8 +1241,10 @@ instruct Laravel to use this stored locale when sending mail:
     {
         /**
          * Get the user's preferred locale.
+         *
+         * @return string
          */
-        public function preferredLocale(): string
+        public function preferredLocale()
         {
             return $this->locale;
         }
@@ -1283,11 +1259,7 @@ interface:
 
 <a name="testing-mailables"></a>
 
-## Testing
-
-<a name="testing-mailable-content"></a>
-
-### Testing Mailable Content
+## Testing Mailables
 
 Laravel provides a variety of methods for inspecting your mailable's structure.
 In addition, Laravel provides several convenient methods for testing that your
@@ -1302,7 +1274,7 @@ plain-text version of your mailable contains a given string:
     use App\Mail\InvoicePaid;
     use App\Models\User;
 
-    public function test_mailable_content(): void
+    public function test_mailable_content()
     {
         $user = User::factory()->create();
 
@@ -1333,121 +1305,16 @@ plain-text version of your mailable contains a given string:
 
 <a name="testing-mailable-sending"></a>
 
-### Testing Mailable Sending
+#### Testing Mailable Sending
 
 We suggest testing the content of your mailables separately from your tests that
-assert that a given mailable was "sent" to a specific user. Typically, the
-content of mailables is not relevant to the code you are testing, and it is
-sufficient to simply assert that Laravel was instructed to send a given
-mailable.
-
-You may use the `Mail` facade's `fake` method to prevent mail from being sent.
-After calling the `Mail` facade's `fake` method, you may then assert that
-mailables were instructed to be sent to users and even inspect the data the
-mailables received:
-
-    <?php
-
-    namespace Tests\Feature;
-
-    use App\Mail\OrderShipped;
-    use Illuminate\Support\Facades\Mail;
-    use Tests\TestCase;
-
-    class ExampleTest extends TestCase
-    {
-        public function test_orders_can_be_shipped(): void
-        {
-            Mail::fake();
-
-            // Perform order shipping...
-
-            // Assert that no mailables were sent...
-            Mail::assertNothingSent();
-
-            // Assert that a mailable was sent...
-            Mail::assertSent(OrderShipped::class);
-
-            // Assert a mailable was sent twice...
-            Mail::assertSent(OrderShipped::class, 2);
-
-            // Assert a mailable was not sent...
-            Mail::assertNotSent(AnotherMailable::class);
-
-            // Assert 3 total mailables were sent...
-            Mail::assertSentCount(3);
-        }
-    }
-
-If you are queueing mailables for delivery in the background, you should use
-the `assertQueued` method instead of `assertSent`:
-
-    Mail::assertQueued(OrderShipped::class);
-    Mail::assertNotQueued(OrderShipped::class);
-    Mail::assertNothingQueued();
-    Mail::assertQueuedCount(3);
-
-You may pass a closure to the `assertSent`, `assertNotSent`, `assertQueued`,
-or `assertNotQueued` methods in order to assert that a mailable was sent that
-passes a given "truth test". If at least one mailable was sent that passes the
-given truth test then the assertion will be successful:
-
-    Mail::assertSent(function (OrderShipped $mail) use ($order) {
-        return $mail->order->id === $order->id;
-    });
-
-When calling the `Mail` facade's assertion methods, the mailable instance
-accepted by the provided closure exposes helpful methods for examining the
-mailable:
-
-    Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) use ($user) {
-        return $mail->hasTo($user->email) &&
-               $mail->hasCc('...') &&
-               $mail->hasBcc('...') &&
-               $mail->hasReplyTo('...') &&
-               $mail->hasFrom('...') &&
-               $mail->hasSubject('...');
-    });
-
-The mailable instance also includes several helpful methods for examining the
-attachments on a mailable:
-
-    use Illuminate\Mail\Mailables\Attachment;
-
-    Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) {
-        return $mail->hasAttachment(
-            Attachment::fromPath('/path/to/file')
-                    ->as('name.pdf')
-                    ->withMime('application/pdf')
-        );
-    });
-
-    Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) {
-        return $mail->hasAttachment(
-            Attachment::fromStorageDisk('s3', '/path/to/file')
-        );
-    });
-
-    Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) use ($pdfData) {
-        return $mail->hasAttachment(
-            Attachment::fromData(fn () => $pdfData, 'name.pdf')
-        );
-    });
-
-You may have noticed that there are two methods for asserting that mail was not
-sent: `assertNotSent` and `assertNotQueued`. Sometimes you may wish to assert
-that no mail was sent **or** queued. To accomplish this, you may use
-the `assertNothingOutgoing` and `assertNotOutgoing` methods:
-
-    Mail::assertNothingOutgoing();
-
-    Mail::assertNotOutgoing(function (OrderShipped $mail) use ($order) {
-        return $mail->order->id === $order->id;
-    });
+assert that a given mailable was "sent" to a specific user. To learn how to test
+that mailables were sent, check out our documentation on
+the [Mail fake](mocking.md#mail-fake).
 
 <a name="mail-and-local-development"></a>
 
-## Mail and Local Development
+## Mail & Local Development
 
 When developing an application that sends email, you probably don't want to
 actually send emails to live email addresses. Laravel provides several ways to "
@@ -1473,13 +1340,13 @@ messages to a "dummy" mailbox where you may view them in a true email client.
 This approach has the benefit of allowing you to actually inspect the final
 emails in Mailtrap's message viewer.
 
-If you are using [Laravel Sail](sail.md), you may preview your
-messages using [Mailpit](https://github.com/axllent/mailpit). When Sail is
-running, you may access the Mailpit interface at: `http://localhost:8025`.
+If you are using [Laravel Sail](sail.md), you may preview your messages
+using [Mailpit](https://github.com/axllent/mailpit). When Sail is running, you
+may access the Mailpit interface at: `http://localhost:8025`.
 
 <a name="using-a-global-to-address"></a>
 
-#### Using a Global `to` Address
+#### Using A Global `to` Address
 
 Finally, you may specify a global "to" address by invoking the `alwaysTo` method
 offered by the `Mail` facade. Typically, this method should be called from
@@ -1489,8 +1356,10 @@ the `boot` method of one of your application's service providers:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         if ($this->app->environment('local')) {
             Mail::alwaysTo('taylor@example.com');
@@ -1541,18 +1410,28 @@ implement the `doSend` and `__toString()` methods on your transport:
     use MailchimpTransactional\ApiClient;
     use Symfony\Component\Mailer\SentMessage;
     use Symfony\Component\Mailer\Transport\AbstractTransport;
-    use Symfony\Component\Mime\Address;
     use Symfony\Component\Mime\MessageConverter;
 
     class MailchimpTransport extends AbstractTransport
     {
         /**
-         * Create a new Mailchimp transport instance.
+         * The Mailchimp API client.
+         *
+         * @var \MailchimpTransactional\ApiClient
          */
-        public function __construct(
-            protected ApiClient $client,
-        ) {
+        protected $client;
+
+        /**
+         * Create a new Mailchimp transport instance.
+         *
+         * @param  \MailchimpTransactional\ApiClient  $client
+         * @return void
+         */
+        public function __construct(ApiClient $client)
+        {
             parent::__construct();
+
+            $this->client = $client;
         }
 
         /**
@@ -1564,7 +1443,7 @@ implement the `doSend` and `__toString()` methods on your transport:
 
             $this->client->messages->send(['message' => [
                 'from_email' => $email->getFrom(),
-                'to' => collect($email->getTo())->map(function (Address $email) {
+                'to' => collect($email->getTo())->map(function ($email) {
                     return ['email' => $email->getAddress(), 'type' => 'to'];
                 })->all(),
                 'subject' => $email->getSubject(),
@@ -1574,6 +1453,8 @@ implement the `doSend` and `__toString()` methods on your transport:
 
         /**
          * Get the string representation of the transport.
+         *
+         * @return string
          */
         public function __toString(): string
         {
@@ -1593,8 +1474,10 @@ mailer in the application's `config/mail.php` configuration file:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Mail::extend('mailchimp', function (array $config = []) {
             return new MailchimpTransport(/* ... */);
@@ -1618,17 +1501,18 @@ Laravel includes support for some existing Symfony maintained mail transports
 like Mailgun and Postmark. However, you may wish to extend Laravel with support
 for additional Symfony maintained transports. You can do so by requiring the
 necessary Symfony mailer via Composer and registering the transport with
-Laravel. For example, you may install and register the "Brevo" (formerly "
-Sendinblue") Symfony mailer:
+Laravel. For example, you may install and register the "Sendinblue" Symfony
+mailer:
 
 ```none
-composer require symfony/brevo-mailer symfony/http-client
+composer require symfony/sendinblue-mailer symfony/http-client
 ```
 
-Once the Brevo mailer package has been installed, you may add an entry for your
-Brevo API credentials to your application's `services` configuration file:
+Once the Sendinblue mailer package has been installed, you may add an entry for
+your Sendinblue API credentials to your application's `services` configuration
+file:
 
-    'brevo' => [
+    'sendinblue' => [
         'key' => 'your-api-key',
     ],
 
@@ -1637,20 +1521,22 @@ with Laravel. Typically, this should be done within the `boot` method of a
 service provider:
 
     use Illuminate\Support\Facades\Mail;
-    use Symfony\Component\Mailer\Bridge\Brevo\Transport\BrevoTransportFactory;
+    use Symfony\Component\Mailer\Bridge\Sendinblue\Transport\SendinblueTransportFactory;
     use Symfony\Component\Mailer\Transport\Dsn;
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
-        Mail::extend('brevo', function () {
-            return (new BrevoTransportFactory)->create(
+        Mail::extend('sendinblue', function () {
+            return (new SendinblueTransportFactory)->create(
                 new Dsn(
-                    'brevo+api',
+                    'sendinblue+api',
                     'default',
-                    config('services.brevo.key')
+                    config('services.sendinblue.key')
                 )
             );
         });
@@ -1660,7 +1546,7 @@ Once your transport has been registered, you may create a mailer definition
 within your application's config/mail.php configuration file that utilizes the
 new transport:
 
-    'brevo' => [
-        'transport' => 'brevo',
+    'sendinblue' => [
+        'transport' => 'sendinblue',
         // ...
     ],

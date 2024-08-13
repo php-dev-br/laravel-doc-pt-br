@@ -19,17 +19,16 @@
 
 ## Introduction
 
-> [!NOTE]
+> **Note**
 > Before digging into Laravel Horizon, you should familiarize yourself with
-> Laravel's base [queue services](queues.md). Horizon augments
-> Laravel's queue with additional features that may be confusing if you are not
-> already familiar with the basic queue features offered by Laravel.
+> Laravel's base [queue services](queues.md). Horizon augments Laravel's queue
+> with additional features that may be confusing if you are not already familiar
+> with the basic queue features offered by Laravel.
 
 [Laravel Horizon](https://github.com/laravel/horizon) provides a beautiful
 dashboard and code-driven configuration for your Laravel
-powered [Redis queues](queues.md). Horizon allows you to easily
-monitor key metrics of your queue system such as job throughput, runtime, and
-job failures.
+powered [Redis queues](queues.md). Horizon allows you to easily monitor key
+metrics of your queue system such as job throughput, runtime, and job failures.
 
 When using Horizon, all of your queue worker configuration is stored in a
 single, simple configuration file. By defining your application's worker
@@ -42,7 +41,7 @@ application's queue workers when deploying your application.
 
 ## Installation
 
-> [!WARNING]
+> **Warning**
 > Laravel Horizon requires that you use [Redis](https://redis.io) to power your
 > queue. Therefore, you should ensure that your queue connection is set to `redis`
 > in your application's `config/queue.php` configuration file.
@@ -70,7 +69,7 @@ the queue worker options for your application. Each configuration option
 includes a description of its purpose, so be sure to thoroughly explore this
 file.
 
-> [!WARNING]
+> **Warning**
 > Horizon uses a Redis connection named `horizon` internally. This Redis
 > connection name is reserved and should not be assigned to another Redis
 > connection in the `database.php` configuration file or as the value of the `use`
@@ -113,11 +112,11 @@ assigned to each queue. The default `production` environment is configured to
 start a maximum of 10 worker processes and automatically balance the number of
 worker processes assigned to each queue.
 
-> [!WARNING]
+> **Warning**
 > You should ensure that the `environments` portion of your `horizon`
 > configuration file contains an entry for
-> each [environment](configuration.md#environment-configuration) on
-> which you plan to run Horizon.
+> each [environment](configuration.md#environment-configuration) on which you plan
+> to run Horizon.
 
 <a name="supervisors"></a>
 
@@ -134,24 +133,6 @@ You may add additional supervisors to a given environment if you would like to
 define a new group of worker processes that should run in that environment. You
 may choose to do this if you would like to define a different balancing strategy
 or worker process count for a given queue used by your application.
-
-<a name="maintenance-mode"></a>
-
-#### Maintenance Mode
-
-While your application is
-in [maintainance mode](configuration.md#maintenance-mode), queued
-jobs will not be processed by Horizon unless the supervisor's `force` option is
-defined as `true` within the Horizon configuration file:
-
-    'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                // ...
-                'force' => true,
-            ],
-        ],
-    ],
 
 <a name="default-values"></a>
 
@@ -170,15 +151,15 @@ supervisors.
 
 Unlike Laravel's default queue system, Horizon allows you to choose from three
 worker balancing strategies: `simple`, `auto`, and `false`. The `simple`
-strategy splits incoming jobs evenly between worker processes:
+strategy, which is the configuration file's default, splits incoming jobs evenly
+between worker processes:
 
     'balance' => 'simple',
 
-The `auto` strategy, which is the configuration file's default, adjusts the
-number of worker processes per queue based on the current workload of the queue.
-For example, if your `notifications` queue has 1,000 pending jobs while
-your `render` queue is empty, Horizon will allocate more workers to
-your `notifications` queue until the queue is empty.
+The `auto` strategy adjusts the number of worker processes per queue based on
+the current workload of the queue. For example, if your `notifications` queue
+has 1,000 pending jobs while your `render` queue is empty, Horizon will allocate
+more workers to your `notifications` queue until the queue is empty.
 
 When using the `auto` strategy, you may define the `minProcesses`
 and `maxProcesses` configuration options to control the minimum and the maximum
@@ -190,7 +171,6 @@ number of worker processes Horizon should scale up and down to:
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'auto',
-                'autoScalingStrategy' => 'time',
                 'minProcesses' => 1,
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
@@ -199,11 +179,6 @@ number of worker processes Horizon should scale up and down to:
             ],
         ],
     ],
-
-The `autoScalingStrategy` configuration value determines if Horizon will assign
-more worker processes to queues based on the total amount of time it will take
-to clear the queue (`time` strategy) or by the total number of jobs on the
-queue (`size` strategy).
 
 The `balanceMaxShift` and `balanceCooldown` configuration values determine how
 quickly Horizon will scale to meet worker demand. In the example above, a
@@ -218,22 +193,23 @@ configuration.
 
 ### Dashboard Authorization
 
-The Horizon dashboard may be accessed via the `/horizon` route. By default, you
-will only be able to access this dashboard in the `local` environment. However,
-within your `app/Providers/HorizonServiceProvider.php` file, there is
-an [authorization gate](authorization.md#gates) definition. This
-authorization gate controls access to Horizon in **non-local** environments. You
-are free to modify this gate as needed to restrict access to your Horizon
-installation:
+Horizon exposes a dashboard at the `/horizon` URI. By default, you will only be
+able to access this dashboard in the `local` environment. However, within
+your `app/Providers/HorizonServiceProvider.php` file, there is
+an [authorization gate](authorization.md#gates) definition. This authorization
+gate controls access to Horizon in **non-local** environments. You are free to
+modify this gate as needed to restrict access to your Horizon installation:
 
     /**
      * Register the Horizon gate.
      *
      * This gate determines who can access Horizon in non-local environments.
+     *
+     * @return void
      */
-    protected function gate(): void
+    protected function gate()
     {
-        Gate::define('viewHorizon', function (User $user) {
+        Gate::define('viewHorizon', function ($user) {
             return in_array($user->email, [
                 'taylor@laravel.com',
             ]);
@@ -247,8 +223,8 @@ installation:
 Remember that Laravel automatically injects the authenticated user into the gate
 closure. If your application is providing Horizon security via another method,
 such as IP restrictions, then your Horizon users may not need to "login".
-Therefore, you will need to change `function (User $user)` closure signature
-above to `function (User $user = null)` in order to force Laravel to not require
+Therefore, you will need to change `function ($user)` closure signature above
+to `function ($user = null)` in order to force Laravel to not require
 authentication.
 
 <a name="silenced-jobs"></a>
@@ -385,7 +361,7 @@ manager:
 sudo apt-get install supervisor
 ```
 
-> [!NOTE]
+> **Note**
 > If configuring Supervisor yourself sounds overwhelming, consider
 > using [Laravel Forge](https://forge.laravel.com), which will automatically
 > install and configure Supervisor for your Laravel projects.
@@ -417,7 +393,7 @@ of `stopwaitsecs` is greater than the number of seconds consumed by your longest
 running job. Otherwise, Supervisor may kill the job before it is finished
 processing.
 
-> [!WARNING]
+> **Warning**
 > While the examples above are valid for Ubuntu based servers, the location and
 > file extension expected of Supervisor configuration files may vary between other
 > server operating systems. Please consult your server's documentation for more
@@ -438,7 +414,7 @@ sudo supervisorctl update
 sudo supervisorctl start horizon
 ```
 
-> [!NOTE]
+> **Note**
 > For more information on running Supervisor, consult
 > the [Supervisor documentation](http://supervisord.org/index.html).
 
@@ -467,18 +443,31 @@ that are attached to the job. For example, take a look at the following job:
         use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
         /**
-         * Create a new job instance.
+         * The video instance.
+         *
+         * @var \App\Models\Video
          */
-        public function __construct(
-            public Video $video,
-        ) {}
+        public $video;
+
+        /**
+         * Create a new job instance.
+         *
+         * @param  \App\Models\Video  $video
+         * @return void
+         */
+        public function __construct(Video $video)
+        {
+            $this->video = $video;
+        }
 
         /**
          * Execute the job.
+         *
+         * @return void
          */
-        public function handle(): void
+        public function handle()
         {
-            // ...
+            //
         }
     }
 
@@ -507,32 +496,11 @@ you may define a `tags` method on the class:
         /**
          * Get the tags that should be assigned to the job.
          *
-         * @return array<int, string>
+         * @return array
          */
-        public function tags(): array
+        public function tags()
         {
             return ['render', 'video:'.$this->video->id];
-        }
-    }
-
-<a name="manually-tagging-event-listeners"></a>
-
-#### Manually Tagging Event Listeners
-
-When retrieving the tags for a queued event listener, Horizon will automatically
-pass the event instance to the `tags` method, allowing you to add event data to
-the tags:
-
-    class SendRenderNotifications implements ShouldQueue
-    {
-        /**
-         * Get the tags that should be assigned to the listener.
-         *
-         * @return array<int, string>
-         */
-        public function tags(VideoRendered $event): array
-        {
-            return ['video:'.$event->video->id];
         }
     }
 
@@ -540,7 +508,7 @@ the tags:
 
 ## Notifications
 
-> [!WARNING]
+> **Warning**
 > When configuring Horizon to send Slack or SMS notifications, you should review
 > the [prerequisites for the relevant notification channel](notifications.md).
 
@@ -552,8 +520,10 @@ the `boot` method of your application's `App\Providers\HorizonServiceProvider`:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         parent::boot();
 
@@ -569,13 +539,11 @@ the `boot` method of your application's `App\Providers\HorizonServiceProvider`:
 You may configure how many seconds are considered a "long wait" within your
 application's `config/horizon.php` configuration file. The `waits` configuration
 option within this file allows you to control the long wait threshold for each
-connection / queue combination. Any undefined connection / queue combinations
-will default to a long wait threshold of 60 seconds:
+connection / queue combination:
 
     'waits' => [
-        'redis:critical' => 30,
         'redis:default' => 60,
-        'redis:batch' => 120,
+        'redis:critical,high' => 90,
     ],
 
 <a name="metrics"></a>
@@ -589,8 +557,11 @@ minutes via your application's [scheduler](scheduling.md):
 
     /**
      * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
      */
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
     }

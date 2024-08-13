@@ -12,10 +12,9 @@
     - [Options](#options)
     - [Input Arrays](#input-arrays)
     - [Input Descriptions](#input-descriptions)
-    - [Prompting for Missing Input](#prompting-for-missing-input)
 - [Command I/O](#command-io)
     - [Retrieving Input](#retrieving-input)
-    - [Prompting for Input](#prompting-for-input)
+    - [Prompting For Input](#prompting-for-input)
     - [Writing Output](#writing-output)
 - [Registering Commands](#registering-commands)
 - [Programmatically Executing Commands](#programmatically-executing-commands)
@@ -49,10 +48,9 @@ php artisan help migrate
 
 #### Laravel Sail
 
-If you are using [Laravel Sail](sail.md) as your local
-development environment, remember to use the `sail` command line to invoke
-Artisan commands. Sail will execute your Artisan commands within your
-application's Docker containers:
+If you are using [Laravel Sail](sail.md) as your local development environment,
+remember to use the `sail` command line to invoke Artisan commands. Sail will
+execute your Artisan commands within your application's Docker containers:
 
 ```shell
 ./vendor/bin/sail artisan list
@@ -76,10 +74,9 @@ Tinker using Composer if you have previously removed it from your application:
 composer require laravel/tinker
 ```
 
-> [!NOTE]
-> Looking for hot reloading, multiline code editing, and autocompletion when
-> interacting with your Laravel application? Check
-> out [Tinkerwell](https://tinkerwell.app)!
+> **Note**
+> Looking for a graphical UI for interacting with your Laravel application?
+> Check out [Tinkerwell](https://tinkerwell.app)!
 
 <a name="usage"></a>
 
@@ -99,7 +96,7 @@ You can publish Tinker's configuration file using the `vendor:publish` command:
 php artisan vendor:publish --provider="Laravel\Tinker\TinkerServiceProvider"
 ```
 
-> [!WARNING]
+> **Warning**
 > The `dispatch` helper function and `dispatch` method on the `Dispatchable`
 > class depends on garbage collection to place the job on the queue. Therefore,
 > when using tinker, you should use `Bus::dispatch` or `Queue::push` to dispatch
@@ -168,8 +165,8 @@ your command logic in this method.
 
 Let's take a look at an example command. Note that we are able to request any
 dependencies we need via the command's `handle` method. The
-Laravel [service container](container.md) will automatically
-inject all dependencies that are type-hinted in this method's signature:
+Laravel [service container](container.md) will automatically inject all
+dependencies that are type-hinted in this method's signature:
 
     <?php
 
@@ -197,14 +194,17 @@ inject all dependencies that are type-hinted in this method's signature:
 
         /**
          * Execute the console command.
+         *
+         * @param  \App\Support\DripEmailer  $drip
+         * @return mixed
          */
-        public function handle(DripEmailer $drip): void
+        public function handle(DripEmailer $drip)
         {
             $drip->send(User::find($this->argument('user')));
         }
     }
 
-> [!NOTE]
+> **Note**
 > For greater code reuse, it is good practice to keep your console commands
 > light and let them defer to application services to accomplish their tasks. In
 > the example above, note that we inject a service class to do the "heavy lifting"
@@ -222,8 +222,10 @@ the `routes/console.php` file:
 
     /**
      * Register the closure based commands for the application.
+     *
+     * @return void
      */
-    protected function commands(): void
+    protected function commands()
     {
         require base_path('routes/console.php');
     }
@@ -235,7 +237,7 @@ The `command` method accepts two arguments:
 the [command signature](#defining-input-expectations) and a closure which
 receives the command's arguments and options:
 
-    Artisan::command('mail:send {user}', function (string $user) {
+    Artisan::command('mail:send {user}', function ($user) {
         $this->info("Sending email to: {$user}!");
     });
 
@@ -254,7 +256,7 @@ the [service container](container.md):
     use App\Models\User;
     use App\Support\DripEmailer;
 
-    Artisan::command('mail:send {user}', function (DripEmailer $drip, string $user) {
+    Artisan::command('mail:send {user}', function (DripEmailer $drip, $user) {
         $drip->send(User::find($user));
     });
 
@@ -266,7 +268,7 @@ When defining a closure based command, you may use the `purpose` method to add a
 description to the command. This description will be displayed when you run
 the `php artisan list` or `php artisan help` commands:
 
-    Artisan::command('mail:send {user}', function (string $user) {
+    Artisan::command('mail:send {user}', function ($user) {
         // ...
     })->purpose('Send a marketing email to a user');
 
@@ -274,7 +276,7 @@ the `php artisan list` or `php artisan help` commands:
 
 ### Isolatable Commands
 
-> [!WARNING]
+> **Warning**
 > To utilize this feature, your application must be using
 > the `memcached`, `redis`, `dynamodb`, `database`, `file`, or `array` cache
 > driver as your application's default cache driver. In addition, all servers must
@@ -316,26 +318,6 @@ the `isolated` option:
 php artisan mail:send 1 --isolated=12
 ```
 
-<a name="lock-id"></a>
-
-#### Lock ID
-
-By default, Laravel will use the command's name to generate the string key that
-is used to acquire the atomic lock in your application's cache. However, you may
-customize this key by defining an `isolatableId` method on your Artisan command
-class, allowing you to integrate the command's arguments or options into the
-key:
-
-```php
-/**
- * Get the isolatable ID for the command.
- */
-public function isolatableId(): string
-{
-    return $this->argument('user');
-}
-```
-
 <a name="lock-expiration-time"></a>
 
 #### Lock Expiration Time
@@ -346,13 +328,12 @@ hour. However, you may adjust the lock expiration time by defining
 a `isolationLockExpiresAt` method on your command:
 
 ```php
-use DateTimeInterface;
-use DateInterval;
-
 /**
  * Determine when an isolation lock expires for the command.
+ *
+ * @return \DateTimeInterface|\DateInterval
  */
-public function isolationLockExpiresAt(): DateTimeInterface|DateInterval
+public function isolationLockExpiresAt()
 {
     return now()->addMinutes(5);
 }
@@ -454,11 +435,10 @@ from the full option name:
     'mail:send {user} {--Q|queue}'
 
 When invoking the command on your terminal, option shortcuts should be prefixed
-with a single hyphen and no `=` character should be included when specifying a
-value for the option:
+with a single hyphen:
 
 ```shell
-php artisan mail:send 1 -Qdefault
+php artisan mail:send 1 -Q
 ```
 
 <a name="input-arrays"></a>
@@ -517,109 +497,6 @@ lines:
                             {user : The ID of the user}
                             {--queue : Whether the job should be queued}';
 
-<a name="prompting-for-missing-input"></a>
-
-### Prompting for Missing Input
-
-If your command contains required arguments, the user will receive an error
-message when they are not provided. Alternatively, you may configure your
-command to automatically prompt the user when required arguments are missing by
-implementing the `PromptsForMissingInput` interface:
-
-    <?php
-
-    namespace App\Console\Commands;
-
-    use Illuminate\Console\Command;
-    use Illuminate\Contracts\Console\PromptsForMissingInput;
-
-    class SendEmails extends Command implements PromptsForMissingInput
-    {
-        /**
-         * The name and signature of the console command.
-         *
-         * @var string
-         */
-        protected $signature = 'mail:send {user}';
-
-        // ...
-    }
-
-If Laravel needs to gather a required argument from the user, it will
-automatically ask the user for the argument by intelligently phrasing the
-question using either the argument name or description. If you wish to customize
-the question used to gather the required argument, you may implement
-the `promptForMissingArgumentsUsing` method, returning an array of questions
-keyed by the argument names:
-
-    /**
-     * Prompt for missing input arguments using the returned questions.
-     *
-     * @return array
-     */
-    protected function promptForMissingArgumentsUsing()
-    {
-        return [
-            'user' => 'Which user ID should receive the mail?',
-        ];
-    }
-
-You may also provide placeholder text by using a tuple containing the question
-and placeholder:
-
-    return [
-        'user' => ['Which user ID should receive the mail?', 'E.g. 123'],
-    ];
-
-If you would like complete control over the prompt, you may provide a closure
-that should prompt the user and return their answer:
-
-    use App\Models\User;
-    use function Laravel\Prompts\search;
-
-    // ...
-
-    return [
-        'user' => fn () => search(
-            label: 'Search for a user:',
-            placeholder: 'E.g. Taylor Otwell',
-            options: fn ($value) => strlen($value) > 0
-                ? User::where('name', 'like', "%{$value}%")->pluck('name', 'id')->all()
-                : []
-        ),
-    ];
-
-> [!NOTE]
-> The comprehensive [Laravel Prompts](prompts.md) documentation
-> includes additional information on the available prompts and their usage.
-
-If you wish to prompt the user to select or enter [options](#options), you may
-include prompts in your command's `handle` method. However, if you only wish to
-prompt the user when they have also been automatically prompted for missing
-arguments, then you may implement the `afterPromptingForMissingArguments`
-method:
-
-    use Symfony\Component\Console\Input\InputInterface;
-    use Symfony\Component\Console\Output\OutputInterface;
-    use function Laravel\Prompts\confirm;
-
-    // ...
-
-    /**
-     * Perform actions after the user was prompted for missing arguments.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @return void
-     */
-    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
-    {
-        $input->setOption('queue', confirm(
-            label: 'Would you like to queue the mail?',
-            default: $this->option('queue')
-        ));
-    }
-
 <a name="command-io"></a>
 
 ## Command I/O
@@ -635,10 +512,14 @@ exist, `null` will be returned:
 
     /**
      * Execute the console command.
+     *
+     * @return int
      */
-    public function handle(): void
+    public function handle()
     {
         $userId = $this->argument('user');
+
+        //
     }
 
 If you need to retrieve all of the arguments as an `array`, call the `arguments`
@@ -657,12 +538,7 @@ To retrieve all of the options as an array, call the `options` method:
 
 <a name="prompting-for-input"></a>
 
-### Prompting for Input
-
-> [!NOTE]
-> [Laravel Prompts](prompts.md) is a PHP package for adding
-> beautiful and user-friendly forms to your command-line applications, with
-> browser-like features including placeholder text and validation.
+### Prompting For Input
 
 In addition to displaying output, you may also ask the user to provide input
 during the execution of your command. The `ask` method will prompt the user with
@@ -671,18 +547,13 @@ your command:
 
     /**
      * Execute the console command.
+     *
+     * @return mixed
      */
-    public function handle(): void
+    public function handle()
     {
         $name = $this->ask('What is your name?');
-
-        // ...
     }
-
-The `ask` method also accepts an optional second argument which specifies the
-default value that should be returned if no user input is provided:
-
-    $name = $this->ask('What is your name?', 'Taylor');
 
 The `secret` method is similar to `ask`, but the user's input will not be
 visible to them as they type in the console. This method is useful when asking
@@ -692,7 +563,7 @@ for sensitive information such as passwords:
 
 <a name="asking-for-confirmation"></a>
 
-#### Asking for Confirmation
+#### Asking For Confirmation
 
 If you need to ask the user for a simple "yes or no" confirmation, you may use
 the `confirm` method. By default, this method will return `false`. However, if
@@ -700,14 +571,14 @@ the user enters `y` or `yes` in response to the prompt, the method will
 return `true`.
 
     if ($this->confirm('Do you wish to continue?')) {
-        // ...
+        //
     }
 
 If necessary, you may specify that the confirmation prompt should return `true`
 by default by passing `true` as the second argument to the `confirm` method:
 
     if ($this->confirm('Do you wish to continue?', true)) {
-        // ...
+        //
     }
 
 <a name="auto-completion"></a>
@@ -725,7 +596,7 @@ method. The closure will be called each time the user types an input character.
 The closure should accept a string parameter containing the user's input so far,
 and return an array of options for auto-completion:
 
-    $name = $this->anticipate('What is your address?', function (string $input) {
+    $name = $this->anticipate('What is your address?', function ($input) {
         // Return auto-completion options...
     });
 
@@ -768,8 +639,10 @@ will display in the console as green colored text:
 
     /**
      * Execute the console command.
+     *
+     * @return mixed
      */
-    public function handle(): void
+    public function handle()
     {
         // ...
 
@@ -820,7 +693,7 @@ iterable value:
 
     use App\Models\User;
 
-    $users = $this->withProgressBar(User::all(), function (User $user) {
+    $users = $this->withProgressBar(User::all(), function ($user) {
         $this->performTask($user);
     });
 
@@ -842,7 +715,7 @@ advance the progress bar after processing each item:
 
     $bar->finish();
 
-> [!NOTE]
+> **Note**
 > For more advanced options, check out
 > the [Symfony Progress Bar component documentation](https://symfony.com/doc/current/components/console/helpers/progressbar.html).
 
@@ -860,8 +733,10 @@ directories for Artisan commands:
 
     /**
      * Register the commands for the application.
+     *
+     * @return void
      */
-    protected function commands(): void
+    protected function commands()
     {
         $this->load(__DIR__.'/Commands');
         $this->load(__DIR__.'/../Domain/Orders/Commands');
@@ -873,8 +748,7 @@ If necessary, you may manually register commands by adding the command's class
 name to a `$commands` property within your `App\Console\Kernel` class. If this
 property is not already defined on your kernel, you should define it manually.
 When Artisan boots, all the commands listed in this property will be resolved by
-the [service container](container.md) and registered with
-Artisan:
+the [service container](container.md) and registered with Artisan:
 
     protected $commands = [
         Commands\SendEmails::class
@@ -893,12 +767,12 @@ The exit code will be returned:
 
     use Illuminate\Support\Facades\Artisan;
 
-    Route::post('/user/{user}/mail', function (string $user) {
+    Route::post('/user/{user}/mail', function ($user) {
         $exitCode = Artisan::call('mail:send', [
             'user' => $user, '--queue' => 'default'
         ]);
 
-        // ...
+        //
     });
 
 Alternatively, you may pass the entire Artisan command to the `call` method as a
@@ -939,17 +813,17 @@ pass `true` or `false` as the value of the option:
 
 Using the `queue` method on the `Artisan` facade, you may even queue Artisan
 commands so they are processed in the background by
-your [queue workers](queues.md). Before using this method, make
-sure you have configured your queue and are running a queue listener:
+your [queue workers](queues.md). Before using this method, make sure you have
+configured your queue and are running a queue listener:
 
     use Illuminate\Support\Facades\Artisan;
 
-    Route::post('/user/{user}/mail', function (string $user) {
+    Route::post('/user/{user}/mail', function ($user) {
         Artisan::queue('mail:send', [
             'user' => $user, '--queue' => 'default'
         ]);
 
-        // ...
+        //
     });
 
 Using the `onConnection` and `onQueue` methods, you may specify the connection
@@ -969,14 +843,16 @@ name and an array of command arguments / options:
 
     /**
      * Execute the console command.
+     *
+     * @return mixed
      */
-    public function handle(): void
+    public function handle()
     {
         $this->call('mail:send', [
             'user' => 1, '--queue' => 'default'
         ]);
 
-        // ...
+        //
     }
 
 If you would like to call another console command and suppress all of its
@@ -998,8 +874,10 @@ commands and execute code when they occur, you may use the `trap` method:
 
     /**
      * Execute the console command.
+     *
+     * @return mixed
      */
-    public function handle(): void
+    public function handle()
     {
         $this->trap(SIGTERM, fn () => $this->shouldKeepRunning = false);
 
@@ -1011,7 +889,7 @@ commands and execute code when they occur, you may use the `trap` method:
 To listen for multiple signals at once, you may provide an array of signals to
 the `trap` method:
 
-    $this->trap([SIGTERM, SIGQUIT], function (int $signal) {
+    $this->trap([SIGTERM, SIGQUIT], function ($signal) {
         $this->shouldKeepRunning = false;
 
         dump($signal); // SIGTERM / SIGQUIT

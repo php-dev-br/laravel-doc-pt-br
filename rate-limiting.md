@@ -14,7 +14,7 @@ Laravel includes a simple to use rate limiting abstraction which, in conjunction
 with your application's [cache](cache), provides an easy way to limit any action
 during a specified window of time.
 
-> [!NOTE]
+> **Note**
 > If you are interested in rate limiting incoming HTTP requests, please consult
 > the [rate limiter middleware documentation](routing#rate-limiting).
 
@@ -60,20 +60,6 @@ action being rate limited:
       return 'Too many messages sent!';
     }
 
-If necessary, you may provide a fourth argument to the `attempt` method, which
-is the "decay rate", or the number of seconds until the available attempts are
-reset. For example, we can modify the example above to allow five attempts every
-two minutes:
-
-    $executed = RateLimiter::attempt(
-        'send-message:'.$user->id,
-        $perTwoMinutes = 5,
-        function() {
-            // Send message...
-        },
-        $decayRate = 120,
-    );
-
 <a name="manually-incrementing-attempts"></a>
 
 ### Manually Incrementing Attempts
@@ -89,26 +75,17 @@ allowed attempts per minute:
         return 'Too many attempts!';
     }
 
-    RateLimiter::increment('send-message:'.$user->id);
-
-    // Send message...
-
 Alternatively, you may use the `remaining` method to retrieve the number of
 attempts remaining for a given key. If a given key has retries remaining, you
-may invoke the `increment` method to increment the number of total attempts:
+may invoke the `hit` method to increment the number of total attempts:
 
     use Illuminate\Support\Facades\RateLimiter;
 
     if (RateLimiter::remaining('send-message:'.$user->id, $perMinute = 5)) {
-        RateLimiter::increment('send-message:'.$user->id);
+        RateLimiter::hit('send-message:'.$user->id);
 
         // Send message...
     }
-
-If you would like to increment the value for a given rate limiter key by more
-than one, you may provide the desired amount to the `increment` method:
-
-    RateLimiter::increment('send-message:'.$user->id, amount: 5);
 
 <a name="determining-limiter-availability"></a>
 
@@ -125,10 +102,6 @@ number of seconds remaining until more attempts will be available:
         return 'You may try again in '.$seconds.' seconds.';
     }
 
-    RateLimiter::increment('send-message:'.$user->id);
-
-    // Send message...
-
 <a name="clearing-attempts"></a>
 
 ### Clearing Attempts
@@ -142,8 +115,11 @@ given message is read by the receiver:
 
     /**
      * Mark the message as read.
+     *
+     * @param  \App\Models\Message  $message
+     * @return \App\Models\Message
      */
-    public function read(Message $message): Message
+    public function read(Message $message)
     {
         $message->markAsRead();
 

@@ -1,24 +1,20 @@
 # Events
 
 - [Introduction](#introduction)
-- [Registering Events and Listeners](#registering-events-and-listeners)
-    - [Generating Events and Listeners](#generating-events-and-listeners)
+- [Registering Events & Listeners](#registering-events-and-listeners)
+    - [Generating Events & Listeners](#generating-events-and-listeners)
     - [Manually Registering Events](#manually-registering-events)
     - [Event Discovery](#event-discovery)
 - [Defining Events](#defining-events)
 - [Defining Listeners](#defining-listeners)
 - [Queued Event Listeners](#queued-event-listeners)
-    - [Manually Interacting With the Queue](#manually-interacting-with-the-queue)
-    - [Queued Event Listeners and Database Transactions](#queued-event-listeners-and-database-transactions)
+    - [Manually Interacting With The Queue](#manually-interacting-with-the-queue)
+    - [Queued Event Listeners & Database Transactions](#queued-event-listeners-and-database-transactions)
     - [Handling Failed Jobs](#handling-failed-jobs)
 - [Dispatching Events](#dispatching-events)
-    - [Dispatching Events After Database Transactions](#dispatching-events-after-database-transactions)
 - [Event Subscribers](#event-subscribers)
     - [Writing Event Subscribers](#writing-event-subscribers)
     - [Registering Event Subscribers](#registering-event-subscribers)
-- [Testing](#testing)
-    - [Faking a Subset of Events](#faking-a-subset-of-events)
-    - [Scoped Events Fakes](#scoped-event-fakes)
 
 <a name="introduction"></a>
 
@@ -40,7 +36,7 @@ which a listener can receive and use to dispatch a Slack notification.
 
 <a name="registering-events-and-listeners"></a>
 
-## Registering Events and Listeners
+## Registering Events & Listeners
 
 The `App\Providers\EventServiceProvider` included with your Laravel application
 provides a convenient place to register all of your application's event
@@ -54,7 +50,7 @@ application requires. For example, let's add an `OrderShipped` event:
     /**
      * The event listener mappings for the application.
      *
-     * @var array<class-string, array<int, class-string>>
+     * @var array
      */
     protected $listen = [
         OrderShipped::class => [
@@ -62,13 +58,13 @@ application requires. For example, let's add an `OrderShipped` event:
         ],
     ];
 
-> [!NOTE]
+> **Note**
 > The `event:list` command may be used to display a list of all events and
 > listeners registered by your application.
 
 <a name="generating-events-and-listeners"></a>
 
-### Generating Events and Listeners
+### Generating Events & Listeners
 
 Of course, manually creating the files for each event and listener is
 cumbersome. Instead, add listeners and events to your `EventServiceProvider` and
@@ -103,16 +99,18 @@ manually in the `boot` method of your `EventServiceProvider`:
 
     /**
      * Register any other events for your application.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Event::listen(
             PodcastProcessed::class,
-            SendPodcastNotification::class,
+            [SendPodcastNotification::class, 'handle']
         );
 
         Event::listen(function (PodcastProcessed $event) {
-            // ...
+            //
         });
     }
 
@@ -130,11 +128,13 @@ Laravel to execute the listener using the [queue](queues.md):
 
     /**
      * Register any other events for your application.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Event::listen(queueable(function (PodcastProcessed $event) {
-            // ...
+            //
         }));
     }
 
@@ -142,7 +142,7 @@ Like queued jobs, you may use the `onConnection`, `onQueue`, and `delay` methods
 to customize the execution of the queued listener:
 
     Event::listen(queueable(function (PodcastProcessed $event) {
-        // ...
+        //
     })->onConnection('redis')->onQueue('podcasts')->delay(now()->addSeconds(10)));
 
 If you would like to handle anonymous queued listener failures, you may provide
@@ -156,7 +156,7 @@ the listener's failure:
     use Throwable;
 
     Event::listen(queueable(function (PodcastProcessed $event) {
-        // ...
+        //
     })->catch(function (PodcastProcessed $event, Throwable $e) {
         // The queued listener failed...
     }));
@@ -170,8 +170,8 @@ you to catch multiple events on the same listener. Wildcard listeners receive
 the event name as their first argument and the entire event data array as their
 second argument:
 
-    Event::listen('event.*', function (string $eventName, array $data) {
-        // ...
+    Event::listen('event.*', function ($eventName, array $data) {
+        //
     });
 
 <a name="event-discovery"></a>
@@ -196,10 +196,13 @@ listeners for the event that is type-hinted in the method's signature:
     {
         /**
          * Handle the given event.
+         *
+         * @param  \App\Events\PodcastProcessed  $event
+         * @return void
          */
-        public function handle(PodcastProcessed $event): void
+        public function handle(PodcastProcessed $event)
         {
-            // ...
+            //
         }
     }
 
@@ -208,8 +211,10 @@ the `shouldDiscoverEvents` method of your application's `EventServiceProvider`:
 
     /**
      * Determine if events and listeners should be automatically discovered.
+     *
+     * @return bool
      */
-    public function shouldDiscoverEvents(): bool
+    public function shouldDiscoverEvents()
     {
         return true;
     }
@@ -221,9 +226,9 @@ may override the `discoverEventsWithin` method in your `EventServiceProvider`:
     /**
      * Get the listener directories that should be used to discover events.
      *
-     * @return array<int, string>
+     * @return array
      */
-    protected function discoverEventsWithin(): array
+    protected function discoverEventsWithin()
     {
         return [
             $this->app->path('Listeners'),
@@ -263,11 +268,22 @@ event receives an [Eloquent ORM](eloquent.md) object:
         use Dispatchable, InteractsWithSockets, SerializesModels;
 
         /**
-         * Create a new event instance.
+         * The order instance.
+         *
+         * @var \App\Models\Order
          */
-        public function __construct(
-            public Order $order,
-        ) {}
+        public $order;
+
+        /**
+         * Create a new event instance.
+         *
+         * @param  \App\Models\Order  $order
+         * @return void
+         */
+        public function __construct(Order $order)
+        {
+            $this->order = $order;
+        }
     }
 
 As you can see, this event class contains no logic. It is a container for
@@ -296,26 +312,31 @@ method, you may perform any actions necessary to respond to the event:
     {
         /**
          * Create the event listener.
+         *
+         * @return void
          */
         public function __construct()
         {
-            // ...
+            //
         }
 
         /**
          * Handle the event.
+         *
+         * @param  \App\Events\OrderShipped  $event
+         * @return void
          */
-        public function handle(OrderShipped $event): void
+        public function handle(OrderShipped $event)
         {
             // Access the order using $event->order...
         }
     }
 
-> [!NOTE]
+> **Note**
 > Your event listeners may also type-hint any dependencies they need on their
 > constructors. All event listeners are resolved via the
-> Laravel [service container](container.md), so dependencies will
-> be injected automatically.
+> Laravel [service container](container.md), so dependencies will be injected
+> automatically.
 
 <a name="stopping-the-propagation-of-an-event"></a>
 
@@ -330,8 +351,8 @@ You may do so by returning `false` from your listener's `handle` method.
 
 Queueing listeners can be beneficial if your listener is going to perform a slow
 task such as sending an email or making an HTTP request. Before using queued
-listeners, make sure to [configure your queue](queues.md) and
-start a queue worker on your server or local development environment.
+listeners, make sure to [configure your queue](queues.md) and start a queue
+worker on your server or local development environment.
 
 To specify that a listener should be queued, add the `ShouldQueue` interface to
 the listener class. Listeners generated by the `event:generate`
@@ -347,18 +368,18 @@ the current namespace so you can use it immediately:
 
     class SendShipmentNotification implements ShouldQueue
     {
-        // ...
+        //
     }
 
 That's it! Now, when an event handled by this listener is dispatched, the
 listener will automatically be queued by the event dispatcher using
-Laravel's [queue system](queues.md). If no exceptions are thrown
-when the listener is executed by the queue, the queued job will automatically be
-deleted after it has finished processing.
+Laravel's [queue system](queues.md). If no exceptions are thrown when the
+listener is executed by the queue, the queued job will automatically be deleted
+after it has finished processing.
 
 <a name="customizing-the-queue-connection-queue-name"></a>
 
-#### Customizing The Queue Connection, Name, & Delay
+#### Customizing The Queue Connection & Queue Name
 
 If you would like to customize the queue connection, queue name, or queue delay
 time of an event listener, you may define the `$connection`, `$queue`,
@@ -395,32 +416,27 @@ or `$delay` properties on your listener class:
         public $delay = 60;
     }
 
-If you would like to define the listener's queue connection, queue name, or
-delay at runtime, you may define `viaConnection`, `viaQueue`, or `withDelay`
-methods on the listener:
+If you would like to define the listener's queue connection or queue name at
+runtime, you may define `viaConnection` or `viaQueue` methods on the listener:
 
     /**
      * Get the name of the listener's queue connection.
+     *
+     * @return string
      */
-    public function viaConnection(): string
+    public function viaConnection()
     {
         return 'sqs';
     }
 
     /**
      * Get the name of the listener's queue.
+     *
+     * @return string
      */
-    public function viaQueue(): string
+    public function viaQueue()
     {
         return 'listeners';
-    }
-
-    /**
-     * Get the number of seconds before the job should be processed.
-     */
-    public function withDelay(OrderShipped $event): int
-    {
-        return $event->highPriority ? 0 : 60;
     }
 
 <a name="conditionally-queueing-listeners"></a>
@@ -444,16 +460,22 @@ listener will not be executed:
     {
         /**
          * Reward a gift card to the customer.
+         *
+         * @param  \App\Events\OrderCreated  $event
+         * @return void
          */
-        public function handle(OrderCreated $event): void
+        public function handle(OrderCreated $event)
         {
-            // ...
+            //
         }
 
         /**
          * Determine whether the listener should be queued.
+         *
+         * @param  \App\Events\OrderCreated  $event
+         * @return bool
          */
-        public function shouldQueue(OrderCreated $event): bool
+        public function shouldQueue(OrderCreated $event)
         {
             return $event->order->subtotal >= 5000;
         }
@@ -461,7 +483,7 @@ listener will not be executed:
 
 <a name="manually-interacting-with-the-queue"></a>
 
-### Manually Interacting With the Queue
+### Manually Interacting With The Queue
 
 If you need to manually access the listener's underlying queue job's `delete`
 and `release` methods, you may do so using
@@ -482,8 +504,11 @@ default on generated listeners and provides access to these methods:
 
         /**
          * Handle the event.
+         *
+         * @param  \App\Events\OrderShipped  $event
+         * @return void
          */
-        public function handle(OrderShipped $event): void
+        public function handle(OrderShipped $event)
         {
             if (true) {
                 $this->release(30);
@@ -493,7 +518,7 @@ default on generated listeners and provides access to these methods:
 
 <a name="queued-event-listeners-and-database-transactions"></a>
 
-### Queued Event Listeners and Database Transactions
+### Queued Event Listeners & Database Transactions
 
 When queued listeners are dispatched within database transactions, they may be
 processed by the queue before the database transaction has committed. When this
@@ -505,24 +530,24 @@ when the job that dispatches the queued listener is processed.
 
 If your queue connection's `after_commit` configuration option is set
 to `false`, you may still indicate that a particular queued listener should be
-dispatched after all open database transactions have been committed by
-implementing the `ShouldHandleEventsAfterCommit` interface on the listener
-class:
+dispatched after all open database transactions have been committed by defining
+an `$afterCommit` property on the listener class:
 
     <?php
 
     namespace App\Listeners;
 
-    use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
     use Illuminate\Contracts\Queue\ShouldQueue;
     use Illuminate\Queue\InteractsWithQueue;
 
-    class SendShipmentNotification implements ShouldQueue, ShouldHandleEventsAfterCommit
+    class SendShipmentNotification implements ShouldQueue
     {
         use InteractsWithQueue;
+
+        public $afterCommit = true;
     }
 
-> [!NOTE]
+> **Note**
 > To learn more about working around these issues, please review the
 > documentation
 > regarding [queued jobs and database transactions](queues.md#jobs-and-database-transactions).
@@ -543,7 +568,6 @@ instance and the `Throwable` that caused the failure:
     use App\Events\OrderShipped;
     use Illuminate\Contracts\Queue\ShouldQueue;
     use Illuminate\Queue\InteractsWithQueue;
-    use Throwable;
 
     class SendShipmentNotification implements ShouldQueue
     {
@@ -551,18 +575,25 @@ instance and the `Throwable` that caused the failure:
 
         /**
          * Handle the event.
+         *
+         * @param  \App\Events\OrderShipped  $event
+         * @return void
          */
-        public function handle(OrderShipped $event): void
+        public function handle(OrderShipped $event)
         {
-            // ...
+            //
         }
 
         /**
          * Handle a job failure.
+         *
+         * @param  \App\Events\OrderShipped  $event
+         * @param  \Throwable  $exception
+         * @return void
          */
-        public function failed(OrderShipped $event, Throwable $exception): void
+        public function failed(OrderShipped $event, $exception)
         {
-            // ...
+            //
         }
     }
 
@@ -604,12 +635,12 @@ given time frame. To define the time at which a listener should no longer be
 attempted, add a `retryUntil` method to your listener class. This method should
 return a `DateTime` instance:
 
-    use DateTime;
-
     /**
      * Determine the time at which the listener should timeout.
+     *
+     * @return \DateTime
      */
-    public function retryUntil(): DateTime
+    public function retryUntil()
     {
         return now()->addMinutes(5);
     }
@@ -630,23 +661,23 @@ the `dispatch` method will be passed to the event's constructor:
     use App\Events\OrderShipped;
     use App\Http\Controllers\Controller;
     use App\Models\Order;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class OrderShipmentController extends Controller
     {
         /**
          * Ship the given order.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $order = Order::findOrFail($request->order_id);
 
             // Order shipment logic...
 
             OrderShipped::dispatch($order);
-
-            return redirect('/orders');
         }
     }
 
@@ -657,45 +688,10 @@ the `dispatchIf` and `dispatchUnless` methods:
 
     OrderShipped::dispatchUnless($condition, $order);
 
-> [!NOTE]
+> **Note**
 > When testing, it can be helpful to assert that certain events were dispatched
 > without actually triggering their listeners.
-> Laravel's [built-in testing helpers](#testing) make it a cinch.
-
-<a name="dispatching-events-after-database-transactions"></a>
-
-### Dispatching Events After Database Transactions
-
-Sometimes, you may want to instruct Laravel to only dispatch an event after the
-active database transaction has committed. To do so, you may implement
-the `ShouldDispatchAfterCommit` interface on the event class.
-
-This interface instructs Laravel to not dispatch the event until the current
-database transaction is committed. If the transaction fails, the event will be
-discarded. If no database transaction is in progress when the event is
-dispatched, the event will be dispatched immediately:
-
-    <?php
-
-    namespace App\Events;
-
-    use App\Models\Order;
-    use Illuminate\Broadcasting\InteractsWithSockets;
-    use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
-    use Illuminate\Foundation\Events\Dispatchable;
-    use Illuminate\Queue\SerializesModels;
-
-    class OrderShipped implements ShouldDispatchAfterCommit
-    {
-        use Dispatchable, InteractsWithSockets, SerializesModels;
-
-        /**
-         * Create a new event instance.
-         */
-        public function __construct(
-            public Order $order,
-        ) {}
-    }
+> Laravel's [built-in testing helpers](mocking.md#event-fake) makes it a cinch.
 
 <a name="event-subscribers"></a>
 
@@ -717,24 +713,26 @@ the given dispatcher to register event listeners:
 
     use Illuminate\Auth\Events\Login;
     use Illuminate\Auth\Events\Logout;
-    use Illuminate\Events\Dispatcher;
 
     class UserEventSubscriber
     {
         /**
          * Handle user login events.
          */
-        public function handleUserLogin(Login $event): void {}
+        public function handleUserLogin($event) {}
 
         /**
          * Handle user logout events.
          */
-        public function handleUserLogout(Logout $event): void {}
+        public function handleUserLogout($event) {}
 
         /**
          * Register the listeners for the subscriber.
+         *
+         * @param  \Illuminate\Events\Dispatcher  $events
+         * @return void
          */
-        public function subscribe(Dispatcher $events): void
+        public function subscribe($events)
         {
             $events->listen(
                 Login::class,
@@ -759,26 +757,26 @@ subscriber's class name when registering the event listeners:
 
     use Illuminate\Auth\Events\Login;
     use Illuminate\Auth\Events\Logout;
-    use Illuminate\Events\Dispatcher;
 
     class UserEventSubscriber
     {
         /**
          * Handle user login events.
          */
-        public function handleUserLogin(Login $event): void {}
+        public function handleUserLogin($event) {}
 
         /**
          * Handle user logout events.
          */
-        public function handleUserLogout(Logout $event): void {}
+        public function handleUserLogout($event) {}
 
         /**
          * Register the listeners for the subscriber.
          *
-         * @return array<string, string>
+         * @param  \Illuminate\Events\Dispatcher  $events
+         * @return array
          */
-        public function subscribe(Dispatcher $events): array
+        public function subscribe($events)
         {
             return [
                 Login::class => 'handleUserLogin',
@@ -811,7 +809,7 @@ the list:
          * @var array
          */
         protected $listen = [
-            // ...
+            //
         ];
 
         /**
@@ -822,144 +820,4 @@ the list:
         protected $subscribe = [
             UserEventSubscriber::class,
         ];
-    }
-
-<a name="testing"></a>
-
-## Testing
-
-When testing code that dispatches events, you may wish to instruct Laravel to
-not actually execute the event's listeners, since the listener's code can be
-tested directly and separately of the code that dispatches the corresponding
-event. Of course, to test the listener itself, you may instantiate a listener
-instance and invoke the `handle` method directly in your test.
-
-Using the `Event` facade's `fake` method, you may prevent listeners from
-executing, execute the code under test, and then assert which events were
-dispatched by your application using
-the `assertDispatched`, `assertNotDispatched`, and `assertNothingDispatched`
-methods:
-
-    <?php
-
-    namespace Tests\Feature;
-
-    use App\Events\OrderFailedToShip;
-    use App\Events\OrderShipped;
-    use Illuminate\Support\Facades\Event;
-    use Tests\TestCase;
-
-    class ExampleTest extends TestCase
-    {
-        /**
-         * Test order shipping.
-         */
-        public function test_orders_can_be_shipped(): void
-        {
-            Event::fake();
-
-            // Perform order shipping...
-
-            // Assert that an event was dispatched...
-            Event::assertDispatched(OrderShipped::class);
-
-            // Assert an event was dispatched twice...
-            Event::assertDispatched(OrderShipped::class, 2);
-
-            // Assert an event was not dispatched...
-            Event::assertNotDispatched(OrderFailedToShip::class);
-
-            // Assert that no events were dispatched...
-            Event::assertNothingDispatched();
-        }
-    }
-
-You may pass a closure to the `assertDispatched` or `assertNotDispatched`
-methods in order to assert that an event was dispatched that passes a given "
-truth test". If at least one event was dispatched that passes the given truth
-test then the assertion will be successful:
-
-    Event::assertDispatched(function (OrderShipped $event) use ($order) {
-        return $event->order->id === $order->id;
-    });
-
-If you would simply like to assert that an event listener is listening to a
-given event, you may use the `assertListening` method:
-
-    Event::assertListening(
-        OrderShipped::class,
-        SendShipmentNotification::class
-    );
-
-> [!WARNING]
-> After calling `Event::fake()`, no event listeners will be executed. So, if
-> your tests use model factories that rely on events, such as creating a UUID
-> during a model's `creating` event, you should call `Event::fake()` **after**
-> using your factories.
-
-<a name="faking-a-subset-of-events"></a>
-
-### Faking a Subset of Events
-
-If you only want to fake event listeners for a specific set of events, you may
-pass them to the `fake` or `fakeFor` method:
-
-    /**
-     * Test order process.
-     */
-    public function test_orders_can_be_processed(): void
-    {
-        Event::fake([
-            OrderCreated::class,
-        ]);
-
-        $order = Order::factory()->create();
-
-        Event::assertDispatched(OrderCreated::class);
-
-        // Other events are dispatched as normal...
-        $order->update([...]);
-    }
-
-You may fake all events except for a set of specified events using the `except`
-method:
-
-    Event::fake()->except([
-        OrderCreated::class,
-    ]);
-
-<a name="scoped-event-fakes"></a>
-
-### Scoped Event Fakes
-
-If you only want to fake event listeners for a portion of your test, you may use
-the `fakeFor` method:
-
-    <?php
-
-    namespace Tests\Feature;
-
-    use App\Events\OrderCreated;
-    use App\Models\Order;
-    use Illuminate\Support\Facades\Event;
-    use Tests\TestCase;
-
-    class ExampleTest extends TestCase
-    {
-        /**
-         * Test order process.
-         */
-        public function test_orders_can_be_processed(): void
-        {
-            $order = Event::fakeFor(function () {
-                $order = Order::factory()->create();
-
-                Event::assertDispatched(OrderCreated::class);
-
-                return $order;
-            });
-
-            // Events are dispatched as normal and observers will run ...
-            $order->update([...]);
-        }
     }

@@ -3,24 +3,23 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Server Prerequisites](#server-prerequisites)
-    - [FrankenPHP](#frankenphp)
     - [RoadRunner](#roadrunner)
     - [Swoole](#swoole)
 - [Serving Your Application](#serving-your-application)
-    - [Serving Your Application via HTTPS](#serving-your-application-via-https)
-    - [Serving Your Application via Nginx](#serving-your-application-via-nginx)
-    - [Watching for File Changes](#watching-for-file-changes)
-    - [Specifying the Worker Count](#specifying-the-worker-count)
-    - [Specifying the Max Request Count](#specifying-the-max-request-count)
-    - [Reloading the Workers](#reloading-the-workers)
-    - [Stopping the Server](#stopping-the-server)
-- [Dependency Injection and Octane](#dependency-injection-and-octane)
+    - [Serving Your Application Via HTTPS](#serving-your-application-via-https)
+    - [Serving Your Application Via Nginx](#serving-your-application-via-nginx)
+    - [Watching For File Changes](#watching-for-file-changes)
+    - [Specifying The Worker Count](#specifying-the-worker-count)
+    - [Specifying The Max Request Count](#specifying-the-max-request-count)
+    - [Reloading The Workers](#reloading-the-workers)
+    - [Stopping The Server](#stopping-the-server)
+- [Dependency Injection & Octane](#dependency-injection-and-octane)
     - [Container Injection](#container-injection)
     - [Request Injection](#request-injection)
     - [Configuration Repository Injection](#configuration-repository-injection)
 - [Managing Memory Leaks](#managing-memory-leaks)
 - [Concurrent Tasks](#concurrent-tasks)
-- [Ticks and Intervals](#ticks-and-intervals)
+- [Ticks & Intervals](#ticks-and-intervals)
 - [The Octane Cache](#the-octane-cache)
 - [Tables](#tables)
 
@@ -31,7 +30,7 @@
 [Laravel Octane](https://github.com/laravel/octane) supercharges your
 application's performance by serving your application using high-powered
 application servers,
-including [FrankenPHP](https://frankenphp.dev/), [Open Swoole](https://openswoole.com/), [Swoole](https://github.com/swoole/swoole-src),
+including [Open Swoole](https://swoole.co.uk), [Swoole](https://github.com/swoole/swoole-src),
 and [RoadRunner](https://roadrunner.dev). Octane boots your application once,
 keeps it in memory, and then feeds it requests at supersonic speeds.
 
@@ -56,122 +55,8 @@ php artisan octane:install
 
 ## Server Prerequisites
 
-> [!WARNING]
-> Laravel Octane requires [PHP 8.1+](https://php.net/releases/).
-
-<a name="frankenphp"></a>
-
-### FrankenPHP
-
-> [!WARNING]
-> FrankenPHP's Octane integration is in beta and should be used with caution in
-> production.
-
-[FrankenPHP](https://frankenphp.dev) is a PHP application server, written in Go,
-that supports modern web features like early hints and Zstandard compression.
-When you install Octane and choose FrankenPHP as your server, Octane will
-automatically download and install the FrankenPHP binary for you.
-
-<a name="frankenphp-via-laravel-sail"></a>
-
-#### FrankenPHP via Laravel Sail
-
-If you plan to develop your application
-using [Laravel Sail](sail.md), you should run the following
-commands to install Octane and FrankenPHP:
-
-```shell
-./vendor/bin/sail up
-
-./vendor/bin/sail composer require laravel/octane
-```
-
-Next, you should use the `octane:install` Artisan command to install the
-FrankenPHP binary:
-
-```shell
-./vendor/bin/sail artisan octane:install --server=frankenphp
-```
-
-Finally, add a `SUPERVISOR_PHP_COMMAND` environment variable to
-the `laravel.test` service definition in your application's `docker-compose.yml`
-file. This environment variable will contain the command that Sail will use to
-serve your application using Octane instead of the PHP development server:
-
-```yaml
-services:
-  laravel.test:
-    environment:
-      SUPERVISOR_PHP_COMMAND: "/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=80" # [tl! add]
-      XDG_CONFIG_HOME:  /var/www/html/config # [tl! add]
-      XDG_DATA_HOME:  /var/www/html/data # [tl! add]
-```
-
-To enable HTTPS, HTTP/2, and HTTP/3, apply these modifications instead:
-
-```yaml
-services:
-  laravel.test:
-    ports:
-        - '${APP_PORT:-80}:80'
-        - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
-        - '443:443' # [tl! add]
-        - '443:443/udp' # [tl! add]
-    environment:
-      SUPERVISOR_PHP_COMMAND: "/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan octane:start --host=localhost --port=443 --admin-port=2019 --https" # [tl! add]
-      XDG_CONFIG_HOME:  /var/www/html/config # [tl! add]
-      XDG_DATA_HOME:  /var/www/html/data # [tl! add]
-```
-
-Typically, you should access your FrankenPHP Sail application
-via `https://localhost`, as using `https://127.0.0.1` requires additional
-configuration and
-is [discouraged](https://frankenphp.dev/docs/known-issues/#using-https127001-with-docker).
-
-<a name="frankenphp-via-docker"></a>
-
-#### FrankenPHP via Docker
-
-Using FrankenPHP's official Docker images can offer improved performance and the
-use additional extensions not included with static installations of FrankenPHP.
-In addition, the official Docker images provide support for running FrankenPHP
-on platforms it doesn't natively support, such as Windows. FrankenPHP's official
-Docker images are suitable for both local development and production usage.
-
-You may use the following Dockerfile as a starting point for containerizing your
-FrankenPHP powered Laravel application:
-
-```dockerfile
-FROM dunglas/frankenphp
-
-RUN install-php-extensions \
-    pcntl
-    # Add other PHP extensions here...
-
-COPY . /app
-
-ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
-```
-
-Then, during development, you may utilize the following Docker Compose file to
-run your application:
-
-```yaml
-# compose.yaml
-services:
-  frankenphp:
-    build:
-      context: .
-    entrypoint: php artisan octane:frankenphp --max-requests=1
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-```
-
-You may
-consult [the official FrankenPHP documentation](https://frankenphp.dev/docs/docker/)
-for more information on running FrankenPHP with Docker.
+> **Warning**
+> Laravel Octane requires [PHP 8.0+](https://php.net/releases/).
 
 <a name="roadrunner"></a>
 
@@ -183,16 +68,15 @@ Octane will offer to download and install the RoadRunner binary for you.
 
 <a name="roadrunner-via-laravel-sail"></a>
 
-#### RoadRunner via Laravel Sail
+#### RoadRunner Via Laravel Sail
 
-If you plan to develop your application
-using [Laravel Sail](sail.md), you should run the following
-commands to install Octane and RoadRunner:
+If you plan to develop your application using [Laravel Sail](sail.md), you
+should run the following commands to install Octane and RoadRunner:
 
 ```shell
 ./vendor/bin/sail up
 
-./vendor/bin/sail composer require laravel/octane spiral/roadrunner-cli spiral/roadrunner-http
+./vendor/bin/sail composer require laravel/octane spiral/roadrunner
 ```
 
 Next, you should start a Sail shell and use the `rr` executable to retrieve the
@@ -205,16 +89,20 @@ latest Linux based build of the RoadRunner binary:
 ./vendor/bin/rr get-binary
 ```
 
-Then, add a `SUPERVISOR_PHP_COMMAND` environment variable to the `laravel.test`
-service definition in your application's `docker-compose.yml` file. This
-environment variable will contain the command that Sail will use to serve your
+After installing the RoadRunner binary, you may exit your Sail shell session.
+You will now need to adjust the `supervisor.conf` file used by Sail to keep your
+application running. To get started, execute the `sail:publish` Artisan command:
+
+```shell
+./vendor/bin/sail artisan sail:publish
+```
+
+Next, update the `command` directive of your
+application's `docker/supervisord.conf` file so that Sail serves your
 application using Octane instead of the PHP development server:
 
-```yaml
-services:
-  laravel.test:
-    environment:
-      SUPERVISOR_PHP_COMMAND: "/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan octane:start --server=roadrunner --host=0.0.0.0 --rpc-port=6001 --port=80" # [tl! add]
+```ini
+command=/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan octane:start --server=roadrunner --host=0.0.0.0 --rpc-port=6001 --port=80
 ```
 
 Finally, ensure the `rr` binary is executable and build your Sail images:
@@ -237,46 +125,31 @@ done via PECL:
 pecl install swoole
 ```
 
-<a name="openswoole"></a>
-
-#### Open Swoole
-
-If you want to use the Open Swoole application server to serve your Laravel
-Octane application, you must install the Open Swoole PHP extension. Typically,
-this can be done via PECL:
-
-```shell
-pecl install openswoole
-```
-
-Using Laravel Octane with Open Swoole grants the same functionality provided by
-Swoole, such as concurrent tasks, ticks, and intervals.
-
 <a name="swoole-via-laravel-sail"></a>
 
-#### Swoole via Laravel Sail
+#### Swoole Via Laravel Sail
 
-> [!WARNING]
+> **Warning**
 > Before serving an Octane application via Sail, ensure you have the latest
 > version of Laravel Sail and execute `./vendor/bin/sail build --no-cache` within
 > your application's root directory.
 
 Alternatively, you may develop your Swoole based Octane application
-using [Laravel Sail](sail.md), the official Docker based
-development environment for Laravel. Laravel Sail includes the Swoole extension
-by default. However, you will still need to adjust the `docker-compose.yml` file
-used by Sail.
+using [Laravel Sail](sail.md), the official Docker based development environment
+for Laravel. Laravel Sail includes the Swoole extension by default. However, you
+will still need to adjust the `supervisor.conf` file used by Sail to keep your
+application running. To get started, execute the `sail:publish` Artisan command:
 
-To get started, add a `SUPERVISOR_PHP_COMMAND` environment variable to
-the `laravel.test` service definition in your application's `docker-compose.yml`
-file. This environment variable will contain the command that Sail will use to
-serve your application using Octane instead of the PHP development server:
+```shell
+./vendor/bin/sail artisan sail:publish
+```
 
-```yaml
-services:
-  laravel.test:
-    environment:
-      SUPERVISOR_PHP_COMMAND: "/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan octane:start --server=swoole --host=0.0.0.0 --port=80" # [tl! add]
+Next, update the `command` directive of your
+application's `docker/supervisord.conf` file so that Sail serves your
+application using Octane instead of the PHP development server:
+
+```ini
+command=/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan octane:start --server=swoole --host=0.0.0.0 --port=80
 ```
 
 Finally, build your Sail images:
@@ -319,7 +192,7 @@ application in a web browser via `http://localhost:8000`.
 
 <a name="serving-your-application-via-https"></a>
 
-### Serving Your Application via HTTPS
+### Serving Your Application Via HTTPS
 
 By default, applications running via Octane generate links prefixed
 with `http://`. The `OCTANE_HTTPS` environment variable, used within your
@@ -334,16 +207,16 @@ with `https://`:
 
 <a name="serving-your-application-via-nginx"></a>
 
-### Serving Your Application via Nginx
+### Serving Your Application Via Nginx
 
-> [!NOTE]
+> **Note**
 > If you aren't quite ready to manage your own server configuration or aren't
 > comfortable configuring all of the various services needed to run a robust
 > Laravel Octane application, check
 > out [Laravel Forge](https://forge.laravel.com).
 
 In production environments, you should serve your Octane application behind a
-traditional web server such as Nginx or Apache. Doing so will allow the web
+traditional web server such as a Nginx or Apache. Doing so will allow the web
 server to serve your static assets such as images and stylesheets, as well as
 manage your SSL certificate termination.
 
@@ -406,7 +279,7 @@ server {
 
 <a name="watching-for-file-changes"></a>
 
-### Watching for File Changes
+### Watching For File Changes
 
 Since your application is loaded in memory once when the Octane server starts,
 any changes to your application's files will not be reflected when you refresh
@@ -434,7 +307,7 @@ configuration file.
 
 <a name="specifying-the-worker-count"></a>
 
-### Specifying the Worker Count
+### Specifying The Worker Count
 
 By default, Octane will start an application request worker for each CPU core
 provided by your machine. These workers will then be used to serve incoming HTTP
@@ -455,7 +328,7 @@ php artisan octane:start --workers=4 --task-workers=6
 
 <a name="specifying-the-max-request-count"></a>
 
-### Specifying the Max Request Count
+### Specifying The Max Request Count
 
 To help prevent stray memory leaks, Octane gracefully restarts any worker once
 it has handled 500 requests. To adjust this number, you may use
@@ -467,7 +340,7 @@ php artisan octane:start --max-requests=250
 
 <a name="reloading-the-workers"></a>
 
-### Reloading the Workers
+### Reloading The Workers
 
 You may gracefully restart the Octane server's application workers using
 the `octane:reload` command. Typically, this should be done after deployment so
@@ -480,7 +353,7 @@ php artisan octane:reload
 
 <a name="stopping-the-server"></a>
 
-### Stopping the Server
+### Stopping The Server
 
 You may stop the Octane server using the `octane:stop` Artisan command:
 
@@ -490,7 +363,7 @@ php artisan octane:stop
 
 <a name="checking-the-server-status"></a>
 
-#### Checking the Server Status
+#### Checking The Server Status
 
 You may check the current status of the Octane server using the `octane:status`
 Artisan command:
@@ -501,7 +374,7 @@ php artisan octane:status
 
 <a name="dependency-injection-and-octane"></a>
 
-## Dependency Injection and Octane
+## Dependency Injection & Octane
 
 Since Octane boots your application once and keeps it in memory while serving
 requests, there are a few caveats you should consider while building your
@@ -532,14 +405,15 @@ object that is bound as a singleton:
 
 ```php
 use App\Service;
-use Illuminate\Contracts\Foundation\Application;
 
 /**
  * Register any application services.
+ *
+ * @return void
  */
-public function register(): void
+public function register()
 {
-    $this->app->singleton(Service::class, function (Application $app) {
+    $this->app->singleton(Service::class, function ($app) {
         return new Service($app);
     });
 }
@@ -559,9 +433,8 @@ resolves the current container instance:
 ```php
 use App\Service;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 
-$this->app->bind(Service::class, function (Application $app) {
+$this->app->bind(Service::class, function ($app) {
     return new Service($app);
 });
 
@@ -584,14 +457,15 @@ bound as a singleton:
 
 ```php
 use App\Service;
-use Illuminate\Contracts\Foundation\Application;
 
 /**
  * Register any application services.
+ *
+ * @return void
  */
-public function register(): void
+public function register()
 {
-    $this->app->singleton(Service::class, function (Application $app) {
+    $this->app->singleton(Service::class, function ($app) {
         return new Service($app['request']);
     });
 }
@@ -611,13 +485,12 @@ object's methods at runtime:
 
 ```php
 use App\Service;
-use Illuminate\Contracts\Foundation\Application;
 
-$this->app->bind(Service::class, function (Application $app) {
+$this->app->bind(Service::class, function ($app) {
     return new Service($app['request']);
 });
 
-$this->app->singleton(Service::class, function (Application $app) {
+$this->app->singleton(Service::class, function ($app) {
     return new Service(fn () => $app['request']);
 });
 
@@ -629,7 +502,7 @@ $service->method($request->input('name'));
 The global `request` helper will always return the request the application is
 currently handling and is therefore safe to use within your application.
 
-> [!WARNING]
+> **Warning**
 > It is acceptable to type-hint the `Illuminate\Http\Request` instance on your
 > controller methods and route closures.
 
@@ -644,14 +517,15 @@ singleton:
 
 ```php
 use App\Service;
-use Illuminate\Contracts\Foundation\Application;
 
 /**
  * Register any application services.
+ *
+ * @return void
  */
-public function register(): void
+public function register()
 {
-    $this->app->singleton(Service::class, function (Application $app) {
+    $this->app->singleton(Service::class, function ($app) {
         return new Service($app->make('config'));
     });
 }
@@ -667,9 +541,8 @@ or you could inject a configuration repository resolver closure to the class:
 ```php
 use App\Service;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 
-$this->app->bind(Service::class, function (Application $app) {
+$this->app->bind(Service::class, function ($app) {
     return new Service($app->make('config'));
 });
 
@@ -697,14 +570,15 @@ use Illuminate\Support\Str;
 
 /**
  * Handle an incoming request.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return void
  */
-public function index(Request $request): array
+public function index(Request $request)
 {
     Service::$data[] = Str::random(10);
 
-    return [
-        // ...
-    ];
+    // ...
 }
 ```
 
@@ -717,7 +591,7 @@ introducing new memory leaks into your application.
 
 ## Concurrent Tasks
 
-> [!WARNING]
+> **Warning**
 > This feature requires [Swoole](#swoole).
 
 When using Swoole, you may execute operations concurrently via light-weight
@@ -750,9 +624,9 @@ tasks due to limitations imposed by Swoole's task system.
 
 <a name="ticks-and-intervals"></a>
 
-## Ticks and Intervals
+## Ticks & Intervals
 
-> [!WARNING]
+> **Warning**
 > This feature requires [Swoole](#swoole).
 
 When using Swoole, you may register "tick" operations that will be executed
@@ -784,7 +658,7 @@ Octane::tick('simple-ticker', fn () => ray('Ticking...'))
 
 ## The Octane Cache
 
-> [!WARNING]
+> **Warning**
 > This feature requires [Swoole](#swoole).
 
 When using Swoole, you may leverage the Octane cache driver, which provides read
@@ -801,7 +675,7 @@ cached data will be flushed when the server is restarted:
 Cache::store('octane')->put('framework', 'Laravel', 30);
 ```
 
-> [!NOTE]
+> **Note**
 > The maximum number of entries allowed in the Octane cache may be defined in
 > your application's `octane` configuration file.
 
@@ -827,7 +701,7 @@ Cache::store('octane')->interval('random', function () {
 
 ## Tables
 
-> [!WARNING]
+> **Warning**
 > This feature requires [Swoole](#swoole).
 
 When using Swoole, you may define and interact with your own
@@ -864,5 +738,5 @@ Octane::table('example')->set('uuid', [
 return Octane::table('example')->get('uuid');
 ```
 
-> [!WARNING]
+> **Warning**
 > The column types supported by Swoole tables are: `string`, `int`, and `float`.

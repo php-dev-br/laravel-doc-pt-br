@@ -1,7 +1,7 @@
 # Laravel Sanctum
 
 - [Introduction](#introduction)
-    - [How it Works](#how-it-works)
+    - [How It Works](#how-it-works)
 - [Installation](#installation)
 - [Configuration](#configuration)
     - [Overriding Default Models](#overriding-default-models)
@@ -35,7 +35,7 @@ perform.
 
 <a name="how-it-works"></a>
 
-### How it Works
+### How It Works
 
 Laravel Sanctum exists to solve two separate problems. Let's discuss each before
 digging deeper into the library.
@@ -78,7 +78,7 @@ HTTP request, it will first check for an authentication cookie and, if none is
 present, Sanctum will then examine the `Authorization` header for a valid API
 token.
 
-> [!NOTE]
+> **Note**
 > It is perfectly fine to use Sanctum only for API token authentication or only
 > for SPA authentication. Just because you use Sanctum does not mean you are
 > required to use both features it offers.
@@ -87,7 +87,7 @@ token.
 
 ## Installation
 
-> [!NOTE]
+> **Note**
 > The most recent versions of Laravel already include Laravel Sanctum. However,
 > if your application's `composer.json` file does not include `laravel/sanctum`,
 > you may follow the installation instructions below.
@@ -119,7 +119,7 @@ application's `app/Http/Kernel.php` file:
 
     'api' => [
         \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+        'throttle:api',
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
     ],
 
@@ -161,8 +161,10 @@ service providers:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }
@@ -171,7 +173,7 @@ service providers:
 
 ## API Token Authentication
 
-> [!NOTE]
+> **Note**
 > You should not use API tokens to authenticate your own first-party SPA.
 > Instead, use Sanctum's
 > built-in [SPA authentication features](#spa-authentication).
@@ -214,7 +216,7 @@ You may access all of the user's tokens using the `tokens` Eloquent relationship
 provided by the `HasApiTokens` trait:
 
     foreach ($user->tokens as $token) {
-        // ...
+        //
     }
 
 <a name="token-abilities"></a>
@@ -231,7 +233,7 @@ When handling an incoming request authenticated by Sanctum, you may determine if
 the token has a given ability using the `tokenCan` method:
 
     if ($user->tokenCan('server:update')) {
-        // ...
+        //
     }
 
 <a name="token-ability-middleware"></a>
@@ -240,8 +242,8 @@ the token has a given ability using the `tokenCan` method:
 
 Sanctum also includes two middleware that may be used to verify that an incoming
 request is authenticated with a token that has been granted a given ability. To
-get started, add the following middleware to the `$middlewareAliases` property
-of your application's `app/Http/Kernel.php` file:
+get started, add the following middleware to the `$routeMiddleware` property of
+your application's `app/Http/Kernel.php` file:
 
     'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
     'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
@@ -270,10 +272,10 @@ built-in [SPA authentication](#spa-authentication).
 
 However, this does not necessarily mean that your application has to allow the
 user to perform the action. Typically, your
-application's [authorization policies](authorization.md#creating-policies)
-will determine if the token has been granted the permission to perform the
-abilities as well as check that the user instance itself should be allowed to
-perform the action.
+application's [authorization policies](authorization.md#creating-policies) will
+determine if the token has been granted the permission to perform the abilities
+as well as check that the user instance itself should be allowed to perform the
+action.
 
 For example, if we imagine an application that manages servers, this might mean
 checking that token is authorized to update servers **and** that the server
@@ -349,22 +351,12 @@ the number of minutes until an issued token will be considered expired:
 'expiration' => 525600,
 ```
 
-If you would like to specify the expiration time of each token independently,
-you may do so by providing the expiration time as the third argument to
-the `createToken` method:
-
-```php
-return $user->createToken(
-    'token-name', ['*'], now()->addWeek()
-)->plainTextToken;
-```
-
 If you have configured a token expiration time for your application, you may
-also wish to [schedule a task](scheduling.md) to prune your
-application's expired tokens. Thankfully, Sanctum includes
-a `sanctum:prune-expired` Artisan command that you may use to accomplish this.
-For example, you may configure a scheduled tasks to delete all expired token
-database records that have been expired for at least 24 hours:
+also wish to [schedule a task](scheduling.md) to prune your application's
+expired tokens. Thankfully, Sanctum includes a `sanctum:prune-expired` Artisan
+command that you may use to accomplish this. For example, you may configure a
+scheduled tasks to delete all expired token database records that have been
+expired for at least 24 hours:
 
 ```php
 $schedule->command('sanctum:prune-expired --hours=24')->daily();
@@ -385,11 +377,11 @@ to authentication provides the benefits of CSRF protection, session
 authentication, as well as protects against leakage of the authentication
 credentials via XSS.
 
-> [!WARNING]
+> **Warning**
 > In order to authenticate, your SPA and API must share the same top-level
 > domain. However, they may be placed on different subdomains. Additionally, you
-> should ensure that you send the `Accept: application/json` header and either
-> the `Referer` or `Origin` header with your request.
+> should ensure that you send the `Accept: application/json` header with your
+> request.
 
 
 <a name="spa-configuration"></a>
@@ -406,7 +398,7 @@ your `sanctum` configuration file. This configuration setting determines which
 domains will maintain "stateful" authentication using Laravel session cookies
 when making requests to your API.
 
-> [!WARNING]
+> **Warning**
 > If you are accessing your application via a URL that includes a
 > port (`127.0.0.1:8000`), you should ensure that you include the port number with
 > the domain.
@@ -423,13 +415,13 @@ to authenticate using API tokens:
 
     'api' => [
         \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+        'throttle:api',
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
     ],
 
 <a name="cors-and-cookies"></a>
 
-#### CORS and Cookies
+#### CORS & Cookies
 
 If you are having trouble authenticating with your application from a SPA that
 executes on a separate subdomain, you have likely misconfigured your CORS (
@@ -440,15 +432,14 @@ the `Access-Control-Allow-Credentials` header with a value of `True`. This may
 be accomplished by setting the `supports_credentials` option within your
 application's `config/cors.php` configuration file to `true`.
 
-In addition, you should enable the `withCredentials` and `withXSRFToken` options
-on your application's global `axios` instance. Typically, this should be
-performed in your `resources/js/bootstrap.js` file. If you are not using Axios
-to make HTTP requests from your frontend, you should perform the equivalent
-configuration on your own HTTP client:
+In addition, you should enable the `withCredentials` option on your
+application's global `axios` instance. Typically, this should be performed in
+your `resources/js/bootstrap.js` file. If you are not using Axios to make HTTP
+requests from your frontend, you should perform the equivalent configuration on
+your own HTTP client:
 
 ```js
 axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
 ```
 
 Finally, you should ensure your application's session cookie domain
@@ -490,9 +481,8 @@ set by this route.
 
 Once CSRF protection has been initialized, you should make a `POST` request to
 your Laravel application's `/login` route. This `/login` route may
-be [implemented manually](authentication.md#authenticating-users)
-or using a headless authentication package
-like [Laravel Fortify](fortify.md).
+be [implemented manually](authentication.md#authenticating-users) or using a
+headless authentication package like [Laravel Fortify](fortify.md).
 
 If the login request is successful, you will be authenticated and subsequent
 requests to your application's routes will automatically be authenticated via
@@ -506,7 +496,7 @@ Of course, if your user's session expires due to lack of activity, subsequent
 requests to the Laravel application may receive 401 or 419 HTTP error response.
 In this case, you should redirect the user to your SPA's login page.
 
-> [!WARNING]
+> **Warning**
 > You are free to write your own `/login` endpoint; however, you should ensure
 > that it authenticates the user using the
 > standard, [session based authentication services that Laravel provides](authentication.md#authenticating-users).
@@ -541,9 +531,9 @@ your `routes/api.php` file:
 
 Next, in order for Pusher's authorization requests to succeed, you will need to
 provide a custom Pusher `authorizer` when
-initializing [Laravel Echo](broadcasting.md#client-side-installation).
-This allows your application to configure Pusher to use the `axios` instance
-that is [properly configured for cross-domain requests](#cors-and-cookies):
+initializing [Laravel Echo](broadcasting.md#client-side-installation). This
+allows your application to configure Pusher to use the `axios` instance that
+is [properly configured for cross-domain requests](#cors-and-cookies):
 
 ```js
 window.Echo = new Echo({
@@ -621,7 +611,7 @@ When the mobile application uses the token to make an API request to your
 application, it should pass the token in the `Authorization` header as
 a `Bearer` token.
 
-> [!NOTE]
+> **Note**
 > When issuing tokens for a mobile application, you are also free to
 > specify [token abilities](#token-abilities).
 
@@ -664,7 +654,7 @@ and specify which abilities should be granted to their token:
     use App\Models\User;
     use Laravel\Sanctum\Sanctum;
 
-    public function test_task_list_can_be_retrieved(): void
+    public function test_task_list_can_be_retrieved()
     {
         Sanctum::actingAs(
             User::factory()->create(),

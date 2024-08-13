@@ -4,17 +4,17 @@
 - [Configuration](#configuration)
 - [Basic Usage](#basic-usage)
     - [Hashing Passwords](#hashing-passwords)
-    - [Verifying That a Password Matches a Hash](#verifying-that-a-password-matches-a-hash)
-    - [Determining if a Password Needs to be Rehashed](#determining-if-a-password-needs-to-be-rehashed)
+    - [Verifying That A Password Matches A Hash](#verifying-that-a-password-matches-a-hash)
+    - [Determining If A Password Needs To Be Rehashed](#determining-if-a-password-needs-to-be-rehashed)
 
 <a name="introduction"></a>
 
 ## Introduction
 
-The Laravel `Hash` [facade](facades.md) provides secure Bcrypt
-and Argon2 hashing for storing user passwords. If you are using one of
-the [Laravel application starter kits](starter-kits.md), Bcrypt
-will be used for registration and authentication by default.
+The Laravel `Hash` [facade](facades.md) provides secure Bcrypt and Argon2
+hashing for storing user passwords. If you are using one of
+the [Laravel application starter kits](starter-kits.md), Bcrypt will be used for
+registration and authentication by default.
 
 Bcrypt is a great choice for hashing passwords because its "work factor" is
 adjustable, which means that the time it takes to generate a hash can be
@@ -47,7 +47,7 @@ You may hash a password by calling the `make` method on the `Hash` facade:
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
+    use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Hash;
 
@@ -55,16 +55,17 @@ You may hash a password by calling the `make` method on the `Hash` facade:
     {
         /**
          * Update the password for the user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function update(Request $request): RedirectResponse
+        public function update(Request $request)
         {
             // Validate the new password length...
 
             $request->user()->fill([
                 'password' => Hash::make($request->newPassword)
             ])->save();
-
-            return redirect('/profile');
         }
     }
 
@@ -95,13 +96,13 @@ applications:
         'threads' => 2,
     ]);
 
-> [!NOTE]
+> **Note**
 > For more information on these options, please refer to
 > the [official PHP documentation regarding Argon hashing](https://secure.php.net/manual/en/function.password-hash.php).
 
 <a name="verifying-that-a-password-matches-a-hash"></a>
 
-### Verifying That a Password Matches a Hash
+### Verifying That A Password Matches A Hash
 
 The `check` method provided by the `Hash` facade allows you to verify that a
 given plain-text string corresponds to a given hash:
@@ -112,7 +113,7 @@ given plain-text string corresponds to a given hash:
 
 <a name="determining-if-a-password-needs-to-be-rehashed"></a>
 
-### Determining if a Password Needs to be Rehashed
+### Determining If A Password Needs To Be Rehashed
 
 The `needsRehash` method provided by the `Hash` facade allows you to determine
 if the work factor used by the hasher has changed since the password was hashed.

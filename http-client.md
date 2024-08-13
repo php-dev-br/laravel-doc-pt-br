@@ -147,13 +147,6 @@ the `get` method:
         'page' => 1,
     ]);
 
-Alternatively, the `withQueryParameters` method may be used:
-
-    Http::retry(3, 100)->withQueryParameters([
-        'name' => 'Taylor',
-        'page' => 1,
-    ])->get('http://example.com/users')
-
 <a name="sending-form-url-encoded-requests"></a>
 
 #### Sending Form URL Encoded Requests
@@ -168,7 +161,7 @@ content type, you should call the `asForm` method before making your request:
 
 <a name="sending-a-raw-request-body"></a>
 
-#### Sending a Raw Request Body
+#### Sending A Raw Request Body
 
 You may use the `withBody` method if you would like to provide a raw request
 body when making a request. The content type may be provided via the method's
@@ -185,11 +178,10 @@ second argument:
 If you would like to send files as multi-part requests, you should call
 the `attach` method before making your request. This method accepts the name of
 the file and its contents. If needed, you may provide a third argument which
-will be considered the file's filename, while a fourth argument may be used to
-provide headers associated with the file:
+will be considered the file's filename:
 
     $response = Http::attach(
-        'attachment', file_get_contents('photo.jpg'), 'photo.jpg', ['Content-Type' => 'image/jpeg']
+        'attachment', file_get_contents('photo.jpg'), 'photo.jpg'
     )->post('http://example.com/attachments');
 
 Instead of passing the raw contents of a file, you may pass a stream resource:
@@ -225,20 +217,6 @@ request:
 
     $response = Http::acceptJson()->get('http://example.com/users');
 
-The `withHeaders` method merges new headers into the request's existing headers.
-If needed, you may replace all of the headers entirely using
-the `replaceHeaders` method:
-
-```php
-$response = Http::withHeaders([
-    'X-Original' => 'foo',
-])->replaceHeaders([
-    'X-Replacement' => 'bar',
-])->post('http://example.com/users', [
-    'name' => 'Taylor',
-]);
-```
-
 <a name="authentication"></a>
 
 ### Authentication
@@ -266,7 +244,7 @@ header, you may use the `withToken` method:
 ### Timeout
 
 The `timeout` method may be used to specify the maximum number of seconds to
-wait for a response. By default, the HTTP client will timeout after 30 seconds:
+wait for a response:
 
     $response = Http::timeout(3)->get(/* ... */);
 
@@ -289,31 +267,12 @@ number of milliseconds that Laravel should wait in between attempts:
 
     $response = Http::retry(3, 100)->post(/* ... */);
 
-If you would like to manually calculate the number of milliseconds to sleep
-between attempts, you may pass a closure as the second argument to the `retry`
-method:
-
-    use Exception;
-
-    $response = Http::retry(3, function (int $attempt, Exception $exception) {
-        return $attempt * 100;
-    })->post(/* ... */);
-
-For convenience, you may also provide an array as the first argument to
-the `retry` method. This array will be used to determine how many milliseconds
-to sleep between subsequent attempts:
-
-    $response = Http::retry([100, 200])->post(/* ... */);
-
 If needed, you may pass a third argument to the `retry` method. The third
 argument should be a callable that determines if the retries should actually be
 attempted. For example, you may wish to only retry the request if the initial
 request encounters an `ConnectionException`:
 
-    use Exception;
-    use Illuminate\Http\Client\PendingRequest;
-
-    $response = Http::retry(3, 100, function (Exception $exception, PendingRequest $request) {
+    $response = Http::retry(3, 100, function ($exception, $request) {
         return $exception instanceof ConnectionException;
     })->post(/* ... */);
 
@@ -323,11 +282,7 @@ provided to the callable you provided to the `retry` method. For example, you
 might want to retry the request with a new authorization token if the first
 attempt returned an authentication error:
 
-    use Exception;
-    use Illuminate\Http\Client\PendingRequest;
-    use Illuminate\Http\Client\RequestException;
-
-    $response = Http::withToken($this->getToken())->retry(2, 0, function (Exception $exception, PendingRequest $request) {
+    $response = Http::withToken($this->getToken())->retry(2, 0, function ($exception, $request) {
         if (! $exception instanceof RequestException || $exception->response->status() !== 401) {
             return false;
         }
@@ -345,7 +300,7 @@ returned after all retries have been attempted:
 
     $response = Http::retry(3, 100, throw: false)->post(/* ... */);
 
-> [!WARNING]
+> **Warning**
 > If all of the requests fail because of a connection issue,
 > a `Illuminate\Http\Client\ConnectionException` will still be thrown even when
 > the `throw` argument is set to `false`.
@@ -383,8 +338,6 @@ of `Illuminate\Http\Client\RequestException` if the response status code
 indicates a client or server error, you may use the `throw` or `throwIf`
 methods:
 
-    use Illuminate\Http\Client\Response;
-
     $response = Http::post(/* ... */);
 
     // Throw an exception if a client or server error occurred...
@@ -394,13 +347,13 @@ methods:
     $response->throwIf($condition);
 
     // Throw an exception if an error occurred and the given closure resolves to true...
-    $response->throwIf(fn (Response $response) => true);
+    $response->throwIf(fn ($response) => true);
 
     // Throw an exception if an error occurred and the given condition is false...
     $response->throwUnless($condition);
 
     // Throw an exception if an error occurred and the given closure resolves to false...
-    $response->throwUnless(fn (Response $response) => false);
+    $response->throwUnless(fn ($response) => false);
 
     // Throw an exception if the response has a specific status code...
     $response->throwIfStatus(403);
@@ -423,11 +376,8 @@ thrown, you may pass a closure to the `throw` method. The exception will be
 thrown automatically after the closure is invoked, so you do not need to
 re-throw the exception from within the closure:
 
-    use Illuminate\Http\Client\Response;
-    use Illuminate\Http\Client\RequestException;
-
-    return Http::post(/* ... */)->throw(function (Response $response, RequestException $e) {
-        // ...
+    return Http::post(/* ... */)->throw(function ($response, $e) {
+        //
     })->json();
 
 <a name="guzzle-middleware"></a>
@@ -438,54 +388,38 @@ Since Laravel's HTTP client is powered by Guzzle, you may take advantage
 of [Guzzle Middleware](https://docs.guzzlephp.org/en/stable/handlers-and-middleware.html)
 to manipulate the outgoing request or inspect the incoming response. To
 manipulate the outgoing request, register a Guzzle middleware via
-the `withRequestMiddleware` method:
+the `withMiddleware` method in combination with Guzzle's `mapRequest` middleware
+factory:
 
+    use GuzzleHttp\Middleware;
     use Illuminate\Support\Facades\Http;
     use Psr\Http\Message\RequestInterface;
 
-    $response = Http::withRequestMiddleware(
-        function (RequestInterface $request) {
-            return $request->withHeader('X-Example', 'Value');
-        }
+    $response = Http::withMiddleware(
+        Middleware::mapRequest(function (RequestInterface $request) {
+            $request = $request->withHeader('X-Example', 'Value');
+
+            return $request;
+        })
     )->get('http://example.com');
 
 Likewise, you can inspect the incoming HTTP response by registering a middleware
-via the `withResponseMiddleware` method:
+via the `withMiddleware` method in combination with Guzzle's `mapResponse`
+middleware factory:
 
+    use GuzzleHttp\Middleware;
     use Illuminate\Support\Facades\Http;
     use Psr\Http\Message\ResponseInterface;
 
-    $response = Http::withResponseMiddleware(
-        function (ResponseInterface $response) {
+    $response = Http::withMiddleware(
+        Middleware::mapResponse(function (ResponseInterface $response) {
             $header = $response->getHeader('X-Example');
 
             // ...
 
             return $response;
-        }
+        })
     )->get('http://example.com');
-
-<a name="global-middleware"></a>
-
-#### Global Middleware
-
-Sometimes, you may want to register a middleware that applies to every outgoing
-request and incoming response. To accomplish this, you may use
-the `globalRequestMiddleware` and `globalResponseMiddleware` methods. Typically,
-these methods should be invoked in the `boot` method of your
-application's `AppServiceProvider`:
-
-```php
-use Illuminate\Support\Facades\Http;
-
-Http::globalRequestMiddleware(fn ($request) => $request->withHeader(
-    'User-Agent', 'Example Application/1.0'
-));
-
-Http::globalResponseMiddleware(fn ($response) => $response->withHeader(
-    'X-Finished-At', now()->toDateTimeString()
-));
-```
 
 <a name="guzzle-options"></a>
 
@@ -541,30 +475,6 @@ which allows you to access the corresponding responses by name:
 
     return $responses['first']->ok();
 
-<a name="customizing-concurrent-requests"></a>
-
-#### Customizing Concurrent Requests
-
-The `pool` method cannot be chained with other HTTP client methods such as
-the `withHeaders` or `middleware` methods. If you want to apply custom headers
-or middleware to pooled requests, you should configure those options on each
-request in the pool:
-
-```php
-use Illuminate\Http\Client\Pool;
-use Illuminate\Support\Facades\Http;
-
-$headers = [
-    'X-Example' => 'example',
-];
-
-$responses = Http::pool(fn (Pool $pool) => [
-    $pool->withHeaders($headers)->get('http://laravel.test/test'),
-    $pool->withHeaders($headers)->get('http://laravel.test/test'),
-    $pool->withHeaders($headers)->get('http://laravel.test/test'),
-]);
-```
-
 <a name="macros"></a>
 
 ## Macros
@@ -580,8 +490,10 @@ use Illuminate\Support\Facades\Http;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Http::macro('github', function () {
         return Http::withHeaders([

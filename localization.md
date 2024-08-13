@@ -1,14 +1,13 @@
 # Localization
 
 - [Introduction](#introduction)
-    - [Publishing the Language Files](#publishing-the-language-files)
-    - [Configuring the Locale](#configuring-the-locale)
+    - [Configuring The Locale](#configuring-the-locale)
     - [Pluralization Language](#pluralization-language)
 - [Defining Translation Strings](#defining-translation-strings)
     - [Using Short Keys](#using-short-keys)
-    - [Using Translation Strings as Keys](#using-translation-strings-as-keys)
+    - [Using Translation Strings As Keys](#using-translation-strings-as-keys)
 - [Retrieving Translation Strings](#retrieving-translation-strings)
-    - [Replacing Parameters in Translation Strings](#replacing-parameters-in-translation-strings)
+    - [Replacing Parameters In Translation Strings](#replacing-parameters-in-translation-strings)
     - [Pluralization](#pluralization)
 - [Overriding Package Language Files](#overriding-package-language-files)
 
@@ -16,20 +15,15 @@
 
 ## Introduction
 
-> [!NOTE]
-> By default, the Laravel application skeleton does not include the `lang`
-> directory. If you would like to customize Laravel's language files, you may
-> publish them via the `lang:publish` Artisan command.
-
 Laravel's localization features provide a convenient way to retrieve strings in
 various languages, allowing you to easily support multiple languages within your
 application.
 
 Laravel provides two ways to manage translation strings. First, language strings
-may be stored in files within the application's `lang` directory. Within this
-directory, there may be subdirectories for each language supported by the
-application. This is the approach Laravel uses to manage translation strings for
-built-in Laravel features such as validation error messages:
+may be stored in files within the `lang` directory. Within this directory, there
+may be subdirectories for each language supported by the application. This is
+the approach Laravel uses to manage translation strings for built-in Laravel
+features such as validation error messages:
 
     /lang
         /en
@@ -50,23 +44,9 @@ translatable strings:
 We'll discuss each approach to managing translation strings within this
 documentation.
 
-<a name="publishing-the-language-files"></a>
-
-### Publishing the Language Files
-
-By default, the Laravel application skeleton does not include the `lang`
-directory. If you would like to customize Laravel's language files or create
-your own, you should scaffold the `lang` directory via the `lang:publish`
-Artisan command. The `lang:publish` command will create the `lang` directory in
-your application and publish the default set of language files used by Laravel:
-
-```shell
-php artisan lang:publish
-```
-
 <a name="configuring-the-locale"></a>
 
-### Configuring the Locale
+### Configuring The Locale
 
 The default language for your application is stored in the `config/app.php`
 configuration file's `locale` configuration option. You are free to modify this
@@ -77,14 +57,14 @@ the `setLocale` method provided by the `App` facade:
 
     use Illuminate\Support\Facades\App;
 
-    Route::get('/greeting/{locale}', function (string $locale) {
+    Route::get('/greeting/{locale}', function ($locale) {
         if (! in_array($locale, ['en', 'es', 'fr'])) {
             abort(400);
         }
 
         App::setLocale($locale);
 
-        // ...
+        //
     });
 
 You may configure a "fallback language", which will be used when the active
@@ -96,7 +76,7 @@ file:
 
 <a name="determining-the-current-locale"></a>
 
-#### Determining the Current Locale
+#### Determining The Current Locale
 
 You may use the `currentLocale` and `isLocale` methods on the `App` facade to
 determine the current locale or check if the locale is a given value:
@@ -106,7 +86,7 @@ determine the current locale or check if the locale is a given value:
     $locale = App::currentLocale();
 
     if (App::isLocale('en')) {
-        // ...
+        //
     }
 
 <a name="pluralization-language"></a>
@@ -124,15 +104,17 @@ are: `french`, `norwegian-bokmal`, `portuguese`, `spanish`, and `turkish`:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Pluralizer::useLanguage('spanish');
 
         // ...
     }
 
-> [!WARNING]
+> **Warning**
 > If you customize the pluralizer's language, you should explicitly define your
 > Eloquent model's [table names](eloquent.md#table-names).
 
@@ -166,14 +148,14 @@ All language files return an array of keyed strings. For example:
         'welcome' => 'Welcome to our application!',
     ];
 
-> [!WARNING]
+> **Warning**
 > For languages that differ by territory, you should name the language
 > directories according to the ISO 15897. For example, "en_GB" should be used for
 > British English rather than "en-gb".
 
 <a name="using-translation-strings-as-keys"></a>
 
-### Using Translation Strings as Keys
+### Using Translation Strings As Keys
 
 For applications with a large number of translatable strings, defining every
 string with a "short key" can become confusing when referencing the keys in your
@@ -181,7 +163,7 @@ views and it is cumbersome to continually invent keys for every translation
 string supported by your application.
 
 For this reason, Laravel also provides support for defining translation strings
-using the "default" translation of the string as the key. Language files that
+using the "default" translation of the string as the key. Translation files that
 use translation strings as keys are stored as JSON files in the `lang`
 directory. For example, if your application has a Spanish translation, you
 should create a `lang/es.json` file:
@@ -197,7 +179,7 @@ should create a `lang/es.json` file:
 You should not define translation string keys that conflict with other
 translation filenames. For example, translating `__('Action')` for the "NL"
 locale while a `nl/action.php` file exists but a `nl.json` file does not exist
-will result in the translator returning the entire contents of `nl/action.php`.
+will result in the translator returning the contents of `nl/action.php`.
 
 <a name="retrieving-translation-strings"></a>
 
@@ -225,14 +207,14 @@ you should pass the default translation of your string to the `__` function;
 Again, if the translation string does not exist, the `__` function will return
 the translation string key that it was given.
 
-If you are using the [Blade templating engine](blade.md), you may
-use the `{{ }}` echo syntax to display the translation string:
+If you are using the [Blade templating engine](blade.md), you may use
+the `{{ }}` echo syntax to display the translation string:
 
     {{ __('messages.welcome') }}
 
 <a name="replacing-parameters-in-translation-strings"></a>
 
-### Replacing Parameters in Translation Strings
+### Replacing Parameters In Translation Strings
 
 If you wish, you may define placeholders in your translation strings. All
 placeholders are prefixed with a `:`. For example, you may define a welcome
@@ -274,8 +256,10 @@ your application's `AppServiceProvider` class:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Lang::stringable(function (Money $money) {
             return $money->formatTo('en_GB');

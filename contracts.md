@@ -1,9 +1,9 @@
 # Contracts
 
 - [Introduction](#introduction)
-    - [Contracts vs. Facades](#contracts-vs-facades)
-- [When to Use Contracts](#when-to-use-contracts)
-- [How to Use Contracts](#how-to-use-contracts)
+    - [Contracts Vs. Facades](#contracts-vs-facades)
+- [When To Use Contracts](#when-to-use-contracts)
+- [How To Use Contracts](#how-to-use-contracts)
 - [Contract Reference](#contract-reference)
 
 <a name="introduction"></a>
@@ -29,12 +29,12 @@ interact with Laravel services.
 
 <a name="contracts-vs-facades"></a>
 
-### Contracts vs. Facades
+### Contracts Vs. Facades
 
-Laravel's [facades](facades.md) and helper functions provide a
-simple way of utilizing Laravel's services without needing to type-hint and
-resolve contracts out of the service container. In most cases, each facade has
-an equivalent contract.
+Laravel's [facades](facades.md) and helper functions provide a simple way of
+utilizing Laravel's services without needing to type-hint and resolve contracts
+out of the service container. In most cases, each facade has an equivalent
+contract.
 
 Unlike facades, which do not require you to require them in your class'
 constructor, contracts allow you to define explicit dependencies for your
@@ -45,7 +45,7 @@ issue during development.**
 
 <a name="when-to-use-contracts"></a>
 
-## When to Use Contracts
+## When To Use Contracts
 
 The decision to use contracts or facades will come down to personal taste and
 the tastes of your development team. Both contracts and facades can be used to
@@ -63,15 +63,15 @@ implementations in your package's `composer.json` file.
 
 <a name="how-to-use-contracts"></a>
 
-## How to Use Contracts
+## How To Use Contracts
 
 So, how do you get an implementation of a contract? It's actually quite simple.
 
 Many types of classes in Laravel are resolved through
-the [service container](container.md), including controllers,
-event listeners, middleware, queued jobs, and even route closures. So, to get an
-implementation of a contract, you can just "type-hint" the interface in the
-constructor of the class being resolved.
+the [service container](container.md), including controllers, event listeners,
+middleware, queued jobs, and even route closures. So, to get an implementation
+of a contract, you can just "type-hint" the interface in the constructor of the
+class being resolved.
 
 For example, take a look at this event listener:
 
@@ -86,18 +86,32 @@ For example, take a look at this event listener:
     class CacheOrderInformation
     {
         /**
-         * Create a new event handler instance.
+         * The Redis factory implementation.
+         *
+         * @var \Illuminate\Contracts\Redis\Factory
          */
-        public function __construct(
-            protected Factory $redis,
-        ) {}
+        protected $redis;
+
+        /**
+         * Create a new event handler instance.
+         *
+         * @param  \Illuminate\Contracts\Redis\Factory  $redis
+         * @return void
+         */
+        public function __construct(Factory $redis)
+        {
+            $this->redis = $redis;
+        }
 
         /**
          * Handle the event.
+         *
+         * @param  \App\Events\OrderWasPlaced  $event
+         * @return void
          */
-        public function handle(OrderWasPlaced $event): void
+        public function handle(OrderWasPlaced $event)
         {
-            // ...
+            //
         }
     }
 
@@ -161,7 +175,7 @@ equivalent facades:
 | [Illuminate\Contracts\Pagination\LengthAwarePaginator](https://github.com/illuminate/contracts/blob/{{version}}/Pagination/LengthAwarePaginator.php)   | &nbsp;                    |
 | [Illuminate\Contracts\Pagination\Paginator](https://github.com/illuminate/contracts/blob/{{version}}/Pagination/Paginator.php)                         | &nbsp;                    |
 | [Illuminate\Contracts\Pipeline\Hub](https://github.com/illuminate/contracts/blob/{{version}}/Pipeline/Hub.php)                                         | &nbsp;                    |
-| [Illuminate\Contracts\Pipeline\Pipeline](https://github.com/illuminate/contracts/blob/{{version}}/Pipeline/Pipeline.php)                               | `Pipeline`;               |
+| [Illuminate\Contracts\Pipeline\Pipeline](https://github.com/illuminate/contracts/blob/{{version}}/Pipeline/Pipeline.php)                               | &nbsp;                    |
 | [Illuminate\Contracts\Queue\EntityResolver](https://github.com/illuminate/contracts/blob/{{version}}/Queue/EntityResolver.php)                         | &nbsp;                    |
 | [Illuminate\Contracts\Queue\Factory](https://github.com/illuminate/contracts/blob/{{version}}/Queue/Factory.php)                                       | `Queue`                   |
 | [Illuminate\Contracts\Queue\Job](https://github.com/illuminate/contracts/blob/{{version}}/Queue/Job.php)                                               | &nbsp;                    |

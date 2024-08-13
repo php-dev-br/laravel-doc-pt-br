@@ -1,13 +1,12 @@
 # Queues
 
 - [Introduction](#introduction)
-    - [Connections vs. Queues](#connections-vs-queues)
-    - [Driver Notes and Prerequisites](#driver-prerequisites)
+    - [Connections Vs. Queues](#connections-vs-queues)
+    - [Driver Notes & Prerequisites](#driver-prerequisites)
 - [Creating Jobs](#creating-jobs)
     - [Generating Job Classes](#generating-job-classes)
     - [Class Structure](#class-structure)
     - [Unique Jobs](#unique-jobs)
-    - [Encrypted Jobs](#encrypted-jobs)
 - [Job Middleware](#job-middleware)
     - [Rate Limiting](#rate-limiting)
     - [Preventing Job Overlaps](#preventing-job-overlaps)
@@ -17,40 +16,34 @@
     - [Synchronous Dispatching](#synchronous-dispatching)
     - [Jobs & Database Transactions](#jobs-and-database-transactions)
     - [Job Chaining](#job-chaining)
-    - [Customizing The Queue and Connection](#customizing-the-queue-and-connection)
+    - [Customizing The Queue & Connection](#customizing-the-queue-and-connection)
     - [Specifying Max Job Attempts / Timeout Values](#max-job-attempts-and-timeout)
     - [Error Handling](#error-handling)
 - [Job Batching](#job-batching)
     - [Defining Batchable Jobs](#defining-batchable-jobs)
     - [Dispatching Batches](#dispatching-batches)
-    - [Chains and Batches](#chains-and-batches)
-    - [Adding Jobs to Batches](#adding-jobs-to-batches)
+    - [Adding Jobs To Batches](#adding-jobs-to-batches)
     - [Inspecting Batches](#inspecting-batches)
     - [Cancelling Batches](#cancelling-batches)
     - [Batch Failures](#batch-failures)
     - [Pruning Batches](#pruning-batches)
-    - [Storing Batches in DynamoDB](#storing-batches-in-dynamodb)
 - [Queueing Closures](#queueing-closures)
-- [Running the Queue Worker](#running-the-queue-worker)
+- [Running The Queue Worker](#running-the-queue-worker)
     - [The `queue:work` Command](#the-queue-work-command)
     - [Queue Priorities](#queue-priorities)
-    - [Queue Workers and Deployment](#queue-workers-and-deployment)
-    - [Job Expirations and Timeouts](#job-expirations-and-timeouts)
+    - [Queue Workers & Deployment](#queue-workers-and-deployment)
+    - [Job Expirations & Timeouts](#job-expirations-and-timeouts)
 - [Supervisor Configuration](#supervisor-configuration)
 - [Dealing With Failed Jobs](#dealing-with-failed-jobs)
     - [Cleaning Up After Failed Jobs](#cleaning-up-after-failed-jobs)
     - [Retrying Failed Jobs](#retrying-failed-jobs)
     - [Ignoring Missing Models](#ignoring-missing-models)
     - [Pruning Failed Jobs](#pruning-failed-jobs)
-    - [Storing Failed Jobs in DynamoDB](#storing-failed-jobs-in-dynamodb)
+    - [Storing Failed Jobs In DynamoDB](#storing-failed-jobs-in-dynamodb)
     - [Disabling Failed Job Storage](#disabling-failed-job-storage)
     - [Failed Job Events](#failed-job-events)
 - [Clearing Jobs From Queues](#clearing-jobs-from-queues)
 - [Monitoring Your Queues](#monitoring-your-queues)
-- [Testing](#testing)
-    - [Faking a Subset of Jobs](#faking-a-subset-of-jobs)
-    - [Testing Job Chains](#testing-job-chains)
-    - [Testing Job Batches](#testing-job-batches)
 - [Job Events](#job-events)
 
 <a name="introduction"></a>
@@ -78,14 +71,14 @@ and [Beanstalkd](https://beanstalkd.github.io/) drivers, as well as a
 synchronous driver that will execute jobs immediately (for use during local
 development). A `null` queue driver is also included which discards queued jobs.
 
-> [!NOTE]
+> **Note**
 > Laravel now offers Horizon, a beautiful dashboard and configuration system for
 > your Redis powered queues. Check out the
 > full [Horizon documentation](horizon.md) for more information.
 
 <a name="connections-vs-queues"></a>
 
-### Connections vs. Queues
+### Connections Vs. Queues
 
 Before getting started with Laravel queues, it is important to understand the
 distinction between "connections" and "queues". In your `config/queue.php`
@@ -122,7 +115,7 @@ php artisan queue:work --queue=high,default
 
 <a name="driver-prerequisites"></a>
 
-### Driver Notes and Prerequisites
+### Driver Notes & Prerequisites
 
 <a name="database"></a>
 
@@ -150,10 +143,6 @@ by updating the `QUEUE_CONNECTION` variable in your application's `.env` file:
 
 In order to use the `redis` queue driver, you should configure a Redis database
 connection in your `config/database.php` configuration file.
-
-> [!WARNING]
-> The `serializer` and `compression` Redis options are not supported by
-> the `redis` queue driver.
 
 **Redis Cluster**
 
@@ -189,7 +178,7 @@ waiting for a job to become available:
         'block_for' => 5,
     ],
 
-> [!WARNING]
+> **Warning**
 > Setting `block_for` to `0` will cause queue workers to block indefinitely
 > until a job is available. This will also prevent signals such as `SIGTERM` from
 > being handled until the next job has been processed.
@@ -229,7 +218,7 @@ The generated class will implement the `Illuminate\Contracts\Queue\ShouldQueue`
 interface, indicating to Laravel that the job should be pushed onto the queue to
 run asynchronously.
 
-> [!NOTE]
+> **Note**
 > Job stubs may be customized
 > using [stub publishing](artisan.md#stub-customization).
 
@@ -260,26 +249,39 @@ are published:
         use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
         /**
-         * Create a new job instance.
+         * The podcast instance.
+         *
+         * @var \App\Models\Podcast
          */
-        public function __construct(
-            public Podcast $podcast,
-        ) {}
+        public $podcast;
+
+        /**
+         * Create a new job instance.
+         *
+         * @param  App\Models\Podcast  $podcast
+         * @return void
+         */
+        public function __construct(Podcast $podcast)
+        {
+            $this->podcast = $podcast;
+        }
 
         /**
          * Execute the job.
+         *
+         * @param  App\Services\AudioProcessor  $processor
+         * @return void
          */
-        public function handle(AudioProcessor $processor): void
+        public function handle(AudioProcessor $processor)
         {
             // Process uploaded podcast...
         }
     }
 
-In this example, note that we were able to pass
-an [Eloquent model](eloquent.md) directly into the queued job's
-constructor. Because of the `SerializesModels` trait that the job is using,
-Eloquent models and their loaded relationships will be gracefully serialized and
-unserialized when the job is processing.
+In this example, note that we were able to pass an [Eloquent model](eloquent.md)
+directly into the queued job's constructor. Because of the `SerializesModels`
+trait that the job is using, Eloquent models and their loaded relationships will
+be gracefully serialized and unserialized when the job is processing.
 
 If your queued job accepts an Eloquent model in its constructor, only the
 identifier for the model will be serialized onto the queue. When the job is
@@ -294,26 +296,24 @@ driver.
 
 The `handle` method is invoked when the job is processed by the queue. Note that
 we are able to type-hint dependencies on the `handle` method of the job. The
-Laravel [service container](container.md) automatically injects
-these dependencies.
+Laravel [service container](container.md) automatically injects these
+dependencies.
 
 If you would like to take total control over how the container injects
 dependencies into the `handle` method, you may use the container's `bindMethod`
 method. The `bindMethod` method accepts a callback which receives the job and
 the container. Within the callback, you are free to invoke the `handle` method
 however you wish. Typically, you should call this method from the `boot` method
-of
-your `App\Providers\AppServiceProvider` [service provider](providers.md):
+of your `App\Providers\AppServiceProvider` [service provider](providers.md):
 
     use App\Jobs\ProcessPodcast;
     use App\Services\AudioProcessor;
-    use Illuminate\Contracts\Foundation\Application;
 
-    $this->app->bindMethod([ProcessPodcast::class, 'handle'], function (ProcessPodcast $job, Application $app) {
+    $this->app->bindMethod([ProcessPodcast::class, 'handle'], function ($job, $app) {
         return $job->handle($app->make(AudioProcessor::class));
     });
 
-> [!WARNING]
+> **Warning**
 > Binary data, such as raw image contents, should be passed through
 > the `base64_encode` function before being passed to a queued job. Otherwise, the
 > job may not properly serialize to JSON when being placed on the queue.
@@ -322,8 +322,23 @@ your `App\Providers\AppServiceProvider` [service provider](providers.md):
 
 #### Queued Relationships
 
-Because all loaded Eloquent model relationships also get serialized when a job
-is queued, the serialized job string can sometimes become quite large.
+Because loaded relationships also get serialized, the serialized job string can
+sometimes become quite large. To prevent relations from being serialized, you
+can call the `withoutRelations` method on the model when setting a property
+value. This method will return an instance of the model without its loaded
+relationships:
+
+    /**
+     * Create a new job instance.
+     *
+     * @param  \App\Models\Podcast  $podcast
+     * @return void
+     */
+    public function __construct(Podcast $podcast)
+    {
+        $this->podcast = $podcast->withoutRelations();
+    }
+
 Furthermore, when a job is deserialized and model relationships are re-retrieved
 from the database, they will be retrieved in their entirety. Any previous
 relationship constraints that were applied before the model was serialized
@@ -331,43 +346,11 @@ during the job queueing process will not be applied when the job is
 deserialized. Therefore, if you wish to work with a subset of a given
 relationship, you should re-constrain that relationship within your queued job.
 
-Or, to prevent relations from being serialized, you can call
-the `withoutRelations` method on the model when setting a property value. This
-method will return an instance of the model without its loaded relationships:
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(Podcast $podcast)
-    {
-        $this->podcast = $podcast->withoutRelations();
-    }
-
-If you are using PHP constructor property promotion and would like to indicate
-that an Eloquent model should not have its relations serialized, you may use
-the `WithoutRelations` attribute:
-
-    use Illuminate\Queue\Attributes\WithoutRelations;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(
-        #[WithoutRelations]
-        public Podcast $podcast
-    ) {
-    }
-
-If a job receives a collection or array of Eloquent models instead of a single
-model, the models within that collection will not have their relationships
-restored when the job is deserialized and executed. This is to prevent excessive
-resource usage on jobs that deal with large numbers of models.
-
 <a name="unique-jobs"></a>
 
 ### Unique Jobs
 
-> [!WARNING]
+> **Warning**
 > Unique jobs require a cache driver that
 > supports [locks](cache.md#atomic-locks). Currently,
 > the `memcached`, `redis`, `dynamodb`, `database`, `file`, and `array` cache
@@ -421,9 +404,11 @@ or methods on your job class:
         public $uniqueFor = 3600;
 
         /**
-         * Get the unique ID for the job.
+         * The unique ID of the job.
+         *
+         * @return string
          */
-        public function uniqueId(): string
+        public function uniqueId()
         {
             return $this->product->id;
         }
@@ -435,7 +420,7 @@ existing job has completed processing. In addition, if the existing job is not
 processed within one hour, the unique lock will be released and another job with
 the same unique key can be dispatched to the queue.
 
-> [!WARNING]
+> **Warning**
 > If your application dispatches jobs from multiple web servers or containers,
 > you should ensure that all of your servers are communicating with the same
 > central cache server so that Laravel can accurately determine if a job is
@@ -467,14 +452,13 @@ the `ShouldBeUnique` contract:
 #### Unique Job Locks
 
 Behind the scenes, when a `ShouldBeUnique` job is dispatched, Laravel attempts
-to acquire a [lock](cache.md#atomic-locks) with the `uniqueId`
-key. If the lock is not acquired, the job is not dispatched. This lock is
-released when the job completes processing or fails all of its retry attempts.
-By default, Laravel will use the default cache driver to obtain this lock.
-However, if you wish to use another driver for acquiring the lock, you may
-define a `uniqueVia` method that returns the cache driver that should be used:
+to acquire a [lock](cache.md#atomic-locks) with the `uniqueId` key. If the lock
+is not acquired, the job is not dispatched. This lock is released when the job
+completes processing or fails all of its retry attempts. By default, Laravel
+will use the default cache driver to obtain this lock. However, if you wish to
+use another driver for acquiring the lock, you may define a `uniqueVia` method
+that returns the cache driver that should be used:
 
-    use Illuminate\Contracts\Cache\Repository;
     use Illuminate\Support\Facades\Cache;
 
     class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
@@ -483,37 +467,19 @@ define a `uniqueVia` method that returns the cache driver that should be used:
 
         /**
          * Get the cache driver for the unique job lock.
+         *
+         * @return \Illuminate\Contracts\Cache\Repository
          */
-        public function uniqueVia(): Repository
+        public function uniqueVia()
         {
             return Cache::driver('redis');
         }
     }
 
-> [!NOTE]
+> **Note**
 > If you only need to limit the concurrent processing of a job, use
-> the [`WithoutOverlapping`](queues.md#preventing-job-overlaps) job
-> middleware instead.
-
-<a name="encrypted-jobs"></a>
-
-### Encrypted Jobs
-
-Laravel allows you to ensure the privacy and integrity of a job's data
-via [encryption](encryption.md). To get started, simply add
-the `ShouldBeEncrypted` interface to the job class. Once this interface has been
-added to the class, Laravel will automatically encrypt your job before pushing
-it onto a queue:
-
-    <?php
-
-    use Illuminate\Contracts\Queue\ShouldBeEncrypted;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-
-    class UpdateSearchIndex implements ShouldQueue, ShouldBeEncrypted
-    {
-        // ...
-    }
+> the [`WithoutOverlapping`](queues.md#preventing-job-overlaps) job middleware
+> instead.
 
 <a name="job-middleware"></a>
 
@@ -528,8 +494,10 @@ to allow only one job to process every five seconds:
 
     /**
      * Execute the job.
+     *
+     * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         Redis::throttle('key')->block(0)->allow(1)->every(5)->then(function () {
             info('Lock obtained...');
@@ -557,7 +525,6 @@ an `app/Jobs/Middleware` directory:
 
     namespace App\Jobs\Middleware;
 
-    use Closure;
     use Illuminate\Support\Facades\Redis;
 
     class RateLimited
@@ -565,9 +532,11 @@ an `app/Jobs/Middleware` directory:
         /**
          * Process the queued job.
          *
-         * @param  \Closure(object): void  $next
+         * @param  mixed  $job
+         * @param  callable  $next
+         * @return mixed
          */
-        public function handle(object $job, Closure $next): void
+        public function handle($job, $next)
         {
             Redis::throttle('key')
                     ->block(0)->allow(1)->every(5)
@@ -583,9 +552,9 @@ an `app/Jobs/Middleware` directory:
         }
     }
 
-As you can see, like [route middleware](middleware.md), job
-middleware receive the job being processed and a callback that should be invoked
-to continue processing the job.
+As you can see, like [route middleware](middleware.md), job middleware receive
+the job being processed and a callback that should be invoked to continue
+processing the job.
 
 After creating job middleware, they may be attached to a job by returning them
 from the job's `middleware` method. This method does not exist on jobs
@@ -597,14 +566,14 @@ it to your job class:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [new RateLimited];
     }
 
-> [!NOTE]
+> **Note**
 > Job middleware can also be assigned to queueable event listeners, mailables,
 > and notifications.
 
@@ -615,8 +584,8 @@ it to your job class:
 Although we just demonstrated how to write your own rate limiting job
 middleware, Laravel actually includes a rate limiting middleware that you may
 utilize to rate limit jobs.
-Like [route rate limiters](routing.md#defining-rate-limiters),
-job rate limiters are defined using the `RateLimiter` facade's `for` method.
+Like [route rate limiters](routing.md#defining-rate-limiters), job rate limiters
+are defined using the `RateLimiter` facade's `for` method.
 
 For example, you may wish to allow users to backup their data once per hour
 while imposing no such limit on premium customers. To accomplish this, you may
@@ -627,10 +596,12 @@ define a `RateLimiter` in the `boot` method of your `AppServiceProvider`:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
-        RateLimiter::for('backups', function (object $job) {
+        RateLimiter::for('backups', function ($job) {
             return $job->user->vipCustomer()
                         ? Limit::none()
                         : Limit::perHour(1)->by($job->user->id);
@@ -645,18 +616,18 @@ this value is most often used to segment rate limits by customer:
     return Limit::perMinute(50)->by($job->user->id);
 
 Once you have defined your rate limit, you may attach the rate limiter to your
-job using the `Illuminate\Queue\Middleware\RateLimited` middleware. Each time
-the job exceeds the rate limit, this middleware will release the job back to the
-queue with an appropriate delay based on the rate limit duration.
+backup job using the `Illuminate\Queue\Middleware\RateLimited` middleware. Each
+time the job exceeds the rate limit, this middleware will release the job back
+to the queue with an appropriate delay based on the rate limit duration.
 
     use Illuminate\Queue\Middleware\RateLimited;
 
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [new RateLimited('backups')];
     }
@@ -673,14 +644,14 @@ the `dontRelease` method:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [(new RateLimited('backups'))->dontRelease()];
     }
 
-> [!NOTE]
+> **Note**
 > If you are using Redis, you may use
 > the `Illuminate\Queue\Middleware\RateLimitedWithRedis` middleware, which is
 > fine-tuned for Redis and more efficient than the basic rate limiting middleware.
@@ -704,9 +675,9 @@ your job's `middleware` method:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [new WithoutOverlapping($this->user->id)];
     }
@@ -718,9 +689,9 @@ will be attempted again:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [(new WithoutOverlapping($this->order->id))->releaseAfter(60)];
     }
@@ -731,9 +702,9 @@ retried, you may use the `dontRelease` method:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [(new WithoutOverlapping($this->order->id))->dontRelease()];
     }
@@ -748,14 +719,14 @@ started processing:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [(new WithoutOverlapping($this->order->id))->expireAfter(180)];
     }
 
-> [!WARNING]
+> **Warning**
 > The `WithoutOverlapping` middleware requires a cache driver that
 > supports [locks](cache.md#atomic-locks). Currently,
 > the `memcached`, `redis`, `dynamodb`, `database`, `file`, and `array` cache
@@ -778,7 +749,7 @@ class ProviderIsDown
     // ...
 
 
-    public function middleware(): array
+    public function middleware()
     {
         return [
             (new WithoutOverlapping("status:{$this->provider}"))->shared(),
@@ -791,7 +762,7 @@ class ProviderIsUp
     // ...
 
 
-    public function middleware(): array
+    public function middleware()
     {
         return [
             (new WithoutOverlapping("status:{$this->provider}"))->shared(),
@@ -816,23 +787,24 @@ the `ThrottlesExceptions` middleware from your job's `middleware` method.
 Typically, this middleware should be paired with a job that
 implements [time based attempts](#time-based-attempts):
 
-    use DateTime;
     use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [new ThrottlesExceptions(10, 5)];
     }
 
     /**
      * Determine the time at which the job should timeout.
+     *
+     * @return \DateTime
      */
-    public function retryUntil(): DateTime
+    public function retryUntil()
     {
         return now()->addMinutes(5);
     }
@@ -854,9 +826,9 @@ method when attaching the middleware to the job:
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [(new ThrottlesExceptions(10, 5))->backoff(5)];
     }
@@ -873,14 +845,14 @@ bucket":
     /**
      * Get the middleware the job should pass through.
      *
-     * @return array<int, object>
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [(new ThrottlesExceptions(10, 10))->by('key')];
     }
 
-> [!NOTE]
+> **Note**
 > If you are using Redis, you may use
 > the `Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis` middleware, which
 > is fine-tuned for Redis and more efficient than the basic exception throttling
@@ -901,23 +873,23 @@ given to the job's constructor:
     use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class PodcastController extends Controller
     {
         /**
          * Store a new podcast.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $podcast = Podcast::create(/* ... */);
 
             // ...
 
             ProcessPodcast::dispatch($podcast);
-
-            return redirect('/podcasts');
         }
     }
 
@@ -951,15 +923,17 @@ processing until 10 minutes after it has been dispatched:
     use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class PodcastController extends Controller
     {
         /**
          * Store a new podcast.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $podcast = Podcast::create(/* ... */);
 
@@ -967,17 +941,15 @@ processing until 10 minutes after it has been dispatched:
 
             ProcessPodcast::dispatch($podcast)
                         ->delay(now()->addMinutes(10));
-
-            return redirect('/podcasts');
         }
     }
 
-> [!WARNING]
+> **Warning**
 > The Amazon SQS queue service has a maximum delay time of 15 minutes.
 
 <a name="dispatching-after-the-response-is-sent-to-browser"></a>
 
-#### Dispatching After the Response is Sent to the Browser
+#### Dispatching After The Response Is Sent To Browser
 
 Alternatively, the `dispatchAfterResponse` method delays dispatching a job until
 after the HTTP response is sent to the user's browser if your web server is
@@ -1017,23 +989,23 @@ and will be executed immediately within the current process:
     use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class PodcastController extends Controller
     {
         /**
          * Store a new podcast.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $podcast = Podcast::create(/* ... */);
 
             // Create podcast...
 
             ProcessPodcast::dispatchSync($podcast);
-
-            return redirect('/podcasts');
         }
     }
 
@@ -1070,7 +1042,7 @@ If a transaction is rolled back due to an exception that occurs during the
 transaction, the jobs that were dispatched during that transaction will be
 discarded.
 
-> [!NOTE]
+> **Note**
 > Setting the `after_commit` configuration option to `true` will also cause any
 > queued event listeners, mailables, notifications, and broadcast events to be
 > dispatched after all open database transactions have been committed.
@@ -1126,14 +1098,14 @@ In addition to chaining job class instances, you may also chain closures:
         },
     ])->dispatch();
 
-> [!WARNING]
+> **Warning**
 > Deleting jobs using the `$this->delete()` method within the job will not
 > prevent chained jobs from being processed. The chain will only stop executing if
 > a job in the chain fails.
 
 <a name="chain-connection-queue"></a>
 
-#### Chain Connection and Queue
+#### Chain Connection & Queue
 
 If you would like to specify the connection and queue that should be used for
 the chained jobs, you may use the `onConnection` and `onQueue` methods. These
@@ -1165,17 +1137,17 @@ receive the `Throwable` instance that caused the job failure:
         // A job within the chain has failed...
     })->dispatch();
 
-> [!WARNING]
+> **Warning**
 > Since chain callbacks are serialized and executed at a later time by the
 > Laravel queue, you should not use the `$this` variable within chain callbacks.
 
 <a name="customizing-the-queue-and-connection"></a>
 
-### Customizing The Queue a Connection
+### Customizing The Queue & Connection
 
 <a name="dispatching-to-a-particular-queue"></a>
 
-#### Dispatching to a Particular Queue
+#### Dispatching To A Particular Queue
 
 By pushing jobs to different queues, you may "categorize" your queued jobs and
 even prioritize how many workers you assign to various queues. Keep in mind,
@@ -1191,23 +1163,23 @@ job:
     use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class PodcastController extends Controller
     {
         /**
          * Store a new podcast.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $podcast = Podcast::create(/* ... */);
 
             // Create podcast...
 
             ProcessPodcast::dispatch($podcast)->onQueue('processing');
-
-            return redirect('/podcasts');
         }
     }
 
@@ -1230,6 +1202,8 @@ within the job's constructor:
 
         /**
          * Create a new job instance.
+         *
+         * @return void
          */
         public function __construct()
         {
@@ -1239,7 +1213,7 @@ within the job's constructor:
 
 <a name="dispatching-to-a-particular-connection"></a>
 
-#### Dispatching to a Particular Connection
+#### Dispatching To A Particular Connection
 
 If your application interacts with multiple queue connections, you may specify
 which connection to push a job to using the `onConnection` method:
@@ -1251,23 +1225,23 @@ which connection to push a job to using the `onConnection` method:
     use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class PodcastController extends Controller
     {
         /**
          * Store a new podcast.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $podcast = Podcast::create(/* ... */);
 
             // Create podcast...
 
             ProcessPodcast::dispatch($podcast)->onConnection('sqs');
-
-            return redirect('/podcasts');
         }
     }
 
@@ -1297,6 +1271,8 @@ the `onConnection` method within the job's constructor:
 
         /**
          * Create a new job instance.
+         *
+         * @return void
          */
         public function __construct()
         {
@@ -1349,17 +1325,6 @@ provided on the command line:
         public $tries = 5;
     }
 
-If you need dynamic control over a particular job's maximum attempts, you may
-define a `tries` method on the job:
-
-    /**
-     * Determine number of times the job may be attempted.
-     */
-    public function tries(): int
-    {
-        return 5;
-    }
-
 <a name="time-based-attempts"></a>
 
 #### Time Based Attempts
@@ -1371,17 +1336,17 @@ To define the time at which a job should no longer be attempted, add
 a `retryUntil` method to your job class. This method should return a `DateTime`
 instance:
 
-    use DateTime;
-
     /**
      * Determine the time at which the job should timeout.
+     *
+     * @return \DateTime
      */
-    public function retryUntil(): DateTime
+    public function retryUntil()
     {
         return now()->addMinutes(10);
     }
 
-> [!NOTE]
+> **Note**
 > You may also define a `tries` property or `retryUntil` method on
 > your [queued event listeners](events.md#queued-event-listeners).
 
@@ -1418,8 +1383,10 @@ accomplish this, you may define a `maxExceptions` property on your job class:
 
         /**
          * Execute the job.
+         *
+         * @return void
          */
-        public function handle(): void
+        public function handle()
         {
             Redis::throttle('key')->allow(10)->every(60)->then(function () {
                 // Lock obtained, process the podcast...
@@ -1437,6 +1404,9 @@ However, the job will fail if three unhandled exceptions are thrown by the job.
 <a name="timeout"></a>
 
 #### Timeout
+
+> **Warning**
+> The `pcntl` PHP extension must be installed in order to specify job timeouts.
 
 Often, you know roughly how long you expect your queued jobs to take. For this
 reason, Laravel allows you to specify a "timeout" value. By default, the timeout
@@ -1479,15 +1449,9 @@ you should always attempt to specify a timeout using their APIs as well. For
 example, when using Guzzle, you should always specify a connection and request
 timeout value.
 
-> [!WARNING]
-> The `pcntl` PHP extension must be installed in order to specify job timeouts.
-> In addition, a job's "timeout" value should always be less than
-> its ["retry after"](#job-expiration) value. Otherwise, the job may be
-> re-attempted before it has actually finished executing or timed out.
-
 <a name="failing-on-timeout"></a>
 
-#### Failing on Timeout
+#### Failing On Timeout
 
 If you would like to indicate that a job should be marked
 as [failed](#dealing-with-failed-jobs) on timeout, you may define
@@ -1517,7 +1481,7 @@ worker [can be found below](#running-the-queue-worker).
 
 <a name="manually-releasing-a-job"></a>
 
-#### Manually Releasing a Job
+#### Manually Releasing A Job
 
 Sometimes you may wish to manually release a job back onto the queue so that it
 can be attempted again at a later time. You may accomplish this by calling
@@ -1525,8 +1489,10 @@ the `release` method:
 
     /**
      * Execute the job.
+     *
+     * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         // ...
 
@@ -1534,25 +1500,25 @@ the `release` method:
     }
 
 By default, the `release` method will release the job back onto the queue for
-immediate processing. However, you may instruct the queue to not make the job
-available for processing until a given number of seconds has elapsed by passing
-an integer or date instance to the `release` method:
+immediate processing. However, by passing an integer to the `release` method you
+may instruct the queue to not make the job available for processing until a
+given number of seconds has elapsed:
 
     $this->release(10);
 
-    $this->release(now()->addSeconds(10));
-
 <a name="manually-failing-a-job"></a>
 
-#### Manually Failing a Job
+#### Manually Failing A Job
 
 Occasionally you may need to manually mark a job as "failed". To do so, you may
 call the `fail` method:
 
     /**
      * Execute the job.
+     *
+     * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         // ...
 
@@ -1568,7 +1534,7 @@ exception for you:
 
     $this->fail('Something went wrong.');
 
-> [!NOTE]
+> **Note**
 > For more information on failed jobs, check out
 > the [documentation on dealing with job failures](#dealing-with-failed-jobs).
 
@@ -1578,8 +1544,8 @@ exception for you:
 
 Laravel's job batching feature allows you to easily execute a batch of jobs and
 then perform some action when the batch of jobs has completed executing. Before
-getting started, you should create a database migration to build a table which
-will contain meta information about your job batches, such as their completion
+getting started, you should create a database migration to build a table to
+contain meta information about your job batches, such as their completion
 percentage. This migration may be generated using the `queue:batches-table`
 Artisan command:
 
@@ -1615,8 +1581,10 @@ retrieve the current batch that the job is executing within:
 
         /**
          * Execute the job.
+         *
+         * @return void
          */
-        public function handle(): void
+        public function handle()
         {
             if ($this->batch()->cancelled()) {
                 // Determine if the batch has been cancelled...
@@ -1651,11 +1619,7 @@ rows from a CSV file:
         new ImportCsv(201, 300),
         new ImportCsv(301, 400),
         new ImportCsv(401, 500),
-    ])->before(function (Batch $batch) {
-        // The batch has been created but no jobs have been added...
-    })->progress(function (Batch $batch) {
-        // A single job has completed successfully...
-    })->then(function (Batch $batch) {
+    ])->then(function (Batch $batch) {
         // All jobs completed successfully...
     })->catch(function (Batch $batch, Throwable $e) {
         // First batch job failure detected...
@@ -1669,7 +1633,7 @@ The batch's ID, which may be accessed via the `$batch->id` property, may be used
 to [query the Laravel command bus](#inspecting-batches) for information about
 the batch after it has been dispatched.
 
-> [!WARNING]
+> **Warning**
 > Since batch callbacks are serialized and executed at a later time by the
 > Laravel queue, you should not use the `$this` variable within the callbacks.
 
@@ -1690,7 +1654,7 @@ batch:
 
 <a name="batch-connection-queue"></a>
 
-#### Batch Connection and Queue
+#### Batch Connection & Queue
 
 If you would like to specify the connection and queue that should be used for
 the batched jobs, you may use the `onConnection` and `onQueue` methods. All
@@ -1702,9 +1666,9 @@ batched jobs must execute within the same connection and queue:
         // All jobs completed successfully...
     })->onConnection('redis')->onQueue('imports')->dispatch();
 
-<a name="chains-and-batches"></a>
+<a name="chains-within-batches"></a>
 
-### Chains and Batches
+#### Chains Within Batches
 
 You may define a set of [chained jobs](#job-chaining) within a batch by placing
 the chained jobs within an array. For example, we may execute two job chains in
@@ -1728,31 +1692,9 @@ parallel and execute a callback when both job chains have finished processing:
         // ...
     })->dispatch();
 
-Conversely, you may run batches of jobs within a [chain](#job-chaining) by
-defining batches within the chain. For example, you could first run a batch of
-jobs to release multiple podcasts then a batch of jobs to send the release
-notifications:
-
-    use App\Jobs\FlushPodcastCache;
-    use App\Jobs\ReleasePodcast;
-    use App\Jobs\SendPodcastReleaseNotification;
-    use Illuminate\Support\Facades\Bus;
-
-    Bus::chain([
-        new FlushPodcastCache,
-        Bus::batch([
-            new ReleasePodcast(1),
-            new ReleasePodcast(2),
-        ]),
-        Bus::batch([
-            new SendPodcastReleaseNotification(1),
-            new SendPodcastReleaseNotification(2),
-        ]),
-    ])->dispatch();
-
 <a name="adding-jobs-to-batches"></a>
 
-### Adding Jobs to Batches
+### Adding Jobs To Batches
 
 Sometimes it may be useful to add additional jobs to a batch from within a
 batched job. This pattern can be useful when you need to batch thousands of jobs
@@ -1777,8 +1719,10 @@ instance that may be accessed via the job's `batch` method:
 
     /**
      * Execute the job.
+     *
+     * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         if ($this->batch()->cancelled()) {
             return;
@@ -1789,7 +1733,7 @@ instance that may be accessed via the job's `batch` method:
         }));
     }
 
-> [!WARNING]
+> **Warning**
 > You may only add jobs to a batch from within a job that belongs to the same
 > batch.
 
@@ -1861,8 +1805,10 @@ instance:
 
     /**
      * Execute the job.
+     *
+     * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         if ($this->user->exceedsImportLimit()) {
             return $this->batch()->cancel();
@@ -1884,8 +1830,10 @@ if its corresponding batch has been cancelled:
 
     /**
      * Get the middleware the job should pass through.
+     *
+     * @return array
      */
-    public function middleware(): array
+    public function middleware()
     {
         return [new SkipIfBatchCancelled];
     }
@@ -1930,8 +1878,8 @@ php artisan queue:retry-batch 32dbc76c-4f82-4749-b610-a639fe0099b5
 ### Pruning Batches
 
 Without pruning, the `job_batches` table can accumulate records very quickly. To
-mitigate this, you should [schedule](scheduling.md)
-the `queue:prune-batches` Artisan command to run daily:
+mitigate this, you should [schedule](scheduling.md) the `queue:prune-batches`
+Artisan command to run daily:
 
     $schedule->command('queue:prune-batches')->daily();
 
@@ -1954,89 +1902,6 @@ cancelled batches. You may instruct the `queue:prune-batches` command to prune
 these cancelled batch records using the `cancelled` option:
 
     $schedule->command('queue:prune-batches --hours=48 --cancelled=72')->daily();
-
-<a name="storing-batches-in-dynamodb"></a>
-
-### Storing Batches in DynamoDB
-
-Laravel also provides support for storing batch meta information
-in [DynamoDB](https://aws.amazon.com/dynamodb) instead of a relational database.
-However, you will need to manually create a DynamoDB table to store all of the
-batch records.
-
-Typically, this table should be named `job_batches`, but you should name the
-table based on the value of the `queue.batching.table` configuration value
-within your application's `queue` configuration file.
-
-<a name="dynamodb-batch-table-configuration"></a>
-
-#### DynamoDB Batch Table Configuration
-
-The `job_batches` table should have a string primary partition key
-named `application` and a string primary sort key named `id`. The `application`
-portion of the key will contain your application's name as defined by the `name`
-configuration value within your application's `app` configuration file. Since
-the application name is part of the DynamoDB table's key, you can use the same
-table to store job batches for multiple Laravel applications.
-
-In addition, you may define `ttl` attribute for your table if you would like to
-take advantage of [automatic batch pruning](#pruning-batches-in-dynamodb).
-
-<a name="dynamodb-configuration"></a>
-
-#### DynamoDB Configuration
-
-Next, install the AWS SDK so that your Laravel application can communicate with
-Amazon DynamoDB:
-
-```shell
-composer require aws/aws-sdk-php
-```
-
-Then, set the `queue.batching.driver` configuration option's value
-to `dynamodb`. In addition, you should define `key`, `secret`, and `region`
-configuration options within the `batching` configuration array. These options
-will be used to authenticate with AWS. When using the `dynamodb` driver,
-the `queue.batching.database` configuration option is unnecessary:
-
-```php
-'batching' => [
-    'driver' => env('QUEUE_FAILED_DRIVER', 'dynamodb'),
-    'key' => env('AWS_ACCESS_KEY_ID'),
-    'secret' => env('AWS_SECRET_ACCESS_KEY'),
-    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    'table' => 'job_batches',
-],
-```
-
-<a name="pruning-batches-in-dynamodb"></a>
-
-#### Pruning Batches in DynamoDB
-
-When utilizing [DynamoDB](https://aws.amazon.com/dynamodb) to store job batch
-information, the typical pruning commands used to prune batches stored in a
-relational database will not work. Instead, you may
-utilize [DynamoDB's native TTL functionality](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html)
-to automatically remove records for old batches.
-
-If you defined your DynamoDB table with a `ttl` attribute, you may define
-configuration parameters to instruct Laravel how to prune batch records.
-The `queue.batching.ttl_attribute` configuration value defines the name of the
-attribute holding the TTL, while the `queue.batching.ttl` configuration value
-defines the number of seconds after which a batch record can be removed from the
-DynamoDB table, relative to the last time the record was updated:
-
-```php
-'batching' => [
-    'driver' => env('QUEUE_FAILED_DRIVER', 'dynamodb'),
-    'key' => env('AWS_ACCESS_KEY_ID'),
-    'secret' => env('AWS_SECRET_ACCESS_KEY'),
-    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    'table' => 'job_batches',
-    'ttl_attribute' => 'ttl',
-    'ttl' => 60 * 60 * 24 * 7, // 7 days...
-],
-```
 
 <a name="queueing-closures"></a>
 
@@ -2066,13 +1931,13 @@ queue's [configured retry attempts](#max-job-attempts-and-timeout):
         // This job has failed...
     });
 
-> [!WARNING]
+> **Warning**
 > Since `catch` callbacks are serialized and executed at a later time by the
 > Laravel queue, you should not use the `$this` variable within `catch` callbacks.
 
 <a name="running-the-queue-worker"></a>
 
-## Running the Queue Worker
+## Running The Queue Worker
 
 <a name="the-queue-work-command"></a>
 
@@ -2088,7 +1953,7 @@ terminal:
 php artisan queue:work
 ```
 
-> [!NOTE]
+> **Note**
 > To keep the `queue:work` process running permanently in the background, you
 > should use a process monitor such as [Supervisor](#supervisor-configuration) to
 > ensure that the queue worker does not stop running.
@@ -2128,7 +1993,7 @@ may use the `numprocs` configuration value.
 
 <a name="specifying-the-connection-queue"></a>
 
-#### Specifying the Connection and Queue
+#### Specifying The Connection & Queue
 
 You may also specify which queue connection the worker should utilize. The
 connection name passed to the `work` command should correspond to one of the
@@ -2151,7 +2016,7 @@ php artisan queue:work redis --queue=emails
 
 <a name="processing-a-specified-number-of-jobs"></a>
 
-#### Processing a Specified Number of Jobs
+#### Processing A Specified Number Of Jobs
 
 The `--once` option may be used to instruct the worker to only process a single
 job from the queue:
@@ -2172,7 +2037,7 @@ php artisan queue:work --max-jobs=1000
 
 <a name="processing-all-queued-jobs-then-exiting"></a>
 
-#### Processing All Queued Jobs and Then Exiting
+#### Processing All Queued Jobs & Then Exiting
 
 The `--stop-when-empty` option may be used to instruct the worker to process all
 jobs and then exit gracefully. This option can be useful when processing Laravel
@@ -2185,7 +2050,7 @@ php artisan queue:work --stop-when-empty
 
 <a name="processing-jobs-for-a-given-number-of-seconds"></a>
 
-#### Processing Jobs for a Given Number of Seconds
+#### Processing Jobs For A Given Number Of Seconds
 
 The `--max-time` option may be used to instruct the worker to process jobs for
 the given number of seconds and then exit. This option may be useful when
@@ -2209,22 +2074,6 @@ sleeping, the worker will not process any new jobs:
 
 ```shell
 php artisan queue:work --sleep=3
-```
-
-<a name="maintenance-mode-queues"></a>
-
-#### Maintenance Mode and Queues
-
-While your application is
-in [maintenance mode](configuration.md#maintenance-mode), no
-queued jobs will be handled. The jobs will continue to be handled as normal once
-the application is out of maintenance mode.
-
-To force your queue workers to process jobs even if maintenance mode is enabled,
-you may use `--force` option:
-
-```shell
-php artisan queue:work --force
 ```
 
 <a name="resource-considerations"></a>
@@ -2257,7 +2106,7 @@ php artisan queue:work --queue=high,low
 
 <a name="queue-workers-and-deployment"></a>
 
-### Queue Workers and Deployment
+### Queue Workers & Deployment
 
 Since queue workers are long-lived processes, they will not notice changes to
 your code without being restarted. So, the simplest way to deploy an application
@@ -2275,14 +2124,14 @@ queue workers will exit when the `queue:restart` command is executed, you should
 be running a process manager such as [Supervisor](#supervisor-configuration) to
 automatically restart the queue workers.
 
-> [!NOTE]
-> The queue uses the [cache](cache.md) to store restart signals,
-> so you should verify that a cache driver is properly configured for your
-> application before using this feature.
+> **Note**
+> The queue uses the [cache](cache.md) to store restart signals, so you should
+> verify that a cache driver is properly configured for your application before
+> using this feature.
 
 <a name="job-expirations-and-timeouts"></a>
 
-### Job Expirations and Timeouts
+### Job Expirations & Timeouts
 
 <a name="job-expiration"></a>
 
@@ -2297,7 +2146,7 @@ released or deleted. Typically, you should set the `retry_after` value to the
 maximum number of seconds your jobs should reasonably take to complete
 processing.
 
-> [!WARNING]
+> **Warning**
 > The only queue connection which does not contain a `retry_after` value is
 > Amazon SQS. SQS will retry the job based on
 > the [Default Visibility Timeout](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/AboutVT.html)
@@ -2321,7 +2170,7 @@ The `retry_after` configuration option and the `--timeout` CLI option are
 different, but work together to ensure that jobs are not lost and that jobs are
 only successfully processed once.
 
-> [!WARNING]
+> **Warning**
 > The `--timeout` value should always be at least several seconds shorter than
 > your `retry_after` configuration value. This will ensure that a worker
 > processing a frozen job is always terminated before the job is retried. If
@@ -2355,7 +2204,7 @@ Supervisor on Ubuntu, you may use the following command:
 sudo apt-get install supervisor
 ```
 
-> [!NOTE]
+> **Note**
 > If configuring and managing Supervisor yourself sounds overwhelming, consider
 > using [Laravel Forge](https://forge.laravel.com), which will automatically
 > install and configure Supervisor for your production Laravel projects.
@@ -2390,7 +2239,7 @@ eight `queue:work` processes and monitor all of them, automatically restarting
 them if they fail. You should change the `command` directive of the
 configuration to reflect your desired queue connection and worker options.
 
-> [!WARNING]
+> **Warning**
 > You should ensure that the value of `stopwaitsecs` is greater than the number
 > of seconds consumed by your longest running job. Otherwise, Supervisor may kill
 > the job before it is finished processing.
@@ -2407,7 +2256,7 @@ sudo supervisorctl reread
 
 sudo supervisorctl update
 
-sudo supervisorctl start "laravel-worker:*"
+sudo supervisorctl start laravel-worker:*
 ```
 
 For more information on Supervisor, consult
@@ -2422,9 +2271,9 @@ planned! Laravel includes a convenient way
 to [specify the maximum number of times a job should be attempted](#max-job-attempts-and-timeout).
 After an asynchronous job has exceeded this number of attempts, it will be
 inserted into the `failed_jobs` database
-table. [Synchronously dispatched jobs](queues.md#synchronous-dispatching)
-that fail are not stored in this table and their exceptions are immediately
-handled by the application.
+table. [Synchronously dispatched jobs](queues.md#synchronous-dispatching) that
+fail are not stored in this table and their exceptions are immediately handled
+by the application.
 
 A migration to create the `failed_jobs` table is typically already present in
 new Laravel applications. However, if your application does not contain a
@@ -2471,24 +2320,25 @@ may define a `backoff` method on your job class:
 
     /**
     * Calculate the number of seconds to wait before retrying the job.
+    *
+    * @return int
     */
-    public function backoff(): int
+    public function backoff()
     {
         return 3;
     }
 
 You may easily configure "exponential" backoffs by returning an array of backoff
 values from the `backoff` method. In this example, the retry delay will be 1
-second for the first retry, 5 seconds for the second retry, 10 seconds for the
-third retry, and 10 seconds for every subsequent retry if there are more
-attempts remaining:
+second for the first retry, 5 seconds for the second retry, and 10 seconds for
+the third retry:
 
     /**
     * Calculate the number of seconds to wait before retrying the job.
     *
-    * @return array<int, int>
+    * @return array
     */
-    public function backoff(): array
+    public function backoff()
     {
         return [1, 5, 10];
     }
@@ -2519,30 +2369,47 @@ that caused the job to fail will be passed to the `failed` method:
         use InteractsWithQueue, Queueable, SerializesModels;
 
         /**
-         * Create a new job instance.
+         * The podcast instance.
+         *
+         * @var \App\Podcast
          */
-        public function __construct(
-            public Podcast $podcast,
-        ) {}
+        public $podcast;
+
+        /**
+         * Create a new job instance.
+         *
+         * @param  \App\Models\Podcast  $podcast
+         * @return void
+         */
+        public function __construct(Podcast $podcast)
+        {
+            $this->podcast = $podcast;
+        }
 
         /**
          * Execute the job.
+         *
+         * @param  \App\Services\AudioProcessor  $processor
+         * @return void
          */
-        public function handle(AudioProcessor $processor): void
+        public function handle(AudioProcessor $processor)
         {
             // Process uploaded podcast...
         }
 
         /**
          * Handle a job failure.
+         *
+         * @param  \Throwable  $exception
+         * @return void
          */
-        public function failed(?Throwable $exception): void
+        public function failed(Throwable $exception)
         {
             // Send user notification of failure, etc...
         }
     }
 
-> [!WARNING]
+> **Warning**
 > A new instance of the job is instantiated before invoking the `failed` method;
 > therefore, any class property modifications that may have occurred within
 > the `handle` method will be lost.
@@ -2593,10 +2460,9 @@ command:
 php artisan queue:forget 91401d2c-0784-4f43-824c-34f94a33c24d
 ```
 
-> [!NOTE]
-> When using [Horizon](horizon.md), you should use
-> the `horizon:forget` command to delete a failed job instead of
-> the `queue:forget` command.
+> **Note**
+> When using [Horizon](horizon.md), you should use the `horizon:forget` command
+> to delete a failed job instead of the `queue:forget` command.
 
 To delete all of your failed jobs from the `failed_jobs` table, you may use
 the `queue:flush` command:
@@ -2650,14 +2516,14 @@ php artisan queue:prune-failed --hours=48
 
 <a name="storing-failed-jobs-in-dynamodb"></a>
 
-### Storing Failed Jobs in DynamoDB
+### Storing Failed Jobs In DynamoDB
 
 Laravel also provides support for storing your failed job records
 in [DynamoDB](https://aws.amazon.com/dynamodb) instead of a relational database
-table. However, you must manually create a DynamoDB table to store all of the
-failed job records. Typically, this table should be named `failed_jobs`, but you
-should name the table based on the value of the `queue.failed.table`
-configuration value within your application's `queue` configuration file.
+table. However, you must create a DynamoDB table to store all of the failed job
+records. Typically, this table should be named `failed_jobs`, but you should
+name the table based on the value of the `queue.failed.table` configuration
+value within your application's `queue` configuration file.
 
 The `failed_jobs` table should have a string primary partition key
 named `application` and a string primary sort key named `uuid`.
@@ -2723,16 +2589,20 @@ the `AppServiceProvider` that is included with Laravel:
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
             Queue::failing(function (JobFailed $event) {
                 // $event->connectionName
@@ -2746,10 +2616,9 @@ the `AppServiceProvider` that is included with Laravel:
 
 ## Clearing Jobs From Queues
 
-> [!NOTE]
-> When using [Horizon](horizon.md), you should use
-> the `horizon:clear` command to clear jobs from the queue instead of
-> the `queue:clear` command.
+> **Note**
+> When using [Horizon](horizon.md), you should use the `horizon:clear` command
+> to clear jobs from the queue instead of the `queue:clear` command.
 
 If you would like to delete all jobs from the default queue of the default
 connection, you may do so using the `queue:clear` Artisan command:
@@ -2765,7 +2634,7 @@ from a specific connection and queue:
 php artisan queue:clear redis --queue=emails
 ```
 
-> [!WARNING]
+> **Warning**
 > Clearing jobs from queues is only available for the SQS, Redis, and database
 > queue drivers. In addition, the SQS message deletion process takes up to 60
 > seconds, so jobs sent to the SQS queue up to 60 seconds after you clear the
@@ -2780,9 +2649,8 @@ leading to a long wait time for jobs to complete. If you wish, Laravel can alert
 you when your queue job count exceeds a specified threshold.
 
 To get started, you should schedule the `queue:monitor` command
-to [run every minute](scheduling.md). The command accepts the
-names of the queues you wish to monitor as well as your desired job count
-threshold:
+to [run every minute](scheduling.md). The command accepts the names of the
+queues you wish to monitor as well as your desired job count threshold:
 
 ```shell
 php artisan queue:monitor redis:default,redis:deployments --max=100
@@ -2803,8 +2671,10 @@ use Illuminate\Support\Facades\Notification;
 
 /**
  * Register any other events for your application.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Event::listen(function (QueueBusy $event) {
         Notification::route('mail', 'dev@example.com')
@@ -2817,217 +2687,16 @@ public function boot(): void
 }
 ```
 
-<a name="testing"></a>
-
-## Testing
-
-When testing code that dispatches jobs, you may wish to instruct Laravel to not
-actually execute the job itself, since the job's code can be tested directly and
-separately of the code that dispatches it. Of course, to test the job itself,
-you may instantiate a job instance and invoke the `handle` method directly in
-your test.
-
-You may use the `Queue` facade's `fake` method to prevent queued jobs from
-actually being pushed to the queue. After calling the `Queue` facade's `fake`
-method, you may then assert that the application attempted to push jobs to the
-queue:
-
-    <?php
-
-    namespace Tests\Feature;
-
-    use App\Jobs\AnotherJob;
-    use App\Jobs\FinalJob;
-    use App\Jobs\ShipOrder;
-    use Illuminate\Support\Facades\Queue;
-    use Tests\TestCase;
-
-    class ExampleTest extends TestCase
-    {
-        public function test_orders_can_be_shipped(): void
-        {
-            Queue::fake();
-
-            // Perform order shipping...
-
-            // Assert that no jobs were pushed...
-            Queue::assertNothingPushed();
-
-            // Assert a job was pushed to a given queue...
-            Queue::assertPushedOn('queue-name', ShipOrder::class);
-
-            // Assert a job was pushed twice...
-            Queue::assertPushed(ShipOrder::class, 2);
-
-            // Assert a job was not pushed...
-            Queue::assertNotPushed(AnotherJob::class);
-
-            // Assert that a Closure was pushed to the queue...
-            Queue::assertClosurePushed();
-
-            // Assert the total number of jobs that were pushed...
-            Queue::assertCount(3);
-        }
-    }
-
-You may pass a closure to the `assertPushed` or `assertNotPushed` methods in
-order to assert that a job was pushed that passes a given "truth test". If at
-least one job was pushed that passes the given truth test then the assertion
-will be successful:
-
-    Queue::assertPushed(function (ShipOrder $job) use ($order) {
-        return $job->order->id === $order->id;
-    });
-
-<a name="faking-a-subset-of-jobs"></a>
-
-### Faking a Subset of Jobs
-
-If you only need to fake specific jobs while allowing your other jobs to execute
-normally, you may pass the class names of the jobs that should be faked to
-the `fake` method:
-
-    public function test_orders_can_be_shipped(): void
-    {
-        Queue::fake([
-            ShipOrder::class,
-        ]);
-
-        // Perform order shipping...
-
-        // Assert a job was pushed twice...
-        Queue::assertPushed(ShipOrder::class, 2);
-    }
-
-You may fake all jobs except for a set of specified jobs using the `except`
-method:
-
-    Queue::fake()->except([
-        ShipOrder::class,
-    ]);
-
-<a name="testing-job-chains"></a>
-
-### Testing Job Chains
-
-To test job chains, you will need to utilize the `Bus` facade's faking
-capabilities. The `Bus` facade's `assertChained` method may be used to assert
-that a [chain of jobs](queues.md#job-chaining) was dispatched.
-The `assertChained` method accepts an array of chained jobs as its first
-argument:
-
-    use App\Jobs\RecordShipment;
-    use App\Jobs\ShipOrder;
-    use App\Jobs\UpdateInventory;
-    use Illuminate\Support\Facades\Bus;
-
-    Bus::fake();
-
-    // ...
-
-    Bus::assertChained([
-        ShipOrder::class,
-        RecordShipment::class,
-        UpdateInventory::class
-    ]);
-
-As you can see in the example above, the array of chained jobs may be an array
-of the job's class names. However, you may also provide an array of actual job
-instances. When doing so, Laravel will ensure that the job instances are of the
-same class and have the same property values of the chained jobs dispatched by
-your application:
-
-    Bus::assertChained([
-        new ShipOrder,
-        new RecordShipment,
-        new UpdateInventory,
-    ]);
-
-You may use the `assertDispatchedWithoutChain` method to assert that a job was
-pushed without a chain of jobs:
-
-    Bus::assertDispatchedWithoutChain(ShipOrder::class);
-
-<a name="testing-chained-batches"></a>
-
-#### Testing Chained Batches
-
-If your job chain [contains a batch of jobs](#chains-and-batches), you may
-assert that the chained batch matches your expectations by inserting
-a `Bus::chainedBatch` definition within your chain assertion:
-
-    use App\Jobs\ShipOrder;
-    use App\Jobs\UpdateInventory;
-    use Illuminate\Bus\PendingBatch;
-    use Illuminate\Support\Facades\Bus;
-
-    Bus::assertChained([
-        new ShipOrder,
-        Bus::chainedBatch(function (PendingBatch $batch) {
-            return $batch->jobs->count() === 3;
-        }),
-        new UpdateInventory,
-    ]);
-
-<a name="testing-job-batches"></a>
-
-### Testing Job Batches
-
-The `Bus` facade's `assertBatched` method may be used to assert that
-a [batch of jobs](queues.md#job-batching) was dispatched. The
-closure given to the `assertBatched` method receives an instance
-of `Illuminate\Bus\PendingBatch`, which may be used to inspect the jobs within
-the batch:
-
-    use Illuminate\Bus\PendingBatch;
-    use Illuminate\Support\Facades\Bus;
-
-    Bus::fake();
-
-    // ...
-
-    Bus::assertBatched(function (PendingBatch $batch) {
-        return $batch->name == 'import-csv' &&
-               $batch->jobs->count() === 10;
-    });
-
-You may use the `assertBatchCount` method to assert that a given number of
-batches were dispatched:
-
-    Bus::assertBatchCount(3);
-
-You may use `assertNothingBatched` to assert that no batches were dispatched:
-
-    Bus::assertNothingBatched();
-
-<a name="testing-job-batch-interaction"></a>
-
-#### Testing Job / Batch Interaction
-
-In addition, you may occasionally need to test an individual job's interaction
-with its underlying batch. For example, you may need to test if a job cancelled
-further processing for its batch. To accomplish this, you need to assign a fake
-batch to the job via the `withFakeBatch` method. The `withFakeBatch` method
-returns a tuple containing the job instance and the fake batch:
-
-    [$job, $batch] = (new ShipOrder)->withFakeBatch();
-
-    $job->handle();
-
-    $this->assertTrue($batch->cancelled());
-    $this->assertEmpty($batch->added);
-
 <a name="job-events"></a>
 
 ## Job Events
 
-Using the `before` and `after` methods on
-the `Queue` [facade](facades.md), you may specify callbacks to be
-executed before or after a queued job is processed. These callbacks are a great
-opportunity to perform additional logging or increment statistics for a
-dashboard. Typically, you should call these methods from the `boot` method of
-a [service provider](providers.md). For example, we may use
-the `AppServiceProvider` that is included with Laravel:
+Using the `before` and `after` methods on the `Queue` [facade](facades.md), you
+may specify callbacks to be executed before or after a queued job is processed.
+These callbacks are a great opportunity to perform additional logging or
+increment statistics for a dashboard. Typically, you should call these methods
+from the `boot` method of a [service provider](providers.md). For example, we
+may use the `AppServiceProvider` that is included with Laravel:
 
     <?php
 
@@ -3042,16 +2711,20 @@ the `AppServiceProvider` that is included with Laravel:
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
             Queue::before(function (JobProcessing $event) {
                 // $event->connectionName
@@ -3067,10 +2740,10 @@ the `AppServiceProvider` that is included with Laravel:
         }
     }
 
-Using the `looping` method on the `Queue` [facade](facades.md),
-you may specify callbacks that execute before the worker attempts to fetch a job
-from a queue. For example, you might register a closure to rollback any
-transactions that were left open by a previously failed job:
+Using the `looping` method on the `Queue` [facade](facades.md), you may specify
+callbacks that execute before the worker attempts to fetch a job from a queue.
+For example, you might register a closure to rollback any transactions that were
+left open by a previously failed job:
 
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Queue;

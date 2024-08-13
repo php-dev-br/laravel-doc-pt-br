@@ -2,13 +2,13 @@
 
 - [Introduction](#introduction)
     - [Configuration](#configuration)
-    - [Read and Write Connections](#read-and-write-connections)
+    - [Read & Write Connections](#read-and-write-connections)
 - [Running SQL Queries](#running-queries)
     - [Using Multiple Database Connections](#using-multiple-database-connections)
-    - [Listening for Query Events](#listening-for-query-events)
+    - [Listening For Query Events](#listening-for-query-events)
     - [Monitoring Cumulative Query Time](#monitoring-cumulative-query-time)
 - [Database Transactions](#database-transactions)
-- [Connecting to the Database CLI](#connecting-to-the-database-cli)
+- [Connecting To The Database CLI](#connecting-to-the-database-cli)
 - [Inspecting Your Databases](#inspecting-your-databases)
 - [Monitoring Your Databases](#monitoring-your-databases)
 
@@ -18,18 +18,18 @@
 
 Almost every modern web application interacts with a database. Laravel makes
 interacting with databases extremely simple across a variety of supported
-databases using raw SQL, a [fluent query builder](queries.md),
-and the [Eloquent ORM](eloquent.md). Currently, Laravel provides
-first-party support for five databases:
+databases using raw SQL, a [fluent query builder](queries.md), and
+the [Eloquent ORM](eloquent.md). Currently, Laravel provides first-party support
+for five databases:
 
 <div class="content-list" markdown="1">
 
 - MariaDB
-  10.10+ ([Version Policy](https://mariadb.org/about/#maintenance-policy))
+  10.3+ ([Version Policy](https://mariadb.org/about/#maintenance-policy))
 - MySQL
   5.7+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
 - PostgreSQL
-  11.0+ ([Version Policy](https://www.postgresql.org/support/versioning/))
+  10.0+ ([Version Policy](https://www.postgresql.org/support/versioning/))
 - SQLite 3.8.8+
 - SQL Server
   2017+ ([Version Policy](https://docs.microsoft.com/en-us/lifecycle/products/?products=sql-server))
@@ -49,10 +49,9 @@ for most of Laravel's supported database systems are provided in this file.
 
 By default, Laravel's
 sample [environment configuration](configuration.md#environment-configuration)
-is ready to use with [Laravel Sail](sail.md), which is a Docker
-configuration for developing Laravel applications on your local machine.
-However, you are free to modify your database configuration as needed for your
-local database.
+is ready to use with [Laravel Sail](sail.md), which is a Docker configuration
+for developing Laravel applications on your local machine. However, you are free
+to modify your database configuration as needed for your local database.
 
 <a name="sqlite-configuration"></a>
 
@@ -118,7 +117,7 @@ information.
 
 <a name="read-and-write-connections"></a>
 
-### Read and Write Connections
+### Read & Write Connections
 
 Sometimes you may wish to use one database connection for SELECT statements, and
 another for INSERT, UPDATE, and DELETE statements. Laravel makes this a breeze,
@@ -186,7 +185,7 @@ query: `select`, `update`, `insert`, `delete`, and `statement`.
 
 <a name="running-a-select-query"></a>
 
-#### Running a Select Query
+#### Running A Select Query
 
 To run a basic SELECT query, you may use the `select` method on the `DB` facade:
 
@@ -196,14 +195,15 @@ To run a basic SELECT query, you may use the `select` method on the `DB` facade:
 
     use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\DB;
-    use Illuminate\View\View;
 
     class UserController extends Controller
     {
         /**
          * Show a list of all of the application's users.
+         *
+         * @return \Illuminate\Http\Response
          */
-        public function index(): View
+        public function index()
         {
             $users = DB::select('select * from users where active = ?', [1]);
 
@@ -240,18 +240,6 @@ Laravel allows you to retrieve this value directly using the `scalar` method:
         "select count(case when food = 'burger' then 1 end) as burgers from menu"
     );
 
-<a name="selecting-multiple-result-sets"></a>
-
-#### Selecting Multiple Result Sets
-
-If your application calls stored procedures that return multiple result sets,
-you may use the `selectResultSets` method to retrieve all of the result sets
-returned by the stored procedure:
-
-    [$options, $notifications] = DB::selectResultSets(
-        "CALL get_user_options_and_notifications(?)", $request->user()->id
-    );
-
 <a name="using-named-bindings"></a>
 
 #### Using Named Bindings
@@ -263,7 +251,7 @@ query using named bindings:
 
 <a name="running-an-insert-statement"></a>
 
-#### Running an Insert Statement
+#### Running An Insert Statement
 
 To execute an `insert` statement, you may use the `insert` method on the `DB`
 facade. Like `select`, this method accepts the SQL query as its first argument
@@ -275,7 +263,7 @@ and bindings as its second argument:
 
 <a name="running-an-update-statement"></a>
 
-#### Running an Update Statement
+#### Running An Update Statement
 
 The `update` method should be used to update existing records in the database.
 The number of rows affected by the statement is returned by the method:
@@ -289,7 +277,7 @@ The number of rows affected by the statement is returned by the method:
 
 <a name="running-a-delete-statement"></a>
 
-#### Running a Delete Statement
+#### Running A Delete Statement
 
 The `delete` method should be used to delete records from the database.
 Like `update`, the number of rows affected will be returned by the method:
@@ -300,7 +288,7 @@ Like `update`, the number of rows affected will be returned by the method:
 
 <a name="running-a-general-statement"></a>
 
-#### Running a General Statement
+#### Running A General Statement
 
 Some database statements do not return any value. For these types of operations,
 you may use the `statement` method on the `DB` facade:
@@ -309,14 +297,14 @@ you may use the `statement` method on the `DB` facade:
 
 <a name="running-an-unprepared-statement"></a>
 
-#### Running an Unprepared Statement
+#### Running An Unprepared Statement
 
 Sometimes you may want to execute an SQL statement without binding any values.
 You may use the `DB` facade's `unprepared` method to accomplish this:
 
     DB::unprepared('update users set votes = 100 where name = "Dries"');
 
-> [!WARNING]
+> **Warning**
 > Since unprepared statements do not bind parameters, they may be vulnerable to
 > SQL injection. You should never allow user controlled values within an
 > unprepared statement.
@@ -360,7 +348,7 @@ the `getPdo` method on a connection instance:
 
 <a name="listening-for-query-events"></a>
 
-### Listening for Query Events
+### Listening For Query Events
 
 If you would like to specify a closure that is invoked for each SQL query
 executed by your application, you may use the `DB` facade's `listen` method.
@@ -372,7 +360,6 @@ a [service provider](providers.md):
 
     namespace App\Providers;
 
-    use Illuminate\Database\Events\QueryExecuted;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Support\ServiceProvider;
 
@@ -380,18 +367,22 @@ a [service provider](providers.md):
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
-            DB::listen(function (QueryExecuted $query) {
+            DB::listen(function ($query) {
                 // $query->sql;
                 // $query->bindings;
                 // $query->time;
@@ -408,8 +399,7 @@ they spend querying databases. Thankfully, Laravel can invoke a closure or
 callback of your choice when it spends too much time querying the database
 during a single request. To get started, provide a query time threshold (in
 milliseconds) and closure to the `whenQueryingForLongerThan` method. You may
-invoke this method in the `boot` method of
-a [service provider](providers.md):
+invoke this method in the `boot` method of a [service provider](providers.md):
 
     <?php
 
@@ -424,16 +414,20 @@ a [service provider](providers.md):
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
             DB::whenQueryingForLongerThan(500, function (Connection $connection, QueryExecuted $event) {
                 // Notify development team...
@@ -496,14 +490,13 @@ Lastly, you can commit a transaction via the `commit` method:
 
     DB::commit();
 
-> [!NOTE]
+> **Note**
 > The `DB` facade's transaction methods control the transactions for both
-> the [query builder](queries.md)
-> and [Eloquent ORM](eloquent.md).
+> the [query builder](queries.md) and [Eloquent ORM](eloquent.md).
 
 <a name="connecting-to-the-database-cli"></a>
 
-## Connecting to the Database CLI
+## Connecting To The Database CLI
 
 If you would like to connect to your database's CLI, you may use the `db`
 Artisan command:
@@ -570,10 +563,10 @@ an `Illuminate\Database\Events\DatabaseBusy` event if your database is managing
 more than a specified number of open connections.
 
 To get started, you should schedule the `db:monitor` command
-to [run every minute](scheduling.md). The command accepts the
-names of the database connection configurations that you wish to monitor as well
-as the maximum number of open connections that should be tolerated before
-dispatching an event:
+to [run every minute](scheduling.md). The command accepts the names of the
+database connection configurations that you wish to monitor as well as the
+maximum number of open connections that should be tolerated before dispatching
+an event:
 
 ```shell
 php artisan db:monitor --databases=mysql,pgsql --max=100
@@ -594,8 +587,10 @@ use Illuminate\Support\Facades\Notification;
 
 /**
  * Register any other events for your application.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Event::listen(function (DatabaseBusy $event) {
         Notification::route('mail', 'dev@example.com')

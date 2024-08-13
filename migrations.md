@@ -34,17 +34,17 @@ had to tell a teammate to manually add a column to their local database schema
 after pulling in your changes from source control, you've faced the problem that
 database migrations solve.
 
-The Laravel `Schema` [facade](facades.md) provides database
-agnostic support for creating and manipulating tables across all of Laravel's
-supported database systems. Typically, migrations will use this facade to create
-and modify database tables and columns.
+The Laravel `Schema` [facade](facades.md) provides database agnostic support for
+creating and manipulating tables across all of Laravel's supported database
+systems. Typically, migrations will use this facade to create and modify
+database tables and columns.
 
 <a name="generating-migrations"></a>
 
 ## Generating Migrations
 
-You may use the `make:migration` [Artisan command](artisan.md) to
-generate a database migration. The new migration will be placed in
+You may use the `make:migration` [Artisan command](artisan.md) to generate a
+database migration. The new migration will be placed in
 your `database/migrations` directory. Each migration filename contains a
 timestamp that allows Laravel to determine the order of the migrations:
 
@@ -62,7 +62,7 @@ If you would like to specify a custom path for the generated migration, you may
 use the `--path` option when executing the `make:migration` command. The given
 path should be relative to your application's base path.
 
-> [!NOTE]
+> **Note**
 > Migration stubs may be customized
 > using [stub publishing](artisan.md#stub-customization).
 
@@ -86,10 +86,10 @@ php artisan schema:dump --prune
 When you execute this command, Laravel will write a "schema" file to your
 application's `database/schema` directory. The schema file's name will
 correspond to the database connection. Now, when you attempt to migrate your
-database and no other migrations have been executed, Laravel will first execute
-the SQL statements in the schema file of the database connection you are using.
-After executing the schema file's SQL statements, Laravel will execute any
-remaining migrations that were not part of the schema dump.
+database and no other migrations have been executed, Laravel will execute first
+the SQL statements of the schema file of the database connection you are using.
+After executing the schema file's statements, Laravel will execute any remaining
+migrations that were not part of the schema dump.
 
 If your application's tests use a different database connection than the one you
 typically use during local development, you should ensure you have dumped a
@@ -106,9 +106,10 @@ You should commit your database schema file to source control so that other new
 developers on your team may quickly create your application's initial database
 structure.
 
-> [!WARNING]
+> **Warning**
 > Migration squashing is only available for the MySQL, PostgreSQL, and SQLite
-> databases and utilizes the database's command-line client.
+> databases and utilizes the database's command-line client. Schema dumps may not
+> be restored to in-memory SQLite databases.
 
 <a name="migration-structure"></a>
 
@@ -134,8 +135,10 @@ following migration creates a `flights` table:
     {
         /**
          * Run the migrations.
+         *
+         * @return void
          */
-        public function up(): void
+        public function up()
         {
             Schema::create('flights', function (Blueprint $table) {
                 $table->id();
@@ -147,8 +150,10 @@ following migration creates a `flights` table:
 
         /**
          * Reverse the migrations.
+         *
+         * @return void
          */
-        public function down(): void
+        public function down()
         {
             Schema::drop('flights');
         }
@@ -156,7 +161,7 @@ following migration creates a `flights` table:
 
 <a name="setting-the-migration-connection"></a>
 
-#### Setting the Migration Connection
+#### Setting The Migration Connection
 
 If your migration will be interacting with a database connection other than your
 application's default database connection, you should set the `$connection`
@@ -171,10 +176,12 @@ property of your migration:
 
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
-        // ...
+        //
     }
 
 <a name="running-migrations"></a>
@@ -220,7 +227,7 @@ code:
 php artisan migrate --isolated
 ```
 
-> [!WARNING]
+> **Warning**
 > To utilize this feature, your application must be using
 > the `memcached`, `redis`, `dynamodb`, `database`, `file`, or `array` cache
 > driver as your application's default cache driver. In addition, all servers must
@@ -228,7 +235,7 @@ php artisan migrate --isolated
 
 <a name="forcing-migrations-to-run-in-production"></a>
 
-#### Forcing Migrations to Run in Production
+#### Forcing Migrations To Run In Production
 
 Some migration operations are destructive, which means they may cause you to
 lose data. In order to protect you from running these commands against your
@@ -260,23 +267,6 @@ last five migrations:
 php artisan migrate:rollback --step=5
 ```
 
-You may roll back a specific "batch" of migrations by providing the `batch`
-option to the `rollback` command, where the `batch` option corresponds to a
-batch value within your application's `migrations` database table. For example,
-the following command will roll back all migrations in batch three:
-
- ```shell
- php artisan migrate:rollback --batch=3
- ```
-
-If you would like to see the SQL statements that will be executed by the
-migrations without actually running them, you may provide the `--pretend` flag
-to the `migrate:rollback` command:
-
-```shell
-php artisan migrate:rollback --pretend
-```
-
 The `migrate:reset` command will roll back all of your application's migrations:
 
 ```shell
@@ -285,7 +275,7 @@ php artisan migrate:reset
 
 <a name="roll-back-migrate-using-a-single-command"></a>
 
-#### Roll Back and Migrate Using a Single Command
+#### Roll Back & Migrate Using A Single Command
 
 The `migrate:refresh` command will roll back all of your migrations and then
 execute the `migrate` command. This command effectively re-creates your entire
@@ -308,7 +298,7 @@ php artisan migrate:refresh --step=5
 
 <a name="drop-all-tables-migrate"></a>
 
-#### Drop All Tables and Migrate
+#### Drop All Tables & Migrate
 
 The `migrate:fresh` command will drop all tables from the database and then
 execute the `migrate` command:
@@ -319,17 +309,7 @@ php artisan migrate:fresh
 php artisan migrate:fresh --seed
 ```
 
-By default, the `migrate:fresh` command only drops tables from the default
-database connection. However, you may use the `--database` option to specify the
-database connection that should be migrated. The database connection name should
-correspond to a connection defined in your
-application's `database` [configuration file](configuration.md):
-
-```shell
-php artisan migrate:fresh --database=admin
-```
-
-> [!WARNING]
+> **Warning**
 > The `migrate:fresh` command will drop all database tables regardless of their
 > prefix. This command should be used with caution when developing on a database
 > that is shared with other applications.
@@ -360,11 +340,11 @@ used to define the new table:
 When creating the table, you may use any of the schema
 builder's [column methods](#creating-columns) to define the table's columns.
 
-<a name="determining-table-column-existence"></a>
+<a name="checking-for-table-column-existence"></a>
 
-#### Determining Table / Column Existence
+#### Checking For Table / Column Existence
 
-You may determine the existence of a table or column using the `hasTable`
+You may check for the existence of a table or column using the `hasTable`
 and `hasColumn` methods:
 
     if (Schema::hasTable('users')) {
@@ -377,7 +357,7 @@ and `hasColumn` methods:
 
 <a name="database-connection-table-options"></a>
 
-#### Database Connection and Table Options
+#### Database Connection & Table Options
 
 If you want to perform a schema operation on a database connection that is not
 your application's default connection, use the `connection` method:
@@ -704,9 +684,8 @@ The `foreignId` method creates an `UNSIGNED BIGINT` equivalent column:
 
 #### `foreignIdFor()` {.collection-method}
 
-The `foreignIdFor` method adds a `{column}_id` equivalent column for a given
-model class. The column type will be `UNSIGNED BIGINT`, `CHAR(36)`,
-or `CHAR(26)` depending on the model key type:
+The `foreignIdFor` method adds a `{column}_id UNSIGNED BIGINT` equivalent column
+for a given model class:
 
     $table->foreignIdFor(User::class);
 
@@ -777,8 +756,6 @@ The `integer` method creates an `INTEGER` equivalent column:
 The `ipAddress` method creates a `VARCHAR` equivalent column:
 
     $table->ipAddress('visitor');
-
-When using Postgres, an `INET` column will be created.
 
 <a name="column-method-json"></a>
 
@@ -851,15 +828,13 @@ The `mediumText` method creates a `MEDIUMTEXT` equivalent column:
 
 #### `morphs()` {.collection-method}
 
-The `morphs` method is a convenience method that adds a `{column}_id` equivalent
-column and a `{column}_type` `VARCHAR` equivalent column. The column type for
-the `{column}_id` will be `UNSIGNED BIGINT`, `CHAR(36)`, or `CHAR(26)` depending
-on the model key type.
+The `morphs` method is a convenience method that adds
+a `{column}_id` `UNSIGNED BIGINT` equivalent column and
+a `{column}_type` `VARCHAR` equivalent column.
 
 This method is intended to be used when defining the columns necessary for a
-polymorphic [Eloquent relationship](eloquent-relationships.md).
-In the following example, `taggable_id` and `taggable_type` columns would be
-created:
+polymorphic [Eloquent relationship](eloquent-relationships.md). In the following
+example, `taggable_id` and `taggable_type` columns would be created:
 
     $table->morphs('taggable');
 
@@ -1153,9 +1128,9 @@ a `{column}_id` `CHAR(26)` equivalent column and a `{column}_type` `VARCHAR`
 equivalent column.
 
 This method is intended to be used when defining the columns necessary for a
-polymorphic [Eloquent relationship](eloquent-relationships.md)
-that use ULID identifiers. In the following example, `taggable_id`
-and `taggable_type` columns would be created:
+polymorphic [Eloquent relationship](eloquent-relationships.md) that use ULID
+identifiers. In the following example, `taggable_id` and `taggable_type` columns
+would be created:
 
     $table->ulidMorphs('taggable');
 
@@ -1168,9 +1143,9 @@ a `{column}_id` `CHAR(36)` equivalent column and a `{column}_type` `VARCHAR`
 equivalent column.
 
 This method is intended to be used when defining the columns necessary for a
-polymorphic [Eloquent relationship](eloquent-relationships.md)
-that use UUID identifiers. In the following example, `taggable_id`
-and `taggable_type` columns would be created:
+polymorphic [Eloquent relationship](eloquent-relationships.md) that use UUID
+identifiers. In the following example, `taggable_id` and `taggable_type` columns
+would be created:
 
     $table->uuidMorphs('taggable');
 
@@ -1231,7 +1206,7 @@ does not include [index modifiers](#creating-indexes):
  `->storedAs($expression)`           | Create a stored generated column (MySQL / PostgreSQL).
  `->unsigned()`                      | Set INTEGER columns as UNSIGNED (MySQL).
  `->useCurrent()`                    | Set TIMESTAMP columns to use CURRENT_TIMESTAMP as default value.
- `->useCurrentOnUpdate()`            | Set TIMESTAMP columns to use CURRENT_TIMESTAMP when a record is updated (MySQL).
+ `->useCurrentOnUpdate()`            | Set TIMESTAMP columns to use CURRENT_TIMESTAMP when a record is updated.
  `->virtualAs($expression)`          | Create a virtual generated column (MySQL / PostgreSQL / SQLite).
  `->generatedAs($expression)`        | Create an identity column with specified sequence options (PostgreSQL).
  `->always()`                        | Defines the precedence of sequence values over input for an identity column (PostgreSQL).
@@ -1258,8 +1233,10 @@ is when you need to assign default values to JSON columns:
     {
         /**
          * Run the migrations.
+         *
+         * @return void
          */
-        public function up(): void
+        public function up()
         {
             Schema::create('flights', function (Blueprint $table) {
                 $table->id();
@@ -1269,9 +1246,11 @@ is when you need to assign default values to JSON columns:
         }
     };
 
-> [!WARNING]
+> **Warning**
 > Support for default expressions depends on your database driver, database
-> version, and the field type. Please refer to your database's documentation.
+> version, and the field type. Please refer to your database's documentation. In
+> addition, it is not possible to combine raw `default` expressions (
+> using `DB::raw`) with column changes via the `change` method.
 
 <a name="column-order"></a>
 
@@ -1280,7 +1259,7 @@ is when you need to assign default values to JSON columns:
 When using the MySQL database, the `after` method may be used to add columns
 after an existing column in the schema:
 
-    $table->after('password', function (Blueprint $table) {
+    $table->after('password', function ($table) {
         $table->string('address_line1');
         $table->string('address_line2');
         $table->string('city');
@@ -1290,34 +1269,14 @@ after an existing column in the schema:
 
 ### Modifying Columns
 
-The `change` method allows you to modify the type and attributes of existing
-columns. For example, you may wish to increase the size of a `string` column. To
-see the `change` method in action, let's increase the size of the `name` column
-from 25 to 50. To accomplish this, we simply define the new state of the column
-and then call the `change` method:
+<a name="prerequisites"></a>
 
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('name', 50)->change();
-    });
+#### Prerequisites
 
-When modifying a column, you must explicitly include all of the modifiers you
-want to keep on the column definition - any missing attribute will be dropped.
-For example, to retain the `unsigned`, `default`, and `comment` attributes, you
-must call each modifier explicitly when changing the column:
-
-    Schema::table('users', function (Blueprint $table) {
-        $table->integer('votes')->unsigned()->default(1)->comment('my comment')->change();
-    });
-
-<a name="modifying-columns-on-sqlite"></a>
-
-#### Modifying Columns on SQLite
-
-If your application is utilizing an SQLite database, you must install
-the `doctrine/dbal` package using the Composer package manager before modifying
-a column. The Doctrine DBAL library is used to determine the current state of
-the column and to create the SQL queries needed to make the requested changes to
-your column:
+Before modifying a column, you must install the `doctrine/dbal` package using
+the Composer package manager. The Doctrine DBAL library is used to determine the
+current state of the column and to create the SQL queries needed to make the
+requested changes to your column:
 
     composer require doctrine/dbal
 
@@ -1335,10 +1294,35 @@ use Illuminate\Database\DBAL\TimestampType;
 ],
 ```
 
-> [!WARNING]
-> When using the `doctrine/dbal` package, the following column types can be
-> modified: `bigInteger`, `binary`, `boolean`, `char`, `date`, `dateTime`, `dateTimeTz`, `decimal`, `double`, `integer`, `json`, `longText`, `mediumText`, `smallInteger`, `string`, `text`, `time`, `tinyText`, `unsignedBigInteger`, `unsignedInteger`, `unsignedSmallInteger`, `ulid`,
-> and `uuid`.
+> **Warning**
+> If your application is using Microsoft SQL Server, please ensure that you
+> install `doctrine/dbal:^3.0`.
+
+<a name="updating-column-attributes"></a>
+
+#### Updating Column Attributes
+
+The `change` method allows you to modify the type and attributes of existing
+columns. For example, you may wish to increase the size of a `string` column. To
+see the `change` method in action, let's increase the size of the `name` column
+from 25 to 50. To accomplish this, we simply define the new state of the column
+and then call the `change` method:
+
+    Schema::table('users', function (Blueprint $table) {
+        $table->string('name', 50)->change();
+    });
+
+We could also modify a column to be nullable:
+
+    Schema::table('users', function (Blueprint $table) {
+        $table->string('name', 50)->nullable()->change();
+    });
+
+> **Warning**
+> The following column types can be
+> modified: `bigInteger`, `binary`, `boolean`, `char`, `date`, `dateTime`, `dateTimeTz`, `decimal`, `double`, `integer`, `json`, `longText`, `mediumText`, `smallInteger`, `string`, `text`, `time`, `tinyText`, `unsignedBigInteger`, `unsignedInteger`, `unsignedSmallInteger`,
+> and `uuid`. To modify a `timestamp` column type
+> a [Doctrine type must be registered](#prerequisites).
 
 <a name="renaming-columns"></a>
 
@@ -1353,7 +1337,7 @@ builder:
 
 <a name="renaming-columns-on-legacy-databases"></a>
 
-#### Renaming Columns on Legacy Databases
+#### Renaming Columns On Legacy Databases
 
 If you are running a database installation older than one of the following
 releases, you should ensure that you have installed the `doctrine/dbal` library
@@ -1386,7 +1370,7 @@ to the `dropColumn` method:
 
 <a name="dropping-columns-on-legacy-databases"></a>
 
-#### Dropping Columns on Legacy Databases
+#### Dropping Columns On Legacy Databases
 
 If you are running a version of SQLite prior to `3.35.0`, you must install
 the `doctrine/dbal` package via the Composer package manager before
@@ -1468,7 +1452,7 @@ index type. Each of the available index methods is described in the table below:
 
 <a name="index-lengths-mysql-mariadb"></a>
 
-#### Index Lengths and MySQL / MariaDB
+#### Index Lengths & MySQL / MariaDB
 
 By default, Laravel uses the `utf8mb4` character set. If you are running a
 version of MySQL older than the 5.7.7 release or MariaDB older than the 10.2.2
@@ -1481,8 +1465,10 @@ within the `boot` method of your `App\Providers\AppServiceProvider` class:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Schema::defaultStringLength(191);
     }
@@ -1501,7 +1487,7 @@ argument and the desired name as its second argument:
 
     $table->renameIndex('from', 'to')
 
-> [!WARNING]
+> **Warning**
 > If your application is utilizing an SQLite database, you must install
 > the `doctrine/dbal` package via the Composer package manager before
 > the `renameIndex` method may be used.
@@ -1559,14 +1545,12 @@ like so:
 
 The `foreignId` method creates an `UNSIGNED BIGINT` equivalent column, while
 the `constrained` method will use conventions to determine the table and column
-being referenced. If your table name does not match Laravel's conventions, you
-may manually provide it to the `constrained` method. In addition, the name that
-should be assigned to the generated index may be specified as well:
+name being referenced. If your table name does not match Laravel's conventions,
+you may specify the table name by passing it as an argument to the `constrained`
+method:
 
     Schema::table('posts', function (Blueprint $table) {
-        $table->foreignId('user_id')->constrained(
-            table: 'users', indexName: 'posts_user_id'
-        );
+        $table->foreignId('user_id')->constrained('users');
     });
 
 You may also specify the desired action for the "on delete" and "on update"
@@ -1579,14 +1563,13 @@ properties of the constraint:
 
 An alternative, expressive syntax is also provided for these actions:
 
-| Method                        | Description                                       |
-|-------------------------------|---------------------------------------------------|
-| `$table->cascadeOnUpdate();`  | Updates should cascade.                           |
-| `$table->restrictOnUpdate();` | Updates should be restricted.                     |
-| `$table->noActionOnUpdate();` | No action on updates.                             |
-| `$table->cascadeOnDelete();`  | Deletes should cascade.                           |
-| `$table->restrictOnDelete();` | Deletes should be restricted.                     |
-| `$table->nullOnDelete();`     | Deletes should set the foreign key value to null. |
+ Method                        | Description
+-------------------------------|---------------------------------------------------
+ `$table->cascadeOnUpdate();`  | Updates should cascade.
+ `$table->restrictOnUpdate();` | Updates should be restricted.
+ `$table->cascadeOnDelete();`  | Deletes should cascade.
+ `$table->restrictOnDelete();` | Deletes should be restricted.
+ `$table->nullOnDelete();`     | Deletes should set the foreign key value to null.
 
 Any additional [column modifiers](#column-modifiers) must be called before
 the `constrained` method:
@@ -1628,19 +1611,19 @@ using the following methods:
         // Constraints disabled within this closure...
     });
 
-> [!WARNING]
+> **Warning**
 > SQLite disables foreign key constraints by default. When using SQLite, make
-> sure to [enable foreign key support](database.md#configuration)
-> in your database configuration before attempting to create them in your
-> migrations. In addition, SQLite only supports foreign keys upon creation of the
-> table and [not when tables are altered](https://www.sqlite.org/omitted.html).
+> sure to [enable foreign key support](database.md#configuration) in your database
+> configuration before attempting to create them in your migrations. In addition,
+> SQLite only supports foreign keys upon creation of the table
+> and [not when tables are altered](https://www.sqlite.org/omitted.html).
 
 <a name="events"></a>
 
 ## Events
 
-For convenience, each migration operation will dispatch
-an [event](events.md). All of the following events extend the
+For convenience, each migration operation will dispatch an [event](events.md).
+All of the following events extend the
 base `Illuminate\Database\Events\MigrationEvent` class:
 
  Class                                          | Description

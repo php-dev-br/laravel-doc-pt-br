@@ -3,16 +3,16 @@
 - [Introduction](#introduction)
     - [Configuration](#configuration)
     - [Driver Prerequisites](#driver-prerequisites)
-- [Interacting With the Session](#interacting-with-the-session)
+- [Interacting With The Session](#interacting-with-the-session)
     - [Retrieving Data](#retrieving-data)
     - [Storing Data](#storing-data)
     - [Flash Data](#flash-data)
     - [Deleting Data](#deleting-data)
-    - [Regenerating the Session ID](#regenerating-the-session-id)
+    - [Regenerating The Session ID](#regenerating-the-session-id)
 - [Session Blocking](#session-blocking)
 - [Adding Custom Session Drivers](#adding-custom-session-drivers)
-    - [Implementing the Driver](#implementing-the-driver)
-    - [Registering the Driver](#registering-the-driver)
+    - [Implementing The Driver](#implementing-the-driver)
+    - [Registering The Driver](#registering-the-driver)
 
 <a name="introduction"></a>
 
@@ -55,9 +55,9 @@ box:
 
 </div>
 
-> [!NOTE]
-> The array driver is primarily used during [testing](testing.md)
-> and prevents the data stored in the session from being persisted.
+> **Note**
+> The array driver is primarily used during [testing](testing.md) and prevents
+> the data stored in the session from being persisted.
 
 <a name="driver-prerequisites"></a>
 
@@ -71,10 +71,7 @@ When using the `database` session driver, you will need to create a table to
 contain the session records. An example `Schema` declaration for the table may
 be found below:
 
-    use Illuminate\Database\Schema\Blueprint;
-    use Illuminate\Support\Facades\Schema;
-
-    Schema::create('sessions', function (Blueprint $table) {
+    Schema::create('sessions', function ($table) {
         $table->string('id')->primary();
         $table->foreignId('user_id')->nullable()->index();
         $table->string('ip_address', 45)->nullable();
@@ -102,13 +99,13 @@ PhpRedis PHP extension via PECL or install the `predis/predis` package (~1.0)
 via Composer. For more information on configuring Redis, consult
 Laravel's [Redis documentation](redis.md#configuration).
 
-> [!NOTE]
+> **Note**
 > In the `session` configuration file, the `connection` option may be used to
 > specify which Redis connection is used by the session.
 
 <a name="interacting-with-the-session"></a>
 
-## Interacting With the Session
+## Interacting With The Session
 
 <a name="retrieving-data"></a>
 
@@ -118,30 +115,29 @@ There are two primary ways of working with session data in Laravel: the
 global `session` helper and via a `Request` instance. First, let's look at
 accessing the session via a `Request` instance, which can be type-hinted on a
 route closure or controller method. Remember, controller method dependencies are
-automatically injected via the
-Laravel [service container](container.md):
+automatically injected via the Laravel [service container](container.md):
 
     <?php
 
     namespace App\Http\Controllers;
 
+    use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
-    use Illuminate\View\View;
 
     class UserController extends Controller
     {
         /**
          * Show the profile for the given user.
+         *
+         * @param  Request  $request
+         * @param  int  $id
+         * @return Response
          */
-        public function show(Request $request, string $id): View
+        public function show(Request $request, $id)
         {
             $value = $request->session()->get('key');
 
-            // ...
-
-            $user = $this->users->find($id);
-
-            return view('user.profile', ['user' => $user]);
+            //
         }
     }
 
@@ -177,11 +173,11 @@ array of key / value pairs, those values will be stored in the session:
         session(['key' => 'value']);
     });
 
-> [!NOTE]
+> **Note**
 > There is little practical difference between using the session via an HTTP
 > request instance versus using the global `session` helper. Both methods
-> are [testable](testing.md) via the `assertSessionHas` method
-> which is available in all of your test cases.
+> are [testable](testing.md) via the `assertSessionHas` method which is available
+> in all of your test cases.
 
 <a name="retrieving-all-session-data"></a>
 
@@ -192,40 +188,29 @@ method:
 
     $data = $request->session()->all();
 
-<a name="retrieving-a-portion-of-the-session-data"></a>
-
-#### Retrieving a Portion of the Session Data
-
-The `only` and `except` methods may be used to retrieve a subset of the session
-data:
-
-    $data = $request->session()->only(['username', 'email']);
-
-    $data = $request->session()->except(['username', 'email']);
-
 <a name="determining-if-an-item-exists-in-the-session"></a>
 
-#### Determining if an Item Exists in the Session
+#### Determining If An Item Exists In The Session
 
 To determine if an item is present in the session, you may use the `has` method.
 The `has` method returns `true` if the item is present and is not `null`:
 
     if ($request->session()->has('users')) {
-        // ...
+        //
     }
 
 To determine if an item is present in the session, even if its value is `null`,
 you may use the `exists` method:
 
     if ($request->session()->exists('users')) {
-        // ...
+        //
     }
 
 To determine if an item is not present in the session, you may use the `missing`
 method. The `missing` method returns `true` if the item is not present:
 
     if ($request->session()->missing('users')) {
-        // ...
+        //
     }
 
 <a name="storing-data"></a>
@@ -243,7 +228,7 @@ instance's `put` method or the global `session` helper:
 
 <a name="pushing-to-array-session-values"></a>
 
-#### Pushing to Array Session Values
+#### Pushing To Array Session Values
 
 The `push` method may be used to push a new value onto a session value that is
 an array. For example, if the `user.teams` key contains an array of team names,
@@ -253,7 +238,7 @@ you may push a new value onto the array like so:
 
 <a name="retrieving-deleting-an-item"></a>
 
-#### Retrieving and Deleting an Item
+#### Retrieving & Deleting An Item
 
 The `pull` method will retrieve and delete an item from the session in a single
 statement:
@@ -262,7 +247,7 @@ statement:
 
 <a name="#incrementing-and-decrementing-session-values"></a>
 
-#### Incrementing and Decrementing Session Values
+#### Incrementing & Decrementing Session Values
 
 If your session data contains an integer you wish to increment or decrement, you
 may use the `increment` and `decrement` methods:
@@ -318,7 +303,7 @@ like to remove all data from the session, you may use the `flush` method:
 
 <a name="regenerating-the-session-id"></a>
 
-### Regenerating the Session ID
+### Regenerating The Session ID
 
 Regenerating the session ID is often done in order to prevent malicious users
 from exploiting
@@ -326,10 +311,9 @@ a [session fixation](https://owasp.org/www-community/attacks/Session_fixation)
 attack on your application.
 
 Laravel automatically regenerates the session ID during authentication if you
-are using one of the
-Laravel [application starter kits](starter-kits.md)
-or [Laravel Fortify](fortify.md); however, if you need to
-manually regenerate the session ID, you may use the `regenerate` method:
+are using one of the Laravel [application starter kits](starter-kits.md)
+or [Laravel Fortify](fortify.md); however, if you need to manually regenerate
+the session ID, you may use the `regenerate` method:
 
     $request->session()->regenerate();
 
@@ -342,12 +326,11 @@ a single statement, you may use the `invalidate` method:
 
 ## Session Blocking
 
-> [!WARNING]
+> **Warning**
 > To utilize session blocking, your application must be using a cache driver
-> that supports [atomic locks](cache.md#atomic-locks). Currently,
-> those cache drivers include
-> the `memcached`, `dynamodb`, `redis`, `database`, `file`, and `array` drivers.
-> In addition, you may not use the `cookie` session driver.
+> that supports [atomic locks](cache.md#atomic-locks). Currently, those cache
+> drivers include the `memcached`, `dynamodb`, `redis`, and `database` drivers. In
+> addition, you may not use the `cookie` session driver.
 
 By default, Laravel allows requests using the same session to execute
 concurrently. So, for example, if you use a JavaScript HTTP library to make two
@@ -365,11 +348,11 @@ which share the same session ID will wait for the first request to finish
 executing before continuing their execution:
 
     Route::post('/profile', function () {
-        // ...
+        //
     })->block($lockSeconds = 10, $waitSeconds = 10)
 
     Route::post('/order', function () {
-        // ...
+        //
     })->block($lockSeconds = 10, $waitSeconds = 10)
 
 The `block` method accepts two optional arguments. The first argument accepted
@@ -387,7 +370,7 @@ of 10 seconds and requests will wait a maximum of 10 seconds while attempting to
 obtain a lock:
 
     Route::post('/profile', function () {
-        // ...
+        //
     })->block()
 
 <a name="adding-custom-session-drivers"></a>
@@ -396,7 +379,7 @@ obtain a lock:
 
 <a name="implementing-the-driver"></a>
 
-### Implementing the Driver
+#### Implementing The Driver
 
 If none of the existing session drivers fit your application's needs, Laravel
 makes it possible to write your own session handler. Your custom session driver
@@ -418,7 +401,7 @@ the following:
         public function gc($lifetime) {}
     }
 
-> [!NOTE]
+> **Note**
 > Laravel does not ship with a directory to contain your extensions. You are
 > free to place them anywhere you like. In this example, we have created
 > an `Extensions` directory to house the `MongoSessionHandler`.
@@ -451,13 +434,12 @@ cover what each of the methods do:
 
 <a name="registering-the-driver"></a>
 
-### Registering the Driver
+#### Registering The Driver
 
 Once your driver has been implemented, you are ready to register it with
 Laravel. To add additional drivers to Laravel's session backend, you may use
-the `extend` method provided by
-the `Session` [facade](facades.md). You should call the `extend`
-method from the `boot` method of
+the `extend` method provided by the `Session` [facade](facades.md). You should
+call the `extend` method from the `boot` method of
 a [service provider](providers.md). You may do this from the
 existing `App\Providers\AppServiceProvider` or create an entirely new provider:
 
@@ -466,7 +448,6 @@ existing `App\Providers\AppServiceProvider` or create an entirely new provider:
     namespace App\Providers;
 
     use App\Extensions\MongoSessionHandler;
-    use Illuminate\Contracts\Foundation\Application;
     use Illuminate\Support\Facades\Session;
     use Illuminate\Support\ServiceProvider;
 
@@ -474,18 +455,22 @@ existing `App\Providers\AppServiceProvider` or create an entirely new provider:
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
-            Session::extend('mongo', function (Application $app) {
+            Session::extend('mongo', function ($app) {
                 // Return an implementation of SessionHandlerInterface...
                 return new MongoSessionHandler;
             });

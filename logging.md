@@ -8,15 +8,11 @@
 - [Building Log Stacks](#building-log-stacks)
 - [Writing Log Messages](#writing-log-messages)
     - [Contextual Information](#contextual-information)
-    - [Writing to Specific Channels](#writing-to-specific-channels)
+    - [Writing To Specific Channels](#writing-to-specific-channels)
 - [Monolog Channel Customization](#monolog-channel-customization)
-    - [Customizing Monolog for Channels](#customizing-monolog-for-channels)
+    - [Customizing Monolog For Channels](#customizing-monolog-for-channels)
     - [Creating Monolog Handler Channels](#creating-monolog-handler-channels)
-    - [Creating Custom Channels via Factories](#creating-custom-channels-via-factories)
-- [Tailing Log Messages Using Pail](#tailing-log-messages-using-pail)
-    - [Installation](#pail-installation)
-    - [Usage](#pail-usage)
-    - [Filtering Logs](#pail-filtering-logs)
+    - [Creating Custom Channels Via Factories](#creating-custom-channels-via-factories)
 
 <a name="introduction"></a>
 
@@ -41,7 +37,7 @@ application's log handling.
 
 ## Configuration
 
-All of the configuration options for your application's logging behavior are
+All of the configuration options for your application's logging behavior is
 housed in the `config/logging.php` configuration file. This file allows you to
 configure your application's log channels, so be sure to review each of the
 available channels and their options. We'll review a few common options below.
@@ -53,7 +49,7 @@ the [documentation below](#building-log-stacks).
 
 <a name="configuring-the-channel-name"></a>
 
-#### Configuring the Channel Name
+#### Configuring The Channel Name
 
 By default, Monolog is instantiated with a "channel name" that matches the
 current environment, such as `production` or `local`. To change this value, add
@@ -75,23 +71,20 @@ available in every Laravel application. An entry for most of these drivers is
 already present in your application's `config/logging.php` configuration file,
 so be sure to review this file to become familiar with its contents:
 
-<div class="overflow-auto">
-
  Name         | Description
 --------------|---------------------------------------------------------------------
  `custom`     | A driver that calls a specified factory to create a channel
  `daily`      | A `RotatingFileHandler` based Monolog driver which rotates daily
  `errorlog`   | An `ErrorLogHandler` based Monolog driver
  `monolog`    | A Monolog factory driver that may use any supported Monolog handler
+ `null`       | A driver that discards all log messages
  `papertrail` | A `SyslogUdpHandler` based Monolog driver
  `single`     | A single file or path based logger channel (`StreamHandler`)
  `slack`      | A `SlackWebhookHandler` based Monolog driver
  `stack`      | A wrapper to facilitate creating "multi-channel" channels
  `syslog`     | A `SyslogHandler` based Monolog driver
 
-</div>
-
-> [!NOTE]
+> **Note**
 > Check out the documentation
 > on [advanced channel customization](#monolog-channel-customization) to learn
 > more about the `monolog` and `custom` drivers.
@@ -102,12 +95,10 @@ so be sure to review this file to become familiar with its contents:
 
 <a name="configuring-the-single-and-daily-channels"></a>
 
-#### Configuring the Single and Daily Channels
+#### Configuring The Single and Daily Channels
 
 The `single` and `daily` channels have three optional configuration
 options: `bubble`, `permission`, and `locking`.
-
-<div class="overflow-auto">
 
  Name         | Description                                                                  | Default
 --------------|------------------------------------------------------------------------------|---------
@@ -115,22 +106,16 @@ options: `bubble`, `permission`, and `locking`.
  `locking`    | Attempt to lock the log file before writing to it                            | `false`
  `permission` | The log file's permissions                                                   | `0644`
 
-</div>
-
 Additionally, the retention policy for the `daily` channel can be configured via
 the `days` option:
-
-<div class="overflow-auto">
 
  Name   | Description                                                | Default
 --------|------------------------------------------------------------|---------
  `days` | The number of days that daily log files should be retained | `7`
 
-</div>
-
 <a name="configuring-the-papertrail-channel"></a>
 
-#### Configuring the Papertrail Channel
+#### Configuring The Papertrail Channel
 
 The `papertrail` channel requires the `host` and `port` configuration options.
 You can obtain these values
@@ -138,7 +123,7 @@ from [Papertrail](https://help.papertrailapp.com/kb/configuration/configuring-ce
 
 <a name="configuring-the-slack-channel"></a>
 
-#### Configuring the Slack Channel
+#### Configuring The Slack Channel
 
 The `slack` channel requires a `url` configuration option. This URL should match
 a URL for
@@ -239,9 +224,8 @@ minimum level threshold for both channels:
 
 ## Writing Log Messages
 
-You may write information to the logs using
-the `Log` [facade](facades.md). As previously mentioned, the
-logger provides the eight logging levels defined in
+You may write information to the logs using the `Log` [facade](facades.md). As
+previously mentioned, the logger provides the eight logging levels defined in
 the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency
 **, **alert**, **critical**, **error**, **warning**, **notice**, **info** and *
 *debug**:
@@ -268,16 +252,18 @@ by your `logging` configuration file:
     use App\Http\Controllers\Controller;
     use App\Models\User;
     use Illuminate\Support\Facades\Log;
-    use Illuminate\View\View;
 
     class UserController extends Controller
     {
         /**
          * Show the profile for the given user.
+         *
+         * @param  int  $id
+         * @return \Illuminate\Http\Response
          */
-        public function show(string $id): View
+        public function show($id)
         {
-            Log::info('Showing the user profile for user: {id}', ['id' => $id]);
+            Log::info('Showing the user profile for user: '.$id);
 
             return view('user.profile', [
                 'user' => User::findOrFail($id)
@@ -294,7 +280,7 @@ data will be formatted and displayed with the log message:
 
     use Illuminate\Support\Facades\Log;
 
-    Log::info('User {id} failed to login.', ['id' => $user->id]);
+    Log::info('User failed to login.', ['id' => $user->id]);
 
 Occasionally, you may wish to specify some contextual information that should be
 included with all subsequent log entries in a particular channel. For example,
@@ -307,19 +293,19 @@ facade's `withContext` method:
     namespace App\Http\Middleware;
 
     use Closure;
-    use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Str;
-    use Symfony\Component\HttpFoundation\Response;
 
     class AssignRequestId
     {
         /**
          * Handle an incoming request.
          *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+         * @param  \Illuminate\Http\Request  $request
+         * @param  \Closure  $next
+         * @return mixed
          */
-        public function handle(Request $request, Closure $next): Response
+        public function handle($request, Closure $next)
         {
             $requestId = (string) Str::uuid();
 
@@ -327,55 +313,37 @@ facade's `withContext` method:
                 'request-id' => $requestId
             ]);
 
-            $response = $next($request);
-
-            $response->headers->set('Request-Id', $requestId);
-
-            return $response;
+            return $next($request)->header('Request-Id', $requestId);
         }
     }
 
 If you would like to share contextual information across _all_ logging channels,
-you may invoke the `Log::shareContext()` method. This method will provide the
+you may call the `Log::shareContext()` method. This method will provide the
 contextual information to all created channels and any channels that are created
-subsequently:
+subsequently. Typically, the `shareContext` method should be called from
+the `boot` method of an application service provider:
 
-    <?php
-
-    namespace App\Http\Middleware;
-
-    use Closure;
-    use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Str;
-    use Symfony\Component\HttpFoundation\Response;
 
-    class AssignRequestId
+    class AppServiceProvider
     {
         /**
-         * Handle an incoming request.
+         * Bootstrap any application services.
          *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+         * @return void
          */
-        public function handle(Request $request, Closure $next): Response
+        public function boot()
         {
-            $requestId = (string) Str::uuid();
-
             Log::shareContext([
-                'request-id' => $requestId
+                'invocation-id' => (string) Str::uuid(),
             ]);
-
-            // ...
         }
     }
 
-> [!NOTE]
-> If you need to share log context while processing queued jobs, you may
-> utilize [job middleware](queues.md#job-middleware).
-
 <a name="writing-to-specific-channels"></a>
 
-### Writing to Specific Channels
+### Writing To Specific Channels
 
 Sometimes you may wish to log a message to a channel other than your
 application's default channel. You may use the `channel` method on the `Log`
@@ -425,7 +393,7 @@ passed to the `stack` method:
 
 <a name="customizing-monolog-for-channels"></a>
 
-### Customizing Monolog for Channels
+### Customizing Monolog For Channels
 
 Sometimes you may need complete control over how Monolog is configured for an
 existing channel. For example, you may want to configure a custom
@@ -455,15 +423,17 @@ underlying Monolog instance:
 
     namespace App\Logging;
 
-    use Illuminate\Log\Logger;
     use Monolog\Formatter\LineFormatter;
 
     class CustomizeFormatter
     {
         /**
          * Customize the given logger instance.
+         *
+         * @param  \Illuminate\Log\Logger  $logger
+         * @return void
          */
-        public function __invoke(Logger $logger): void
+        public function __invoke($logger)
         {
             foreach ($logger->getHandlers() as $handler) {
                 $handler->setFormatter(new LineFormatter(
@@ -473,10 +443,10 @@ underlying Monolog instance:
         }
     }
 
-> [!NOTE]
+> **Note**
 > All of your "tap" classes are resolved by
-> the [service container](container.md), so any constructor
-> dependencies they require will automatically be injected.
+> the [service container](container.md), so any constructor dependencies they
+> require will automatically be injected.
 
 <a name="creating-monolog-handler-channels"></a>
 
@@ -530,38 +500,9 @@ to `default`:
         'formatter' => 'default',
     ],
 
-<a name="monolog-processors"></a>
-
-#### Monolog Processors
-
-Monolog can also process messages before logging them. You can create your own
-processors or use
-the [existing processors offered by Monolog](https://github.com/Seldaek/monolog/tree/main/src/Monolog/Processor).
-
-If you would like to customize the processors for a `monolog` driver, add
-a `processors` configuration value to your channel's configuration:
-
-     'memory' => [
-         'driver' => 'monolog',
-         'handler' => Monolog\Handler\StreamHandler::class,
-         'with' => [
-             'stream' => 'php://stderr',
-         ],
-         'processors' => [
-             // Simple syntax...
-             Monolog\Processor\MemoryUsageProcessor::class,
-
-             // With options...
-             [
-                'processor' => Monolog\Processor\PsrLogMessageProcessor::class,
-                'with' => ['removeUsedContextFields' => true],
-            ],
-         ],
-     ],
-
 <a name="creating-custom-channels-via-factories"></a>
 
-### Creating Custom Channels via Factories
+### Creating Custom Channels Via Factories
 
 If you would like to define an entirely custom channel in which you have full
 control over Monolog's instantiation and configuration, you may specify
@@ -591,113 +532,12 @@ method will receive the channels configuration array as its only argument:
     {
         /**
          * Create a custom Monolog instance.
+         *
+         * @param  array  $config
+         * @return \Monolog\Logger
          */
-        public function __invoke(array $config): Logger
+        public function __invoke(array $config)
         {
             return new Logger(/* ... */);
         }
     }
-
-<a name="tailing-log-messages-using-pail"></a>
-
-## Tailing Log Messages Using Pail
-
-Often you may need to tail your application's logs in real time. For example,
-when debugging an issue or when monitoring your application's logs for specific
-types of errors.
-
-Laravel Pail is a package that allows you to easily dive into your Laravel
-application's log files directly from the command line. Unlike the
-standard `tail` command, Pail is designed to work with any log driver, including
-Sentry or Flare. In addition, Pail provides a set of useful filters to help you
-quickly find what you're looking for.
-
-<img src="https://laravel.com/img/docs/pail-example.png">
-
-<a name="pail-installation"></a>
-
-### Installation
-
-> [!WARNING]
-> Laravel Pail requires [PHP 8.2+](https://php.net/releases/) and
-> the [PCNTL](https://www.php.net/manual/en/book.pcntl.php) extension.
-
-To get started, install Pail into your project using the Composer package
-manager:
-
-```bash
-composer require laravel/pail
-```
-
-<a name="pail-usage"></a>
-
-### Usage
-
-To start tailing logs, run the `pail` command:
-
-```bash
-php artisan pail
-```
-
-To increase the verbosity of the output and avoid truncation (…), use the `-v`
-option:
-
-```bash
-php artisan pail -v
-```
-
-For maximum verbosity and to display exception stack traces, use the `-vv`
-option:
-
-```bash
-php artisan pail -vv
-```
-
-To stop tailing logs, press `Ctrl+C` at any time.
-
-<a name="pail-filtering-logs"></a>
-
-### Filtering Logs
-
-<a name="pail-filtering-logs-filter-option"></a>
-
-#### `--filter`
-
-You may use the `--filter` option to filter logs by their type, file, message,
-and stack trace content:
-
-```bash
-php artisan pail --filter="QueryException"
-```
-
-<a name="pail-filtering-logs-message-option"></a>
-
-#### `--message`
-
-To filter logs by only their message, you may use the `--message` option:
-
-```bash
-php artisan pail --message="User created"
-```
-
-<a name="pail-filtering-logs-level-option"></a>
-
-#### `--level`
-
-The `--level` option may be used to filter logs by
-their [log level](#log-levels):
-
-```bash
-php artisan pail --level=error
-```
-
-<a name="pail-filtering-logs-user-option"></a>
-
-#### `--user`
-
-To only display logs that were written while a given user was authenticated, you
-may provide the user's ID to the `--user` option:
-
-```bash
-php artisan pail --user=1
-```

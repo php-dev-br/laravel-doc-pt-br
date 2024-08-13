@@ -3,10 +3,10 @@
 - [Introduction](#introduction)
 - [The Basics](#the-basics)
     - [Generating URLs](#generating-urls)
-    - [Accessing the Current URL](#accessing-the-current-url)
-- [URLs for Named Routes](#urls-for-named-routes)
+    - [Accessing The Current URL](#accessing-the-current-url)
+- [URLs For Named Routes](#urls-for-named-routes)
     - [Signed URLs](#signed-urls)
-- [URLs for Controller Actions](#urls-for-controller-actions)
+- [URLs For Controller Actions](#urls-for-controller-actions)
 - [Default Values](#default-values)
 
 <a name="introduction"></a>
@@ -38,7 +38,7 @@ from the current request being handled by the application:
 
 <a name="accessing-the-current-url"></a>
 
-### Accessing the Current URL
+### Accessing The Current URL
 
 If no path is provided to the `url` helper, an `Illuminate\Routing\UrlGenerator`
 instance is returned, allowing you to access information about the current URL:
@@ -52,8 +52,7 @@ instance is returned, allowing you to access information about the current URL:
     // Get the full URL for the previous request...
     echo url()->previous();
 
-Each of these methods may also be accessed via
-the `URL` [facade](facades.md):
+Each of these methods may also be accessed via the `URL` [facade](facades.md):
 
     use Illuminate\Support\Facades\URL;
 
@@ -61,17 +60,17 @@ the `URL` [facade](facades.md):
 
 <a name="urls-for-named-routes"></a>
 
-## URLs for Named Routes
+## URLs For Named Routes
 
 The `route` helper may be used to generate URLs
-to [named routes](routing.md#named-routes). Named routes allow
-you to generate URLs without being coupled to the actual URL defined on the
-route. Therefore, if the route's URL changes, no changes need to be made to your
-calls to the `route` function. For example, imagine your application contains a
-route defined like the following:
+to [named routes](routing.md#named-routes). Named routes allow you to generate
+URLs without being coupled to the actual URL defined on the route. Therefore, if
+the route's URL changes, no changes need to be made to your calls to the `route`
+function. For example, imagine your application contains a route defined like
+the following:
 
     Route::get('/post/{post}', function (Post $post) {
-        // ...
+        //
     })->name('post.show');
 
 To generate a URL to this route, you may use the `route` helper like so:
@@ -84,7 +83,7 @@ Of course, the `route` helper may also be used to generate URLs for routes with
 multiple parameters:
 
     Route::get('/post/{post}/comment/{comment}', function (Post $post, Comment $comment) {
-        // ...
+        //
     })->name('comment.show');
 
     echo route('comment.show', ['post' => 1, 'comment' => 3]);
@@ -103,9 +102,9 @@ parameters will be added to the URL's query string:
 #### Eloquent Models
 
 You will often be generating URLs using the route key (typically the primary
-key) of [Eloquent models](eloquent.md). For this reason, you may
-pass Eloquent models as parameter values. The `route` helper will automatically
-extract the model's route key:
+key) of [Eloquent models](eloquent.md). For this reason, you may pass Eloquent
+models as parameter values. The `route` helper will automatically extract the
+model's route key:
 
     echo route('post.show', ['post' => $post]);
 
@@ -126,11 +125,6 @@ the `signedRoute` method of the `URL` facade:
     use Illuminate\Support\Facades\URL;
 
     return URL::signedRoute('unsubscribe', ['user' => 1]);
-
-You may exclude the domain from the signed URL hash by providing the `absolute`
-argument to the `signedRoute` method:
-
-    return URL::signedRoute('unsubscribe', ['user' => 1], absolute: false);
 
 If you would like to generate a temporary signed route URL that expires after a
 specified amount of time, you may use the `temporarySignedRoute` method. When
@@ -174,17 +168,17 @@ parameters allows anyone to modify those parameters on the request:
 Instead of validating signed URLs using the incoming request instance, you may
 assign
 the `Illuminate\Routing\Middleware\ValidateSignature` [middleware](middleware.md)
-to the route. If it is not already present, you may assign this middleware an
-alias in your HTTP kernel's `$middlewareAliases` array:
+to the route. If it is not already present, you should assign this middleware a
+key in your HTTP kernel's `routeMiddleware` array:
 
     /**
-     * The application's middleware aliases.
+     * The application's route middleware.
      *
-     * Aliases may be used to conveniently assign middleware to routes and groups.
+     * These middleware may be assigned to groups or used individually.
      *
-     * @var array<string, class-string|string>
+     * @var array
      */
-    protected $middlewareAliases = [
+    protected $routeMiddleware = [
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
     ];
 
@@ -196,16 +190,9 @@ will automatically return a `403` HTTP response:
         // ...
     })->name('unsubscribe')->middleware('signed');
 
-If your signed URLs do not include the domain in the URL hash, you should
-provide the `relative` argument to the middleware:
-
-    Route::post('/unsubscribe/{user}', function (Request $request) {
-        // ...
-    })->name('unsubscribe')->middleware('signed:relative');
-
 <a name="responding-to-invalid-signed-routes"></a>
 
-#### Responding to Invalid Signed Routes
+#### Responding To Invalid Signed Routes
 
 When someone visits a signed URL that has expired, they will receive a generic
 error page for the `403` HTTP status code. However, you can customize this
@@ -217,8 +204,10 @@ closure should return an HTTP response:
 
     /**
      * Register the exception handling callbacks for the application.
+     *
+     * @return void
      */
-    public function register(): void
+    public function register()
     {
         $this->renderable(function (InvalidSignatureException $e) {
             return response()->view('error.link-expired', [], 403);
@@ -227,7 +216,7 @@ closure should return an HTTP response:
 
 <a name="urls-for-controller-actions"></a>
 
-## URLs for Controller Actions
+## URLs For Controller Actions
 
 The `action` function generates a URL for the given controller action:
 
@@ -249,33 +238,33 @@ certain URL parameters. For example, imagine many of your routes define
 a `{locale}` parameter:
 
     Route::get('/{locale}/posts', function () {
-        // ...
+        //
     })->name('post.index');
 
 It is cumbersome to always pass the `locale` every time you call the `route`
 helper. So, you may use the `URL::defaults` method to define a default value for
 this parameter that will always be applied during the current request. You may
 wish to call this method from
-a [route middleware](middleware.md#assigning-middleware-to-routes)
-so that you have access to the current request:
+a [route middleware](middleware.md#assigning-middleware-to-routes) so that you
+have access to the current request:
 
     <?php
 
     namespace App\Http\Middleware;
 
     use Closure;
-    use Illuminate\Http\Request;
     use Illuminate\Support\Facades\URL;
-    use Symfony\Component\HttpFoundation\Response;
 
     class SetDefaultLocaleForUrls
     {
         /**
-         * Handle an incoming request.
+         * Handle the incoming request.
          *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+         * @param  \Illuminate\Http\Request  $request
+         * @param  \Closure  $next
+         * @return \Illuminate\Http\Response
          */
-        public function handle(Request $request, Closure $next): Response
+        public function handle($request, Closure $next)
         {
             URL::defaults(['locale' => $request->user()->locale]);
 
@@ -288,12 +277,12 @@ longer required to pass its value when generating URLs via the `route` helper.
 
 <a name="url-defaults-middleware-priority"></a>
 
-#### URL Defaults and Middleware Priority
+#### URL Defaults & Middleware Priority
 
 Setting URL default values can interfere with Laravel's handling of implicit
 model bindings. Therefore, you
-should [prioritize your middleware](middleware.md#sorting-middleware)
-that set URL defaults to be executed before Laravel's own `SubstituteBindings`
+should [prioritize your middleware](middleware.md#sorting-middleware) that set
+URL defaults to be executed before Laravel's own `SubstituteBindings`
 middleware. You can accomplish this by making sure your middleware occurs before
 the `SubstituteBindings` middleware within the `$middlewarePriority` property of
 your application's HTTP kernel.

@@ -8,12 +8,11 @@
     - [Schedule Frequency Options](#schedule-frequency-options)
     - [Timezones](#timezones)
     - [Preventing Task Overlaps](#preventing-task-overlaps)
-    - [Running Tasks on One Server](#running-tasks-on-one-server)
+    - [Running Tasks On One Server](#running-tasks-on-one-server)
     - [Background Tasks](#background-tasks)
     - [Maintenance Mode](#maintenance-mode)
-- [Running the Scheduler](#running-the-scheduler)
-    - [Sub-Minute Scheduled Tasks](#sub-minute-scheduled-tasks)
-    - [Running the Scheduler Locally](#running-the-scheduler-locally)
+- [Running The Scheduler](#running-the-scheduler)
+    - [Running The Scheduler Locally](#running-the-scheduler-locally)
 - [Task Output](#task-output)
 - [Task Hooks](#task-hooks)
 - [Events](#events)
@@ -56,8 +55,11 @@ table:
     {
         /**
          * Define the application's command schedule.
+         *
+         * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+         * @return void
          */
-        protected function schedule(Schedule $schedule): void
+        protected function schedule(Schedule $schedule)
         {
             $schedule->call(function () {
                 DB::table('recent_users')->delete();
@@ -83,9 +85,9 @@ php artisan schedule:list
 ### Scheduling Artisan Commands
 
 In addition to scheduling closures, you may also
-schedule [Artisan commands](artisan.md) and system commands. For
-example, you may use the `command` method to schedule an Artisan command using
-either the command's name or class.
+schedule [Artisan commands](artisan.md) and system commands. For example, you
+may use the `command` method to schedule an Artisan command using either the
+command's name or class.
 
 When scheduling Artisan commands using the command's class name, you may pass an
 array of additional command-line arguments that should be provided to the
@@ -101,10 +103,9 @@ command when it is invoked:
 
 ### Scheduling Queued Jobs
 
-The `job` method may be used to schedule
-a [queued job](queues.md). This method provides a convenient way
-to schedule queued jobs without using the `call` method to define closures to
-queue the job:
+The `job` method may be used to schedule a [queued job](queues.md). This method
+provides a convenient way to schedule queued jobs without using the `call`
+method to define closures to queue the job:
 
     use App\Jobs\Heartbeat;
 
@@ -135,50 +136,39 @@ We've already seen a few examples of how you may configure a task to run at
 specified intervals. However, there are many more task schedule frequencies that
 you may assign to a task:
 
-<div class="overflow-auto">
-
- Method                             | Description
-------------------------------------|---------------------------------------------------------
- `->cron('* * * * *');`             | Run the task on a custom cron schedule
- `->everySecond();`                 | Run the task every second
- `->everyTwoSeconds();`             | Run the task every two seconds
- `->everyFiveSeconds();`            | Run the task every five seconds
- `->everyTenSeconds();`             | Run the task every ten seconds
- `->everyFifteenSeconds();`         | Run the task every fifteen seconds
- `->everyTwentySeconds();`          | Run the task every twenty seconds
- `->everyThirtySeconds();`          | Run the task every thirty seconds
- `->everyMinute();`                 | Run the task every minute
- `->everyTwoMinutes();`             | Run the task every two minutes
- `->everyThreeMinutes();`           | Run the task every three minutes
- `->everyFourMinutes();`            | Run the task every four minutes
- `->everyFiveMinutes();`            | Run the task every five minutes
- `->everyTenMinutes();`             | Run the task every ten minutes
- `->everyFifteenMinutes();`         | Run the task every fifteen minutes
- `->everyThirtyMinutes();`          | Run the task every thirty minutes
- `->hourly();`                      | Run the task every hour
- `->hourlyAt(17);`                  | Run the task every hour at 17 minutes past the hour
- `->everyOddHour($minutes = 0);`    | Run the task every odd hour
- `->everyTwoHours($minutes = 0);`   | Run the task every two hours
- `->everyThreeHours($minutes = 0);` | Run the task every three hours
- `->everyFourHours($minutes = 0);`  | Run the task every four hours
- `->everySixHours($minutes = 0);`   | Run the task every six hours
- `->daily();`                       | Run the task every day at midnight
- `->dailyAt('13:00');`              | Run the task every day at 13:00
- `->twiceDaily(1, 13);`             | Run the task daily at 1:00 & 13:00
- `->twiceDailyAt(1, 13, 15);`       | Run the task daily at 1:15 & 13:15
- `->weekly();`                      | Run the task every Sunday at 00:00
- `->weeklyOn(1, '8:00');`           | Run the task every week on Monday at 8:00
- `->monthly();`                     | Run the task on the first day of every month at 00:00
- `->monthlyOn(4, '15:00');`         | Run the task every month on the 4th at 15:00
- `->twiceMonthly(1, 16, '13:00');`  | Run the task monthly on the 1st and 16th at 13:00
- `->lastDayOfMonth('15:00');`       | Run the task on the last day of the month at 15:00
- `->quarterly();`                   | Run the task on the first day of every quarter at 00:00
- `->quarterlyOn(4, '14:00');`       | Run the task every quarter on the 4th at 14:00
- `->yearly();`                      | Run the task on the first day of every year at 00:00
- `->yearlyOn(6, 1, '17:00');`       | Run the task every year on June 1st at 17:00
- `->timezone('America/New_York');`  | Set the timezone for the task
-
-</div>
+ Method                            | Description
+-----------------------------------|---------------------------------------------------------
+ `->cron('* * * * *');`            | Run the task on a custom cron schedule
+ `->everyMinute();`                | Run the task every minute
+ `->everyTwoMinutes();`            | Run the task every two minutes
+ `->everyThreeMinutes();`          | Run the task every three minutes
+ `->everyFourMinutes();`           | Run the task every four minutes
+ `->everyFiveMinutes();`           | Run the task every five minutes
+ `->everyTenMinutes();`            | Run the task every ten minutes
+ `->everyFifteenMinutes();`        | Run the task every fifteen minutes
+ `->everyThirtyMinutes();`         | Run the task every thirty minutes
+ `->hourly();`                     | Run the task every hour
+ `->hourlyAt(17);`                 | Run the task every hour at 17 minutes past the hour
+ `->everyOddHour();`               | Run the task every odd hour
+ `->everyTwoHours();`              | Run the task every two hours
+ `->everyThreeHours();`            | Run the task every three hours
+ `->everyFourHours();`             | Run the task every four hours
+ `->everySixHours();`              | Run the task every six hours
+ `->daily();`                      | Run the task every day at midnight
+ `->dailyAt('13:00');`             | Run the task every day at 13:00
+ `->twiceDaily(1, 13);`            | Run the task daily at 1:00 & 13:00
+ `->twiceDailyAt(1, 13, 15);`      | Run the task daily at 1:15 & 13:15
+ `->weekly();`                     | Run the task every Sunday at 00:00
+ `->weeklyOn(1, '8:00');`          | Run the task every week on Monday at 8:00
+ `->monthly();`                    | Run the task on the first day of every month at 00:00
+ `->monthlyOn(4, '15:00');`        | Run the task every month on the 4th at 15:00
+ `->twiceMonthly(1, 16, '13:00');` | Run the task monthly on the 1st and 16th at 13:00
+ `->lastDayOfMonth('15:00');`      | Run the task on the last day of the month at 15:00
+ `->quarterly();`                  | Run the task on the first day of every quarter at 00:00
+ `->quarterlyOn(4, '14:00');`      | Run the task every quarter on the 4th at 14:00
+ `->yearly();`                     | Run the task on the first day of every year at 00:00
+ `->yearlyOn(6, 1, '17:00');`      | Run the task every year on June 1st at 17:00
+ `->timezone('America/New_York');` | Set the timezone for the task
 
 These methods may be combined with additional constraints to create even more
 finely tuned schedules that only run on certain days of the week. For example,
@@ -186,7 +176,7 @@ you may schedule a command to run weekly on Monday:
 
     // Run once per week on Monday at 1 PM...
     $schedule->call(function () {
-        // ...
+        //
     })->weekly()->mondays()->at('13:00');
 
     // Run hourly from 8 AM to 5 PM on weekdays...
@@ -197,8 +187,6 @@ you may schedule a command to run weekly on Monday:
               ->between('8:00', '17:00');
 
 A list of additional schedule constraints may be found below:
-
-<div class="overflow-auto">
 
  Method                                   | Description
 ------------------------------------------|-------------------------------------------------------
@@ -216,8 +204,6 @@ A list of additional schedule constraints may be found below:
  `->unlessBetween($startTime, $endTime);` | Limit the task to not run between start and end times
  `->when(Closure);`                       | Limit the task based on a truth test
  `->environments($env);`                  | Limit the task to specific environments
-
-</div>
 
 <a name="day-constraints"></a>
 
@@ -310,17 +296,17 @@ tasks, you may wish to define a `scheduleTimezone` method in
 your `App\Console\Kernel` class. This method should return the default timezone
 that should be assigned to all scheduled tasks:
 
-    use DateTimeZone;
-
     /**
      * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
      */
-    protected function scheduleTimezone(): DateTimeZone|string|null
+    protected function scheduleTimezone()
     {
         return 'America/Chicago';
     }
 
-> [!WARNING]
+> **Warning**
 > Remember that some timezones utilize daylight savings time. When daylight
 > saving time changes occur, your scheduled task may run twice or even not run at
 > all. For this reason, we recommend avoiding timezone scheduling when possible.
@@ -335,11 +321,10 @@ method:
 
     $schedule->command('emails:send')->withoutOverlapping();
 
-In this example, the `emails:send` [Artisan command](artisan.md)
-will be run every minute if it is not already running. The `withoutOverlapping`
-method is especially useful if you have tasks that vary drastically in their
-execution time, preventing you from predicting exactly how long a given task
-will take.
+In this example, the `emails:send` [Artisan command](artisan.md) will be run
+every minute if it is not already running. The `withoutOverlapping` method is
+especially useful if you have tasks that vary drastically in their execution
+time, preventing you from predicting exactly how long a given task will take.
 
 If needed, you may specify how many minutes must pass before the "without
 overlapping" lock expires. By default, the lock will expire after 24 hours:
@@ -347,16 +332,16 @@ overlapping" lock expires. By default, the lock will expire after 24 hours:
     $schedule->command('emails:send')->withoutOverlapping(10);
 
 Behind the scenes, the `withoutOverlapping` method utilizes your
-application's [cache](cache.md) to obtain locks. If necessary,
-you can clear these cache locks using the `schedule:clear-cache` Artisan
-command. This is typically only necessary if a task becomes stuck due to an
-unexpected server problem.
+application's [cache](cache.md) to obtain locks. If necessary, you can clear
+these cache locks using the `schedule:clear-cache` Artisan command. This is
+typically only necessary if a task becomes stuck due to an unexpected server
+problem.
 
 <a name="running-tasks-on-one-server"></a>
 
-### Running Tasks on One Server
+### Running Tasks On One Server
 
-> [!WARNING]
+> **Warning**
 > To utilize this feature, your application must be using
 > the `database`, `memcached`, `dynamodb`, or `redis` cache driver as your
 > application's default cache driver. In addition, all servers must be
@@ -423,7 +408,7 @@ all run simultaneously, you may use the `runInBackground` method:
              ->daily()
              ->runInBackground();
 
-> [!WARNING]
+> **Warning**
 > The `runInBackground` method may only be used when scheduling tasks via
 > the `command` and `exec` methods.
 
@@ -432,17 +417,17 @@ all run simultaneously, you may use the `runInBackground` method:
 ### Maintenance Mode
 
 Your application's scheduled tasks will not run when the application is
-in [maintenance mode](configuration.md#maintenance-mode), since
-we don't want your tasks to interfere with any unfinished maintenance you may be
-performing on your server. However, if you would like to force a task to run
-even in maintenance mode, you may call the `evenInMaintenanceMode` method when
-defining the task:
+in [maintenance mode](configuration.md#maintenance-mode), since we don't want
+your tasks to interfere with any unfinished maintenance you may be performing on
+your server. However, if you would like to force a task to run even in
+maintenance mode, you may call the `evenInMaintenanceMode` method when defining
+the task:
 
     $schedule->command('emails:send')->evenInMaintenanceMode();
 
 <a name="running-the-scheduler"></a>
 
-## Running the Scheduler
+## Running The Scheduler
 
 Now that we have learned how to define scheduled tasks, let's discuss how to
 actually run them on our server. The `schedule:run` Artisan command will
@@ -459,55 +444,9 @@ manage the cron entries for you:
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-<a name="sub-minute-scheduled-tasks"></a>
-
-### Sub-Minute Scheduled Tasks
-
-On most operating systems, cron jobs are limited to running a maximum of once
-per minute. However, Laravel's scheduler allows you to schedule tasks to run at
-more frequent intervals, even as often as once per second:
-
-    $schedule->call(function () {
-        DB::table('recent_users')->delete();
-    })->everySecond();
-
-When sub-minute tasks are defined within your application, the `schedule:run`
-command will continue running until the end of the current minute instead of
-exiting immediately. This allows the command to invoke all required sub-minute
-tasks throughout the minute.
-
-Since sub-minute tasks that take longer than expected to run could delay the
-execution of later sub-minute tasks, it is recommend that all sub-minute tasks
-dispatch queued jobs or background commands to handle the actual task
-processing:
-
-    use App\Jobs\DeleteRecentUsers;
-
-    $schedule->job(new DeleteRecentUsers)->everyTenSeconds();
-
-    $schedule->command('users:delete')->everyTenSeconds()->runInBackground();
-
-<a name="interrupting-sub-minute-tasks"></a>
-
-#### Interrupting Sub-Minute Tasks
-
-As the `schedule:run` command runs for the entire minute of invocation when
-sub-minute tasks are defined, you may sometimes need to interrupt the command
-when deploying your application. Otherwise, an instance of the `schedule:run`
-command that is already running would continue using your application's
-previously deployed code until the current minute ends.
-
-To interrupt in-progress `schedule:run` invocations, you may add
-the `schedule:interrupt` command to your application's deployment script. This
-command should be invoked after your application is finished deploying:
-
-```shell
-php artisan schedule:interrupt
-```
-
 <a name="running-the-scheduler-locally"></a>
 
-### Running the Scheduler Locally
+## Running The Scheduler Locally
 
 Typically, you would not add a scheduler cron entry to your local development
 machine. Instead, you may use the `schedule:work` Artisan command. This command
@@ -553,7 +492,7 @@ terminates with a non-zero exit code, use the `emailOutputOnFailure` method:
              ->daily()
              ->emailOutputOnFailure('taylor@example.com');
 
-> [!WARNING]
+> **Warning**
 > The `emailOutputTo`, `emailOutputOnFailure`, `sendOutputTo`,
 > and `appendOutputTo` methods are exclusive to the `command` and `exec` methods.
 
@@ -646,8 +585,8 @@ composer require guzzlehttp/guzzle
 
 ## Events
 
-If needed, you may listen to [events](events.md) dispatched by
-the scheduler. Typically, event listener mappings will be defined within your
+If needed, you may listen to [events](events.md) dispatched by the scheduler.
+Typically, event listener mappings will be defined within your
 application's `App\Providers\EventServiceProvider` class:
 
     /**

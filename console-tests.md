@@ -3,7 +3,6 @@
 - [Introduction](#introduction)
 - [Success / Failure Expectations](#success-failure-expectations)
 - [Input / Output Expectations](#input-output-expectations)
-- [Console Events](#console-events)
 
 <a name="introduction"></a>
 
@@ -23,8 +22,10 @@ method to assert that the command completed with a given exit code:
 
     /**
      * Test a console command.
+     *
+     * @return void
      */
-    public function test_console_command(): void
+    public function test_console_command()
     {
         $this->artisan('inspire')->assertExitCode(0);
     }
@@ -72,8 +73,10 @@ and `assertExitCode` methods:
 
     /**
      * Test a console command.
+     *
+     * @return void
      */
-    public function test_console_command(): void
+    public function test_console_command()
     {
         $this->artisan('question')
              ->expectsQuestion('What is your name?', 'Taylor Otwell')
@@ -113,27 +116,3 @@ as its first argument and the table's data as its second argument:
             [1, 'taylor@example.com'],
             [2, 'abigail@example.com'],
         ]);
-
-<a name="console-events"></a>
-
-## Console Events
-
-By default, the `Illuminate\Console\Events\CommandStarting`
-and `Illuminate\Console\Events\CommandFinished` events are not dispatched while
-running your application's tests. However, you can enable these events for a
-given test class by adding the `Illuminate\Foundation\Testing\WithConsoleEvents`
-trait to the class:
-
-    <?php
-
-    namespace Tests\Feature;
-
-    use Illuminate\Foundation\Testing\WithConsoleEvents;
-    use Tests\TestCase;
-
-    class ConsoleEventTest extends TestCase
-    {
-        use WithConsoleEvents;
-
-        // ...
-    }

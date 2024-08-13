@@ -2,19 +2,19 @@
 
 - [Introduction](#introduction)
 - [Interacting With The Request](#interacting-with-the-request)
-    - [Accessing the Request](#accessing-the-request)
-    - [Request Path, Host, and Method](#request-path-and-method)
+    - [Accessing The Request](#accessing-the-request)
+    - [Request Path, Host, & Method](#request-path-and-method)
     - [Request Headers](#request-headers)
     - [Request IP Address](#request-ip-address)
     - [Content Negotiation](#content-negotiation)
     - [PSR-7 Requests](#psr7-requests)
 - [Input](#input)
     - [Retrieving Input](#retrieving-input)
-    - [Input Presence](#input-presence)
+    - [Determining If Input Is Present](#determining-if-input-is-present)
     - [Merging Additional Input](#merging-additional-input)
     - [Old Input](#old-input)
     - [Cookies](#cookies)
-    - [Input Trimming and Normalization](#input-trimming-and-normalization)
+    - [Input Trimming & Normalization](#input-trimming-and-normalization)
 - [Files](#files)
     - [Retrieving Uploaded Files](#retrieving-uploaded-files)
     - [Storing Uploaded Files](#storing-uploaded-files)
@@ -35,7 +35,7 @@ as retrieve the input, cookies, and files that were submitted with the request.
 
 <a name="accessing-the-request"></a>
 
-### Accessing the Request
+### Accessing The Request
 
 To obtain an instance of the current HTTP request via dependency injection, you
 should type-hint the `Illuminate\Http\Request` class on your route closure or
@@ -46,21 +46,21 @@ by the Laravel [service container](container.md):
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class UserController extends Controller
     {
         /**
          * Store a new user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $name = $request->input('name');
 
-            // Store the user...
-
-            return redirect('/users');
+            //
         }
     }
 
@@ -71,12 +71,12 @@ request into the closure when it is executed:
     use Illuminate\Http\Request;
 
     Route::get('/', function (Request $request) {
-        // ...
+        //
     });
 
 <a name="dependency-injection-route-parameters"></a>
 
-#### Dependency Injection and Route Parameters
+#### Dependency Injection & Route Parameters
 
 If your controller method is also expecting input from a route parameter you
 should list your route parameters after your other dependencies. For example, if
@@ -93,25 +93,26 @@ parameter by defining your controller method as follows:
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class UserController extends Controller
     {
         /**
          * Update the specified user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @param  string  $id
+         * @return \Illuminate\Http\Response
          */
-        public function update(Request $request, string $id): RedirectResponse
+        public function update(Request $request, $id)
         {
-            // Update the user...
-
-            return redirect('/users');
+            //
         }
     }
 
 <a name="request-path-and-method"></a>
 
-### Request Path, Host, and Method
+### Request Path, Host, & Method
 
 The `Illuminate\Http\Request` instance provides a variety of methods for
 examining the incoming HTTP request and extends
@@ -120,7 +121,7 @@ the most important methods below.
 
 <a name="retrieving-the-request-path"></a>
 
-#### Retrieving the Request Path
+#### Retrieving The Request Path
 
 The `path` method returns the request's path information. So, if the incoming
 request is targeted at `http://example.com/foo/bar`, the `path` method will
@@ -130,26 +131,26 @@ return `foo/bar`:
 
 <a name="inspecting-the-request-path"></a>
 
-#### Inspecting the Request Path / Route
+#### Inspecting The Request Path / Route
 
 The `is` method allows you to verify that the incoming request path matches a
 given pattern. You may use the `*` character as a wildcard when utilizing this
 method:
 
     if ($request->is('admin/*')) {
-        // ...
+        //
     }
 
 Using the `routeIs` method, you may determine if the incoming request has
 matched a [named route](routing.md#named-routes):
 
     if ($request->routeIs('admin.*')) {
-        // ...
+        //
     }
 
 <a name="retrieving-the-request-url"></a>
 
-#### Retrieving the Request URL
+#### Retrieving The Request URL
 
 To retrieve the full URL for the incoming request you may use the `url`
 or `fullUrl` methods. The `url` method will return the URL without the query
@@ -165,16 +166,9 @@ string variables with the current query string:
 
     $request->fullUrlWithQuery(['type' => 'phone']);
 
-If you would like to get the current URL without a given query string parameter,
-you may utilize the `fullUrlWithoutQuery` method:
-
-```php
-$request->fullUrlWithoutQuery(['type']);
-```
-
 <a name="retrieving-the-request-host"></a>
 
-#### Retrieving the Request Host
+#### Retrieving The Request Host
 
 You may retrieve the "host" of the incoming request via the `host`, `httpHost`,
 and `schemeAndHttpHost` methods:
@@ -185,7 +179,7 @@ and `schemeAndHttpHost` methods:
 
 <a name="retrieving-the-request-method"></a>
 
-#### Retrieving the Request Method
+#### Retrieving The Request Method
 
 The `method` method will return the HTTP verb for the request. You may use
 the `isMethod` method to verify that the HTTP verb matches a given string:
@@ -193,7 +187,7 @@ the `isMethod` method to verify that the HTTP verb matches a given string:
     $method = $request->method();
 
     if ($request->isMethod('post')) {
-        // ...
+        //
     }
 
 <a name="request-headers"></a>
@@ -213,7 +207,7 @@ The `hasHeader` method may be used to determine if the request contains a given
 header:
 
     if ($request->hasHeader('X-Header-Name')) {
-        // ...
+        //
     }
 
 For convenience, the `bearerToken` method may be used to retrieve a bearer token
@@ -230,15 +224,6 @@ The `ip` method may be used to retrieve the IP address of the client that made
 the request to your application:
 
     $ipAddress = $request->ip();
-
-If you would like to retrieve an array of IP addresses, including all of the
-client IP addesses that were forwarded by proxies, you may use the `ips` method.
-The "original" client IP address will be at the end of the array:
-
-    $ipAddresses = $request->ips();
-
-In general, IP addresses should be considered untrusted, user-controlled input
-and be used for informational purposes only.
 
 <a name="content-negotiation"></a>
 
@@ -294,10 +279,10 @@ type-hinting the request interface on your route closure or controller method:
     use Psr\Http\Message\ServerRequestInterface;
 
     Route::get('/', function (ServerRequestInterface $request) {
-        // ...
+        //
     });
 
-> [!NOTE]
+> **Note**
 > If you return a PSR-7 response instance from a route or controller, it will
 > automatically be converted back to a Laravel response instance and be displayed
 > by the framework.
@@ -326,15 +311,15 @@ data as a [collection](collections.md):
     $input = $request->collect();
 
 The `collect` method also allows you to retrieve a subset of the incoming
-request's input as a collection:
+request input as a collection:
 
-    $request->collect('users')->each(function (string $user) {
+    $request->collect('users')->each(function ($user) {
         // ...
     });
 
 <a name="retrieving-an-input-value"></a>
 
-#### Retrieving an Input Value
+#### Retrieving An Input Value
 
 Using a few simple methods, you may access all of the user input from
 your `Illuminate\Http\Request` instance without worrying about which HTTP verb
@@ -363,7 +348,7 @@ of the input values as an associative array:
 
 <a name="retrieving-input-from-the-query-string"></a>
 
-#### Retrieving Input From the Query String
+#### Retrieving Input From The Query String
 
 While the `input` method retrieves values from the entire request payload (
 including the query string), the `query` method will only retrieve values from
@@ -450,7 +435,7 @@ the input value and the enum class as its first and second arguments:
 
 <a name="retrieving-input-via-dynamic-properties"></a>
 
-#### Retrieving Input via Dynamic Properties
+#### Retrieving Input Via Dynamic Properties
 
 You may also access user input using dynamic properties on
 the `Illuminate\Http\Request` instance. For example, if one of your
@@ -465,7 +450,7 @@ in the matched route's parameters.
 
 <a name="retrieving-a-portion-of-the-input-data"></a>
 
-#### Retrieving a Portion of the Input Data
+#### Retrieving A Portion Of The Input Data
 
 If you need to retrieve a subset of the input data, you may use the `only`
 and `except` methods. Both of these methods accept a single `array` or a dynamic
@@ -479,76 +464,69 @@ list of arguments:
 
     $input = $request->except('credit_card');
 
-> [!WARNING]
+> **Warning**
 > The `only` method returns all of the key / value pairs that you request;
 > however, it will not return key / value pairs that are not present on the
 > request.
 
-<a name="input-presence"></a>
+<a name="determining-if-input-is-present"></a>
 
-### Input Presence
+### Determining If Input Is Present
 
 You may use the `has` method to determine if a value is present on the request.
 The `has` method returns `true` if the value is present on the request:
 
     if ($request->has('name')) {
-        // ...
+        //
     }
 
 When given an array, the `has` method will determine if all of the specified
 values are present:
 
     if ($request->has(['name', 'email'])) {
-        // ...
-    }
-
-The `hasAny` method returns `true` if any of the specified values are present:
-
-    if ($request->hasAny(['name', 'email'])) {
-        // ...
+        //
     }
 
 The `whenHas` method will execute the given closure if a value is present on the
 request:
 
-    $request->whenHas('name', function (string $input) {
-        // ...
+    $request->whenHas('name', function ($input) {
+        //
     });
 
 A second closure may be passed to the `whenHas` method that will be executed if
 the specified value is not present on the request:
 
-    $request->whenHas('name', function (string $input) {
+    $request->whenHas('name', function ($input) {
         // The "name" value is present...
     }, function () {
         // The "name" value is not present...
     });
 
+The `hasAny` method returns `true` if any of the specified values are present:
+
+    if ($request->hasAny(['name', 'email'])) {
+        //
+    }
+
 If you would like to determine if a value is present on the request and is not
 an empty string, you may use the `filled` method:
 
     if ($request->filled('name')) {
-        // ...
-    }
-
-The `anyFilled` method returns `true` if any of the specified values is not an
-empty string:
-
-    if ($request->anyFilled(['name', 'email'])) {
-        // ...
+        //
     }
 
 The `whenFilled` method will execute the given closure if a value is present on
 the request and is not an empty string:
 
-    $request->whenFilled('name', function (string $input) {
-        // ...
+    $request->whenFilled('name', function ($input) {
+        //
     });
 
 A second closure may be passed to the `whenFilled` method that will be executed
 if the specified value is not "filled":
 
-    $request->whenFilled('name', function (string $input) {
+    $request->whenFilled('name', function ($input) {
         // The "name" value is filled...
     }, function () {
         // The "name" value is not filled...
@@ -558,10 +536,10 @@ To determine if a given key is absent from the request, you may use
 the `missing` and `whenMissing` methods:
 
     if ($request->missing('name')) {
-        // ...
+        //
     }
 
-    $request->whenMissing('name', function (array $input) {
+    $request->whenMissing('name', function ($input) {
         // The "name" value is missing...
     }, function () {
         // The "name" value is present...
@@ -590,18 +568,17 @@ corresponding keys do not already exist within the request's input data:
 Laravel allows you to keep input from one request during the next request. This
 feature is particularly useful for re-populating forms after detecting
 validation errors. However, if you are using Laravel's
-included [validation features](validation.md), it is possible
-that you will not need to manually use these session input flashing methods
-directly, as some of Laravel's built-in validation facilities will call them
-automatically.
+included [validation features](validation.md), it is possible that you will not
+need to manually use these session input flashing methods directly, as some of
+Laravel's built-in validation facilities will call them automatically.
 
 <a name="flashing-input-to-the-session"></a>
 
-#### Flashing Input to the Session
+#### Flashing Input To The Session
 
 The `flash` method on the `Illuminate\Http\Request` class will flash the current
-input to the [session](session.md) so that it is available during
-the user's next request to the application:
+input to the [session](session.md) so that it is available during the user's
+next request to the application:
 
     $request->flash();
 
@@ -640,8 +617,8 @@ previously flashed input data from the [session](session.md):
     $username = $request->old('username');
 
 Laravel also provides a global `old` helper. If you are displaying old input
-within a [Blade template](blade.md), it is more convenient to use
-the `old` helper to repopulate the form. If no old input exists for the given
+within a [Blade template](blade.md), it is more convenient to use the `old`
+helper to repopulate the form. If no old input exists for the given
 field, `null` will be returned:
 
     <input type="text" name="username" value="{{ old('username') }}">
@@ -663,7 +640,7 @@ the `cookie` method on an `Illuminate\Http\Request` instance:
 
 <a name="input-trimming-and-normalization"></a>
 
-## Input Trimming and Normalization
+## Input Trimming & Normalization
 
 By default, Laravel includes the `App\Http\Middleware\TrimStrings`
 and `Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull` middleware
@@ -688,19 +665,20 @@ application's `AppServiceProvider`.
 
 ```php
 use App\Http\Middleware\TrimStrings;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
-    TrimStrings::skipWhen(function (Request $request) {
+    TrimStrings::skipWhen(function ($request) {
         return $request->is('admin/*');
     });
 
-    ConvertEmptyStringsToNull::skipWhen(function (Request $request) {
+    ConvertEmptyStringsToNull::skipWhen(function ($request) {
         // ...
     });
 }
@@ -728,7 +706,7 @@ You may determine if a file is present on the request using the `hasFile`
 method:
 
     if ($request->hasFile('photo')) {
-        // ...
+        //
     }
 
 <a name="validating-successful-uploads"></a>
@@ -739,12 +717,12 @@ In addition to checking if the file is present, you may verify that there were
 no problems uploading the file via the `isValid` method:
 
     if ($request->file('photo')->isValid()) {
-        // ...
+        //
     }
 
 <a name="file-paths-extensions"></a>
 
-#### File Paths and Extensions
+#### File Paths & Extensions
 
 The `UploadedFile` class also contains methods for accessing the file's
 fully-qualified path and its extension. The `extension` method will attempt to
@@ -769,10 +747,9 @@ for more information regarding these methods.
 ### Storing Uploaded Files
 
 To store an uploaded file, you will typically use one of your
-configured [filesystems](filesystem.md). The `UploadedFile` class
-has a `store` method that will move an uploaded file to one of your disks, which
-may be a location on your local filesystem or a cloud storage location like
-Amazon S3.
+configured [filesystems](filesystem.md). The `UploadedFile` class has a `store`
+method that will move an uploaded file to one of your disks, which may be a
+location on your local filesystem or a cloud storage location like Amazon S3.
 
 The `store` method accepts the path where the file should be stored relative to
 the filesystem's configured root directory. This path should not contain a
@@ -795,7 +772,7 @@ arguments:
 
     $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 
-> [!NOTE]
+> **Note**
 > For more information about file storage in Laravel, check out the
 > complete [file storage documentation](filesystem.md).
 
@@ -843,7 +820,7 @@ may configure the proxy `$headers` that should be trusted:
         protected $headers = Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO;
     }
 
-> [!NOTE]
+> **Note**
 > If you are using AWS Elastic Load Balancing, your `$headers` value should
 > be `Request::HEADER_X_FORWARDED_AWS_ELB`. For more information on the constants
 > that may be used in the `$headers` property, check out Symfony's documentation
@@ -888,9 +865,9 @@ headers will be rejected:
     /**
      * Get the host patterns that should be trusted.
      *
-     * @return array<int, string>
+     * @return array
      */
-    public function hosts(): array
+    public function hosts()
     {
         return [
             'laravel.test',

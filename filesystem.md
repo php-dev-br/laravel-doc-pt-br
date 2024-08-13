@@ -5,24 +5,22 @@
     - [The Local Driver](#the-local-driver)
     - [The Public Disk](#the-public-disk)
     - [Driver Prerequisites](#driver-prerequisites)
-    - [Scoped and Read-Only Filesystems](#scoped-and-read-only-filesystems)
+    - [Scoped & Read-Only Filesystems](#scoped-and-read-only-filesystems)
     - [Amazon S3 Compatible Filesystems](#amazon-s3-compatible-filesystems)
 - [Obtaining Disk Instances](#obtaining-disk-instances)
     - [On-Demand Disks](#on-demand-disks)
 - [Retrieving Files](#retrieving-files)
     - [Downloading Files](#downloading-files)
     - [File URLs](#file-urls)
-    - [Temporary URLs](#temporary-urls)
     - [File Metadata](#file-metadata)
 - [Storing Files](#storing-files)
-    - [Prepending and Appending To Files](#prepending-appending-to-files)
-    - [Copying and Moving Files](#copying-moving-files)
+    - [Prepending & Appending To Files](#prepending-appending-to-files)
+    - [Copying & Moving Files](#copying-moving-files)
     - [Automatic Streaming](#automatic-streaming)
     - [File Uploads](#file-uploads)
     - [File Visibility](#file-visibility)
 - [Deleting Files](#deleting-files)
 - [Directories](#directories)
-- [Testing](#testing)
 - [Custom Filesystems](#custom-filesystems)
 
 <a name="introduction"></a>
@@ -51,7 +49,7 @@ The `local` driver interacts with files stored locally on the server running the
 Laravel application while the `s3` driver is used to write to Amazon's S3 cloud
 storage service.
 
-> [!NOTE]
+> **Note**
 > You may configure as many disks as you like and may even have multiple disks
 > that use the same driver.
 
@@ -103,13 +101,6 @@ the `storage:link` command:
         public_path('images') => storage_path('app/images'),
     ],
 
-The `storage:unlink` command may be used to destroy your configured symbolic
-links:
-
-```shell
-php artisan storage:unlink
-```
-
 <a name="driver-prerequisites"></a>
 
 ### Driver Prerequisites
@@ -122,7 +113,7 @@ Before using the S3 driver, you will need to install the Flysystem S3 package
 via the Composer package manager:
 
 ```shell
-composer require league/flysystem-aws-s3-v3 "^3.0" --with-all-dependencies
+composer require league/flysystem-aws-s3-v3 "^3.0"
 ```
 
 The S3 driver configuration information is located in
@@ -189,10 +180,6 @@ configuration example below:
         'privateKey' => env('SFTP_PRIVATE_KEY'),
         'passphrase' => env('SFTP_PASSPHRASE'),
 
-        // Settings for file / directory permissions...
-        'visibility' => 'private', // `private` = 0600, `public` = 0644
-        'directory_visibility' => 'private', // `private` = 0700, `public` = 0755
-
         // Optional SFTP Settings...
         // 'hostFingerprint' => env('SFTP_HOST_FINGERPRINT'),
         // 'maxTries' => 4,
@@ -205,7 +192,7 @@ configuration example below:
 
 <a name="scoped-and-read-only-filesystems"></a>
 
-### Scoped and Read-Only Filesystems
+### Scoped & Read-Only Filesystems
 
 Scoped disks allow you to define a filesystem where all paths are automatically
 prefixed with a given path prefix. Before creating a scoped filesystem disk, you
@@ -277,7 +264,7 @@ your application's local URL and includes the bucket name in the URL path:
 AWS_URL=http://localhost:9000/local
 ```
 
-> [!WARNING]
+> **Warning**
 > Generating temporary storage URLs via the `temporaryUrl` method is not
 > supported when using MinIO.
 
@@ -330,11 +317,6 @@ should be specified relative to the disk's "root" location:
 
     $contents = Storage::get('file.jpg');
 
-If the file you are retrieving contains JSON, you may use the `json` method to
-retrieve the file and decode its contents:
-
-    $orders = Storage::json('orders.json');
-
 The `exists` method may be used to determine if a file exists on the disk:
 
     if (Storage::disk('s3')->exists('file.jpg')) {
@@ -380,28 +362,14 @@ should be placed in the `storage/app/public` directory. Furthermore, you
 should [create a symbolic link](#the-public-disk) at `public/storage` which
 points to the `storage/app/public` directory.
 
-> [!WARNING]
+> **Warning**
 > When using the `local` driver, the return value of `url` is not URL encoded.
 > For this reason, we recommend always storing your files using names that will
 > create valid URLs.
 
-<a name="url-host-customization"></a>
-
-#### URL Host Customization
-
-If you would like to pre-define the host for URLs generated using the `Storage`
-facade, you may add a `url` option to the disk's configuration array:
-
-    'public' => [
-        'driver' => 'local',
-        'root' => storage_path('app/public'),
-        'url' => env('APP_URL').'/storage',
-        'visibility' => 'public',
-    ],
-
 <a name="temporary-urls"></a>
 
-### Temporary URLs
+#### Temporary URLs
 
 Using the `temporaryUrl` method, you may create temporary URLs to files stored
 using the `s3` driver. This method accepts a path and a `DateTime` instance
@@ -437,7 +405,6 @@ be called from the `boot` method of a service provider:
 
     namespace App\Providers;
 
-    use DateTime;
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Facades\URL;
     use Illuminate\Support\ServiceProvider;
@@ -446,45 +413,34 @@ be called from the `boot` method of a service provider:
     {
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
-            Storage::disk('local')->buildTemporaryUrlsUsing(
-                function (string $path, DateTime $expiration, array $options) {
-                    return URL::temporarySignedRoute(
-                        'files.download',
-                        $expiration,
-                        array_merge($options, ['path' => $path])
-                    );
-                }
-            );
+            Storage::disk('local')->buildTemporaryUrlsUsing(function ($path, $expiration, $options) {
+                return URL::temporarySignedRoute(
+                    'files.download',
+                    $expiration,
+                    array_merge($options, ['path' => $path])
+                );
+            });
         }
     }
 
-<a name="temporary-upload-urls"></a>
+<a name="url-host-customization"></a>
 
-#### Temporary Upload URLs
+#### URL Host Customization
 
-> [!WARNING]
-> The ability to generate temporary upload URLs is only supported by the `s3`
-> driver.
+If you would like to pre-define the host for URLs generated using the `Storage`
+facade, you may add a `url` option to the disk's configuration array:
 
-If you need to generate a temporary URL that can be used to upload a file
-directly from your client-side application, you may use the `temporaryUploadUrl`
-method. This method accepts a path and a `DateTime` instance specifying when the
-URL should expire. The `temporaryUploadUrl` method returns an associative array
-which may be destructured into the upload URL and the headers that should be
-included with the upload request:
-
-    use Illuminate\Support\Facades\Storage;
-
-    ['url' => $url, 'headers' => $headers] = Storage::temporaryUploadUrl(
-        'file.jpg', now()->addMinutes(5)
-    );
-
-This method is primarily useful in serverless environments that require the
-client-side application to directly upload files to a cloud storage system such
-as Amazon S3.
+    'public' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL').'/storage',
+        'visibility' => 'public',
+    ],
 
 <a name="file-metadata"></a>
 
@@ -505,7 +461,7 @@ was modified:
 
 The MIME type of a given file may be obtained via the `mimeType` method:
 
-    $mime = Storage::mimeType('file.jpg');
+    $mime = Storage::mimeType('file.jpg')
 
 <a name="file-paths"></a>
 
@@ -559,7 +515,7 @@ write operations fail:
 
 <a name="prepending-appending-to-files"></a>
 
-### Prepending and Appending To Files
+### Prepending & Appending To Files
 
 The `prepend` and `append` methods allow you to write to the beginning or end of
 a file:
@@ -570,7 +526,7 @@ a file:
 
 <a name="copying-moving-files"></a>
 
-### Copying and Moving Files
+### Copying & Moving Files
 
 The `copy` method may be used to copy an existing file to a new location on the
 disk, while the `move` method may be used to rename or move an existing file to
@@ -634,8 +590,11 @@ uploaded file:
     {
         /**
          * Update the avatar for the user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function update(Request $request): string
+        public function update(Request $request)
         {
             $path = $request->file('avatar')->store('avatars');
 
@@ -657,7 +616,7 @@ same file storage operation as the example above:
 
 <a name="specifying-a-file-name"></a>
 
-#### Specifying a File Name
+#### Specifying A File Name
 
 If you do not want a filename to be automatically assigned to your stored file,
 you may use the `storeAs` method, which receives the path, the filename, and
@@ -674,7 +633,7 @@ perform the same file storage operation as the example above:
         'avatars', $request->file('avatar'), $request->user()->id
     );
 
-> [!WARNING]
+> **Warning**
 > Unprintable and invalid unicode characters will automatically be removed from
 > file paths. Therefore, you may wish to sanitize your file paths before passing
 > them to Laravel's file storage methods. File paths are normalized using
@@ -682,7 +641,7 @@ perform the same file storage operation as the example above:
 
 <a name="specifying-a-disk"></a>
 
-#### Specifying a Disk
+#### Specifying A Disk
 
 By default, this uploaded file's `store` method will use your default disk. If
 you would like to specify another disk, pass the disk name as the second
@@ -762,7 +721,7 @@ visibility:
 
 <a name="local-files-and-visibility"></a>
 
-#### Local Files and Visibility
+#### Local Files & Visibility
 
 When using the `local` driver, `public` [visibility](#file-visibility)
 translates to `0755` permissions for directories and `0644` permissions for
@@ -808,7 +767,7 @@ If necessary, you may specify the disk that the file should be deleted from:
 
 <a name="get-all-files-within-a-directory"></a>
 
-#### Get All Files Within a Directory
+#### Get All Files Within A Directory
 
 The `files` method returns an array of all of the files in a given directory. If
 you would like to retrieve a list of all files within a given directory
@@ -822,7 +781,7 @@ including all subdirectories, you may use the `allFiles` method:
 
 <a name="get-all-directories-within-a-directory"></a>
 
-#### Get All Directories Within a Directory
+#### Get All Directories Within A Directory
 
 The `directories` method returns an array of all the directories within a given
 directory. Additionally, you may use the `allDirectories` method to get a list
@@ -834,7 +793,7 @@ of all directories within a given directory and all of its subdirectories:
 
 <a name="create-a-directory"></a>
 
-#### Create a Directory
+#### Create A Directory
 
 The `makeDirectory` method will create the given directory, including any needed
 subdirectories:
@@ -843,62 +802,12 @@ subdirectories:
 
 <a name="delete-a-directory"></a>
 
-#### Delete a Directory
+#### Delete A Directory
 
 Finally, the `deleteDirectory` method may be used to remove a directory and all
 of its files:
 
     Storage::deleteDirectory($directory);
-
-<a name="testing"></a>
-
-## Testing
-
-The `Storage` facade's `fake` method allows you to easily generate a fake disk
-that, combined with the file generation utilities of
-the `Illuminate\Http\UploadedFile` class, greatly simplifies the testing of file
-uploads. For example:
-
-    <?php
-
-    namespace Tests\Feature;
-
-    use Illuminate\Http\UploadedFile;
-    use Illuminate\Support\Facades\Storage;
-    use Tests\TestCase;
-
-    class ExampleTest extends TestCase
-    {
-        public function test_albums_can_be_uploaded(): void
-        {
-            Storage::fake('photos');
-
-            $response = $this->json('POST', '/photos', [
-                UploadedFile::fake()->image('photo1.jpg'),
-                UploadedFile::fake()->image('photo2.jpg')
-            ]);
-
-            // Assert one or more files were stored...
-            Storage::disk('photos')->assertExists('photo1.jpg');
-            Storage::disk('photos')->assertExists(['photo1.jpg', 'photo2.jpg']);
-
-            // Assert one or more files were not stored...
-            Storage::disk('photos')->assertMissing('missing.jpg');
-            Storage::disk('photos')->assertMissing(['missing.jpg', 'non-existing.jpg']);
-
-            // Assert that a given directory is empty...
-            Storage::disk('photos')->assertDirectoryEmpty('/wallpapers');
-        }
-    }
-
-By default, the `fake` method will delete all files in its temporary directory.
-If you would like to keep these files, you may use the "persistentFake" method
-instead. For more information on testing file uploads, you may consult
-the [HTTP testing documentation's information on file uploads](http-tests.md#testing-file-uploads).
-
-> [!WARNING]
-> The `image` method requires
-> the [GD extension](https://www.php.net/manual/en/book.image.php).
 
 <a name="custom-filesystems"></a>
 
@@ -917,14 +826,13 @@ composer require spatie/flysystem-dropbox
 ```
 
 Next, you can register the driver within the `boot` method of one of your
-application's [service providers](providers.md). To accomplish
-this, you should use the `extend` method of the `Storage` facade:
+application's [service providers](providers.md). To accomplish this, you should
+use the `extend` method of the `Storage` facade:
 
     <?php
 
     namespace App\Providers;
 
-    use Illuminate\Contracts\Foundation\Application;
     use Illuminate\Filesystem\FilesystemAdapter;
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\ServiceProvider;
@@ -936,18 +844,22 @@ this, you should use the `extend` method of the `Storage` facade:
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
-            Storage::extend('dropbox', function (Application $app, array $config) {
+            Storage::extend('dropbox', function ($app, $config) {
                 $adapter = new DropboxAdapter(new DropboxClient(
                     $config['authorization_token']
                 ));

@@ -4,7 +4,7 @@
 - [Environment Configuration](#environment-configuration)
     - [Environment Variable Types](#environment-variable-types)
     - [Retrieving Environment Configuration](#retrieving-environment-configuration)
-    - [Determining the Current Environment](#determining-the-current-environment)
+    - [Determining The Current Environment](#determining-the-current-environment)
     - [Encrypting Environment Files](#encrypting-environment-files)
 - [Accessing Configuration Values](#accessing-configuration-values)
 - [Configuration Caching](#configuration-caching)
@@ -41,13 +41,6 @@ output, you may filter for that section using the `--only` option:
 php artisan about --only=environment
 ```
 
-Or, to explore a specific configuration file's values in detail, you may use
-the `config:show` Artisan command:
-
-```shell
-php artisan config:show database
-```
-
 <a name="environment-configuration"></a>
 
 ## Environment Configuration
@@ -72,7 +65,7 @@ a `.env.example` file with your application. By putting placeholder values in
 the example configuration file, other developers on your team can clearly see
 which environment variables are needed to run your application.
 
-> [!NOTE]
+> **Note**
 > Any variable in your `.env` file can be overridden by external environment
 > variables such as server-level or system-level environment variables.
 
@@ -143,7 +136,7 @@ will be returned if no environment variable exists for the given key.
 
 <a name="determining-the-current-environment"></a>
 
-### Determining the Current Environment
+### Determining The Current Environment
 
 The current application environment is determined via the `APP_ENV` variable
 from your `.env` file. You may access this value via the `environment` method on
@@ -165,7 +158,7 @@ environment matches any of the given values:
         // The environment is either local OR staging...
     }
 
-> [!NOTE]
+> **Note**
 > The current application environment detection can be overridden by defining a
 > server-level `APP_ENV` environment variable.
 
@@ -197,12 +190,12 @@ option when invoking the command:
 php artisan env:encrypt --key=3UVsEgGVK36XN82KKeyLFMhvosbZN1aF
 ```
 
-> [!NOTE]
+> **Note**
 > The length of the key provided should match the key length required by the
 > encryption cipher being used. By default, Laravel will use the `AES-256-CBC`
 > cipher which requires a 32 character key. You are free to use any cipher
-> supported by Laravel's [encrypter](encryption.md) by passing
-> the `--cipher` option when invoking the command.
+> supported by Laravel's [encrypter](encryption.md) by passing the `--cipher`
+> option when invoking the command.
 
 If your application has multiple environment files, such as `.env`
 and `.env.staging`, you may specify the environment file that should be
@@ -259,25 +252,18 @@ php artisan env:decrypt --force
 
 ## Accessing Configuration Values
 
-You may easily access your configuration values using the `Config` facade or
-global `config` function from anywhere in your application. The configuration
-values may be accessed using "dot" syntax, which includes the name of the file
-and option you wish to access. A default value may also be specified and will be
-returned if the configuration option does not exist:
-
-    use Illuminate\Support\Facades\Config;
-
-    $value = Config::get('app.timezone');
+You may easily access your configuration values using the global `config`
+function from anywhere in your application. The configuration values may be
+accessed using "dot" syntax, which includes the name of the file and option you
+wish to access. A default value may also be specified and will be returned if
+the configuration option does not exist:
 
     $value = config('app.timezone');
 
     // Retrieve a default value if the configuration value does not exist...
     $value = config('app.timezone', 'Asia/Seoul');
 
-To set configuration values at runtime, you may invoke the `Config`
-facade's `set` method or pass an array to the `config` function:
-
-    Config::set('app.timezone', 'America/Chicago');
+To set configuration values at runtime, pass an array to the `config` function:
 
     config(['app.timezone' => 'America/Chicago']);
 
@@ -295,24 +281,13 @@ production deployment process. The command should not be run during local
 development as configuration options will frequently need to be changed during
 the course of your application's development.
 
-Once the configuration has been cached, your application's `.env` file will not
-be loaded by the framework during requests or Artisan commands; therefore,
-the `env` function will only return external, system level environment
-variables.
-
-For this reason, you should ensure you are only calling the `env` function from
-within your application's configuration (`config`) files. You can see many
-examples of this by examining Laravel's default configuration files.
-Configuration values may be accessed from anywhere in your application using
-the `config` function [described above](#accessing-configuration-values).
-
 The `config:clear` command may be used to purge the cached configuration:
 
 ```shell
 php artisan config:clear
 ```
 
-> [!WARNING]
+> **Warning**
 > If you execute the `config:cache` command during your deployment process, you
 > should be sure that you are only calling the `env` function from within your
 > configuration files. Once the configuration has been cached, the `.env` file
@@ -328,9 +303,8 @@ much information about an error is actually displayed to the user. By default,
 this option is set to respect the value of the `APP_DEBUG` environment variable,
 which is stored in your `.env` file.
 
-> [!WARNING]
-> For local development, you should set the `APP_DEBUG` environment variable
-> to `true`. **In your production environment, this value should always
+For local development, you should set the `APP_DEBUG` environment variable
+to `true`. **In your production environment, this value should always
 be `false`. If the variable is set to `true` in production, you risk exposing
 sensitive configuration values to your application's end users.**
 
@@ -388,26 +362,18 @@ bypass cookie to your browser:
 https://example.com/1630542a-246b-4b66-afa1-dd72a4c43515
 ```
 
-If you would like Laravel to generate the secret token for you, you may use
-the `with-secret` option. The secret will be displayed to you once the
-application is in maintenance mode:
-
-```shell
-php artisan down --with-secret
-```
-
 When accessing this hidden route, you will then be redirected to the `/` route
 of the application. Once the cookie has been issued to your browser, you will be
 able to browse the application normally as if it was not in maintenance mode.
 
-> [!NOTE]
+> **Note**
 > Your maintenance mode secret should typically consist of alpha-numeric
 > characters and, optionally, dashes. You should avoid using characters that have
 > special meaning in URLs such as `?` or `&`.
 
 <a name="pre-rendering-the-maintenance-mode-view"></a>
 
-#### Pre-Rendering the Maintenance Mode View
+#### Pre-Rendering The Maintenance Mode View
 
 If you utilize the `php artisan down` command during deployment, your users may
 still occasionally encounter errors if they access the application while your
@@ -449,22 +415,21 @@ To disable maintenance mode, use the `up` command:
 php artisan up
 ```
 
-> [!NOTE]
+> **Note**
 > You may customize the default maintenance mode template by defining your own
 > template at `resources/views/errors/503.blade.php`.
 
 <a name="maintenance-mode-queues"></a>
 
-#### Maintenance Mode and Queues
+#### Maintenance Mode & Queues
 
-While your application is in maintenance mode,
-no [queued jobs](queues.md) will be handled. The jobs will
-continue to be handled as normal once the application is out of maintenance
-mode.
+While your application is in maintenance mode, no [queued jobs](queues.md) will
+be handled. The jobs will continue to be handled as normal once the application
+is out of maintenance mode.
 
 <a name="alternatives-to-maintenance-mode"></a>
 
-#### Alternatives to Maintenance Mode
+#### Alternatives To Maintenance Mode
 
 Since maintenance mode requires your application to have several seconds of
 downtime, consider alternatives like [Laravel Vapor](https://vapor.laravel.com)

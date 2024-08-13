@@ -1,15 +1,15 @@
 # Views
 
 - [Introduction](#introduction)
-  - [Writing Views in React / Vue](#writing-views-in-react-or-vue)
-- [Creating and Rendering Views](#creating-and-rendering-views)
-  - [Nested View Directories](#nested-view-directories)
-  - [Creating the First Available View](#creating-the-first-available-view)
-  - [Determining if a View Exists](#determining-if-a-view-exists)
-- [Passing Data to Views](#passing-data-to-views)
-  - [Sharing Data With All Views](#sharing-data-with-all-views)
+    - [Writing Views In React / Vue](#writing-views-in-react-or-vue)
+- [Creating & Rendering Views](#creating-and-rendering-views)
+    - [Nested View Directories](#nested-view-directories)
+    - [Creating The First Available View](#creating-the-first-available-view)
+    - [Determining If A View Exists](#determining-if-a-view-exists)
+- [Passing Data To Views](#passing-data-to-views)
+    - [Sharing Data With All Views](#sharing-data-with-all-views)
 - [View Composers](#view-composers)
-  - [View Creators](#view-creators)
+    - [View Creators](#view-creators)
 - [Optimizing Views](#optimizing-views)
 
 <a name="introduction"></a>
@@ -22,9 +22,8 @@ place all of our HTML in separate files.
 
 Views separate your controller / application logic from your presentation logic
 and are stored in the `resources/views` directory. When using Laravel, view
-templates are usually written using
-the [Blade templating language](blade.md). A simple view might
-look something like this:
+templates are usually written using the [Blade templating language](blade.md). A
+simple view might look something like this:
 
 ```blade
 <!-- View stored in resources/views/greeting.blade.php -->
@@ -43,13 +42,13 @@ it using the global `view` helper like so:
         return view('greeting', ['name' => 'James']);
     });
 
-> [!NOTE]
+> **Note**
 > Looking for more information on how to write Blade templates? Check out the
 > full [Blade documentation](blade.md) to get started.
 
 <a name="writing-views-in-react-or-vue"></a>
 
-### Writing Views in React / Vue
+### Writing Views In React / Vue
 
 Instead of writing their frontend templates in PHP via Blade, many developers
 have begun to prefer to write their templates using React or Vue. Laravel makes
@@ -57,28 +56,21 @@ this painless thanks to [Inertia](https://inertiajs.com/), a library that makes
 it a cinch to tie your React / Vue frontend to your Laravel backend without the
 typical complexities of building an SPA.
 
-Our Breeze and Jetstream [starter kits](starter-kits.md) give you
-a great starting point for your next Laravel application powered by Inertia. In
+Our Breeze and Jetstream [starter kits](starter-kits.md) give you a great
+starting point for your next Laravel application powered by Inertia. In
 addition, the [Laravel Bootcamp](https://bootcamp.laravel.com) provides a full
 demonstration of building a Laravel application powered by Inertia, including
 examples in Vue and React.
 
 <a name="creating-and-rendering-views"></a>
 
-## Creating and Rendering Views
+## Creating & Rendering Views
 
 You may create a view by placing a file with the `.blade.php` extension in your
-application's `resources/views` directory or by using the `make:view` Artisan
-command:
-
-```shell
-php artisan make:view greeting
-```
-
-The `.blade.php` extension informs the framework that the file contains
-a [Blade template](blade.md). Blade templates contain HTML as
-well as Blade directives that allow you to easily echo values, create "if"
-statements, iterate over data, and more.
+application's `resources/views` directory. The `.blade.php` extension informs
+the framework that the file contains a [Blade template](blade.md). Blade
+templates contain HTML as well as Blade directives that allow you to easily echo
+values, create "if" statements, iterate over data, and more.
 
 Once you have created a view, you may return it from one of your application's
 routes or controllers using the global `view` helper:
@@ -110,12 +102,12 @@ it from one of your application's routes / controllers like so:
 
     return view('admin.profile', $data);
 
-> [!WARNING]
+> **Warning**
 > View directory names should not contain the `.` character.
 
 <a name="creating-the-first-available-view"></a>
 
-### Creating the First Available View
+### Creating The First Available View
 
 Using the `View` facade's `first` method, you may create the first view that
 exists in a given array of views. This may be useful if your application or
@@ -127,20 +119,20 @@ package allows views to be customized or overwritten:
 
 <a name="determining-if-a-view-exists"></a>
 
-### Determining if a View Exists
+### Determining If A View Exists
 
 If you need to determine if a view exists, you may use the `View` facade.
 The `exists` method will return `true` if the view exists:
 
     use Illuminate\Support\Facades\View;
 
-    if (View::exists('admin.profile')) {
-        // ...
+    if (View::exists('emails.customer')) {
+        //
     }
 
 <a name="passing-data-to-views"></a>
 
-## Passing Data to Views
+## Passing Data To Views
 
 As you saw in the previous examples, you may pass an array of data to views to
 make that data available to the view:
@@ -181,16 +173,20 @@ provider to house them:
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
             View::share('key', 'value');
         }
@@ -208,9 +204,9 @@ returned by multiple routes or controllers within your application and always
 needs a particular piece of data.
 
 Typically, view composers will be registered within one of your
-application's [service providers](providers.md). In this example,
-we'll assume that we have created a new `App\Providers\ViewServiceProvider` to
-house this logic.
+application's [service providers](providers.md). In this example, we'll assume
+that we have created a new `App\Providers\ViewServiceProvider` to house this
+logic.
 
 We'll use the `View` facade's `composer` method to register the view composer.
 Laravel does not include a default directory for class based view composers, so
@@ -223,40 +219,39 @@ composers:
     namespace App\Providers;
 
     use App\View\Composers\ProfileComposer;
-    use Illuminate\Support\Facades;
+    use Illuminate\Support\Facades\View;
     use Illuminate\Support\ServiceProvider;
-    use Illuminate\View\View;
 
     class ViewServiceProvider extends ServiceProvider
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            // ...
+            //
         }
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
             // Using class based composers...
-            Facades\View::composer('profile', ProfileComposer::class);
+            View::composer('profile', ProfileComposer::class);
 
             // Using closure based composers...
-            Facades\View::composer('welcome', function (View $view) {
-                // ...
-            });
-
-            Facades\View::composer('dashboard', function (View $view) {
-                // ...
+            View::composer('dashboard', function ($view) {
+                //
             });
         }
     }
 
-> [!WARNING]
+> **Warning**
 > Remember, if you create a new service provider to contain your view composer
 > registrations, you will need to add the service provider to the `providers`
 > array in the `config/app.php` configuration file.
@@ -276,34 +271,47 @@ composer class:
     class ProfileComposer
     {
         /**
-         * Create a new profile composer.
+         * The user repository implementation.
+         *
+         * @var \App\Repositories\UserRepository
          */
-        public function __construct(
-            protected UserRepository $users,
-        ) {}
+        protected $users;
+
+        /**
+         * Create a new profile composer.
+         *
+         * @param  \App\Repositories\UserRepository  $users
+         * @return void
+         */
+        public function __construct(UserRepository $users)
+        {
+            $this->users = $users;
+        }
 
         /**
          * Bind data to the view.
+         *
+         * @param  \Illuminate\View\View  $view
+         * @return void
          */
-        public function compose(View $view): void
+        public function compose(View $view)
         {
             $view->with('count', $this->users->count());
         }
     }
 
 As you can see, all view composers are resolved via
-the [service container](container.md), so you may type-hint any
-dependencies you need within a composer's constructor.
+the [service container](container.md), so you may type-hint any dependencies you
+need within a composer's constructor.
 
 <a name="attaching-a-composer-to-multiple-views"></a>
 
-#### Attaching a Composer to Multiple Views
+#### Attaching A Composer To Multiple Views
 
 You may attach a view composer to multiple views at once by passing an array of
 views as the first argument to the `composer` method:
 
     use App\Views\Composers\MultiComposer;
-    use Illuminate\Support\Facades\View;
 
     View::composer(
         ['profile', 'dashboard'],
@@ -313,11 +321,8 @@ views as the first argument to the `composer` method:
 The `composer` method also accepts the `*` character as a wildcard, allowing you
 to attach a composer to all views:
 
-    use Illuminate\Support\Facades;
-    use Illuminate\View\View;
-
-    Facades\View::composer('*', function (View $view) {
-        // ...
+    View::composer('*', function ($view) {
+        //
     });
 
 <a name="view-creators"></a>

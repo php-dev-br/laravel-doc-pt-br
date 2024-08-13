@@ -4,18 +4,22 @@
 - [Configuration](#configuration)
     - [Driver Prerequisites](#driver-prerequisites)
 - [Cache Usage](#cache-usage)
-    - [Obtaining a Cache Instance](#obtaining-a-cache-instance)
-    - [Retrieving Items From the Cache](#retrieving-items-from-the-cache)
-    - [Storing Items in the Cache](#storing-items-in-the-cache)
-    - [Removing Items From the Cache](#removing-items-from-the-cache)
+    - [Obtaining A Cache Instance](#obtaining-a-cache-instance)
+    - [Retrieving Items From The Cache](#retrieving-items-from-the-cache)
+    - [Storing Items In The Cache](#storing-items-in-the-cache)
+    - [Removing Items From The Cache](#removing-items-from-the-cache)
     - [The Cache Helper](#the-cache-helper)
+- [Cache Tags](#cache-tags)
+    - [Storing Tagged Cache Items](#storing-tagged-cache-items)
+    - [Accessing Tagged Cache Items](#accessing-tagged-cache-items)
+    - [Removing Tagged Cache Items](#removing-tagged-cache-items)
 - [Atomic Locks](#atomic-locks)
     - [Driver Prerequisites](#lock-driver-prerequisites)
     - [Managing Locks](#managing-locks)
     - [Managing Locks Across Processes](#managing-locks-across-processes)
 - [Adding Custom Cache Drivers](#adding-custom-cache-drivers)
-    - [Writing the Driver](#writing-the-driver)
-    - [Registering the Driver](#registering-the-driver)
+    - [Writing The Driver](#writing-the-driver)
+    - [Registering The Driver](#registering-the-driver)
 - [Events](#events)
 
 <a name="introduction"></a>
@@ -64,13 +68,13 @@ When using the `database` cache driver, you will need to set up a table to
 contain the cache items. You'll find an example `Schema` declaration for the
 table below:
 
-    Schema::create('cache', function (Blueprint $table) {
+    Schema::create('cache', function ($table) {
         $table->string('key')->unique();
         $table->text('value');
         $table->integer('expiration');
     });
 
-> [!NOTE]
+> **Note**
 > You may also use the `php artisan cache:table` Artisan command to generate a
 > migration with the proper schema.
 
@@ -111,8 +115,8 @@ the `port` option should be set to `0`:
 
 Before using a Redis cache with Laravel, you will need to either install the
 PhpRedis PHP extension via PECL or install the `predis/predis` package (~1.0)
-via Composer. [Laravel Sail](sail.md) already includes this
-extension. In addition, official Laravel deployment platforms such
+via Composer. [Laravel Sail](sail.md) already includes this extension. In
+addition, official Laravel deployment platforms such
 as [Laravel Forge](https://forge.laravel.com)
 and [Laravel Vapor](https://vapor.laravel.com) have the PhpRedis extension
 installed by default.
@@ -141,7 +145,7 @@ should be named `key`.
 
 <a name="obtaining-a-cache-instance"></a>
 
-### Obtaining a Cache Instance
+### Obtaining A Cache Instance
 
 To obtain a cache store instance, you may use the `Cache` facade, which is what
 we will use throughout this documentation. The `Cache` facade provides
@@ -158,14 +162,14 @@ contracts:
     {
         /**
          * Show a list of all users of the application.
+         *
+         * @return Response
          */
-        public function index(): array
+        public function index()
         {
             $value = Cache::get('key');
 
-            return [
-                // ...
-            ];
+            //
         }
     }
 
@@ -184,7 +188,7 @@ file:
 
 <a name="retrieving-items-from-the-cache"></a>
 
-### Retrieving Items From the Cache
+### Retrieving Items From The Cache
 
 The `Cache` facade's `get` method is used to retrieve items from the cache. If
 the item does not exist in the cache, `null` will be returned. If you wish, you
@@ -204,15 +208,15 @@ external service:
         return DB::table(/* ... */)->get();
     });
 
-<a name="determining-item-existence"></a>
+<a name="checking-for-item-existence"></a>
 
-#### Determining Item Existence
+#### Checking For Item Existence
 
 The `has` method may be used to determine if an item exists in the cache. This
 method will also return `false` if the item exists but its value is `null`:
 
     if (Cache::has('key')) {
-        // ...
+        //
     }
 
 <a name="incrementing-decrementing-values"></a>
@@ -224,10 +228,6 @@ integer items in the cache. Both of these methods accept an optional second
 argument indicating the amount by which to increment or decrement the item's
 value:
 
-    // Initialize the value if it does not exist...
-    Cache::add('key', 0, now()->addHours(4));
-
-    // Increment or decrement the value...
     Cache::increment('key');
     Cache::increment('key', $amount);
     Cache::decrement('key');
@@ -235,7 +235,7 @@ value:
 
 <a name="retrieve-store"></a>
 
-#### Retrieve and Store
+#### Retrieve & Store
 
 Sometimes you may wish to retrieve an item from the cache, but also store a
 default value if the requested item doesn't exist. For example, you may wish to
@@ -259,7 +259,7 @@ store it forever if it does not exist:
 
 <a name="retrieve-delete"></a>
 
-#### Retrieve and Delete
+#### Retrieve & Delete
 
 If you need to retrieve an item from the cache and then delete the item, you may
 use the `pull` method. Like the `get` method, `null` will be returned if the
@@ -269,7 +269,7 @@ item does not exist in the cache:
 
 <a name="storing-items-in-the-cache"></a>
 
-### Storing Items in the Cache
+### Storing Items In The Cache
 
 You may use the `put` method on the `Cache` facade to store items in the cache:
 
@@ -288,7 +288,7 @@ item:
 
 <a name="store-if-not-present"></a>
 
-#### Store if Not Present
+#### Store If Not Present
 
 The `add` method will only add the item to the cache if it does not already
 exist in the cache store. The method will return `true` if the item is actually
@@ -307,13 +307,13 @@ using the `forget` method:
 
     Cache::forever('key', 'value');
 
-> [!NOTE]
+> **Note**
 > If you are using the Memcached driver, items that are stored "forever" may be
 > removed when the cache reaches its size limit.
 
 <a name="removing-items-from-the-cache"></a>
 
-### Removing Items From the Cache
+### Removing Items From The Cache
 
 You may remove items from the cache using the `forget` method:
 
@@ -330,7 +330,7 @@ You may clear the entire cache using the `flush` method:
 
     Cache::flush();
 
-> [!WARNING]
+> **Warning**
 > Flushing the cache does not respect your configured cache "prefix" and will
 > remove all entries from the cache. Consider this carefully when clearing a cache
 > which is shared by other applications.
@@ -361,16 +361,67 @@ you to call other caching methods:
         return DB::table('users')->get();
     });
 
-> [!NOTE]
+> **Note**
 > When testing call to the global `cache` function, you may use
 > the `Cache::shouldReceive` method just as if you
 > were [testing the facade](mocking.md#mocking-facades).
+
+<a name="cache-tags"></a>
+
+## Cache Tags
+
+> **Warning**
+> Cache tags are not supported when using the `file`, `dynamodb`, or `database`
+> cache drivers. Furthermore, when using multiple tags with caches that are
+> stored "forever", performance will be best with a driver such as `memcached`,
+> which automatically purges stale records.
+
+<a name="storing-tagged-cache-items"></a>
+
+### Storing Tagged Cache Items
+
+Cache tags allow you to tag related items in the cache and then flush all cached
+values that have been assigned a given tag. You may access a tagged cache by
+passing in an ordered array of tag names. For example, let's access a tagged
+cache and `put` a value into the cache:
+
+    Cache::tags(['people', 'artists'])->put('John', $john, $seconds);
+
+    Cache::tags(['people', 'authors'])->put('Anne', $anne, $seconds);
+
+<a name="accessing-tagged-cache-items"></a>
+
+### Accessing Tagged Cache Items
+
+Items stored via tags may not be accessed without also providing the tags that
+were used to store the value. To retrieve a tagged cache item, pass the same
+ordered list of tags to the `tags` method and then call the `get` method with
+the key you wish to retrieve:
+
+    $john = Cache::tags(['people', 'artists'])->get('John');
+
+    $anne = Cache::tags(['people', 'authors'])->get('Anne');
+
+<a name="removing-tagged-cache-items"></a>
+
+### Removing Tagged Cache Items
+
+You may flush all items that are assigned a tag or list of tags. For example,
+this statement would remove all caches tagged with either `people`, `authors`,
+or both. So, both `Anne` and `John` would be removed from the cache:
+
+    Cache::tags(['people', 'authors'])->flush();
+
+In contrast, this statement would remove only cached values tagged
+with `authors`, so `Anne` would be removed, but not `John`:
+
+    Cache::tags('authors')->flush();
 
 <a name="atomic-locks"></a>
 
 ## Atomic Locks
 
-> [!WARNING]
+> **Warning**
 > To utilize this feature, your application must be using
 > the `memcached`, `redis`, `dynamodb`, `database`, `file`, or `array` cache
 > driver as your application's default cache driver. In addition, all servers must
@@ -388,16 +439,11 @@ When using the `database` cache driver, you will need to setup a table to
 contain your application's cache locks. You'll find an example `Schema`
 declaration for the table below:
 
-    Schema::create('cache_locks', function (Blueprint $table) {
+    Schema::create('cache_locks', function ($table) {
         $table->string('key')->primary();
         $table->string('owner');
         $table->integer('expiration');
     });
-
-> [!NOTE]
-> If you used the `cache:table` Artisan command to create the database driver's
-> cache table, the migration created by that command already includes a definition
-> for the `cache_locks` table.
 
 <a name="managing-locks"></a>
 
@@ -442,7 +488,7 @@ an `Illuminate\Contracts\Cache\LockTimeoutException` will be thrown:
     } catch (LockTimeoutException $e) {
         // Unable to acquire lock...
     } finally {
-        $lock?->release();
+        optional($lock)->release();
     }
 
 The example above may be simplified by passing a closure to the `block` method.
@@ -493,11 +539,11 @@ may use the `forceRelease` method:
 
 <a name="writing-the-driver"></a>
 
-### Writing the Driver
+### Writing The Driver
 
 To create our custom cache driver, we first need to implement
-the `Illuminate\Contracts\Cache\Store` [contract](contracts.md).
-So, a MongoDB cache implementation might look something like this:
+the `Illuminate\Contracts\Cache\Store` [contract](contracts.md). So, a MongoDB
+cache implementation might look something like this:
 
     <?php
 
@@ -526,11 +572,11 @@ the [Laravel framework source code](https://github.com/laravel/framework). Once
 our implementation is complete, we can finish our custom driver registration by
 calling the `Cache` facade's `extend` method:
 
-    Cache::extend('mongo', function (Application $app) {
+    Cache::extend('mongo', function ($app) {
         return Cache::repository(new MongoStore);
     });
 
-> [!NOTE]
+> **Note**
 > If you're wondering where to put your custom cache driver code, you could
 > create an `Extensions` namespace within your `app` directory. However, keep in
 > mind that Laravel does not have a rigid application structure and you are free
@@ -538,7 +584,7 @@ calling the `Cache` facade's `extend` method:
 
 <a name="registering-the-driver"></a>
 
-### Registering the Driver
+### Registering The Driver
 
 To register the custom cache driver with Laravel, we will use the `extend`
 method on the `Cache` facade. Since other service providers may attempt to read
@@ -555,19 +601,20 @@ class:
     namespace App\Providers;
 
     use App\Extensions\MongoStore;
-    use Illuminate\Contracts\Foundation\Application;
     use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\ServiceProvider;
 
-    class AppServiceProvider extends ServiceProvider
+    class CacheServiceProvider extends ServiceProvider
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
             $this->app->booting(function () {
-                 Cache::extend('mongo', function (Application $app) {
+                 Cache::extend('mongo', function ($app) {
                      return Cache::repository(new MongoStore);
                  });
              });
@@ -575,10 +622,12 @@ class:
 
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
-            // ...
+            //
         }
     }
 
@@ -586,8 +635,7 @@ The first argument passed to the `extend` method is the name of the driver. This
 will correspond to your `driver` option in the `config/cache.php` configuration
 file. The second argument is a closure that should return
 an `Illuminate\Cache\Repository` instance. The closure will be passed an `$app`
-instance, which is an instance of
-the [service container](container.md).
+instance, which is an instance of the [service container](container.md).
 
 Once your extension is registered, update your `config/cache.php` configuration
 file's `driver` option to the name of your extension.
@@ -597,9 +645,9 @@ file's `driver` option to the name of your extension.
 ## Events
 
 To execute code on every cache operation, you may listen for
-the [events](events.md) fired by the cache. Typically, you should
-place these event listeners within your
-application's `App\Providers\EventServiceProvider` class:
+the [events](events.md) fired by the cache. Typically, you should place these
+event listeners within your application's `App\Providers\EventServiceProvider`
+class:
 
     use App\Listeners\LogCacheHit;
     use App\Listeners\LogCacheMissed;

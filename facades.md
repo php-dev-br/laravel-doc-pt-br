@@ -1,9 +1,9 @@
 # Facades
 
 - [Introduction](#introduction)
-- [When to Utilize Facades](#when-to-use-facades)
-    - [Facades vs. Dependency Injection](#facades-vs-dependency-injection)
-    - [Facades vs. Helper Functions](#facades-vs-helper-functions)
+- [When To Use Facades](#when-to-use-facades)
+    - [Facades Vs. Dependency Injection](#facades-vs-dependency-injection)
+    - [Facades Vs. Helper Functions](#facades-vs-helper-functions)
 - [How Facades Work](#how-facades-work)
 - [Real-Time Facades](#real-time-facades)
 - [Facade Class Reference](#facade-class-reference)
@@ -15,8 +15,8 @@
 Throughout the Laravel documentation, you will see examples of code that
 interacts with Laravel's features via "facades". Facades provide a "static"
 interface to classes that are available in the
-application's [service container](container.md). Laravel ships
-with many facades which provide access to almost all of Laravel's features.
+application's [service container](container.md). Laravel ships with many facades
+which provide access to almost all of Laravel's features.
 
 Laravel facades serve as "static proxies" to underlying classes in the service
 container, providing the benefit of a terse, expressive syntax while maintaining
@@ -46,8 +46,7 @@ that make it even easier to interact with common Laravel features. Some of the
 common helper functions you may interact with
 are `view`, `response`, `url`, `config`, and more. Each helper function offered
 by Laravel is documented with their corresponding feature; however, a complete
-list is available within the
-dedicated [helper documentation](helpers.md).
+list is available within the dedicated [helper documentation](helpers.md).
 
 For example, instead of using the `Illuminate\Support\Facades\Response` facade
 to generate a JSON response, we may simply use the `response` function. Because
@@ -70,7 +69,7 @@ in order to use them:
 
 <a name="when-to-use-facades"></a>
 
-## When to Utilize Facades
+## When To Use Facades
 
 Facades have many benefits. They provide a terse, memorable syntax that allows
 you to use Laravel's features without remembering long class names that must be
@@ -88,7 +87,7 @@ getting too large, consider splitting it into multiple smaller classes.
 
 <a name="facades-vs-dependency-injection"></a>
 
-### Facades vs. Dependency Injection
+### Facades Vs. Dependency Injection
 
 One of the primary benefits of dependency injection is the ability to swap
 implementations of the injected class. This is useful during testing since you
@@ -113,8 +112,10 @@ verify that the `Cache::get` method was called with the argument we expected:
 
     /**
      * A basic functional test example.
+     *
+     * @return void
      */
-    public function test_basic_example(): void
+    public function testBasicExample()
     {
         Cache::shouldReceive('get')
              ->with('key')
@@ -127,7 +128,7 @@ verify that the `Cache::get` method was called with the argument we expected:
 
 <a name="facades-vs-helper-functions"></a>
 
-### Facades vs. Helper Functions
+### Facades Vs. Helper Functions
 
 In addition to facades, Laravel includes a variety of "helper" functions which
 can perform common tasks like generating views, firing events, dispatching jobs,
@@ -156,8 +157,10 @@ we expected:
 
     /**
      * A basic functional test example.
+     *
+     * @return void
      */
-    public function test_basic_example(): void
+    public function testBasicExample()
     {
         Cache::shouldReceive('get')
              ->with('key')
@@ -188,14 +191,16 @@ might assume that the static `get` method is being called on the `Cache` class:
 
     use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\Cache;
-    use Illuminate\View\View;
 
     class UserController extends Controller
     {
         /**
          * Show the profile for the given user.
+         *
+         * @param  int  $id
+         * @return Response
          */
-        public function showProfile(string $id): View
+        public function showProfile($id)
         {
             $user = Cache::get('user:'.$id);
 
@@ -215,19 +220,18 @@ there is no static method `get`:
     {
         /**
          * Get the registered name of the component.
+         *
+         * @return string
          */
-        protected static function getFacadeAccessor(): string
-        {
-            return 'cache';
-        }
+        protected static function getFacadeAccessor() { return 'cache'; }
     }
 
 Instead, the `Cache` facade extends the base `Facade` class and defines the
 method `getFacadeAccessor()`. This method's job is to return the name of a
 service container binding. When a user references any static method on
 the `Cache` facade, Laravel resolves the `cache` binding from
-the [service container](container.md) and runs the requested
-method (in this case, `get`) against that object.
+the [service container](container.md) and runs the requested method (in this
+case, `get`) against that object.
 
 <a name="real-time-facades"></a>
 
@@ -250,8 +254,11 @@ to inject a `Publisher` instance:
     {
         /**
          * Publish the podcast.
+         *
+         * @param  Publisher  $publisher
+         * @return void
          */
-        public function publish(Publisher $publisher): void
+        public function publish(Publisher $publisher)
         {
             $this->update(['publishing' => now()]);
 
@@ -270,22 +277,21 @@ real-time facade, prefix the namespace of the imported class with `Facades`:
 
     namespace App\Models;
 
-    use App\Contracts\Publisher; // [tl! remove]
-    use Facades\App\Contracts\Publisher; // [tl! add]
+    use Facades\App\Contracts\Publisher;
     use Illuminate\Database\Eloquent\Model;
 
     class Podcast extends Model
     {
         /**
          * Publish the podcast.
+         *
+         * @return void
          */
-        public function publish(Publisher $publisher): void // [tl! remove]
-        public function publish(): void // [tl! add]
+        public function publish()
         {
             $this->update(['publishing' => now()]);
 
-            $publisher->publish($this); // [tl! remove]
-            Publisher::publish($this); // [tl! add]
+            Publisher::publish($this);
         }
     }
 
@@ -309,8 +315,10 @@ built-in facade testing helpers to mock this method call:
 
         /**
          * A test example.
+         *
+         * @return void
          */
-        public function test_podcast_can_be_published(): void
+        public function test_podcast_can_be_published()
         {
             $podcast = Podcast::factory()->create();
 
@@ -326,10 +334,8 @@ built-in facade testing helpers to mock this method call:
 
 Below you will find every facade and its underlying class. This is a useful tool
 for quickly digging into the API documentation for a given facade root.
-The [service container binding](container.md) key is also
-included where applicable.
-
-<div class="overflow-auto">
+The [service container binding](container.md) key is also included where
+applicable.
 
  Facade               | Class                                                                                                                                       | Service Container Binding
 ----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------------
@@ -360,12 +366,9 @@ included where applicable.
  Notification         | [Illuminate\Notifications\ChannelManager](https://laravel.com/api/{{version}}/Illuminate/Notifications/ChannelManager.html)                 | &nbsp;
  Password             | [Illuminate\Auth\Passwords\PasswordBrokerManager](https://laravel.com/api/{{version}}/Illuminate/Auth/Passwords/PasswordBrokerManager.html) | `auth.password`
  Password (Instance)  | [Illuminate\Auth\Passwords\PasswordBroker](https://laravel.com/api/{{version}}/Illuminate/Auth/Passwords/PasswordBroker.html)               | `auth.password.broker`
- Pipeline (Instance)  | [Illuminate\Pipeline\Pipeline](https://laravel.com/api/{{version}}/Illuminate/Pipeline/Pipeline.html)                                       | &nbsp;
- Process              | [Illuminate\Process\Factory](https://laravel.com/api/{{version}}/Illuminate/Process/Factory.html)                                           | &nbsp;
  Queue                | [Illuminate\Queue\QueueManager](https://laravel.com/api/{{version}}/Illuminate/Queue/QueueManager.html)                                     | `queue`
  Queue (Instance)     | [Illuminate\Contracts\Queue\Queue](https://laravel.com/api/{{version}}/Illuminate/Contracts/Queue/Queue.html)                               | `queue.connection`
  Queue (Base Class)   | [Illuminate\Queue\Queue](https://laravel.com/api/{{version}}/Illuminate/Queue/Queue.html)                                                   | &nbsp;
- RateLimiter          | [Illuminate\Cache\RateLimiter](https://laravel.com/api/{{version}}/Illuminate/Cache/RateLimiter.html)                                       | &nbsp;
  Redirect             | [Illuminate\Routing\Redirector](https://laravel.com/api/{{version}}/Illuminate/Routing/Redirector.html)                                     | `redirect`
  Redis                | [Illuminate\Redis\RedisManager](https://laravel.com/api/{{version}}/Illuminate/Redis/RedisManager.html)                                     | `redis`
  Redis (Instance)     | [Illuminate\Redis\Connections\Connection](https://laravel.com/api/{{version}}/Illuminate/Redis/Connections/Connection.html)                 | `redis.connection`
@@ -384,5 +387,3 @@ included where applicable.
  View                 | [Illuminate\View\Factory](https://laravel.com/api/{{version}}/Illuminate/View/Factory.html)                                                 | `view`
  View (Instance)      | [Illuminate\View\View](https://laravel.com/api/{{version}}/Illuminate/View/View.html)                                                       | &nbsp;
  Vite                 | [Illuminate\Foundation\Vite](https://laravel.com/api/{{version}}/Illuminate/Foundation/Vite.html)                                           | &nbsp;
-
-</div>

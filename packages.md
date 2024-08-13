@@ -1,14 +1,14 @@
 # Package Development
 
 - [Introduction](#introduction)
-    - [A Note on Facades](#a-note-on-facades)
+    - [A Note On Facades](#a-note-on-facades)
 - [Package Discovery](#package-discovery)
 - [Service Providers](#service-providers)
 - [Resources](#resources)
     - [Configuration](#configuration)
     - [Migrations](#migrations)
     - [Routes](#routes)
-    - [Language Files](#language-files)
+    - [Translations](#translations)
     - [Views](#views)
     - [View Components](#view-components)
     - ["About" Artisan Command](#about-artisan-command)
@@ -38,7 +38,7 @@ covers the development of those packages that are Laravel specific.
 
 <a name="a-note-on-facades"></a>
 
-### A Note on Facades
+### A Note On Facades
 
 When writing a Laravel application, it generally does not matter if you use
 contracts or facades since both provide essentially equal levels of testability.
@@ -58,8 +58,8 @@ When someone installs your package, you will typically want your service
 provider to be included in this list. Instead of requiring users to manually add
 your service provider to the list, you may define the provider in the `extra`
 section of your package's `composer.json` file. In addition to service
-providers, you may also list any [facades](facades.md) you would
-like to be registered:
+providers, you may also list any [facades](facades.md) you would like to be
+registered:
 
 ```json
 "extra": {
@@ -80,7 +80,7 @@ convenient installation experience for your package's users.
 
 <a name="opting-out-of-package-discovery"></a>
 
-#### Opting Out of Package Discovery
+### Opting Out Of Package Discovery
 
 If you are the consumer of a package and would like to disable package discovery
 for a package, you may list the package name in the `extra` section of your
@@ -113,18 +113,16 @@ inside of your application's `dont-discover` directive:
 
 ## Service Providers
 
-[Service providers](providers.md) are the connection point
-between your package and Laravel. A service provider is responsible for binding
-things into Laravel's [service container](container.md) and
-informing Laravel where to load package resources such as views, configuration,
-and language files.
+[Service providers](providers.md) are the connection point between your package
+and Laravel. A service provider is responsible for binding things into
+Laravel's [service container](container.md) and informing Laravel where to load
+package resources such as views, configuration, and localization files.
 
 A service provider extends the `Illuminate\Support\ServiceProvider` class and
 contains two methods: `register` and `boot`. The base `ServiceProvider` class is
 located in the `illuminate/support` Composer package, which you should add to
 your own package's dependencies. To learn more about the structure and purpose
-of service providers, check
-out [their documentation](providers.md).
+of service providers, check out [their documentation](providers.md).
 
 <a name="resources"></a>
 
@@ -142,8 +140,10 @@ your service provider:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->publishes([
             __DIR__.'/../config/courier.php' => config_path('courier.php'),
@@ -157,7 +157,7 @@ file:
 
     $value = config('courier.option');
 
-> [!WARNING]
+> **Warning**
 > You should not define closures in your configuration files. They can not be
 > serialized correctly when users execute the `config:cache` Artisan command.
 
@@ -177,15 +177,17 @@ configuration file as its second argument:
 
     /**
      * Register any application services.
+     *
+     * @return void
      */
-    public function register(): void
+    public function register()
     {
         $this->mergeConfigFrom(
             __DIR__.'/../config/courier.php', 'courier'
         );
     }
 
-> [!WARNING]
+> **Warning**
 > This method only merges the first level of the configuration array. If your
 > users partially define a multi-dimensional configuration array, the missing
 > options will not be merged.
@@ -201,8 +203,10 @@ cached:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
@@ -211,15 +215,17 @@ cached:
 
 ### Migrations
 
-If your package contains [database migrations](migrations.md),
-you may use the `loadMigrationsFrom` method to inform Laravel how to load them.
+If your package contains [database migrations](migrations.md), you may use
+the `loadMigrationsFrom` method to inform Laravel how to load them.
 The `loadMigrationsFrom` method accepts the path to your package's migrations as
 its only argument:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
@@ -228,57 +234,47 @@ Once your package's migrations have been registered, they will automatically be
 run when the `php artisan migrate` command is executed. You do not need to
 export them to the application's `database/migrations` directory.
 
-<a name="language-files"></a>
+<a name="translations"></a>
 
-### Language Files
+### Translations
 
-If your package contains [language files](localization.md), you
-may use the `loadTranslationsFrom` method to inform Laravel how to load them.
-For example, if your package is named `courier`, you should add the following to
+If your package contains [translation files](localization.md), you may use
+the `loadTranslationsFrom` method to inform Laravel how to load them. For
+example, if your package is named `courier`, you should add the following to
 your service provider's `boot` method:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'courier');
     }
 
-Package translation lines are referenced using the `package::file.line` syntax
+Package translations are referenced using the `package::file.line` syntax
 convention. So, you may load the `courier` package's `welcome` line from
 the `messages` file like so:
 
     echo trans('courier::messages.welcome');
 
-You can register JSON translation files for your package using
-the `loadJsonTranslationsFrom` method. This method accepts the path to the
-directory that contains your package's JSON translation files:
+<a name="publishing-translations"></a>
 
-```php
-/**
- * Bootstrap any package services.
- */
-public function boot(): void
-{
-    $this->loadJsonTranslationsFrom(__DIR__.'/../lang');
-}
-```
+#### Publishing Translations
 
-<a name="publishing-language-files"></a>
-
-#### Publishing Language Files
-
-If you would like to publish your package's language files to the application'
+If you would like to publish your package's translations to the application'
 s `lang/vendor` directory, you may use the service provider's `publishes`
 method. The `publishes` method accepts an array of package paths and their
-desired publish locations. For example, to publish the language files for
+desired publish locations. For example, to publish the translation files for
 the `courier` package, you may do the following:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'courier');
 
@@ -288,24 +284,26 @@ the `courier` package, you may do the following:
     }
 
 Now, when users of your package execute Laravel's `vendor:publish` Artisan
-command, your package's language files will be published to the specified
-publish location.
+command, your package's translations will be published to the specified publish
+location.
 
 <a name="views"></a>
 
 ### Views
 
-To register your package's [views](views.md) with Laravel, you
-need to tell Laravel where the views are located. You may do this using the
-service provider's `loadViewsFrom` method. The `loadViewsFrom` method accepts
-two arguments: the path to your view templates and your package's name. For
-example, if your package's name is `courier`, you would add the following to
-your service provider's `boot` method:
+To register your package's [views](views.md) with Laravel, you need to tell
+Laravel where the views are located. You may do this using the service
+provider's `loadViewsFrom` method. The `loadViewsFrom` method accepts two
+arguments: the path to your view templates and your package's name. For example,
+if your package's name is `courier`, you would add the following to your service
+provider's `boot` method:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'courier');
     }
@@ -342,8 +340,10 @@ package view paths and their desired publish locations:
 
     /**
      * Bootstrap the package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'courier');
 
@@ -370,8 +370,10 @@ method of your package's service provider:
 
     /**
      * Bootstrap your package's services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Blade::component('package-alert', AlertComponent::class);
     }
@@ -395,8 +397,10 @@ the `Nightshade\Views\Components` namespace:
 
     /**
      * Bootstrap your package's services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Blade::componentNamespace('Nightshade\\Views\\Components', 'nightshade');
     }
@@ -440,8 +444,10 @@ method:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         AboutCommand::add('My Package', fn () => ['Version' => '1.0.0']);
     }
@@ -460,8 +466,10 @@ the [Artisan CLI](artisan.md):
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -482,8 +490,10 @@ asset group tag, which may be used to easily publish groups of related assets:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->publishes([
             __DIR__.'/../public' => public_path('vendor/courier'),
@@ -513,8 +523,10 @@ the `boot` method of the package's service provider:
 
     /**
      * Bootstrap any package services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->publishes([
             __DIR__.'/../config/package.php' => config_path('package.php')

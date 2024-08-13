@@ -6,12 +6,11 @@
     - [Nginx](#nginx)
 - [Optimization](#optimization)
     - [Autoloader Optimization](#autoloader-optimization)
-    - [Caching Configuration](#optimizing-configuration-loading)
-    - [Caching Events](#caching-events)
-    - [Caching Routes](#optimizing-route-loading)
-    - [Caching Views](#optimizing-view-loading)
+    - [Optimizing Configuration Loading](#optimizing-configuration-loading)
+    - [Optimizing Route Loading](#optimizing-route-loading)
+    - [Optimizing View Loading](#optimizing-view-loading)
 - [Debug Mode](#debug-mode)
-- [Easy Deployment With Forge / Vapor](#deploying-with-forge-or-vapor)
+- [Deploying With Forge / Vapor](#deploying-with-forge-or-vapor)
 
 <a name="introduction"></a>
 
@@ -31,7 +30,7 @@ web server has the following minimum PHP version and extensions:
 
 <div class="content-list" markdown="1">
 
-- PHP >= 8.1
+- PHP >= 8.0
 - Ctype PHP Extension
 - cURL PHP Extension
 - DOM PHP Extension
@@ -93,7 +92,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
     }
@@ -120,7 +119,7 @@ class:
 composer install --optimize-autoloader --no-dev
 ```
 
-> [!NOTE]
+> **Note**
 > In addition to optimizing the autoloader, you should always be sure to include
 > a `composer.lock` file in your project's source control repository. Your
 > project's dependencies can be installed much faster when a `composer.lock` file
@@ -128,7 +127,7 @@ composer install --optimize-autoloader --no-dev
 
 <a name="optimizing-configuration-loading"></a>
 
-### Caching Configuration
+### Optimizing Configuration Loading
 
 When deploying your application to production, you should make sure that you run
 the `config:cache` Artisan command during your deployment process:
@@ -141,30 +140,16 @@ This command will combine all of Laravel's configuration files into a single,
 cached file, which greatly reduces the number of trips the framework must make
 to the filesystem when loading your configuration values.
 
-> [!WARNING]
+> **Warning**
 > If you execute the `config:cache` command during your deployment process, you
 > should be sure that you are only calling the `env` function from within your
 > configuration files. Once the configuration has been cached, the `.env` file
 > will not be loaded and all calls to the `env` function for `.env` variables will
 > return `null`.
 
-<a name="caching-events"></a>
-
-### Caching Events
-
-If your application is
-utilizing [event discovery](events.md#event-discovery), you
-should cache your application's event to listener mappings during your
-deployment process. This can be accomplished by invoking the `event:cache`
-Artisan command during deployment:
-
-```shell
-php artisan event:cache
-```
-
 <a name="optimizing-route-loading"></a>
 
-### Caching Routes
+### Optimizing Route Loading
 
 If you are building a large application with many routes, you should make sure
 that you are running the `route:cache` Artisan command during your deployment
@@ -180,7 +165,7 @@ registering hundreds of routes.
 
 <a name="optimizing-view-loading"></a>
 
-### Caching Views
+### Optimizing View Loading
 
 When deploying your application to production, you should make sure that you run
 the `view:cache` Artisan command during your deployment process:
@@ -201,14 +186,13 @@ information about an error is actually displayed to the user. By default, this
 option is set to respect the value of the `APP_DEBUG` environment variable,
 which is stored in your application's `.env` file.
 
-> [!WARNING]
-> **In your production environment, this value should always be `false`. If
+**In your production environment, this value should always be `false`. If
 the `APP_DEBUG` variable is set to `true` in production, you risk exposing
 sensitive configuration values to your application's end users.**
 
 <a name="deploying-with-forge-or-vapor"></a>
 
-## Easy Deployment With Forge / Vapor
+## Deploying With Forge / Vapor
 
 <a name="laravel-forge"></a>
 
@@ -224,7 +208,7 @@ DigitalOcean, Linode, AWS, and more. In addition, Forge installs and manages all
 of the tools needed to build robust Laravel applications, such as Nginx, MySQL,
 Redis, Memcached, Beanstalk, and more.
 
-> [!NOTE]
+> **Note**
 > Want a full guide to deploying with Laravel Forge? Check out
 > the [Laravel Bootcamp](https://bootcamp.laravel.com/deploying) and the
 > Forge [video series available on Laracasts](https://laracasts.com/series/learn-laravel-forge-2022-edition).

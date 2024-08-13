@@ -2,7 +2,7 @@
 
 - [Introduction](#introduction)
 - [Using PHP](#using-php)
-    - [PHP and Blade](#php-and-blade)
+    - [PHP & Blade](#php-and-blade)
     - [Livewire](#livewire)
     - [Starter Kits](#php-starter-kits)
 - [Using Vue / React](#using-vue-react)
@@ -34,7 +34,7 @@ development for your application.
 
 <a name="php-and-blade"></a>
 
-### PHP and Blade
+### PHP & Blade
 
 In the past, most PHP applications rendered HTML to the browser using simple
 HTML templates interspersed with PHP `echo` statements which render data that
@@ -49,9 +49,9 @@ was retrieved from a database during the request:
 ```
 
 In Laravel, this approach to rendering HTML can still be achieved
-using [views](views.md) and [Blade](blade.md).
-Blade is an extremely light-weight templating language that provides convenient,
-short syntax for displaying data, iterating over data, and more:
+using [views](views.md) and [Blade](blade.md). Blade is an extremely
+light-weight templating language that provides convenient, short syntax for
+displaying data, iterating over data, and more:
 
 ```blade
 <div>
@@ -87,14 +87,14 @@ and [Stimulus](https://stimulus.hotwired.dev/).
 
 Within the Laravel ecosystem, the need to create modern, dynamic frontends by
 primarily using PHP has led to the creation
-of [Laravel Livewire](https://livewire.laravel.com)
+of [Laravel Livewire](https://laravel-livewire.com)
 and [Alpine.js](https://alpinejs.dev/).
 
 <a name="livewire"></a>
 
 ### Livewire
 
-[Laravel Livewire](https://livewire.laravel.com) is a framework for building
+[Laravel Livewire](https://laravel-livewire.com) is a framework for building
 Laravel powered frontends that feel dynamic, modern, and alive just like
 frontends built with modern JavaScript frameworks like Vue and React.
 
@@ -147,9 +147,8 @@ utilize [Alpine.js](https://alpinejs.dev/) to "sprinkle" JavaScript onto their
 frontend only where it is needed, such as in order to render a dialog window.
 
 If you're new to Laravel, we recommend getting familiar with the basic usage
-of [views](views.md) and [Blade](blade.md). Then,
-consult the
-official [Laravel Livewire documentation](https://livewire.laravel.com/docs) to
+of [views](views.md) and [Blade](blade.md). Then, consult the
+official [Laravel Livewire documentation](https://laravel-livewire.com/docs) to
 learn how to take your application to the next level with interactive Livewire
 components.
 
@@ -158,11 +157,11 @@ components.
 ### Starter Kits
 
 If you would like to build your frontend using PHP and Livewire, you can
-leverage our Breeze or Jetstream [starter kits](starter-kits.md)
-to jump-start your application's development. Both of these starter kits
-scaffold your application's backend and frontend authentication flow
-using [Blade](blade.md) and [Tailwind](https://tailwindcss.com)
-so that you can simply start building your next big idea.
+leverage our Breeze or Jetstream [starter kits](starter-kits.md) to jump-start
+your application's development. Both of these starter kits scaffold your
+application's backend and frontend authentication flow using [Blade](blade.md)
+and [Tailwind](https://tailwindcss.com) so that you can simply start building
+your next big idea.
 
 <a name="using-vue-react"></a>
 
@@ -211,14 +210,16 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class UserController extends Controller
 {
     /**
      * Show the profile for a given user.
+     *
+     * @param  int  $id
+     * @return \Inertia\Response
      */
-    public function show(string $id): Response
+    public function show($id)
     {
         return Inertia::render('Users/Profile', [
             'user' => User::findOrFail($id)
@@ -235,7 +236,7 @@ page component:
 ```vue
 <script setup>
 import Layout from '@/Layouts/Authenticated.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/inertia-vue3';
 
 const props = defineProps(['user']);
 </script>
@@ -276,9 +277,9 @@ Inertia's server-side rendering process is always running.
 
 If you would like to build your frontend using Inertia and Vue / React, you can
 leverage our Breeze or
-Jetstream [starter kits](starter-kits.md#breeze-and-inertia) to
-jump-start your application's development. Both of these starter kits scaffold
-your application's backend and frontend authentication flow using Inertia, Vue /
+Jetstream [starter kits](starter-kits.md#breeze-and-inertia) to jump-start your
+application's development. Both of these starter kits scaffold your
+application's backend and frontend authentication flow using Inertia, Vue /
 React, [Tailwind](https://tailwindcss.com), and [Vite](https://vitejs.dev) so
 that you can start building your next big idea.
 
@@ -295,16 +296,16 @@ bundle your components into browser ready JavaScript assets.
 By default, Laravel utilizes [Vite](https://vitejs.dev) to bundle your assets.
 Vite provides lightning-fast build times and near instantaneous Hot Module
 Replacement (HMR) during local development. In all new Laravel applications,
-including those using our [starter kits](starter-kits.md), you
-will find a `vite.config.js` file that loads our light-weight Laravel Vite
-plugin that makes Vite a joy to use with Laravel applications.
+including those using our [starter kits](starter-kits.md), you will find
+a `vite.config.js` file that loads our light-weight Laravel Vite plugin that
+makes Vite a joy to use with Laravel applications.
 
 The fastest way to get started with Laravel and Vite is by beginning your
 application's development
-using [Laravel Breeze](starter-kits.md#laravel-breeze), our
-simplest starter kit that jump-starts your application by providing frontend and
-backend authentication scaffolding.
+using [Laravel Breeze](starter-kits.md#laravel-breeze), our simplest starter kit
+that jump-starts your application by providing frontend and backend
+authentication scaffolding.
 
-> [!NOTE]
+> **Note**
 > For more detailed documentation on utilizing Vite with Laravel, please see
 > our [dedicated documentation on bundling and compiling your assets](vite.md).

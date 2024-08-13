@@ -35,10 +35,6 @@ fixing the problem. If you want to chip in, you can help out by
 fixing [any bugs listed in our issue trackers](https://github.com/issues?q=is%3Aopen+is%3Aissue+label%3Abug+user%3Alaravel).
 You must be authenticated with GitHub to view all of Laravel's issues.
 
-If you notice improper DocBlock, PHPStan, or IDE warnings while using Laravel,
-do not create a GitHub issue. Instead, please submit a pull request to fix the
-problem.
-
 The Laravel source code is managed on GitHub, and there are repositories for
 each of the Laravel projects:
 
@@ -52,16 +48,13 @@ each of the Laravel projects:
 - [Laravel Cashier Paddle](https://github.com/laravel/cashier-paddle)
 - [Laravel Echo](https://github.com/laravel/echo)
 - [Laravel Envoy](https://github.com/laravel/envoy)
-- [Laravel Folio](https://github.com/laravel/folio)
 - [Laravel Framework](https://github.com/laravel/framework)
 - [Laravel Homestead](https://github.com/laravel/homestead)
 - [Laravel Homestead Build Scripts](https://github.com/laravel/settler)
 - [Laravel Horizon](https://github.com/laravel/horizon)
 - [Laravel Jetstream](https://github.com/laravel/jetstream)
 - [Laravel Passport](https://github.com/laravel/passport)
-- [Laravel Pennant](https://github.com/laravel/pennant)
 - [Laravel Pint](https://github.com/laravel/pint)
-- [Laravel Prompts](https://github.com/laravel/prompts)
 - [Laravel Sail](https://github.com/laravel/sail)
 - [Laravel Sanctum](https://github.com/laravel/sanctum)
 - [Laravel Scout](https://github.com/laravel/scout)
@@ -112,11 +105,11 @@ at other times.
 ## Which Branch?
 
 **All** bug fixes should be sent to the latest version that supports bug fixes (
-currently `10.x`). Bug fixes should **never** be sent to the `master` branch
+currently `9.x`). Bug fixes should **never** be sent to the `master` branch
 unless they fix features that exist only in the upcoming release.
 
 **Minor** features that are **fully backward compatible** with the current
-release may be sent to the latest stable branch (currently `10.x`).
+release may be sent to the latest stable branch (currently `9.x`).
 
 **Major** new features or features with breaking changes should always be sent
 to the `master` branch, which contains the upcoming release.
@@ -170,33 +163,7 @@ spaces, and finally the variable name:
      */
     public function bind($abstract, $concrete = null, $shared = false)
     {
-        // ...
-    }
-
-When the `@param` or `@return` attributes are redundant due to the use of native
-types, they can be removed:
-
-    /**
-     * Execute the job.
-     */
-    public function handle(AudioProcessor $processor): void
-    {
         //
-    }
-
-However, when the native type is generic, please specify the generic type
-through the use of the `@param` or `@return` attributes:
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [
-            Attachment::fromStorage('/path/to/file'),
-        ];
     }
 
 <a name="styleci"></a>

@@ -31,7 +31,7 @@ when the services they provide are actually needed.
 In this overview, you will learn how to write your own service providers and
 register them with your Laravel application.
 
-> [!NOTE]
+> **Note**
 > If you would like to learn more about how Laravel handles requests and works
 > internally, check out our documentation on the
 > Laravel [request lifecycle](lifecycle.md).
@@ -43,9 +43,9 @@ register them with your Laravel application.
 All service providers extend the `Illuminate\Support\ServiceProvider` class.
 Most service providers contain a `register` and a `boot` method. Within
 the `register` method, you should **only bind things into
-the [service container](container.md)**. You should never attempt
-to register any event listeners, routes, or any other piece of functionality
-within the `register` method.
+the [service container](container.md)**. You should never attempt to register
+any event listeners, routes, or any other piece of functionality within
+the `register` method.
 
 The Artisan CLI can generate a new provider via the `make:provider` command:
 
@@ -58,10 +58,10 @@ php artisan make:provider RiakServiceProvider
 ### The Register Method
 
 As mentioned previously, within the `register` method, you should only bind
-things into the [service container](container.md). You should
-never attempt to register any event listeners, routes, or any other piece of
-functionality within the `register` method. Otherwise, you may accidentally use
-a service that is provided by a service provider which has not loaded yet.
+things into the [service container](container.md). You should never attempt to
+register any event listeners, routes, or any other piece of functionality within
+the `register` method. Otherwise, you may accidentally use a service that is
+provided by a service provider which has not loaded yet.
 
 Let's take a look at a basic service provider. Within any of your service
 provider methods, you always have access to the `$app` property which provides
@@ -72,17 +72,18 @@ access to the service container:
     namespace App\Providers;
 
     use App\Services\Riak\Connection;
-    use Illuminate\Contracts\Foundation\Application;
     use Illuminate\Support\ServiceProvider;
 
     class RiakServiceProvider extends ServiceProvider
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            $this->app->singleton(Connection::class, function (Application $app) {
+            $this->app->singleton(Connection::class, function ($app) {
                 return new Connection(config('riak'));
             });
         }
@@ -95,7 +96,7 @@ out [its documentation](container.md).
 
 <a name="the-bindings-and-singletons-properties"></a>
 
-#### The `bindings` and `singletons` Properties
+#### The `bindings` And `singletons` Properties
 
 If your service provider registers many simple bindings, you may wish to use
 the `bindings` and `singletons` properties instead of manually registering each
@@ -139,11 +140,11 @@ automatically check for these properties and register their bindings:
 
 ### The Boot Method
 
-So, what if we need to register
-a [view composer](views.md#view-composers) within our service
-provider? This should be done within the `boot` method. **This method is called
-after all other service providers have been registered**, meaning you have
-access to all other services that have been registered by the framework:
+So, what if we need to register a [view composer](views.md#view-composers)
+within our service provider? This should be done within the `boot` method. *
+*This method is called after all other service providers have been registered**,
+meaning you have access to all other services that have been registered by the
+framework:
 
     <?php
 
@@ -156,11 +157,13 @@ access to all other services that have been registered by the framework:
     {
         /**
          * Bootstrap any application services.
+         *
+         * @return void
          */
-        public function boot(): void
+        public function boot()
         {
             View::composer('view', function () {
-                // ...
+                //
             });
         }
     }
@@ -170,18 +173,21 @@ access to all other services that have been registered by the framework:
 #### Boot Method Dependency Injection
 
 You may type-hint dependencies for your service provider's `boot` method.
-The [service container](container.md) will automatically inject
-any dependencies you need:
+The [service container](container.md) will automatically inject any dependencies
+you need:
 
     use Illuminate\Contracts\Routing\ResponseFactory;
 
     /**
      * Bootstrap any application services.
+     *
+     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
+     * @return void
      */
-    public function boot(ResponseFactory $response): void
+    public function boot(ResponseFactory $response)
     {
-        $response->macro('serialized', function (mixed $value) {
-            // ...
+        $response->macro('serialized', function ($value) {
+            //
         });
     }
 
@@ -192,26 +198,26 @@ any dependencies you need:
 All service providers are registered in the `config/app.php` configuration file.
 This file contains a `providers` array where you can list the class names of
 your service providers. By default, a set of Laravel core service providers are
-registered in this array. The default providers bootstrap the core Laravel
-components, such as the mailer, queue, cache, and others.
+listed in this array. These providers bootstrap the core Laravel components,
+such as the mailer, queue, cache, and others.
 
 To register your provider, add it to the array:
 
-    'providers' => ServiceProvider::defaultProviders()->merge([
+    'providers' => [
         // Other Service Providers
 
         App\Providers\ComposerServiceProvider::class,
-    ])->toArray(),
+    ],
 
 <a name="deferred-providers"></a>
 
 ## Deferred Providers
 
 If your provider is **only** registering bindings in
-the [service container](container.md), you may choose to defer
-its registration until one of the registered bindings is actually needed.
-Deferring the loading of such a provider will improve the performance of your
-application, since it is not loaded from the filesystem on every request.
+the [service container](container.md), you may choose to defer its registration
+until one of the registered bindings is actually needed. Deferring the loading
+of such a provider will improve the performance of your application, since it is
+not loaded from the filesystem on every request.
 
 Laravel compiles and stores a list of all of the services supplied by deferred
 service providers, along with the name of its service provider class. Then, only
@@ -228,7 +234,6 @@ bindings registered by the provider:
     namespace App\Providers;
 
     use App\Services\Riak\Connection;
-    use Illuminate\Contracts\Foundation\Application;
     use Illuminate\Contracts\Support\DeferrableProvider;
     use Illuminate\Support\ServiceProvider;
 
@@ -236,10 +241,12 @@ bindings registered by the provider:
     {
         /**
          * Register any application services.
+         *
+         * @return void
          */
-        public function register(): void
+        public function register()
         {
-            $this->app->singleton(Connection::class, function (Application $app) {
+            $this->app->singleton(Connection::class, function ($app) {
                 return new Connection($app['config']['riak']);
             });
         }
@@ -247,9 +254,9 @@ bindings registered by the provider:
         /**
          * Get the services provided by the provider.
          *
-         * @return array<int, string>
+         * @return array
          */
-        public function provides(): array
+        public function provides()
         {
             return [Connection::class];
         }

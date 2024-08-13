@@ -4,7 +4,7 @@
 - [Configuration](#configuration)
     - [Clusters](#clusters)
     - [Predis](#predis)
-    - [PhpRedis](#phpredis)
+    - [phpredis](#phpredis)
 - [Interacting With Redis](#interacting-with-redis)
     - [Transactions](#transactions)
     - [Pipelining Commands](#pipelining-commands)
@@ -16,17 +16,17 @@
 
 [Redis](https://redis.io) is an open source, advanced key-value store. It is
 often referred to as a data structure server since keys can
-contain [strings](https://redis.io/docs/data-types/strings/), [hashes](https://redis.io/docs/data-types/hashes/), [lists](https://redis.io/docs/data-types/lists/), [sets](https://redis.io/docs/data-types/sets/),
-and [sorted sets](https://redis.io/docs/data-types/sorted-sets/).
+contain [strings](https://redis.io/topics/data-types#strings), [hashes](https://redis.io/topics/data-types#hashes), [lists](https://redis.io/topics/data-types#lists), [sets](https://redis.io/topics/data-types#sets),
+and [sorted sets](https://redis.io/topics/data-types#sorted-sets).
 
 Before using Redis with Laravel, we encourage you to install and use
-the [PhpRedis](https://github.com/phpredis/phpredis) PHP extension via PECL. The
+the [phpredis](https://github.com/phpredis/phpredis) PHP extension via PECL. The
 extension is more complex to install compared to "user-land" PHP packages but
 may yield better performance for applications that make heavy use of Redis. If
-you are using [Laravel Sail](sail.md), this extension is already
-installed in your application's Docker container.
+you are using [Laravel Sail](sail.md), this extension is already installed in
+your application's Docker container.
 
-If you are unable to install the PhpRedis extension, you may install
+If you are unable to install the phpredis extension, you may install
 the `predis/predis` package via Composer. Predis is a Redis client written
 entirely in PHP and does not require any additional extensions:
 
@@ -82,7 +82,7 @@ connection:
 
 <a name="configuring-the-connection-scheme"></a>
 
-#### Configuring the Connection Scheme
+#### Configuring The Connection Scheme
 
 By default, Redis clients will use the `tcp` scheme when connecting to your
 Redis servers; however, you may use TLS / SSL encryption by specifying
@@ -189,7 +189,7 @@ application's `config/database.php` configuration file:
 Laravel's `config/app.php` configuration file contains an `aliases` array which
 defines all of the class aliases that will be registered by the framework. By
 default, no `Redis` alias is included because it would conflict with the `Redis`
-class name provided by the PhpRedis extension. If you are using the Predis
+class name provided by the phpredis extension. If you are using the Predis
 client and would like to add a `Redis` alias, you may add it to the `aliases`
 array in your application's `config/app.php` configuration file:
 
@@ -199,9 +199,9 @@ array in your application's `config/app.php` configuration file:
 
 <a name="phpredis"></a>
 
-### PhpRedis
+### phpredis
 
-By default, Laravel will use the PhpRedis extension to communicate with Redis.
+By default, Laravel will use the phpredis extension to communicate with Redis.
 The client that Laravel will use to communicate with Redis is dictated by the
 value of the `redis.client` configuration option, which typically reflects the
 value of the `REDIS_CLIENT` environment variable:
@@ -214,7 +214,7 @@ value of the `REDIS_CLIENT` environment variable:
     ],
 
 In addition to the default `scheme`, `host`, `port`, `database`, and `password`
-server configuration options, PhpRedis supports the following additional
+server configuration options, phpredis supports the following additional
 connection
 parameters: `name`, `persistent`, `persistent_id`, `prefix`, `read_timeout`, `retry_interval`, `timeout`,
 and `context`. You may add any of these options to your Redis server
@@ -234,9 +234,9 @@ configuration in the `config/database.php` configuration file:
 
 <a name="phpredis-serialization"></a>
 
-#### PhpRedis Serialization and Compression
+#### phpredis Serialization & Compression
 
-The PhpRedis extension may also be configured to use a variety of serializers
+The phpredis extension may also be configured to use a variety of serialization
 and compression algorithms. These algorithms can be configured via the `options`
 array of your Redis configuration:
 
@@ -252,7 +252,7 @@ array of your Redis configuration:
         // Rest of Redis configuration...
     ],
 
-Currently supported serializers include: `Redis::SERIALIZER_NONE` (
+Currently supported serialization algorithms include: `Redis::SERIALIZER_NONE` (
 default), `Redis::SERIALIZER_PHP`, `Redis::SERIALIZER_JSON`, `Redis::SERIALIZER_IGBINARY`,
 and `Redis::SERIALIZER_MSGPACK`.
 
@@ -265,11 +265,11 @@ and `Redis::COMPRESSION_LZ4`.
 ## Interacting With Redis
 
 You may interact with Redis by calling various methods on
-the `Redis` [facade](facades.md). The `Redis` facade supports
-dynamic methods, meaning you may call
-any [Redis command](https://redis.io/commands) on the facade and the command
-will be passed directly to Redis. In this example, we will call the Redis `GET`
-command by calling the `get` method on the `Redis` facade:
+the `Redis` [facade](facades.md). The `Redis` facade supports dynamic methods,
+meaning you may call any [Redis command](https://redis.io/commands) on the
+facade and the command will be passed directly to Redis. In this example, we
+will call the Redis `GET` command by calling the `get` method on the `Redis`
+facade:
 
     <?php
 
@@ -277,14 +277,16 @@ command by calling the `get` method on the `Redis` facade:
 
     use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\Redis;
-    use Illuminate\View\View;
 
     class UserController extends Controller
     {
         /**
          * Show the profile for the given user.
+         *
+         * @param  int  $id
+         * @return \Illuminate\Http\Response
          */
-        public function show(string $id): View
+        public function show($id)
         {
             return view('user.profile', [
                 'user' => Redis::get('user:profile:'.$id)
@@ -335,15 +337,14 @@ instance and may issue any commands it would like to this instance. All of the
 Redis commands issued within the closure will be executed in a single, atomic
 transaction:
 
-    use Redis;
-    use Illuminate\Support\Facades;
+    use Illuminate\Support\Facades\Redis;
 
-    Facades\Redis::transaction(function (Redis $redis) {
+    Redis::transaction(function ($redis) {
         $redis->incr('user_visits', 1);
         $redis->incr('total_visits', 1);
     });
 
-> [!WARNING]
+> **Warning**
 > When defining a Redis transaction, you may not retrieve any values from the
 > Redis connection. Remember, your transaction is executed as a single, atomic
 > operation and that operation is not executed until your entire closure has
@@ -378,7 +379,7 @@ Finally, we will return the value of the first counter:
         return counter
     LUA, 2, 'first-counter', 'second-counter');
 
-> [!WARNING]
+> **Warning**
 > Please consult the [Redis documentation](https://redis.io/commands/eval) for
 > more information on Redis scripting.
 
@@ -394,10 +395,9 @@ they will all be sent to the Redis server at the same time to reduce network
 trips to the server. The commands will still be executed in the order they were
 issued:
 
-    use Redis;
-    use Illuminate\Support\Facades;
+    use Illuminate\Support\Facades\Redis;
 
-    Facades\Redis::pipeline(function (Redis $pipe) {
+    Redis::pipeline(function ($pipe) {
         for ($i = 0; $i < 1000; $i++) {
             $pipe->set("key:$i", $i);
         }
@@ -414,8 +414,8 @@ even using another programming language, allowing easy communication between
 applications and processes.
 
 First, let's setup a channel listener using the `subscribe` method. We'll place
-this method call within an [Artisan command](artisan.md) since
-calling the `subscribe` method begins a long-running process:
+this method call within an [Artisan command](artisan.md) since calling
+the `subscribe` method begins a long-running process:
 
     <?php
 
@@ -442,10 +442,12 @@ calling the `subscribe` method begins a long-running process:
 
         /**
          * Execute the console command.
+         *
+         * @return mixed
          */
-        public function handle(): void
+        public function handle()
         {
-            Redis::subscribe(['test-channel'], function (string $message) {
+            Redis::subscribe(['test-channel'], function ($message) {
                 echo $message;
             });
         }
@@ -471,10 +473,10 @@ Using the `psubscribe` method, you may subscribe to a wildcard channel, which
 may be useful for catching all messages on all channels. The channel name will
 be passed as the second argument to the provided closure:
 
-    Redis::psubscribe(['*'], function (string $message, string $channel) {
+    Redis::psubscribe(['*'], function ($message, $channel) {
         echo $message;
     });
 
-    Redis::psubscribe(['users.*'], function (string $message, string $channel) {
+    Redis::psubscribe(['users.*'], function ($message, $channel) {
         echo $message;
     });

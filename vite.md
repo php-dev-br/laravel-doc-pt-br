@@ -3,9 +3,9 @@
 - [Introduction](#introduction)
 - [Installation & Setup](#installation)
     - [Installing Node](#installing-node)
-    - [Installing Vite and the Laravel Plugin](#installing-vite-and-laravel-plugin)
+    - [Installing Vite And The Laravel Plugin](#installing-vite-and-laravel-plugin)
     - [Configuring Vite](#configuring-vite)
-    - [Loading Your Scripts and Styles](#loading-your-scripts-and-styles)
+    - [Loading Your Scripts And Styles](#loading-your-scripts-and-styles)
 - [Running Vite](#running-vite)
 - [Working With JavaScript](#working-with-scripts)
     - [Aliases](#aliases)
@@ -14,15 +14,15 @@
     - [Inertia](#inertia)
     - [URL Processing](#url-processing)
 - [Working With Stylesheets](#working-with-stylesheets)
-- [Working With Blade and Routes](#working-with-blade-and-routes)
+- [Working With Blade & Routes](#working-with-blade-and-routes)
     - [Processing Static Assets With Vite](#blade-processing-static-assets)
-    - [Refreshing on Save](#blade-refreshing-on-save)
+    - [Refreshing On Save](#blade-refreshing-on-save)
     - [Aliases](#blade-aliases)
 - [Custom Base URLs](#custom-base-urls)
 - [Environment Variables](#environment-variables)
-- [Disabling Vite in Tests](#disabling-vite-in-tests)
+- [Disabling Vite In Tests](#disabling-vite-in-tests)
 - [Server-Side Rendering (SSR)](#ssr)
-- [Script and Style Tag Attributes](#script-and-style-attributes)
+- [Script & Style Tag Attributes](#script-and-style-attributes)
     - [Content Security Policy (CSP) Nonce](#content-security-policy-csp-nonce)
     - [Subresource Integrity (SRI)](#subresource-integrity-sri)
     - [Arbitrary Attributes](#arbitrary-attributes)
@@ -41,7 +41,7 @@ your application's CSS and JavaScript files into production ready assets.
 Laravel integrates seamlessly with Vite by providing an official plugin and
 Blade directive to load your assets for development and production.
 
-> [!NOTE]
+> **Note**
 > Are you running Laravel Mix? Vite has replaced Laravel Mix in new Laravel
 > installations. For Mix documentation, please visit
 > the [Laravel Mix](https://laravel-mix.com/) website. If you would like to switch
@@ -50,7 +50,7 @@ Blade directive to load your assets for development and production.
 
 <a name="vite-or-mix"></a>
 
-#### Choosing Between Vite and Laravel Mix
+#### Choosing Between Vite And Laravel Mix
 
 Before transitioning to Vite, new Laravel applications
 utilized [Mix](https://laravel-mix.com/), which is powered
@@ -62,13 +62,13 @@ the perfect fit.
 
 Vite also works well with traditional server-side rendered applications with
 JavaScript "sprinkles", including those
-using [Livewire](https://livewire.laravel.com). However, it lacks some features
+using [Livewire](https://laravel-livewire.com). However, it lacks some features
 that Laravel Mix supports, such as the ability to copy arbitrary assets into the
 build that are not referenced directly in your JavaScript application.
 
 <a name="migrating-back-to-mix"></a>
 
-#### Migrating Back to Mix
+#### Migrating Back To Mix
 
 Have you started a new Laravel application using our Vite scaffolding but need
 to move back to Laravel Mix and webpack? No problem. Please consult
@@ -78,11 +78,11 @@ our [official guide on migrating from Vite to Mix](https://github.com/laravel/vi
 
 ## Installation & Setup
 
-> [!NOTE]
+> **Note**
 > The following documentation discusses how to manually install and configure
-> the Laravel Vite plugin. However,
-> Laravel's [starter kits](starter-kits.md) already include all of
-> this scaffolding and are the fastest way to get started with Laravel and Vite.
+> the Laravel Vite plugin. However, Laravel's [starter kits](starter-kits.md)
+> already include all of this scaffolding and are the fastest way to get started
+> with Laravel and Vite.
 
 <a name="installing-node"></a>
 
@@ -98,8 +98,8 @@ npm -v
 
 You can easily install the latest version of Node and NPM using simple graphical
 installers from [the official Node website](https://nodejs.org/en/download/).
-Or, if you are using [Laravel Sail](https://laravel.comsail.md),
-you may invoke Node and NPM through Sail:
+Or, if you are using [Laravel Sail](https://laravel.comsail.md), you may invoke
+Node and NPM through Sail:
 
 ```sh
 ./vendor/bin/sail node -v
@@ -108,7 +108,7 @@ you may invoke Node and NPM through Sail:
 
 <a name="installing-vite-and-laravel-plugin"></a>
 
-### Installing Vite and the Laravel Plugin
+### Installing Vite And The Laravel Plugin
 
 Within a fresh installation of Laravel, you will find a `package.json` file in
 the root of your application's directory structure. The default `package.json`
@@ -177,20 +177,15 @@ configuration options such as [SSR entry points](#ssr).
 
 <a name="working-with-a-secure-development-server"></a>
 
-#### Working With a Secure Development Server
+#### Working With A Secure Development Server
 
 If your local development web server is serving your application via HTTPS, you
 may run into issues connecting to the Vite development server.
 
-If you are using [Laravel Herd](https://herd.laravel.com) and have secured the
-site or you are using [Laravel Valet](valet.md) and have run
-the [secure command](valet.md#securing-sites) against your
-application, the Laravel Vite plugin will automatically detect and use the
-generated TLS certificate for you.
-
-If you secured the site using a host that does not match the application's
-directory name, you may manually specify the host in your
-application's `vite.config.js` file:
+If you are using [Laravel Valet](valet.md) for local development and have run
+the [secure command](valet.md#securing-sites) against your application, you may
+configure the Vite development server to automatically use Valet's generated TLS
+certificates:
 
 ```js
 import { defineConfig } from 'vite';
@@ -200,7 +195,7 @@ export default defineConfig({
     plugins: [
         laravel({
             // ...
-            detectTls: 'my-app.test', // [tl! add]
+            valetTls: 'my-app.test', // [tl! add]
         }),
     ],
 });
@@ -235,37 +230,11 @@ When using untrusted certificates, you will need to accept the certificate
 warning for Vite's development server in your browser by following the "Local"
 link in your console when running the `npm run dev` command.
 
-<a name="configuring-hmr-in-sail-on-wsl2"></a>
-
-#### Running the Development Server in Sail on WSL2
-
-When running the Vite development server
-within [Laravel Sail](sail.md) on Windows Subsystem for Linux 2 (
-WSL2), you should add the following configuration to your `vite.config.js` file
-to ensure the browser can communicate with the development server:
-
-```js
-// ...
-
-export default defineConfig({
-    // ...
-    server: { // [tl! add:start]
-        hmr: {
-            host: 'localhost',
-        },
-    }, // [tl! add:end]
-});
-```
-
-If your file changes are not being reflected in the browser while the
-development server is running, you may also need to configure
-Vite's [`server.watch.usePolling` option](https://vitejs.dev/config/server-options.html#server-watch).
-
 <a name="loading-your-scripts-and-styles"></a>
 
-### Loading Your Scripts and Styles
+### Loading Your Scripts And Styles
 
-With your Vite entry points configured, you may now reference them in
+With your Vite entry points configured, you only need reference them in
 a `@vite()` Blade directive that you add to the `<head>` of your application's
 root template:
 
@@ -307,34 +276,6 @@ invoking the `@vite` directive:
 </head>
 ```
 
-<a name="inline-assets"></a>
-
-#### Inline Assets
-
-Sometimes it may be necessary to include the raw content of assets rather than
-linking to the versioned URL of the asset. For example, you may need to include
-asset content directly into your page when passing HTML content to a PDF
-generator. You may output the content of Vite assets using the `content` method
-provided by the `Vite` facade:
-
-```blade
-@php
-use Illuminate\Support\Facades\Vite;
-@endphp
-
-<!doctype html>
-<head>
-    {{-- ... --}}
-
-    <style>
-        {!! Vite::content('resources/css/app.css') !!}
-    </style>
-    <script>
-        {!! Vite::content('resources/js/app.js') !!}
-    </script>
-</head>
-```
-
 <a name="running-vite"></a>
 
 ## Running Vite
@@ -354,10 +295,6 @@ npm run dev
 # Build and version the assets for production...
 npm run build
 ```
-
-If you are running the development server in [Sail](sail.md) on
-WSL2, you may need
-some [additional configuration](#configuring-hmr-in-sail-on-wsl2) options.
 
 <a name="working-with-scripts"></a>
 
@@ -399,7 +336,7 @@ export default defineConfig({
 
 ### Vue
 
-If you would like to build your frontend using the [Vue](https://vuejs.org/)
+If you would like to build your front-end using the [Vue](https://vuejs.org/)
 framework, then you will also need to install the `@vitejs/plugin-vue` plugin:
 
 ```sh
@@ -440,18 +377,19 @@ export default defineConfig({
 });
 ```
 
-> [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the
-> proper Laravel, Vue, and Vite configuration. Check
-> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the
-> fastest way to get started with Laravel, Vue, and Vite.
+> **Note**
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel,
+> Vue, and Vite configuration. Check
+> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to
+> get started with Laravel, Vue, and Vite.
 
 <a name="react"></a>
 
 ### React
 
-If you would like to build your frontend using the [React](https://reactjs.org/)
-framework, then you will also need to install the `@vitejs/plugin-react` plugin:
+If you would like to build your front-end using
+the [React](https://reactjs.org/) framework, then you will also need to install
+the `@vitejs/plugin-react` plugin:
 
 ```sh
 npm install --save-dev @vitejs/plugin-react
@@ -486,11 +424,11 @@ alongside your existing `@vite` directive.
 
 The `@viteReactRefresh` directive must be called before the `@vite` directive.
 
-> [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the
-> proper Laravel, React, and Vite configuration. Check
-> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the
-> fastest way to get started with Laravel, React, and Vite.
+> **Note**
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel,
+> React, and Vite configuration. Check
+> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to
+> get started with Laravel, React, and Vite.
 
 <a name="inertia"></a>
 
@@ -516,11 +454,11 @@ createInertiaApp({
 });
 ```
 
-> [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the
-> proper Laravel, Inertia, and Vite configuration. Check
-> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the
-> fastest way to get started with Laravel, Inertia, and Vite.
+> **Note**
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel,
+> Inertia, and Vite configuration. Check
+> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to
+> get started with Laravel, Inertia, and Vite.
 
 <a name="url-processing"></a>
 
@@ -570,7 +508,7 @@ create a `postcss.config.js` file in the root of your project and Vite will
 automatically apply it:
 
 ```js
-export default {
+module.exports = {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},
@@ -578,15 +516,9 @@ export default {
 };
 ```
 
-> [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the
-> proper Tailwind, PostCSS, and Vite configuration. Or, if you would like to use
-> Tailwind and Laravel without using one of our starter kits, check
-> out [Tailwind's installation guide for Laravel](https://tailwindcss.com/docs/guides/laravel).
-
 <a name="working-with-blade-and-routes"></a>
 
-## Working With Blade and Routes
+## Working With Blade & Routes
 
 <a name="blade-processing-static-assets"></a>
 
@@ -620,7 +552,7 @@ which will return the versioned URL for a given asset:
 
 <a name="blade-refreshing-on-save"></a>
 
-### Refreshing on Save
+### Refreshing On Save
 
 When your application is built using traditional server-side rendering with
 Blade, Vite can improve your development workflow by automatically refreshing
@@ -707,10 +639,12 @@ a [service provider](providers.md):
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
-        Vite::macro('image', fn (string $asset) => $this->asset("resources/images/{$asset}"));
+        Vite::macro('image', fn ($asset) => $this->asset("resources/images/{$asset}"));
     }
 
 Once a macro has been defined, it can be invoked within your templates. For
@@ -762,21 +696,22 @@ import.meta.env.VITE_SENTRY_DSN_PUBLIC
 
 <a name="disabling-vite-in-tests"></a>
 
-## Disabling Vite in Tests
+## Disabling Vite In Tests
 
 Laravel's Vite integration will attempt to resolve your assets while running
 your tests, which requires you to either run the Vite development server or
 build your assets.
 
 If you would prefer to mock Vite during testing, you may call the `withoutVite`
-method, which is available for any tests that extend Laravel's `TestCase` class:
+method, which is is available for any tests that extend Laravel's `TestCase`
+class:
 
 ```php
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    public function test_without_vite_example(): void
+    public function test_without_vite_example()
     {
         $this->withoutVite();
 
@@ -846,26 +781,18 @@ Then, to build and start the SSR server, you may run the following commands:
 
 ```sh
 npm run build
-node bootstrap/ssr/ssr.js
+node bootstrap/ssr/ssr.mjs
 ```
 
-If you are
-using [SSR with Inertia](https://inertiajs.com/server-side-rendering), you may
-instead use the `inertia:start-ssr` Artisan command to start the SSR server:
-
-```sh
-php artisan inertia:start-ssr
-```
-
-> [!NOTE]
-> Laravel's [starter kits](starter-kits.md) already include the
-> proper Laravel, Inertia SSR, and Vite configuration. Check
-> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the
-> fastest way to get started with Laravel, Inertia SSR, and Vite.
+> **Note**
+> Laravel's [starter kits](starter-kits.md) already include the proper Laravel,
+> Inertia SSR, and Vite configuration. Check
+> out [Laravel Breeze](starter-kits.md#breeze-and-inertia) for the fastest way to
+> get started with Laravel, Inertia SSR, and Vite.
 
 <a name="script-and-style-attributes"></a>
 
-## Script and Style Tag Attributes
+## Script & Style Tag Attributes
 
 <a name="content-security-policy-csp-nonce"></a>
 
@@ -884,18 +811,18 @@ custom [middleware](middleware.md):
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Vite;
-use Symfony\Component\HttpFoundation\Response;
 
 class AddContentSecurityPolicyHeaders
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
         Vite::useCspNonce();
 
@@ -911,8 +838,8 @@ the `nonce` attributes on all generated script and style tags.
 
 If you need to specify the nonce elsewhere, including
 the [Ziggy `@route` directive](https://github.com/tighten/ziggy#using-routes-with-a-content-security-policy)
-included with Laravel's [starter kits](starter-kits.md), you may
-retrieve it using the `cspNonce` method:
+included with Laravel's [starter kits](starter-kits.md), you may retrieve it
+using the `cspNonce` method:
 
 ```blade
 @routes(nonce: Vite::cspNonce())
@@ -1016,7 +943,7 @@ Vite::useStyleTagAttributes(fn (string $src, string $url, array|null $chunk, arr
 ]);
 ```
 
-> [!WARNING]
+> **Warning**
 > The `$chunk` and `$manifest` arguments will be `null` while the Vite
 > development server is running.
 
@@ -1040,9 +967,6 @@ directive:
             ->useBuildDirectory('bundle') // Customize the build directory...
             ->useManifestFilename('assets.json') // Customize the manifest filename...
             ->withEntryPoints(['resources/js/app.js']) // Specify the entry points...
-            ->createAssetPathsUsing(function (string $path, ?bool $secure) { // Customize the backend path generation for built assets...
-                return "https://cdn.example.com/{$path}";
-            })
     }}
 </head>
 ```
@@ -1089,8 +1013,8 @@ with `/@imagetools`. If you are using plugins that are expecting this behaviour,
 you will need to manually correct the URLs. You can do this in
 your `vite.config.js` file by using the `transformOnServe` option.
 
-In this particular example, we will prepend the dev server URL to all
-occurrences of `/@imagetools` within the generated code:
+In this particular example, we will append the dev server URL to all occurrences
+of `/@imagetools` within the generated code:
 
 ```js
 import { defineConfig } from 'vite';
@@ -1115,3 +1039,4 @@ dev server:
 - <img src="/@imagetools/f0b2f404b13f052c604e632f2fb60381bf61a520"><!-- [tl! remove] -->
 + <img src="http://[::1]:5173/@imagetools/f0b2f404b13f052c604e632f2fb60381bf61a520"><!-- [tl! add] -->
 ```
+

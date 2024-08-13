@@ -12,10 +12,10 @@
 - [Factory Relationships](#factory-relationships)
     - [Has Many Relationships](#has-many-relationships)
     - [Belongs To Relationships](#belongs-to-relationships)
-    - [Many to Many Relationships](#many-to-many-relationships)
+    - [Many To Many Relationships](#many-to-many-relationships)
     - [Polymorphic Relationships](#polymorphic-relationships)
     - [Defining Relationships Within Factories](#defining-relationships-within-factories)
-    - [Recycling an Existing Model for Relationships](#recycling-an-existing-model-for-relationships)
+    - [Recycling An Existing Model For Relationships](#recycling-an-existing-model-for-relationships)
 
 <a name="introduction"></a>
 
@@ -33,17 +33,17 @@ definition:
 
     namespace Database\Factories;
 
-    use Illuminate\Support\Str;
     use Illuminate\Database\Eloquent\Factories\Factory;
+    use Illuminate\Support\Str;
 
     class UserFactory extends Factory
     {
         /**
          * Define the model's default state.
          *
-         * @return array<string, mixed>
+         * @return array
          */
-        public function definition(): array
+        public function definition()
         {
             return [
                 'name' => fake()->name(),
@@ -64,7 +64,7 @@ Via the `fake` helper, factories have access to
 the [Faker](https://github.com/FakerPHP/Faker) PHP library, which allows you to
 conveniently generate various kinds of random data for testing and seeding.
 
-> [!NOTE]
+> **Note**
 > You can set your application's Faker locale by adding a `faker_locale` option
 > to your `config/app.php` configuration file.
 
@@ -76,8 +76,7 @@ conveniently generate various kinds of random data for testing and seeding.
 
 ### Generating Factories
 
-To create a factory, execute
-the `make:factory` [Artisan command](artisan.md):
+To create a factory, execute the `make:factory` [Artisan command](artisan.md):
 
 ```shell
 php artisan make:factory PostFactory
@@ -87,7 +86,7 @@ The new factory class will be placed in your `database/factories` directory.
 
 <a name="factory-and-model-discovery-conventions"></a>
 
-#### Model and Factory Discovery Conventions
+#### Model & Factory Discovery Conventions
 
 Once you have defined your factories, you may use the static `factory` method
 provided to your models by
@@ -102,18 +101,19 @@ conventions do not apply to your particular application or factory, you may
 overwrite the `newFactory` method on your model to return an instance of the
 model's corresponding factory directly:
 
-    use Illuminate\Database\Eloquent\Factories\Factory;
     use Database\Factories\Administration\FlightFactory;
 
     /**
      * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory(): Factory
+    protected static function newFactory()
     {
         return FlightFactory::new();
     }
 
-Then, define a `model` property on the corresponding factory:
+Next, define a `model` property on the corresponding factory:
 
     use App\Administration\Flight;
     use Illuminate\Database\Eloquent\Factories\Factory;
@@ -123,7 +123,7 @@ Then, define a `model` property on the corresponding factory:
         /**
          * The name of the factory's corresponding model.
          *
-         * @var class-string<\Illuminate\Database\Eloquent\Model>
+         * @var string
          */
         protected $model = Flight::class;
     }
@@ -142,12 +142,12 @@ Laravel's base factory class. The `state` method accepts a closure which will
 receive the array of raw attributes defined for the factory and should return an
 array of attributes to modify:
 
-    use Illuminate\Database\Eloquent\Factories\Factory;
-
     /**
      * Indicate that the user is suspended.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function suspended(): Factory
+    public function suspended()
     {
         return $this->state(function (array $attributes) {
             return [
@@ -156,15 +156,12 @@ array of attributes to modify:
         });
     }
 
-<a name="trashed-state"></a>
-
 #### "Trashed" State
 
-If your Eloquent model can
-be [soft deleted](eloquent.md#soft-deleting), you may invoke the
-built-in `trashed` state method to indicate that the created model should
-already be "soft deleted". You do not need to manually define the `trashed`
-state as it is automatically available to all factories:
+If your Eloquent model can be [soft deleted](eloquent.md#soft-deleting), you may
+invoke the built-in `trashed` state method to indicate that the created model
+should already be "soft deleted". You do not need to manually define
+the `trashed` state as it is automatically available to all factories:
 
     use App\Models\User;
 
@@ -184,44 +181,25 @@ factory is instantiated:
 
     use App\Models\User;
     use Illuminate\Database\Eloquent\Factories\Factory;
+    use Illuminate\Support\Str;
 
     class UserFactory extends Factory
     {
         /**
          * Configure the model factory.
+         *
+         * @return $this
          */
-        public function configure(): static
+        public function configure()
         {
             return $this->afterMaking(function (User $user) {
-                // ...
+                //
             })->afterCreating(function (User $user) {
-                // ...
+                //
             });
         }
 
         // ...
-    }
-
-You may also register factory callbacks within state methods to perform
-additional tasks that are specific to a given state:
-
-    use App\Models\User;
-    use Illuminate\Database\Eloquent\Factories\Factory;
-
-    /**
-     * Indicate that the user is suspended.
-     */
-    public function suspended(): Factory
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'account_status' => 'suspended',
-            ];
-        })->afterMaking(function (User $user) {
-            // ...
-        })->afterCreating(function (User $user) {
-            // ...
-        });
     }
 
 <a name="creating-models-using-factories"></a>
@@ -277,9 +255,9 @@ to perform an inline state transformation:
         'name' => 'Abigail Otwell',
     ])->make();
 
-> [!NOTE]
-> [Mass assignment protection](eloquent.md#mass-assignment) is
-> automatically disabled when creating models using factories.
+> **Note**
+> [Mass assignment protection](eloquent.md#mass-assignment) is automatically
+> disabled when creating models using factories.
 
 <a name="persisting-models"></a>
 
@@ -329,12 +307,10 @@ five users will be created with an `admin` value of `N`.
 If necessary, you may include a closure as a sequence value. The closure will be
 invoked each time the sequence needs a new value:
 
-    use Illuminate\Database\Eloquent\Factories\Sequence;
-
     $users = User::factory()
                     ->count(10)
                     ->state(new Sequence(
-                        fn (Sequence $sequence) => ['role' => UserRoles::all()->random()],
+                        fn ($sequence) => ['role' => UserRoles::all()->random()],
                     ))
                     ->create();
 
@@ -346,7 +322,7 @@ will be invoked:
 
     $users = User::factory()
                     ->count(10)
-                    ->sequence(fn (Sequence $sequence) => ['name' => 'Name '.$sequence->index])
+                    ->sequence(fn ($sequence) => ['name' => 'Name '.$sequence->index])
                     ->create();
 
 For convenience, sequences may also be applied using the `sequence` method,
@@ -484,7 +460,7 @@ relationship on the `Post` model:
 
 <a name="many-to-many-relationships"></a>
 
-### Many to Many Relationships
+### Many To Many Relationships
 
 Like [has many relationships](#has-many-relationships), "many to many"
 relationships may be created using the `has` method:
@@ -563,8 +539,8 @@ relationship method on the `User` model:
 [Polymorphic relationships](eloquent-relationships.md#polymorphic-relationships)
 may also be created using factories. Polymorphic "morph many" relationships are
 created in the same way as typical "has many" relationships. For example, if
-an `App\Models\Post` model has a `morphMany` relationship with
-an `App\Models\Comment` model:
+a `App\Models\Post` model has a `morphMany` relationship with
+a `App\Models\Comment` model:
 
     use App\Models\Post;
 
@@ -587,7 +563,7 @@ method directly:
 
 <a name="polymorphic-many-to-many-relationships"></a>
 
-#### Polymorphic Many to Many Relationships
+#### Polymorphic Many To Many Relationships
 
 Polymorphic "many to many" (`morphToMany` / `morphedByMany`) relationships may
 be created just like non-polymorphic "many to many" relationships:
@@ -624,9 +600,9 @@ a post, you may do the following:
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return array
      */
-    public function definition(): array
+    public function definition()
     {
         return [
             'user_id' => User::factory(),
@@ -642,9 +618,9 @@ evaluated attribute array:
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return array
      */
-    public function definition(): array
+    public function definition()
     {
         return [
             'user_id' => User::factory(),
@@ -658,7 +634,7 @@ evaluated attribute array:
 
 <a name="recycling-an-existing-model-for-relationships"></a>
 
-### Recycling an Existing Model for Relationships
+### Recycling An Existing Model For Relationships
 
 If you have models that share a common relationship with another model, you may
 use the `recycle` method to ensure a single instance of the related model is

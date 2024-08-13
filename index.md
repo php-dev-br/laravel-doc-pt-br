@@ -58,10 +58,8 @@
 - [E-mail](mail.md)
 - [Notificações](notifications.md)
 - [Desenvolvimento de pacotes](packages.md)
-- [Processos](processes.md)
 - [Filas](queues.md)
 - [Limitação de taxa](rate-limiting.md)
-- [Strings](strings.md)
 - [Agendamento de tarefas](scheduling.md)
 
 ## Segurança
@@ -109,19 +107,13 @@
 - [Dusk](dusk.md)
 - [Envoy](envoy.md)
 - [Fortify](fortify.md)
-- [Folio](folio.md)
 - [Homestead](homestead.md)
 - [Horizon](horizon.md)
 - [Jetstream](https://jetstream.laravel.com)
 - [Mix](mix.md)
 - [Octane](octane.md)
 - [Passport](passport.md)
-- [Pennant](pennant.md)
 - [Pint](pint.md)
-- [Precognition](precognition.md)
-- [Prompts](prompts.md)
-- [Pulse](pulse.md)
-- [Reverb](reverb.md)
 - [Sail](sail.md)
 - [Sanctum](sanctum.md)
 - [Scout](scout.md)
@@ -131,4 +123,4 @@
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/10.x/index.html)
+- [Documentação da API](https://laravel.com/api/9.x/index.html)

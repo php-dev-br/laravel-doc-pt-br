@@ -1,7 +1,7 @@
 # Laravel Fortify
 
 - [Introduction](#introduction)
-    - [What is Fortify?](#what-is-fortify)
+    - [What Is Fortify?](#what-is-fortify)
     - [When Should I Use Fortify?](#when-should-i-use-fortify)
 - [Installation](#installation)
     - [The Fortify Service Provider](#the-fortify-service-provider)
@@ -9,7 +9,7 @@
     - [Disabling Views](#disabling-views)
 - [Authentication](#authentication)
     - [Customizing User Authentication](#customizing-user-authentication)
-    - [Customizing the Authentication Pipeline](#customizing-the-authentication-pipeline)
+    - [Customizing The Authentication Pipeline](#customizing-the-authentication-pipeline)
     - [Customizing Redirects](#customizing-authentication-redirects)
 - [Two Factor Authentication](#two-factor-authentication)
     - [Enabling Two Factor Authentication](#enabling-two-factor-authentication)
@@ -18,8 +18,8 @@
 - [Registration](#registration)
     - [Customizing Registration](#customizing-registration)
 - [Password Reset](#password-reset)
-    - [Requesting a Password Reset Link](#requesting-a-password-reset-link)
-    - [Resetting the Password](#resetting-the-password)
+    - [Requesting A Password Reset Link](#requesting-a-password-reset-link)
+    - [Resetting The Password](#resetting-the-password)
     - [Customizing Password Resets](#customizing-password-resets)
 - [Email Verification](#email-verification)
     - [Protecting Routes](#protecting-routes)
@@ -41,7 +41,7 @@ with your own user interface which makes requests to the routes it registers. We
 will discuss exactly how to make requests to these routes in the remainder of
 this documentation.
 
-> [!NOTE]
+> **Note**
 > Remember, Fortify is a package that is meant to give you a head start
 > implementing Laravel's authentication features. **You are not required to use
 it.** You are always free to manually interact with Laravel's authentication
@@ -51,7 +51,7 @@ it.** You are always free to manually interact with Laravel's authentication
 
 <a name="what-is-fortify"></a>
 
-### What is Fortify?
+### What Is Fortify?
 
 As mentioned previously, Laravel Fortify is a frontend agnostic authentication
 backend implementation for Laravel. Fortify registers the routes and controllers
@@ -65,13 +65,13 @@ the [authentication](authentication.md), [password reset](passwords.md),
 and [email verification](verification.md) documentation.
 
 If you are new to Laravel, you may wish to explore
-the [Laravel Breeze](starter-kits.md) application starter kit
-before attempting to use Laravel Fortify. Laravel Breeze provides an
-authentication scaffolding for your application that includes a user interface
-built with [Tailwind CSS](https://tailwindcss.com). Unlike Fortify, Breeze
-publishes its routes and controllers directly into your application. This allows
-you to study and get comfortable with Laravel's authentication features before
-allowing Laravel Fortify to implement these features for you.
+the [Laravel Breeze](starter-kits.md) application starter kit before attempting
+to use Laravel Fortify. Laravel Breeze provides an authentication scaffolding
+for your application that includes a user interface built
+with [Tailwind CSS](https://tailwindcss.com). Unlike Fortify, Breeze publishes
+its routes and controllers directly into your application. This allows you to
+study and get comfortable with Laravel's authentication features before allowing
+Laravel Fortify to implement these features for you.
 
 Laravel Fortify essentially takes the routes and controllers of Laravel Breeze
 and offers them as a package that does not include a user interface. This allows
@@ -83,10 +83,9 @@ authentication layer without being tied to any particular frontend opinions.
 ### When Should I Use Fortify?
 
 You may be wondering when it is appropriate to use Laravel Fortify. First, if
-you are using one of
-Laravel's [application starter kits](starter-kits.md), you do not
-need to install Laravel Fortify since all of Laravel's application starter kits
-already provide a full authentication implementation.
+you are using one of Laravel's [application starter kits](starter-kits.md), you
+do not need to install Laravel Fortify since all of Laravel's application
+starter kits already provide a full authentication implementation.
 
 If you are not using an application starter kit and your application needs
 authentication features, you have two options: manually implement your
@@ -99,18 +98,17 @@ to authenticate and register users.
 
 If you choose to manually interact with Laravel's authentication services
 instead of using Fortify, you may do so by following the documentation available
-in
-the [authentication](authentication.md), [password reset](passwords.md),
+in the [authentication](authentication.md), [password reset](passwords.md),
 and [email verification](verification.md) documentation.
 
 <a name="laravel-fortify-and-laravel-sanctum"></a>
 
-#### Laravel Fortify and Laravel Sanctum
+#### Laravel Fortify & Laravel Sanctum
 
 Some developers become confused regarding the difference
-between [Laravel Sanctum](sanctum.md) and Laravel Fortify.
-Because the two packages solve two different but related problems, Laravel
-Fortify and Laravel Sanctum are not mutually exclusive or competing packages.
+between [Laravel Sanctum](sanctum.md) and Laravel Fortify. Because the two
+packages solve two different but related problems, Laravel Fortify and Laravel
+Sanctum are not mutually exclusive or competing packages.
 
 Laravel Sanctum is only concerned with managing API tokens and authenticating
 existing users using session cookies or tokens. Sanctum does not provide any
@@ -197,7 +195,7 @@ within your application's `config/fortify.php` configuration file to `false`:
 
 <a name="disabling-views-and-password-reset"></a>
 
-#### Disabling Views and Password Reset
+#### Disabling Views & Password Reset
 
 If you choose to disable Fortify's views and you will be implementing password
 reset features for your application, you should still define a route
@@ -213,8 +211,7 @@ generate the password reset URL via the `password.reset` named route.
 To get started, we need to instruct Fortify how to return our "login" view.
 Remember, Fortify is a headless authentication library. If you would like a
 frontend implementation of Laravel's authentication features that are already
-completed for you, you should use
-an [application starter kit](starter-kits.md).
+completed for you, you should use an [application starter kit](starter-kits.md).
 
 All of the authentication view's rendering logic may be customized using the
 appropriate methods available via the `Laravel\Fortify\Fortify` class.
@@ -226,8 +223,10 @@ care of defining the `/login` route that returns this view:
 
     /**
      * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Fortify::loginView(function () {
             return view('auth.login');
@@ -280,8 +279,10 @@ use Laravel\Fortify\Fortify;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Fortify::authenticateUsing(function (Request $request) {
         $user = User::where('email', $request->email)->first();
@@ -309,14 +310,14 @@ guard in combination with [Laravel Sanctum](https://laravel.com/docs/sanctum).
 
 <a name="customizing-the-authentication-pipeline"></a>
 
-### Customizing the Authentication Pipeline
+### Customizing The Authentication Pipeline
 
 Laravel Fortify authenticates login requests through a pipeline of invokable
 classes. If you would like, you may define a custom pipeline of classes that
 login requests should be piped through. Each class should have an `__invoke`
 method which receives the incoming `Illuminate\Http\Request` instance and,
-like [middleware](middleware.md), a `$next` variable that is
-invoked in order to pass the request to the next class in the pipeline.
+like [middleware](middleware.md), a `$next` variable that is invoked in order to
+pass the request to the next class in the pipeline.
 
 To define your custom pipeline, you may use the `Fortify::authenticateThrough`
 method. This method accepts a closure which should return the array of classes
@@ -356,8 +357,8 @@ application, the user will be redirected to the `/` URI.
 
 If you need advanced customization of this behavior, you may bind
 implementations of the `LoginResponse` and `LogoutResponse` contracts into the
-Laravel [service container](container.md). Typically, this should
-be done within the `register` method of your
+Laravel [service container](container.md). Typically, this should be done within
+the `register` method of your
 application's `App\Providers\FortifyServiceProvider` class:
 
 ```php
@@ -365,8 +366,10 @@ use Laravel\Fortify\Contracts\LogoutResponse;
 
 /**
  * Register any application services.
+ *
+ * @return void
  */
-public function register(): void
+public function register()
 {
     $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
         public function toResponse($request)
@@ -483,7 +486,7 @@ via an XHR request, a `200` HTTP response will be returned.
 
 <a name="displaying-the-recovery-codes"></a>
 
-#### Displaying the Recovery Codes
+#### Displaying The Recovery Codes
 
 You should also display the user's two factor recovery codes. These recovery
 codes allow the user to authenticate if they lose access to their mobile device.
@@ -525,8 +528,10 @@ use Laravel\Fortify\Fortify;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Fortify::twoFactorChallengeView(function () {
         return view('auth.two-factor-challenge');
@@ -584,8 +589,10 @@ use Laravel\Fortify\Fortify;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Fortify::registerView(function () {
         return view('auth.register');
@@ -629,7 +636,7 @@ installed Laravel Fortify.
 
 <a name="requesting-a-password-reset-link"></a>
 
-### Requesting a Password Reset Link
+### Requesting A Password Reset Link
 
 To begin implementing our application's password reset functionality, we need to
 instruct Fortify how to return our "forgot password" view. Remember, Fortify is
@@ -647,8 +654,10 @@ use Laravel\Fortify\Fortify;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Fortify::requestPasswordResetLinkView(function () {
         return view('auth.forgot-password');
@@ -668,7 +677,7 @@ application's `fortify` configuration file.
 
 <a name="handling-the-password-reset-link-request-response"></a>
 
-#### Handling the Password Reset Link Request Response
+#### Handling The Password Reset Link Request Response
 
 If the password reset link request was successful, Fortify will redirect the
 user back to the `/forgot-password` endpoint and send an email to the user with
@@ -677,13 +686,9 @@ request, a 200 HTTP response will be returned.
 
 After being redirected back to the `/forgot-password` endpoint after a
 successful request, the `status` session variable may be used to display the
-status of the password reset link request attempt.
-
-The value of the `$status` session variable will match one of the translation
-strings defined within your
-application's `passwords` [language file](localization.md). If
-you would like to customize this value and have not published Laravel's language
-files, you may do so via the `lang:publish` Artisan command:
+status of the password reset link request attempt. The value of this session
+variable will match one of the translation strings defined within your
+application's `passwords` [language file](localization.md):
 
 ```html
 @if (session('status'))
@@ -702,7 +707,7 @@ Or, in the case of an XHR request, the validation errors will be returned with a
 
 <a name="resetting-the-password"></a>
 
-### Resetting the Password
+### Resetting The Password
 
 To finish implementing our application's password reset functionality, we need
 to instruct Fortify how to return our "reset password" view.
@@ -714,14 +719,15 @@ application's `App\Providers\FortifyServiceProvider` class:
 
 ```php
 use Laravel\Fortify\Fortify;
-use Illuminate\Http\Request;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
-    Fortify::resetPasswordView(function (Request $request) {
+    Fortify::resetPasswordView(function ($request) {
         return view('auth.reset-password', ['request' => $request]);
     });
 
@@ -741,7 +747,7 @@ within your application's `fortify` configuration file.
 
 <a name="handling-the-password-reset-response"></a>
 
-#### Handling the Password Reset Response
+#### Handling The Password Reset Response
 
 If the password reset request was successful, Fortify will redirect back to
 the `/login` route so that the user can log in with their new password. In
@@ -798,8 +804,10 @@ use Laravel\Fortify\Fortify;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Fortify::verifyEmailView(function () {
         return view('auth.verify-email');
@@ -869,8 +877,7 @@ To begin implementing password confirmation functionality, we need to instruct
 Fortify how to return our application's "password confirmation" view. Remember,
 Fortify is a headless authentication library. If you would like a frontend
 implementation of Laravel's authentication features that are already completed
-for you, you should use
-an [application starter kit](starter-kits.md).
+for you, you should use an [application starter kit](starter-kits.md).
 
 All of Fortify's view rendering logic may be customized using the appropriate
 methods available via the `Laravel\Fortify\Fortify` class. Typically, you should
@@ -882,8 +889,10 @@ use Laravel\Fortify\Fortify;
 
 /**
  * Bootstrap any application services.
+ *
+ * @return void
  */
-public function boot(): void
+public function boot()
 {
     Fortify::confirmPasswordView(function () {
         return view('auth.confirm-password');

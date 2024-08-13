@@ -14,7 +14,7 @@
     - [Localizing Resource URIs](#restful-localizing-resource-uris)
     - [Supplementing Resource Controllers](#restful-supplementing-resource-controllers)
     - [Singleton Resource Controllers](#singleton-resource-controllers)
-- [Dependency Injection and Controllers](#dependency-injection-and-controllers)
+- [Dependency Injection & Controllers](#dependency-injection-and-controllers)
 
 <a name="introduction"></a>
 
@@ -35,30 +35,25 @@ controllers are stored in the `app/Http/Controllers` directory.
 
 ### Basic Controllers
 
-To quickly generate a new controller, you may run the `make:controller` Artisan
-command. By default, all of the controllers for your application are stored in
-the `app/Http/Controllers` directory:
-
-```shell
-php artisan make:controller UserController
-```
-
-Let's take a look at an example of a basic controller. A controller may have any
-number of public methods which will respond to incoming HTTP requests:
+Let's take a look at an example of a basic controller. Note that the controller
+extends the base controller class included with
+Laravel: `App\Http\Controllers\Controller`:
 
     <?php
 
     namespace App\Http\Controllers;
 
     use App\Models\User;
-    use Illuminate\View\View;
 
     class UserController extends Controller
     {
         /**
          * Show the profile for a given user.
+         *
+         * @param  int  $id
+         * @return \Illuminate\View\View
          */
-        public function show(string $id): View
+        public function show($id)
         {
             return view('user.profile', [
                 'user' => User::findOrFail($id)
@@ -66,8 +61,7 @@ number of public methods which will respond to incoming HTTP requests:
         }
     }
 
-Once you have written a controller class and method, you may define a route to
-the controller method like so:
+You can define a route to this controller method like so:
 
     use App\Http\Controllers\UserController;
 
@@ -77,7 +71,7 @@ When an incoming request matches the specified route URI, the `show` method on
 the `App\Http\Controllers\UserController` class will be invoked and the route
 parameters will be passed to the method.
 
-> [!NOTE]
+> **Note**
 > Controllers are not **required** to extend a base class. However, you will not
 > have access to convenient features such as the `middleware` and `authorize`
 > methods.
@@ -94,10 +88,14 @@ you may define a single `__invoke` method within the controller:
 
     namespace App\Http\Controllers;
 
+    use App\Models\User;
+
     class ProvisionServer extends Controller
     {
         /**
          * Provision a new web server.
+         *
+         * @return \Illuminate\Http\Response
          */
         public function __invoke()
         {
@@ -120,7 +118,7 @@ the `make:controller` Artisan command:
 php artisan make:controller ProvisionServer --invokable
 ```
 
-> [!NOTE]
+> **Note**
 > Controller stubs may be customized
 > using [stub publishing](artisan.md#stub-customization).
 
@@ -128,8 +126,8 @@ php artisan make:controller ProvisionServer --invokable
 
 ## Controller Middleware
 
-[Middleware](middleware.md) may be assigned to the controller's
-routes in your route files:
+[Middleware](middleware.md) may be assigned to the controller's routes in your
+route files:
 
     Route::get('profile', [UserController::class, 'show'])->middleware('auth');
 
@@ -141,6 +139,8 @@ you can assign middleware to the controller's actions:
     {
         /**
          * Instantiate a new controller instance.
+         *
+         * @return void
          */
         public function __construct()
         {
@@ -154,10 +154,7 @@ Controllers also allow you to register middleware using a closure. This provides
 a convenient way to define an inline middleware for a single controller without
 defining an entire middleware class:
 
-    use Closure;
-    use Illuminate\Http\Request;
-
-    $this->middleware(function (Request $request, Closure $next) {
+    $this->middleware(function ($request, $next) {
         return $next($request);
     });
 
@@ -203,9 +200,9 @@ the `resources` method:
         'posts' => PostController::class,
     ]);
 
-<a name="actions-handled-by-resource-controllers"></a>
+<a name="actions-handled-by-resource-controller"></a>
 
-#### Actions Handled by Resource Controllers
+#### Actions Handled By Resource Controller
 
  Verb      | URI                    | Action  | Route Name
 -----------|------------------------|---------|----------------
@@ -241,10 +238,9 @@ found for any of the resource's routes:
 #### Soft Deleted Models
 
 Typically, implicit model binding will not retrieve models that have
-been [soft deleted](eloquent.md#soft-deleting), and will instead
-return a 404 HTTP response. However, you can instruct the framework to allow
-soft deleted models by invoking the `withTrashed` method when defining your
-resource route:
+been [soft deleted](eloquent.md#soft-deleting), and will instead return a 404
+HTTP response. However, you can instruct the framework to allow soft deleted
+models by invoking the `withTrashed` method when defining your resource route:
 
     use App\Http\Controllers\PhotoController;
 
@@ -258,12 +254,11 @@ these routes by passing an array to the `withTrashed` method:
 
 <a name="specifying-the-resource-model"></a>
 
-#### Specifying the Resource Model
+#### Specifying The Resource Model
 
-If you are
-using [route model binding](routing.md#route-model-binding) and
-would like the resource controller's methods to type-hint a model instance, you
-may use the `--model` option when generating the controller:
+If you are using [route model binding](routing.md#route-model-binding) and would
+like the resource controller's methods to type-hint a model instance, you may
+use the `--model` option when generating the controller:
 
 ```shell
 php artisan make:controller PhotoController --model=Photo --resource
@@ -275,8 +270,8 @@ php artisan make:controller PhotoController --model=Photo --resource
 
 You may provide the `--requests` option when generating a resource controller to
 instruct Artisan to
-generate [form request classes](validation.md#form-request-validation)
-for the controller's storage and update methods:
+generate [form request classes](validation.md#form-request-validation) for the
+controller's storage and update methods:
 
 ```shell
 php artisan make:controller PhotoController --model=Photo --resource --requests
@@ -459,8 +454,10 @@ application's `App\Providers\RouteServiceProvider`:
 
     /**
      * Define your route model bindings, pattern filters, etc.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         Route::resourceVerbs([
             'create' => 'crear',
@@ -495,7 +492,7 @@ method may unintentionally take precedence over your supplemental routes:
     Route::get('/photos/popular', [PhotoController::class, 'popular']);
     Route::resource('photos', PhotoController::class);
 
-> [!NOTE]
+> **Note**
 > Remember to keep your controllers focused. If you find yourself routinely
 > needing methods outside of the typical set of resource actions, consider
 > splitting your controller into two, smaller controllers.
@@ -599,15 +596,15 @@ Route::apiSingleton('photos.thumbnail', ProfileController::class)->creatable();
 
 <a name="dependency-injection-and-controllers"></a>
 
-## Dependency Injection and Controllers
+## Dependency Injection & Controllers
 
 <a name="constructor-injection"></a>
 
 #### Constructor Injection
 
-The Laravel [service container](container.md) is used to resolve
-all Laravel controllers. As a result, you are able to type-hint any dependencies
-your controller may need in its constructor. The declared dependencies will
+The Laravel [service container](container.md) is used to resolve all Laravel
+controllers. As a result, you are able to type-hint any dependencies your
+controller may need in its constructor. The declared dependencies will
 automatically be resolved and injected into the controller instance:
 
     <?php
@@ -619,11 +616,20 @@ automatically be resolved and injected into the controller instance:
     class UserController extends Controller
     {
         /**
-         * Create a new controller instance.
+         * The user repository instance.
          */
-        public function __construct(
-            protected UserRepository $users,
-        ) {}
+        protected $users;
+
+        /**
+         * Create a new controller instance.
+         *
+         * @param  \App\Repositories\UserRepository  $users
+         * @return void
+         */
+        public function __construct(UserRepository $users)
+        {
+            $this->users = $users;
+        }
     }
 
 <a name="method-injection"></a>
@@ -638,21 +644,21 @@ the `Illuminate\Http\Request` instance into your controller methods:
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class UserController extends Controller
     {
         /**
          * Store a new user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function store(Request $request)
         {
             $name = $request->name;
 
-            // Store the user...
-
-            return redirect('/users');
+            //
         }
     }
 
@@ -671,18 +677,19 @@ parameter by defining your controller method as follows:
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
     use Illuminate\Http\Request;
 
     class UserController extends Controller
     {
         /**
          * Update the given user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @param  string  $id
+         * @return \Illuminate\Http\Response
          */
-        public function update(Request $request, string $id): RedirectResponse
+        public function update(Request $request, $id)
         {
-            // Update the user...
-
-            return redirect('/users');
+            //
         }
     }

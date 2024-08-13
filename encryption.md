@@ -2,7 +2,7 @@
 
 - [Introduction](#introduction)
 - [Configuration](#configuration)
-- [Using the Encrypter](#using-the-encrypter)
+- [Using The Encrypter](#using-the-encrypter)
 
 <a name="introduction"></a>
 
@@ -29,11 +29,11 @@ during [Laravel's installation](installation.md).
 
 <a name="using-the-encrypter"></a>
 
-## Using the Encrypter
+## Using The Encrypter
 
 <a name="encrypting-a-value"></a>
 
-#### Encrypting a Value
+#### Encrypting A Value
 
 You may encrypt a value using the `encryptString` method provided by the `Crypt`
 facade. All encrypted values are encrypted using OpenSSL and the AES-256-CBC
@@ -46,7 +46,8 @@ users:
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
+    use App\Http\Controllers\Controller;
+    use App\Models\User;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Crypt;
 
@@ -54,20 +55,21 @@ users:
     {
         /**
          * Store a DigitalOcean API token for the user.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        public function store(Request $request): RedirectResponse
+        public function storeSecret(Request $request)
         {
             $request->user()->fill([
                 'token' => Crypt::encryptString($request->token),
             ])->save();
-
-            return redirect('/secrets');
         }
     }
 
 <a name="decrypting-a-value"></a>
 
-#### Decrypting a Value
+#### Decrypting A Value
 
 You may decrypt values using the `decryptString` method provided by the `Crypt`
 facade. If the value can not be properly decrypted, such as when the message
@@ -80,5 +82,5 @@ an `Illuminate\Contracts\Encryption\DecryptException` will be thrown:
     try {
         $decrypted = Crypt::decryptString($encryptedValue);
     } catch (DecryptException $e) {
-        // ...
+        //
     }

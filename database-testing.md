@@ -1,7 +1,7 @@
 # Database Testing
 
 - [Introduction](#introduction)
-    - [Resetting the Database After Each Test](#resetting-the-database-after-each-test)
+    - [Resetting The Database After Each Test](#resetting-the-database-after-each-test)
 - [Model Factories](#model-factories)
 - [Running Seeders](#running-seeders)
 - [Available Assertions](#available-assertions)
@@ -18,7 +18,7 @@ powerful features in the following documentation.
 
 <a name="resetting-the-database-after-each-test"></a>
 
-### Resetting the Database After Each Test
+### Resetting The Database After Each Test
 
 Before proceeding much further, let's discuss how to reset your database after
 each of your tests so that data from a previous test does not interfere with
@@ -31,6 +31,7 @@ this for you. Simply use the trait on your test class:
     namespace Tests\Feature;
 
     use Illuminate\Foundation\Testing\RefreshDatabase;
+    use Illuminate\Foundation\Testing\WithoutMiddleware;
     use Tests\TestCase;
 
     class ExampleTest extends TestCase
@@ -39,8 +40,10 @@ this for you. Simply use the trait on your test class:
 
         /**
          * A basic functional test example.
+         *
+         * @return void
          */
-        public function test_basic_example(): void
+        public function test_basic_example()
         {
             $response = $this->get('/');
 
@@ -70,13 +73,13 @@ using [model factories](eloquent-factories.md).
 
 To learn more about creating and utilizing model factories to create models,
 please consult the
-complete [model factory documentation](eloquent-factories.md).
-Once you have defined a model factory, you may utilize the factory within your
-test to create models:
+complete [model factory documentation](eloquent-factories.md). Once you have
+defined a model factory, you may utilize the factory within your test to create
+models:
 
     use App\Models\User;
 
-    public function test_models_can_be_instantiated(): void
+    public function test_models_can_be_instantiated()
     {
         $user = User::factory()->create();
 
@@ -87,11 +90,11 @@ test to create models:
 
 ## Running Seeders
 
-If you would like to use [database seeders](seeding.md) to
-populate your database during a feature test, you may invoke the `seed` method.
-By default, the `seed` method will execute the `DatabaseSeeder`, which should
-execute all of your other seeders. Alternatively, you pass a specific seeder
-class name to the `seed` method:
+If you would like to use [database seeders](seeding.md) to populate your
+database during a feature test, you may invoke the `seed` method. By default,
+the `seed` method will execute the `DatabaseSeeder`, which should execute all of
+your other seeders. Alternatively, you pass a specific seeder class name to
+the `seed` method:
 
     <?php
 
@@ -100,6 +103,7 @@ class name to the `seed` method:
     use Database\Seeders\OrderStatusSeeder;
     use Database\Seeders\TransactionStatusSeeder;
     use Illuminate\Foundation\Testing\RefreshDatabase;
+    use Illuminate\Foundation\Testing\WithoutMiddleware;
     use Tests\TestCase;
 
     class ExampleTest extends TestCase
@@ -108,8 +112,10 @@ class name to the `seed` method:
 
         /**
          * Test creating a new order.
+         *
+         * @return void
          */
-        public function test_orders_can_be_created(): void
+        public function test_orders_can_be_created()
         {
             // Run the DatabaseSeeder...
             $this->seed();
