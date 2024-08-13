@@ -16,7 +16,8 @@
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
 - [_Front-end_](frontend.md)
-- [_Kits_ para Iniciantes](starter-kits.md)
+- [Homestead](homestead.md)
+- [Valet](valet.md)
 - [Implantação](deployment.md)
 
 ## Conceitos de Arquitetura
@@ -25,6 +26,7 @@
 - [Contêiner de Serviços](container.md)
 - [Provedores de Serviços](providers.md)
 - [Fachadas](facades.md)
+- [Contratos](contracts.md)
 
 ## O Básico
 
@@ -35,12 +37,27 @@
 - [Requisições](requests.md)
 - [Respostas](responses.md)
 - [Visualizações](views.md)
-- [Modelos Blade](blade.md)
 - [Geração de URL](urls.md)
 - [Sessão](session.md)
 - [Validação](validation.md)
 - [Tratamento de erros](errors.md)
 - [Logging](logging.md)
+
+## Frontend
+
+- [Blade Templates](blade.md)
+- [Localization](localization.md)
+- [Frontend Scaffolding](frontend.md)
+- [Compiling Assets](mix.md)
+
+## Security
+
+- [Authentication](authentication.md)
+- [Authorization](authorization.md)
+- [Email Verification](verification.md)
+- [Encryption](encryption.md)
+- [Hashing](hashing.md)
+- [Password Reset](passwords.md)
 
 ## Indo mais fundo
 
@@ -48,28 +65,15 @@
 - [Transmissão](broadcasting.md)
 - [Cache](cache.md)
 - [Coleções](collections.md)
-- [Compiling Assets](mix.md)
-- [Contratos](contracts.md)
 - [Eventos](events.md)
 - [Armazenamento de arquivos](filesystem.md)
 - [Auxiliares](helpers.md)
 - [Cliente HTTP](http-client.md)
-- [Localização](localization.md)
 - [E-mail](mail.md)
 - [Notificações](notifications.md)
 - [Desenvolvimento de pacotes](packages.md)
 - [Filas](queues.md)
-- [Limitação de taxa](rate-limiting.md)
 - [Agendamento de tarefas](scheduling.md)
-
-## Segurança
-
-- [Autenticação](authentication.md)
-- [Autorização](authorization.md)
-- [Verificação de e-mail](verification.md)
-- [Encriptação](encryption.md)
-- [Hashing](hashing.md)
-- [Redefinição de senha](passwords.md)
 
 ## Banco de dados
 
@@ -85,7 +89,7 @@
 - [Começando](eloquent.md)
 - [Relacionamentos](eloquent-relationships.md)
 - [Coleções](eloquent-collections.md)
-- [Modificadores / Moldadores](eloquent-mutators.md)
+- [Modificadores](eloquent-mutators.md)
 - [Recursos de API](eloquent-resources.md)
 - [Serialização](eloquent-serialization.md)
 
@@ -98,26 +102,20 @@
 - [Banco de dados](database-testing.md)
 - [Simulação](mocking.md)
 
-## Pacotes
+## Pacotes Oficiais
 
-- [Breeze](starter-kits.md#laravel-breeze)
 - [Cashier (Stripe)](billing.md)
 - [Cashier (Paddle)](cashier-paddle.md)
+- [Cashier (Mollie)](https://github.com/laravel/cashier-mollie)
 - [Dusk](dusk.md)
 - [Envoy](envoy.md)
-- [Fortify](fortify.md)
-- [Homestead](homestead.md)
 - [Horizon](horizon.md)
-- [Jetstream](https://jetstream.laravel.com)
-- [Octane](octane.md)
 - [Passport](passport.md)
-- [Sail](sail.md)
 - [Sanctum](sanctum.md)
 - [Scout](scout.md)
 - [Socialite](socialite.md)
 - [Telescope](telescope.md)
-- [Valet](valet.md)
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/8.x/index.html)
+- [Documentação da API](https://laravel.com/api/7.x/index.html)
