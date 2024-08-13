@@ -4,8 +4,6 @@
     - [Server Requirements](#server-requirements)
     - [Installing Laravel](#installing-laravel)
     - [Configuration](#configuration)
-- [Web Server Configuration](#web-server-configuration)
-    - [Pretty URLs](#pretty-urls)
 
 <a name="installation"></a>
 ## Installation
@@ -19,19 +17,18 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 <div class="content-list" markdown="1">
 
-- PHP between 5.6.4 & 7.1.*
+- PHP version between 5.5.9 - 7.1.*
 - OpenSSL PHP Extension
 - PDO PHP Extension
 - Mbstring PHP Extension
 - Tokenizer PHP Extension
-- XML PHP Extension
 
 </div>
 
 <a name="installing-laravel"></a>
 ### Installing Laravel
 
-Laravel utilizes [Composer](https://getcomposer.org) to manage its dependencies. So, before using Laravel, make sure you have Composer installed on your machine.
+Laravel utilizes [Composer](http://getcomposer.org) to manage its dependencies. So, before using Laravel, make sure you have Composer installed on your machine.
 
 #### Via Laravel Installer
 
@@ -39,9 +36,9 @@ First, download the Laravel installer using Composer:
 
     composer global require "laravel/installer"
 
-Make sure to place the `$HOME/.composer/vendor/bin` directory (or the equivalent directory for your OS) in your $PATH so the `laravel` executable can be located by your system.
+Make sure to place the `~/.composer/vendor/bin` directory (or the equivalent directory for your OS) in your PATH so the `laravel` executable can be located by your system.
 
-Once installed, the `laravel new` command will create a fresh Laravel installation in the directory you specify. For instance, `laravel new blog` will create a directory named `blog` containing a fresh Laravel installation with all of Laravel's dependencies already installed:
+Once installed, the `laravel new` command will create a fresh Laravel installation in the directory you specify. For instance, `laravel new blog` will create a directory named `blog` containing a fresh Laravel installation with all of Laravel's dependencies already installed. This method of installation is much faster than installing via Composer:
 
     laravel new blog
 
@@ -49,24 +46,12 @@ Once installed, the `laravel new` command will create a fresh Laravel installati
 
 Alternatively, you may also install Laravel by issuing the Composer `create-project` command in your terminal:
 
-    composer create-project --prefer-dist laravel/laravel blog "5.3.*"
-
-#### Local Development Server
-
-If you have PHP installed locally and you would like to use PHP's built-in development server to serve your application, you may use the `serve` Artisan command. This command will start a development server at `http://localhost:8000`:
-
-    php artisan serve
-
-Of course, more robust local development options are available via [Homestead](homestead.md) and [Valet](valet.md).
+    composer create-project --prefer-dist laravel/laravel blog "5.2.*"
 
 <a name="configuration"></a>
 ### Configuration
 
-#### Public Directory
-
-After installing Laravel, you should configure your web server's document / web root to be the `public` directory. The `index.php` in this directory serves as the front controller for all HTTP requests entering your application.
-
-#### Configuration Files
+After installation, you should configure your application's document / web root to the `public` directory.
 
 All of the configuration files for the Laravel framework are stored in the `config` directory. Each option is documented, so feel free to look through the files and get familiar with the options available to you.
 
@@ -76,9 +61,7 @@ After installing Laravel, you may need to configure some permissions. Directorie
 
 #### Application Key
 
-The next thing you should do after installing Laravel is set your application key to a random string. If you installed Laravel via Composer or the Laravel installer, this key has already been set for you by the `php artisan key:generate` command.
-
-Typically, this string should be 32 characters long. The key can be set in the `.env` environment file. If you have not renamed the `.env.example` file to `.env`, you should do that now. **If the application key is not set, your user sessions and other encrypted data will not be secure!**
+The next thing you should do after installing Laravel is set your application key to a random string. If you installed Laravel via Composer or the Laravel installer, this key has already been set for you by the `php artisan key:generate` command. Typically, this string should be 32 characters long. The key can be set in the `.env` environment file. If you have not renamed the `.env.example` file to `.env`, you should do that now. **If the application key is not set, your user sessions and other encrypted data will not be secure!**
 
 #### Additional Configuration
 
@@ -86,37 +69,8 @@ Laravel needs almost no other configuration out of the box. You are free to get 
 
 You may also want to configure a few additional components of Laravel, such as:
 
-<div class="content-list" markdown="1">
 - [Cache](cache.md#configuration)
 - [Database](database.md#configuration)
 - [Session](session.md#configuration)
-</div>
 
-<a name="web-server-configuration"></a>
-## Web Server Configuration
-
-<a name="pretty-urls"></a>
-### Pretty URLs
-
-#### Apache
-
-Laravel includes a `public/.htaccess` file that is used to provide URLs without the `index.php` front controller in the path. Before serving Laravel with Apache, be sure to enable the `mod_rewrite` module so the `.htaccess` file will be honored by the server.
-
-If the `.htaccess` file that ships with Laravel does not work with your Apache installation, try this alternative:
-
-    Options +FollowSymLinks
-    RewriteEngine On
-
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
-
-#### Nginx
-
-If you are using Nginx, the following directive in your site configuration will direct all requests to the `index.php` front controller:
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-Of course, when using [Homestead](homestead.md) or [Valet](valet.md), pretty URLs will be automatically configured.
+Once Laravel is installed, you should also [configure your local environment](configuration.md#environment-configuration).

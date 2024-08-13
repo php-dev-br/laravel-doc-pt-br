@@ -1,7 +1,6 @@
 # Release Notes
 
 - [Support Policy](#support-policy)
-- [Laravel 5.3](#laravel-5.3)
 - [Laravel 5.2](#laravel-5.2)
 - [Laravel 5.1.11](#laravel-5.1.11)
 - [Laravel 5.1.4](#laravel-5.1.4)
@@ -13,227 +12,9 @@
 <a name="support-policy"></a>
 ## Support Policy
 
-For LTS releases, such as Laravel 5.1, bug fixes are provided for 2 years and security fixes are provided for 3 years. These releases provide the longest window of support and maintenance. For general releases, bug fixes are provided for 6 months and security fixes are provided for 1 year.
+For LTS releases, such as Laravel 5.1, bug fixes are provided for 2 years and security fixes are provided for 3 years. These releases provide the longest window of support and maintenance.
 
-<a name="laravel-5.3"></a>
-## Laravel 5.3
-
-Laravel 5.3 continues the improvements made in Laravel 5.2 by adding a driver based [notification system](/docs/5.3/notifications), robust realtime support via [Laravel Echo](/docs/5.3/broadcasting), painless OAuth2 servers via [Laravel Passport](/docs/5.3/passport), full-text model searching via [Laravel Scout](/docs/5.3/scout), Webpack support in Laravel Elixir, "mailable" objects, explicit separation of `web` and `api` routes, Closure based console commands, convenient helpers for storing uploaded files, support for POPO and single-action controllers, improved default frontend scaffolding, and more.
-
-### Notifications
-
-> {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/9) for this feature available on Laracasts.
-
-Laravel Notifications provide a simple, expressive API for sending notifications across a variety of delivery channels such as email, Slack, SMS, and more. For example, you may define a notification that an invoice has been paid and deliver that notification via email and SMS. Then, you may send the notification using a single, simple method:
-
-    $user->notify(new InvoicePaid($invoice));
-
-There is already a wide variety of [community written drivers](http://laravel-notification-channels.com) for notifications, including support for iOS and Android notifications. To learn more about notifications, be sure to check out the [full notification documentation](/docs/5.3/notifications).
-
-### WebSockets / Event Broadcasting
-
-While event broadcasting existed in previous versions of Laravel, the Laravel 5.3 release greatly improves this feature of the framework by adding channel-level authentication for private and presence WebSocket channels:
-
-    /*
-     * Authenticate the channel subscription...
-     */
-    Broadcast::channel('orders.*', function ($user, $orderId) {
-        return $user->placedOrder($orderId);
-    });
-
-Laravel Echo, a new JavaScript package installable via NPM, has also been released to provide a simple, beautiful API for subscribing to channels and listening for your server-side events in your client-side JavaScript application. Echo includes support for [Pusher](https://pusher.com) and [Socket.io](http://socket.io):
-
-    Echo.channel('orders.' + orderId)
-        .listen('ShippingStatusUpdated', (e) => {
-            console.log(e.description);
-        });
-
-In addition to subscribing to traditional channels, Laravel Echo also makes it a breeze to subscribe to presence channels which provide information about who is listening on a given channel:
-
-    Echo.join('chat.' + roomId)
-        .here((users) => {
-            //
-        })
-        .joining((user) => {
-            console.log(user.name);
-        })
-        .leaving((user) => {
-            console.log(user.name);
-        });
-
-To learn more about Echo and event broadcasting, check out the [full documentation](/docs/5.3/broadcasting).
-
-### Laravel Passport (OAuth2 Server)
-
-> {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/13) for this feature available on Laracasts.
-
-Laravel 5.3 makes API authentication a breeze using [Laravel Passport](passport.md), which provides a full OAuth2 server implementation for your Laravel application in a matter of minutes. Passport is built on top of the [League OAuth2 server](https://github.com/thephpleague/oauth2-server) that is maintained by Alex Bilbie.
-
-Passport makes it painless to issue access tokens via OAuth2 authorization codes. You may also allow your users to create "personal access tokens" via your web UI. To get you started quickly, Passport includes [Vue components](https://vuejs.org) that can serve as a starting point for your OAuth2 dashboard, allowing users to create clients, revoke access tokens, and more:
-
-    <passport-clients></passport-clients>
-    <passport-authorized-clients></passport-authorized-clients>
-    <passport-personal-access-tokens></passport-personal-access-tokens>
-
-If you do not want to use the Vue components, you are welcome to provide your own frontend dashboard for managing clients and access tokens. Passport exposes a simple JSON API that you may use with any JavaScript framework you choose.
-
-Of course, Passport also makes it simple to define access token scopes that may be requested by application's consuming your API:
-
-    Passport::tokensCan([
-        'place-orders' => 'Place new orders',
-        'check-status' => 'Check order status',
-    ]);
-
-In addition, Passport includes helpful middleware for verifying that an access token authenticated request contains the necessary token scopes:
-
-    Route::get('/orders/{order}/status', function (Order $order) {
-        // Access token has "check-status" scope...
-    })->middleware('scope:check-status');
-
-Lastly, Passport includes support for consuming your own API from your JavaScript application without worrying about passing access tokens. Passport achieves this through encrypted JWT cookies and synchronized CSRF tokens, allowing you to focus on what matters: your application. For more information on Passport, be sure to check out its [full documentation](/docs/5.3/passport).
-
-### Search (Laravel Scout)
-
-Laravel Scout provides a simple, driver based solution for adding full-text search to your [Eloquent models](/docs/5.3/eloquent). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records. Currently, Scout ships with an [Algolia](https://www.algolia.com/) driver; however, writing custom drivers is simple and you are free to extend Scout with your own search implementations.
-
-Making models searchable is as simple as adding a `Searchable` trait to the model:
-
-    <?php
-
-    namespace App;
-
-    use Laravel\Scout\Searchable;
-    use Illuminate\Database\Eloquent\Model;
-
-    class Post extends Model
-    {
-        use Searchable;
-    }
-
-Once the trait has been added to your model, its information will be kept in sync with your search indexes by simply saving the model:
-
-    $order = new Order;
-
-    // ...
-
-    $order->save();
-
-Once your models have been indexed, its a breeze to perform full-text searches across all of your models. You may even paginate your search results:
-
-    return Order::search('Star Trek')->get();
-
-    return Order::search('Star Trek')->where('user_id', 1)->paginate();
-
-Of course, Scout has many more features which are covered in the [full documentation](/docs/5.3/scout).
-
-### Mailable Objects
-
-> {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/6) for this feature available on Laracasts.
-
-Laravel 5.3 ships with support for mailable objects. These objects allow you to represent your email messages as a simple objects instead of customizing mail messages within Closures. For example, you may define a simple mailable object for a "welcome" email:
-
-    class WelcomeMessage extends Mailable
-    {
-        use Queueable, SerializesModels;
-
-        /**
-         * Build the message.
-         *
-         * @return $this
-         */
-        public function build()
-        {
-            return $this->view('emails.welcome');
-        }
-    }
-
-Once the mailable object has been defined, you can send it to a user using a simple, expressive API. Mailable objects are great for discovering the intent of your messages while scanning your code:
-
-    Mail::to($user)->send(new WelcomeMessage);
-
-Of course, you may also mark mailable objects as "queueable" so that they will be sent in the background by your queue workers:
-
-    class WelcomeMessage extends Mailable implements ShouldQueue
-    {
-        //
-    }
-
-For more information on mailable objects, be sure to check out the [mail documentation](/docs/5.3/mail).
-
-### Storing Uploaded Files
-
-> {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/12) for this feature available on Laracasts.
-
-In web applications, one of the most common use-cases for storing files is storing user uploaded files such as profile pictures, photos, and documents. Laravel 5.3 makes it very easy to store uploaded files using the new `store` method on an uploaded file instance. Simply call the `store` method with the path at which you wish to store the uploaded file:
-
-    /**
-     * Update the avatar for the user.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-        $path = $request->file('avatar')->store('avatars', 's3');
-
-        return $path;
-    }
-
-For more information on storing uploaded files, check out the [full documentation](filesystem.md#file-uploads).
-
-
-### Webpack & Laravel Elixir
-
-Along with Laravel 5.3, Laravel Elixir 6.0 has been released with baked-in support for the Webpack and Rollup JavaScript module bundlers. By default, the Laravel 5.3 `gulpfile.js` file now uses Webpack to compile your JavaScript. The [full Laravel Elixir documentation](/docs/5.3/elixir) contains more information on both of these bundlers:
-
-    elixir(mix => {
-        mix.sass('app.scss')
-           .webpack('app.js');
-    });
-
-### Frontend Structure
-
-> {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/4) for this feature available on Laracasts.
-
-Laravel 5.3 ships with a more modern frontend structure. This primarily affects the `make:auth` authentication scaffolding. Instead of loading frontend assets from a CDN, dependencies are specified in the default `package.json` file.
-
-In addition, support for single file [Vue components](https://vuejs.org) is now included out of the box. A sample `Example.vue` component is included in the `resources/assets/js/components` directory. In addition, the new `resources/assets/js/app.js` file bootstraps and configures your JavaScript libraries and, if applicable, Vue components.
-
-This structure provides more guidance on how to begin developing modern, robust JavaScript applications, without requiring your application to use any given JavaScript or CSS framework. For more information on getting started with modern Laravel frontend development, check out the new [introductory frontend documentation](/docs/5.3/frontend).
-
-### Routes Files
-
-By default, fresh Laravel 5.3 applications contain two HTTP route files in a new top-level `routes` directory. The `web` and `api` route files provide more explicit guidance in how to split the routes for your web interface and your API. The routes in the `api` route file are automatically assigned the `api` prefix by the `RouteServiceProvider`.
-
-### Closure Console Commands
-
-In addition to being defined as command classes, Artisan commands may now be defined as simple Closures in the `commands` method of your `app/Console/Kernel.php` file. In fresh Laravel 5.3 applications, the `commands` method loads a `routes/console.php` file which allows you to define your Console commands as route-like, Closure based entry points into your application:
-
-    Artisan::command('build {project}', function ($project) {
-        $this->info('Building project...');
-    });
-
-For more information on Closure commands, check out the [full Artisan documentation](/docs/5.3/artisan#closure-commands).
-
-### The `$loop` Variable
-
-> {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-3/episodes/7) for this feature available on Laracasts.
-
-When looping within a Blade template, a `$loop` variable will be available inside of your loop. This variable provides access to some useful bits of information such as the current loop index and whether this is the first or last iteration through the loop:
-
-    @foreach ($users as $user)
-        @if ($loop->first)
-            This is the first iteration.
-        @endif
-
-        @if ($loop->last)
-            This is the last iteration.
-        @endif
-
-        <p>This is user {{ $user->id }}</p>
-    @endforeach
-
-For more information, consult the [full Blade documentation](/docs/5.3/blade#the-loop-variable).
+For general releases, bug fixes are provided for 6 months and security fixes are provided for 1 year.
 
 <a name="laravel-5.2"></a>
 ## Laravel 5.2
@@ -254,7 +35,7 @@ Laravel already makes it easy to handle authentication on the back-end; however,
 
 This command will generate plain, Bootstrap compatible views for user login, registration, and password reset. The command will also update your routes file with the appropriate routes.
 
-> {note} This feature is only meant to be used on new applications, not during application upgrades.
+> **Note:** This feature is only meant to be used on new applications, not during application upgrades.
 
 ### Implicit Model Binding
 
@@ -376,7 +157,7 @@ Every page of the Laravel documentation has been meticulously reviewed and drama
 
 ### Event Broadcasting
 
-In many modern web applications, web sockets are used to implement realtime, live-updating user interfaces. When some data is updated on the server, a message is typically sent over a websocket connection to be handled by the client.
+In many modern web applications, web sockets are used to implement real-time, live-updating user interfaces. When some data is updated on the server, a message is typically sent over a websocket connection to be handled by the client.
 
 To assist you in building these types of applications, Laravel makes it easy to "broadcast" your events over a websocket connection. Broadcasting your Laravel events allows you to share the same event names between your server-side code and your client-side JavaScript framework.
 
@@ -438,7 +219,7 @@ For more information on testing, check out the [testing documentation](testing.m
 
 ### Model Factories
 
-Laravel now ships with an easy way to create stub Eloquent models using [model factories](database-testing.md#writing-factories). Model factories allow you to easily define a set of "default" attributes for your Eloquent model, and then generate test model instances for your tests or database seeds. Model factories also take advantage of the powerful [Faker](https://github.com/fzaninotto/Faker) PHP library for generating random attribute data:
+Laravel now ships with an easy way to create stub Eloquent models using [model factories](testing.md#model-factories). Model factories allow you to easily define a set of "default" attributes for your Eloquent model, and then generate test model instances for your tests or database seeds. Model factories also take advantage of the powerful [Faker](https://github.com/fzaninotto/Faker) PHP library for generating random attribute data:
 
     $factory->define(App\User::class, function ($faker) {
         return [
@@ -449,7 +230,7 @@ Laravel now ships with an easy way to create stub Eloquent models using [model f
         ];
     });
 
-For more information on model factories, check out [the documentation](database-testing.md#writing-factories).
+For more information on model factories, check out [the documentation](testing.md#model-factories).
 
 ### Artisan Improvements
 
@@ -714,7 +495,7 @@ The popular `dd` helper function, which dumps variable debug information, has be
 
 The full change list for this release by running the `php artisan changes` command from a 4.2 installation, or by [viewing the change file on Github](https://github.com/laravel/framework/blob/4.2/src/Illuminate/Foundation/changes.json). These notes only cover the major enhancements and changes for the release.
 
-> {note} During the 4.2 release cycle, many small bug fixes and enhancements were incorporated into the various Laravel 4.1 point releases. So, be sure to check the change list for Laravel 4.1 as well!
+> **Note:** During the 4.2 release cycle, many small bug fixes and enhancements were incorporated into the various Laravel 4.1 point releases. So, be sure to check the change list for Laravel 4.1 as well!
 
 ### PHP 5.4 Requirement
 

@@ -1,9 +1,7 @@
 # Eloquent: Serialization
 
 - [Introduction](#introduction)
-- [Serializing Models & Collections](#serializing-models-and-collections)
-    - [Serializing To Arrays](#serializing-to-arrays)
-    - [Serializing To JSON](#serializing-to-json)
+- [Basic Usage](#basic-usage)
 - [Hiding Attributes From JSON](#hiding-attributes-from-json)
 - [Appending Values To JSON](#appending-values-to-json)
 
@@ -12,34 +10,32 @@
 
 When building JSON APIs, you will often need to convert your models and relationships to arrays or JSON. Eloquent includes convenient methods for making these conversions, as well as controlling which attributes are included in your serializations.
 
-<a name="serializing-models-and-collections"></a>
-## Serializing Models & Collections
+<a name="basic-usage"></a>
+## Basic Usage
 
-<a name="serializing-to-arrays"></a>
-### Serializing To Arrays
+#### Converting A Model To An Array
 
-To convert a model and its loaded [relationships](eloquent-relationships.md) to an array, you should use the `toArray` method. This method is recursive, so all attributes and all relations (including the relations of relations) will be converted to arrays:
+To convert a model and its loaded [relationships](eloquent-relationships.md) to an array, you may use the `toArray` method. This method is recursive, so all attributes and all relations (including the relations of relations) will be converted to arrays:
 
     $user = App\User::with('roles')->first();
 
     return $user->toArray();
 
-You may also convert entire [collections](eloquent-collections.md) of models to arrays:
+You may also convert [collections](eloquent-collections.md) to arrays:
 
     $users = App\User::all();
 
     return $users->toArray();
 
-<a name="serializing-to-json"></a>
-### Serializing To JSON
+#### Converting A Model To JSON
 
-To convert a model to JSON, you should use the `toJson` method. Like `toArray`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON:
+To convert a model to JSON, you may use the `toJson` method. Like `toArray`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON:
 
     $user = App\User::find(1);
 
     return $user->toJson();
 
-Alternatively, you may cast a model or collection to a string, which will automatically call the `toJson` method on the model or collection:
+Alternatively, you may cast a model or collection to a string, which will automatically call the `toJson` method:
 
     $user = App\User::find(1);
 
@@ -54,7 +50,7 @@ Since models and collections are converted to JSON when cast to a string, you ca
 <a name="hiding-attributes-from-json"></a>
 ## Hiding Attributes From JSON
 
-Sometimes you may wish to limit the attributes, such as passwords, that are included in your model's array or JSON representation. To do so, add a `$hidden` property to your model:
+Sometimes you may wish to limit the attributes, such as passwords, that are included in your model's array or JSON representation. To do so, add a `$hidden` property definition to your model:
 
     <?php
 
@@ -72,9 +68,9 @@ Sometimes you may wish to limit the attributes, such as passwords, that are incl
         protected $hidden = ['password'];
     }
 
-> {note} When hiding relationships, use the relationship's method name, not its dynamic property name.
+> **Note:** When hiding relationships, use the relationship's **method** name, not its dynamic property name.
 
-Alternatively, you may use the `visible` property to define a white-list of attributes that should be included in your model's array and JSON representation. All other attributes will be hidden when the model is converted to an array or JSON:
+Alternatively, you may use the `visible` property to define a white-list of attributes that should be included in your model's array and JSON representation:
 
     <?php
 
@@ -92,7 +88,7 @@ Alternatively, you may use the `visible` property to define a white-list of attr
         protected $visible = ['first_name', 'last_name'];
     }
 
-#### Temporarily Modifying Attribute Visibility
+#### Temporarily Modifying Property Visibility
 
 If you would like to make some typically hidden attributes visible on a given model instance, you may use the `makeVisible` method. The `makeVisible` method returns the model instance for convenient method chaining:
 
@@ -105,7 +101,7 @@ Likewise, if you would like to make some typically visible attributes hidden on 
 <a name="appending-values-to-json"></a>
 ## Appending Values To JSON
 
-Occasionally, when casting models to an array or JSON, you may wish to add attributes that do not have a corresponding column in your database. To do so, first define an [accessor](eloquent-mutators.md) for the value:
+Occasionally, you may need to add array attributes that do not have a corresponding column in your database. To do so, first define an [accessor](eloquent-mutators.md) for the value:
 
     <?php
 
@@ -126,7 +122,7 @@ Occasionally, when casting models to an array or JSON, you may wish to add attri
         }
     }
 
-After creating the accessor, add the attribute name to the `appends` property on the model. Note that attribute names are typically referenced in "snake case", even though the accessor is defined using "camel case":
+Once you have created the accessor, add the attribute name to the `appends` property on the model:
 
     <?php
 
@@ -144,4 +140,4 @@ After creating the accessor, add the attribute name to the `appends` property on
         protected $appends = ['is_admin'];
     }
 
-Once the attribute has been added to the `appends` list, it will be included in both the model's array and JSON representations. Attributes in the `appends` array will also respect the `visible` and `hidden` settings configured on the model.
+Once the attribute has been added to the `appends` list, it will be included in both the model's array and JSON forms. Attributes in the `appends` array will also respect the `visible` and `hidden` settings configured on the model.

@@ -6,7 +6,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel includes a variety of global "helper" PHP functions. Many of these functions are used by the framework itself; however, you are free to use them in your own applications if you find them convenient.
+Laravel includes a variety of "helper" PHP functions. Many of these functions are used by the framework itself; however, you are free to use them in your own applications if you find them convenient.
 
 <a name="available-methods"></a>
 ## Available Methods
@@ -36,7 +36,6 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [array_forget](#method-array-forget)
 [array_get](#method-array-get)
 [array_has](#method-array-has)
-[array_last](#method-array-last)
 [array_only](#method-array-only)
 [array_pluck](#method-array-pluck)
 [array_prepend](#method-array-prepend)
@@ -83,7 +82,6 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [str_singular](#method-str-singular)
 [str_slug](#method-str-slug)
 [studly_case](#method-studly-case)
-[title_case](#method-title-case)
 [trans](#method-trans)
 [trans_choice](#method-trans-choice)
 
@@ -97,7 +95,6 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [asset](#method-asset)
 [secure_asset](#method-secure-asset)
 [route](#method-route)
-[secure_url](#method-secure-url)
 [url](#method-url)
 
 </div>
@@ -106,13 +103,9 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 
 <div class="collection-method-list" markdown="1">
 
-[abort](#method-abort)
-[abort_if](#method-abort-if)
-[abort_unless](#method-abort-unless)
 [auth](#method-auth)
 [back](#method-back)
 [bcrypt](#method-bcrypt)
-[cache](#method-cache)
 [collect](#method-collect)
 [config](#method-config)
 [csrf_field](#method-csrf-field)
@@ -122,8 +115,6 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [env](#method-env)
 [event](#method-event)
 [factory](#method-factory)
-[info](#method-info)
-[logger](#method-logger)
 [method_field](#method-method-field)
 [old](#method-old)
 [redirect](#method-redirect)
@@ -132,6 +123,7 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [session](#method-session)
 [value](#method-value)
 [view](#method-view)
+[with](#method-with)
 
 </div>
 
@@ -207,7 +199,7 @@ The `array_first` function returns the first element of an array passing a given
 
     $array = [100, 200, 300];
 
-    $value = array_first($array, function ($value, $key) {
+    $value = array_first($array, function ($key, $value) {
         return $value >= 150;
     });
 
@@ -257,30 +249,13 @@ The `array_get` function also accepts a default value, which will be returned if
 <a name="method-array-has"></a>
 #### `array_has()` {#collection-method}
 
-The `array_has` function checks that a given item or items exists in an array using "dot" notation:
+The `array_has` function checks that a given item exists in an array using "dot" notation:
 
-    $array = ['product' => ['name' => 'desk', 'price' => 100]];
+    $array = ['products' => ['desk' => ['price' => 100]]];
 
-    $hasItem = array_has($array, 'product.name');
+    $hasDesk = array_has($array, 'products.desk');
 
     // true
-
-    $hasItems = array_has($array, ['product.price', 'product.discount']);
-
-    // false
-
-<a name="method-array-last"></a>
-#### `array_last()` {#collection-method}
-
-The `array_last` function returns the last element of an array passing a given truth test:
-
-    $array = [100, 200, 300, 110];
-
-    $value = array_last($array, function ($value, $key) {
-        return $value >= 150;
-    });
-
-    // 300
 
 <a name="method-array-only"></a>
 #### `array_only()` {#collection-method}
@@ -411,7 +386,7 @@ The `array_where` function filters the array using the given Closure:
 
     $array = [100, '200', 300, '400', 500];
 
-    $array = array_where($array, function ($value, $key) {
+    $array = array_where($array, function ($key, $value) {
         return is_string($value);
     });
 
@@ -445,18 +420,22 @@ The `last` function returns the last element in the given array:
 <a name="method-app-path"></a>
 #### `app_path()` {#collection-method}
 
-The `app_path` function returns the fully qualified path to the `app` directory. You may also use the `app_path` function to generate a fully qualified path to a file relative to the application directory:
+The `app_path` function returns the fully qualified path to the `app` directory:
 
     $path = app_path();
+
+You may also use the `app_path` function to generate a fully qualified path to a given file relative to the application directory:
 
     $path = app_path('Http/Controllers/Controller.php');
 
 <a name="method-base-path"></a>
 #### `base_path()` {#collection-method}
 
-The `base_path` function returns the fully qualified path to the project root. You may also use the `base_path` function to generate a fully qualified path to a given file relative to the project root directory:
+The `base_path` function returns the fully qualified path to the project root:
 
     $path = base_path();
+
+You may also use the `base_path` function to generate a fully qualified path to a given file relative to the application directory:
 
     $path = base_path('vendor/bin');
 
@@ -477,7 +456,7 @@ The `database_path` function returns the fully qualified path to the application
 <a name="method-elixir"></a>
 #### `elixir()` {#collection-method}
 
-The `elixir` function gets the path to a [versioned Elixir file](elixir.md):
+The `elixir` function gets the path to the versioned [Elixir](elixir.md) file:
 
     elixir($file);
 
@@ -491,18 +470,22 @@ The `public_path` function returns the fully qualified path to the `public` dire
 <a name="method-resource-path"></a>
 #### `resource_path()` {#collection-method}
 
-The `resource_path` function returns the fully qualified path to the `resources` directory. You may also use the `resource_path` function to generate a fully qualified path to a given file relative to the storage directory:
+The `resource_path` function returns the fully qualified path to the `resources` directory:
 
     $path = resource_path();
+
+You may also use the `resource_path` function to generate a fully qualified path to a given file relative to the storage directory:
 
     $path = resource_path('assets/sass/app.scss');
 
 <a name="method-storage-path"></a>
 #### `storage_path()` {#collection-method}
 
-The `storage_path` function returns the fully qualified path to the `storage` directory. You may also use the `storage_path` function to generate a fully qualified path to a given file relative to the storage directory:
+The `storage_path` function returns the fully qualified path to the `storage` directory:
 
     $path = storage_path();
+
+You may also use the `storage_path` function to generate a fully qualified path to a given file relative to the storage directory:
 
     $path = storage_path('app/file.txt');
 
@@ -530,7 +513,7 @@ The `class_basename` returns the class name of the given class with the class' n
 <a name="method-e"></a>
 #### `e()` {#collection-method}
 
-The `e` function runs `htmlspecialchars` over the given string:
+The `e` function runs `htmlentities` over the given string:
 
     echo e('<html>foo</html>');
 
@@ -578,12 +561,6 @@ The `starts_with` function determines if the given string begins with the given 
 The `str_contains` function determines if the given string contains the given value:
 
     $value = str_contains('This is my name', 'my');
-
-    // true
-
-You may also pass an array of values to determine if the given string contains any of the values:
-
-    $value = str_contains('This is my name', ['my', 'foo']);
 
     // true
 
@@ -635,7 +612,7 @@ You may provide an integer as a second argument to the function to retrieve the 
 <a name="method-str-random"></a>
 #### `str_random()` {#collection-method}
 
-The `str_random` function generates a random string of the specified length. This function uses PHP's `random_bytes` function:
+The `str_random` function generates a random string of the specified length:
 
     $string = str_random(40);
 
@@ -665,15 +642,6 @@ The `studly_case` function converts the given string to `StudlyCase`:
     $value = studly_case('foo_bar');
 
     // FooBar
-
-<a name="method-title-case"></a>
-#### `title_case()` {#collection-method}
-
-The `title_case` function converts the given string to `Title Case`:
-
-    $title = title_case('a nice title uses the correct case');
-
-    // A Nice Title Uses The Correct Case
 
 <a name="method-trans"></a>
 #### `trans()` {#collection-method}
@@ -708,14 +676,14 @@ If the method accepts route parameters, you may pass them as the second argument
 
 Generate a URL for an asset using the current scheme of the request (HTTP or HTTPS):
 
-    $url = asset('img/photo.jpg');
+	$url = asset('img/photo.jpg');
 
 <a name="method-secure-asset"></a>
 #### `secure_asset()` {#collection-method}
 
 Generate a URL for an asset using HTTPS:
 
-    echo secure_asset('foo/bar.zip', $title, $attributes = []);
+	echo secure_asset('foo/bar.zip', $title, $attributes = []);
 
 <a name="method-route"></a>
 #### `route()` {#collection-method}
@@ -727,15 +695,6 @@ The `route` function generates a URL for the given named route:
 If the route accepts parameters, you may pass them as the second argument to the method:
 
     $url = route('routeName', ['id' => 1]);
-
-<a name="method-secure-url"></a>
-#### `secure_url()` {#collection-method}
-
-The `secure_url` function generates a fully qualified HTTPS URL to the given path:
-
-    echo secure_url('user/profile');
-
-    echo secure_url('user/profile', [1]);
 
 <a name="method-url"></a>
 #### `url()` {#collection-method}
@@ -754,31 +713,6 @@ If no path is provided, a `Illuminate\Routing\UrlGenerator` instance is returned
 
 <a name="miscellaneous"></a>
 ## Miscellaneous
-
-<a name="method-abort"></a>
-#### `abort()` {#collection-method}
-
-The `abort` function throws a HTTP exception which will be rendered by the exception handler:
-
-    abort(401);
-
-You may also provide the exception's response text:
-
-    abort(401, 'Unauthorized.');
-
-<a name="method-abort-if"></a>
-#### `abort_if()` {#collection-method}
-
-The `abort_if` function throws an HTTP exception if a given boolean expression evaluates to `true`:
-
-    abort_if(! Auth::user()->isAdmin(), 403);
-
-<a name="method-abort-unless"></a>
-#### `abort_unless()` {#collection-method}
-
-The `abort_unless` function throws an HTTP exception if a given boolean expression evaluates to `false`:
-
-    abort_unless(Auth::user()->isAdmin(), 403);
 
 <a name="method-auth"></a>
 #### `auth()` {#collection-method}
@@ -801,25 +735,10 @@ The `bcrypt` function hashes the given value using Bcrypt. You may use it as an 
 
     $password = bcrypt('my-secret-password');
 
-<a name="method-cache"></a>
-#### `cache()` {#collection-method}
-
-The `cache` function may be used to get values from the cache. If the given key does not exist in the cache, an optional default value will be returned:
-
-    $value = cache('key');
-
-    $value = cache('key', 'default');
-
-You may add items to the cache by passing an array of key / value pairs to the function. You should also pass the number of minutes or duration the cached value should be considered valid:
-
-    cache(['key' => 'value'], 5);
-
-    cache(['key' => 'value'], Carbon::now()->addSeconds(10));
-
 <a name="method-collect"></a>
 #### `collect()` {#collection-method}
 
-The `collect` function creates a [collection](collections.md) instance from the given array:
+The `collect` function creates a [collection](collections.md) instance from the supplied items:
 
     $collection = collect(['taylor', 'abigail']);
 
@@ -853,11 +772,9 @@ The `csrf_token` function retrieves the value of the current CSRF token:
 <a name="method-dd"></a>
 #### `dd()` {#collection-method}
 
-The `dd` function dumps the given variables and ends execution of the script:
+The `dd` function dumps the given variable and ends execution of the script:
 
     dd($value);
-
-    dd($value1, $value2, $value3, ...);
 
 If you do not want to halt the execution of your script, use the `dump` function instead:
 
@@ -890,35 +807,9 @@ The `event` function dispatches the given [event](events.md) to its listeners:
 <a name="method-factory"></a>
 #### `factory()` {#collection-method}
 
-The `factory` function creates a model factory builder for a given class, name, and amount. It can be used while [testing](database-testing.md#writing-factories) or [seeding](seeding.md#using-model-factories):
+The `factory` function creates a model factory builder for a given class, name, and amount. It can be used while [testing](testing.md#model-factories) or [seeding](seeding.md#using-model-factories):
 
     $user = factory(App\User::class)->make();
-
-<a name="method-info"></a>
-#### `info()` {#collection-method}
-
-The `info` function will write information to the log:
-
-    info('Some helpful information!');
-
-An array of contextual data may also be passed to the function:
-
-    info('User login attempt failed.', ['id' => $user->id]);
-
-<a name="method-logger"></a>
-#### `logger()` {#collection-method}
-
-The `logger` function can be used to write a `debug` level message to the log:
-
-    logger('Debug message');
-
-An array of contextual data may also be passed to the function:
-
-    logger('User has logged in.', ['id' => $user->id]);
-
-A [logger](errors.md#logging) instance will be returned if no value is passed to the function:
-
-    logger()->error('You are not allowed here.');
 
 <a name="method-method-field"></a>
 #### `method_field()` {#collection-method}
@@ -941,11 +832,9 @@ The `old` function [retrieves](requests.md#retrieving-input) an old input value 
 <a name="method-redirect"></a>
 #### `redirect()` {#collection-method}
 
-The `redirect` function returns a redirect HTTP response, or returns the redirector instance if called with no arguments:
+The `redirect` function returns an instance of the redirector to do [redirects](responses.md#redirects):
 
     return redirect('/home');
-
-    return redirect()->route('route.name');
 
 <a name="method-request"></a>
 #### `request()` {#collection-method}
@@ -968,7 +857,7 @@ The `response` function creates a [response](responses.md) instance or obtains a
 <a name="method-session"></a>
 #### `session()` {#collection-method}
 
-The `session` function may be used to get or set session values:
+The `session` function may be used to get / set a session value:
 
     $value = session('key');
 
@@ -987,9 +876,7 @@ The session store will be returned if no value is passed to the function:
 
 The `value` function's behavior will simply return the value it is given. However, if you pass a `Closure` to the function, the `Closure` will be executed then its result will be returned:
 
-    $value = value(function () {
-        return 'bar';
-    });
+    $value = value(function() { return 'bar'; });
 
 <a name="method-view"></a>
 #### `view()` {#collection-method}
@@ -997,3 +884,10 @@ The `value` function's behavior will simply return the value it is given. Howeve
 The `view` function retrieves a [view](views.md) instance:
 
     return view('auth.login');
+
+<a name="method-with"></a>
+#### `with()` {#collection-method}
+
+The `with` function returns the value it is given. This function is primarily useful for method chaining where it would otherwise be impossible:
+
+    $value = with(new Foo)->work();

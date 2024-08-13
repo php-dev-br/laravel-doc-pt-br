@@ -3,21 +3,22 @@
 - [Introduction](#introduction)
     - [Valet Or Homestead](#valet-or-homestead)
 - [Installation](#installation)
-    - [Upgrading](#upgrading)
+- [Release Notes](#release-notes)
 - [Serving Sites](#serving-sites)
     - [The "Park" Command](#the-park-command)
     - [The "Link" Command](#the-link-command)
     - [Securing Sites With TLS](#securing-sites)
 - [Sharing Sites](#sharing-sites)
+- [Viewing Logs](#viewing-logs)
 - [Custom Valet Drivers](#custom-valet-drivers)
 - [Other Valet Commands](#other-valet-commands)
 
 <a name="introduction"></a>
 ## Introduction
 
-Valet is a Laravel development environment for Mac minimalists. No Vagrant, no `/etc/hosts` file. You can even share your sites publicly using local tunnels. _Yeah, we like it too._
+Valet is a Laravel development environment for Mac minimalists. No Vagrant, No Apache, No Nginx, No `/etc/hosts` file. You can even share your sites publicly using local tunnels. _Yeah, we like it too._
 
-Laravel Valet configures your Mac to always run [Nginx](https://www.nginx.com/) in the background when your machine starts. Then, using [DnsMasq](https://en.wikipedia.org/wiki/Dnsmasq), Valet proxies all requests on the `*.dev` domain to point to sites installed on your local machine.
+Laravel Valet configures your Mac to always run [Caddy](https://caddyserver.com) in the background when your machine starts. Then, using [DnsMasq](https://en.wikipedia.org/wiki/Dnsmasq), Valet proxies all requests on the `*.dev` domain to point to sites installed on your local machine.
 
 In other words, a blazing fast Laravel development environment that uses roughly 7 MB of RAM. Valet isn't a complete replacement for Vagrant or Homestead, but provides a great alternative if you want flexible basics, prefer extreme speed, or are working on a machine with a limited amount of RAM.
 
@@ -27,10 +28,10 @@ Out of the box, Valet support includes, but is not limited to:
 - [Laravel](https://laravel.com)
 - [Lumen](https://lumen.laravel.com)
 - [Symfony](https://symfony.com)
-- [Zend](https://framework.zend.com)
-- [CakePHP 3](https://cakephp.org)
+- [Zend](http://framework.zend.com)
+- [CakePHP 3](http://cakephp.org)
 - [WordPress](https://wordpress.org)
-- [Bedrock](https://roots.io/bedrock/)
+- [Bedrock](https://roots.io/bedrock)
 - [Craft](https://craftcms.com)
 - [Statamic](https://statamic.com)
 - [Jigsaw](http://jigsaw.tighten.co)
@@ -44,18 +45,18 @@ However, you may extend Valet with your own [custom drivers](#custom-valet-drive
 
 As you may know, Laravel offers [Homestead](homestead.md), another local Laravel development environment. Homestead and Valet differ in regards to their intended audience and their approach to local development. Homestead offers an entire Ubuntu virtual machine with automated Nginx configuration. Homestead is a wonderful choice if you want a fully virtualized Linux development environment or are on Windows / Linux.
 
-Valet only supports Mac, and requires you to install PHP and a database server directly onto your local machine. This is easily achieved by using [Homebrew](http://brew.sh/) with commands like `brew install php71` and `brew install mariadb`. Valet provides a blazing fast local development environment with minimal resource consumption, so it's great for developers who only require PHP / MySQL and do not need a fully virtualized development environment.
+Valet only supports Mac, and requires you to install PHP and a database server directly onto your local machine. This is easily achieved by using [Homebrew](http://brew.sh/) with commands like `brew install php70` and `brew install mariadb`. Valet provides a blazing fast local development environment with minimal resource consumption, so it's great for developers who only require PHP / MySQL and do not need a fully virtualized development environment.
 
 Both Valet and Homestead are great choices for configuring your Laravel development environment. Which one you choose will depend on your personal taste and your team's needs.
 
 <a name="installation"></a>
 ## Installation
 
-**Valet requires macOS and [Homebrew](http://brew.sh/). Before installation, you should make sure that no other programs such as Apache or Nginx are binding to your local machine's port 80.**
+**Valet requires the Mac operating system and [Homebrew](http://brew.sh/). Before installation, you should make sure that no other programs such as Apache or Nginx are binding to your local machine's port 80.**
 
 <div class="content-list" markdown="1">
 - Install or update [Homebrew](http://brew.sh/) to the latest version using `brew update`.
-- Install PHP 7.1 using Homebrew via `brew install homebrew/php/php71`.
+- Install PHP 7.0 using Homebrew via `brew install homebrew/php/php70`.
 - Install Valet with Composer via `composer global require laravel/valet`. Make sure the `~/.composer/vendor/bin` directory is in your system's "PATH".
 - Run the `valet install` command. This will configure and install Valet and DnsMasq, and register Valet's daemon to launch when your system starts.
 </div>
@@ -72,30 +73,26 @@ For example, if you'd like to use `.app` instead of `.dev`, run `valet domain ap
 
 #### Database
 
-If you need a database, try MariaDB by running `brew install mariadb` on your command line. Once MariaDB has been installed, you may start it using the `brew services start mariadb` command. You can then connect to the database at `127.0.0.1` using the `root` username and an empty string for the password.
+If you need a database, try MariaDB by running `brew install mariadb` on your command line. You can connect to the database at `127.0.0.1` using the `root` username and an empty string for the password.
 
-<a name="upgrading"></a>
-### Upgrading
+<a name="release-notes"></a>
+## Release Notes
 
-You may update your Valet installation using the `composer global update` command in your terminal. After upgrading, it is good practice to run the `valet install` command so Valet can make additional upgrades to your configuration files if necessary.
+### Version 1.1.5
 
-#### Upgrading To Valet 2.0
+The 1.1.5 release of Valet brings a variety of internal improvements.
 
-Valet 2.0 transitions Valet's underlying web server from Caddy to Nginx. Before upgrading to this version you should run the following commands to stop and uninstall the existing Caddy daemon:
+#### Upgrade Instructions
 
-    valet stop
-    valet uninstall
+After updating your Valet installation using `composer global update`, you should run the `valet install` command in your terminal.
 
-Next, you should upgrade to the latest version of Valet. Depending on how you installed Valet, this is typically done through Git or Composer. If you installed Valet via Composer, you should use the following command to update to the latest major version:
+### Version 1.1.0
 
-    composer global require laravel/valet
+The 1.1.0 release of Valet brings a variety of great improvements. The built-in PHP server has been replaced with [Caddy](https://caddyserver.com/) for serving incoming HTTP requests. Introducing Caddy allows for a variety of future improvements and allows Valet sites to make HTTP requests to other Valet sites without blocking the built-in PHP server.
 
-Once the fresh Valet source code has been downloaded, you should run the `install` command:
+#### Upgrade Instructions
 
-    valet install
-    valet restart
-
-After upgrading, it may be necessary to re-park or re-link your sites.
+After updating your Valet installation using `composer global update`, you should run the `valet install` command in your terminal to create the new Caddy daemon file on your system.
 
 <a name="serving-sites"></a>
 ## Serving Sites
@@ -125,8 +122,6 @@ The `link` command may also be used to serve your Laravel sites. This command is
 
 To see a listing of all of your linked directories, run the `valet links` command. You may use `valet unlink app-name` to destroy the symbolic link.
 
-> {tip} You can use `valet link` to serve the same project from multiple (sub)domains. To add a subdomain or another domain to your project run `valet link subdomain.app-name` from the project folder.
-
 <a name="securing-sites"></a>
 **Securing Sites With TLS**
 
@@ -147,7 +142,10 @@ To share a site, navigate to the site's directory in your terminal and run the `
 
 To stop sharing your site, hit `Control + C` to cancel the process.
 
-> {note} `valet share` does not currently support sharing sites that have been secured using the `valet secure` command.
+<a name="viewing-logs"></a>
+## Viewing Logs
+
+If you would like to stream all of the logs for all of your sites to your terminal, run the `valet logs` command. New log entries will display in your terminal as they occur. This is a great way to stay on top of all of your log files without ever having to leave your terminal.
 
 <a name="custom-valet-drivers"></a>
 ## Custom Valet Drivers
@@ -158,7 +156,7 @@ All three methods receive the `$sitePath`, `$siteName`, and `$uri` values as the
 
 Once you have completed your custom Valet driver, place it in the `~/.valet/Drivers` directory using the `FrameworkValetDriver.php` naming convention. For example, if you are writing a custom valet driver for WordPress, your file name should be `WordPressValetDriver.php`.
 
-Let's take a look at a sample implementation of each method your custom Valet driver should implement.
+Let's take at a sample implementation of each method your custom Valet driver should implement.
 
 #### The `serves` Method
 
@@ -172,7 +170,7 @@ For example, let's pretend we are writing a `WordPressValetDriver`. Our serve me
      * @param  string  $sitePath
      * @param  string  $siteName
      * @param  string  $uri
-     * @return bool
+     * @return void
      */
     public function serves($sitePath, $siteName, $uri)
     {
@@ -200,7 +198,7 @@ The `isStaticFile` should determine if the incoming request is for a file that i
         return false;
     }
 
-> {note} The `isStaticFile` method will only be called if the `serves` method returns `true` for the incoming request and the request URI is not `/`.
+> **Note:** The `isStaticFile` method will only be called if the `serves` method returns `true` for the incoming request and the request URI is not `/`.
 
 #### The `frontControllerPath` Method
 

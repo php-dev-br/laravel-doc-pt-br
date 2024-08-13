@@ -28,7 +28,7 @@ However, collections are much more powerful than arrays and expose a variety of 
         return $user->name;
     });
 
-> {note} While most Eloquent collection methods return a new instance of an Eloquent collection, the `pluck`, `keys`, `zip`, `collapse`, `flatten` and `flip` methods return a [base collection](collections.md) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be automatically cast to a base collection.
+> **Note:** While most Eloquent collection methods return a new instance of an Eloquent collection, the `pluck`, `keys`, `zip`, `collapse`, `flatten` and `flip` methods return a [base collection](collections.md) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be automatically cast to a base collection.
 
 <a name="available-methods"></a>
 ## Available Methods
@@ -57,7 +57,6 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [collapse](collections.md#method-collapse)
 [combine](collections.md#method-combine)
 [contains](collections.md#method-contains)
-[containsStrict](collections.md#method-containsstrict)
 [count](collections.md#method-count)
 [diff](collections.md#method-diff)
 [diffKeys](collections.md#method-diffkeys)
@@ -77,19 +76,16 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [implode](collections.md#method-implode)
 [intersect](collections.md#method-intersect)
 [isEmpty](collections.md#method-isempty)
-[isNotEmpty](collections.md#method-isnotempty)
 [keyBy](collections.md#method-keyby)
 [keys](collections.md#method-keys)
 [last](collections.md#method-last)
 [map](collections.md#method-map)
-[mapWithKeys](collections.md#method-mapwithkeys)
 [max](collections.md#method-max)
 [median](collections.md#method-median)
 [merge](collections.md#method-merge)
 [min](collections.md#method-min)
 [mode](collections.md#method-mode)
 [only](collections.md#method-only)
-[partition](collections.md#method-partition)
 [pipe](collections.md#method-pipe)
 [pluck](collections.md#method-pluck)
 [pop](collections.md#method-pop)
@@ -109,7 +105,6 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [sortBy](collections.md#method-sortby)
 [sortByDesc](collections.md#method-sortbydesc)
 [splice](collections.md#method-splice)
-[split](collections.md#method-split)
 [sum](collections.md#method-sum)
 [take](collections.md#method-take)
 [toArray](collections.md#method-toarray)
@@ -117,12 +112,11 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [transform](collections.md#method-transform)
 [union](collections.md#method-union)
 [unique](collections.md#method-unique)
-[uniqueStrict](collections.md#method-uniquestrict)
 [values](collections.md#method-values)
 [where](collections.md#method-where)
-[whereStrict](collections.md#method-wherestrict)
+[whereLoose](collections.md#method-whereloose)
 [whereIn](collections.md#method-wherein)
-[whereInStrict](collections.md#method-whereinstrict)
+[whereInLoose](collections.md#method-whereinloose)
 [zip](collections.md#method-zip)
 
 </div>

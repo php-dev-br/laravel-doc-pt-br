@@ -1,6 +1,5 @@
 # Upgrade Guide
 
-- [Upgrading To 5.3.0 From 5.2](#upgrade-5.3.0)
 - [Upgrading To 5.2.0 From 5.1](#upgrade-5.2.0)
 - [Upgrading To 5.1.11](#upgrade-5.1.11)
 - [Upgrading To 5.1.0](#upgrade-5.1.0)
@@ -11,550 +10,12 @@
 - [Upgrading To 4.1.26 From <= 4.1.25](#upgrade-4.1.26)
 - [Upgrading To 4.1 From 4.0](#upgrade-4.1)
 
-<a name="upgrade-5.3.0"></a>
-## Upgrading To 5.3.0 From 5.2
-
-#### Estimated Upgrade Time: 2-3 Hours
-
-> {note} We attempt to document every possible breaking change. Since some of these breaking changes are in obscure parts of the framework only a portion of these changes may actually affect your application.
-
-### Updating Dependencies
-
-Update your `laravel/framework` dependency to `5.3.*` in your `composer.json` file.
-
-You should also upgrade your `symfony/css-selector` and `symfony/dom-crawler` dependencies to `3.1.*` in the `require-dev` section of your `composer.json` file.
-
-### PHP & HHVM
-
-Laravel 5.3 requires PHP 5.6.4 or higher. HHVM is no longer officially supported as it does not contain the same language features as PHP 5.6+.
-
-### Deprecations
-
-All of the deprecations listed in the [Laravel 5.2 upgrade guide](#5.2-deprecations) have been removed from the framework. You should review this list to verify you are no longer using these deprecated features.
-
-### Application Service Providers
-
-You may remove the arguments from the `boot` method on the `EventServiceProvider`, `RouteServiceProvider`, and `AuthServiceProvider` classes. Any calls to the given arguments may be converted to use the equivalent [facade](/docs/5.3/facades) instead. So, for example, instead of calling methods on the `$dispatcher` argument, you may simply call the `Event` facade. Likewise, instead of making method calls to the `$router` argument, you may make calls to the `Route` facade, and instead of making method calls to the `$gate` argument, you may make calls to the `Gate` facade.
-
-> {note} When converting method calls to facades, be sure to import the facade class into your service provider.
-
-### Arrays
-
-#### Key / Value Order Change
-
-The `first`, `last`, and `where` methods on the `Arr` class, in addition to their associated global helper functions, now pass the "value" as the first parameter to the given callback Closure. For example:
-
-    Arr::first($array, function ($value, $key) {
-        return ! is_null($value);
-    });
-
-In previous versions of Laravel, the `$key` was passed first. Since most use cases are only interested in the `$value` it is now passed first. You should do a "global find" in your application for these methods to verify that you are expecting the `$value` to be passed as the first argument to your Closure.
-
-### Artisan
-
-##### The `make:console` Command
-
-The `make:console` command has been renamed to `make:command`.
-
-### Authentication
-
-#### Authentication Scaffolding
-
-The two default authentication controllers provided with the framework have been split into four smaller controllers. This change provides cleaner, more focused authentication controllers by default. The easiest way to upgrade your application to the new authentication controllers is to [grab a fresh copy of each controller from GitHub](https://github.com/laravel/laravel/tree/5.3/app/Http/Controllers/Auth) and place them into your application.
-
-You should also make sure that you are calling the `Auth::routes()` method in your `routes/web.php` file. This method will register the proper routes for the new authentication controllers.
-
-Once these controllers have been placed into your application, you may need to re-implement any customizations you made to these controllers. For example, if you are customizing the authentication guard that is used for authentication, you may need to override the controller's `guard` method. You can examine each authentication controller's trait to determine which methods to override.
-
-> {tip} If you were not customizing the authentication controllers, you should just be able to drop in fresh copies of the controllers from GitHub and verify that you are calling the `Auth::routes` method in your `routes/web.php` file.
-
-#### Password Reset Emails
-
-Password reset emails now use the new Laravel notifications feature. If you would like to customize the notification sent when sending password reset links, you should override the `sendPasswordResetNotification` method of the `Illuminate\Auth\Passwords\CanResetPassword` trait.
-
-Your `User` model **must** use the new `Illuminate\Notifications\Notifiable` trait in order for password reset link emails to be delivered:
-
-    <?php
-
-    namespace App;
-
-    use Illuminate\Notifications\Notifiable;
-    use Illuminate\Foundation\Auth\User as Authenticatable;
-
-    class User extends Authenticatable
-    {
-        use Notifiable;
-    }
-
-> {note} Don't forget to register the `Illuminate\Notifications\NotificationServiceProvider` in the `providers` array of your `config/app.php` configuration file.
-
-#### POST To Logout
-
-The `Auth::routes` method now registers a `POST` route for `/logout` instead of a `GET` route. This prevents other web applications from logging your users out of your application. To upgrade, you should either convert your logout requests to use the `POST` verb or register your own `GET` route for the `/logout` URI:
-
-    Route::get('/logout', 'Auth\LoginController@logout');
-
-### Authorization
-
-#### Calling Policy Methods With Class Names
-
-Some policy methods only receive the currently authenticated user and not an instance of the model they authorize. This situation is most common when authorizing `create` actions. For example, if you are creating a blog, you may wish to check if a user is authorized to create any posts at all.
-
-When defining policy methods that will not receive a model instance, such as a `create` method, the class name will no longer be passed as the second argument to the method. Your method should just expect the authenticated user instance:
-
-    /**
-     * Determine if the given user can create posts.
-     *
-     * @param  \App\User  $user
-     * @return bool
-     */
-    public function create(User $user)
-    {
-        //
-    }
-
-#### The `AuthorizesResources` Trait
-
-The `AuthorizesResources` trait has been merged with the `AuthorizesRequests` trait. You should remove the `AuthorizesResources` trait from your `app/Http/Controllers/Controller.php` file.
-
-### Blade
-
-#### Custom Directives
-
-In prior versions of Laravel, when registering custom Blade directives using the `directive` method, the `$expression` passed to your directive callback contained the outer-most parenthesis. In Laravel 5.3, these outer-most parenthesis are not included in the expression passed to your directive callback. Be sure to review the [Blade extension](/docs/5.3/blade#extending-blade) documentation and verify your custom Blade directives are still working properly.
-
-### Broadcasting
-
-#### Service Provider
-
-Laravel 5.3 includes significant improvements to [event broadcasting](broadcasting.md). You should add the new `BroadcastServiceProvider` to your `app/Providers` directory by [grabbing a fresh copy of the source from GitHub](https://raw.githubusercontent.com/laravel/laravel/5.3/app/Providers/BroadcastServiceProvider.php). Once you have defined the new service provider, you should add it to the `providers` array of your `config/app.php` configuration file.
-
-Next, add the new `broadcasting.php` configuration file to your `app/config` directory by [grabbing a fresh copy of the source from GitHub](https://raw.githubusercontent.com/laravel/laravel/5.3/config/broadcasting.php).
-
-### Cache
-
-#### Extension Closure Binding & `$this`
-
-When calling the `Cache::extend` method with a Closure, `$this` will be bound to the `CacheManager` instance, allowing you to call its methods from within your extension Closure:
-
-    Cache::extend('memcached', function ($app, $config) {
-        try {
-            return $this->createMemcachedDriver($config);
-        } catch (Exception $e) {
-            return $this->createNullDriver($config);
-        }
-    });
-
-### Cashier
-
-If you are using Cashier, you should upgrade your `laravel/cashier` package to the `~7.0` release. This release of Cashier only upgrades a few internal methods to be compatible with Laravel 5.3 and is not a breaking change.
-
-### Collections
-
-#### Key / Value Order Change
-
-The `first`, `last`, and `contains` collection methods all pass the "value" as the first parameter to their given callback Closure. For example:
-
-    $collection->first(function ($value, $key) {
-        return ! is_null($value);
-    });
-
-In previous versions of Laravel, the `$key` was passed first. Since most use cases are only interested in the `$value` it is now passed first. You should do a "global find" in your application for these methods to verify that you are expecting the `$value` to be passed as the first argument to your Closure.
-
-#### Collection `where` Comparison Methods Are "Loose" By Default
-
-A collection's `where` method now performs a "loose" comparison by default instead of a strict comparison. If you would like to perform a strict comparison, you may use the `whereStrict` method.
-
-Due to this change, the `whereLoose` method was removed from the collection class.
-
-The `where` method also no longer accepts a third parameter to indicate "strictness". You should explicitly call either `where` or `whereStrict` depending on your application's needs.
-
-### Configuration
-
-#### Application Name
-
-In the `config/app.php` configuration file, add the following configuration option:
-
-    'name' => 'Your Application Name',
-
-### Controllers
-
-<a name="5.3-session-in-constructors"></a>
-#### Session In The Constructor
-
-In previous versions of Laravel, you could access session variables or the authenticated user in your controller's constructor. This was never intended to be an explicit feature of the framework. In Laravel 5.3, you can't access the session or authenticated user in your controller's constructor because the middleware has not run yet.
-
-As an alternative, you may define a Closure based middleware directly in your controller's constructor. Before using this feature, make sure that your application is running Laravel `5.3.4` or above:
-
-    <?php
-
-    namespace App\Http\Controllers;
-
-    use App\User;
-    use Illuminate\Support\Facades\Auth;
-    use App\Http\Controllers\Controller;
-
-    class ProjectController extends Controller
-    {
-        /**
-         * All of the current user's projects.
-         */
-        protected $projects;
-
-        /**
-         * Create a new controller instance.
-         *
-         * @return void
-         */
-        public function __construct()
-        {
-            $this->middleware(function ($request, $next) {
-                $this->projects = Auth::user()->projects;
-
-                return $next($request);
-            });
-        }
-    }
-
-Of course, you may also access the request session data or authenticated user by type-hinting the `Illuminate\Http\Request` class on your controller action:
-
-    /**
-     * Show all of the projects for the current user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return Response
-     */
-    public function index(Request $request)
-    {
-        $projects = $request->user()->projects;
-
-        $value = $request->session()->get('key');
-
-        //
-    }
-
-### Database
-
-#### Collections
-
-The [fluent query builder](queries.md) now returns `Illuminate\Support\Collection` instances instead of plain arrays. This brings consistency to the result types returned by the fluent query builder and Eloquent.
-
-If you do not want to migrate your query builder results to `Collection` instances, you may chain the `all` method onto your calls to the query builder's `get` or `pluck` methods. This will return a plain PHP array of the results, allowing you to maintain backwards compatibility:
-
-    $users = DB::table('users')->get()->all();
-
-    $usersIds = DB::table('users')->pluck('id')->all();
-
-#### Eloquent `getRelation` Method
-
-The Eloquent `getRelation` method no longer throws a `BadMethodCallException` if the relation can't be loaded. Instead, it will throw an `Illuminate\Database\Eloquent\RelationNotFoundException`. This change will only affect your application if you were manually catching the `BadMethodCallException`.
-
-#### Eloquent `$morphClass` Property
-
-The `$morphClass` property that could be defined on Eloquent models has been removed in favor of defining a "morph map". Defining a morph map provides support for eager loading and resolves additional bugs with polymorphic relations. If you were previously relying on the `$morphClass` property, you should migrate to `morphMap` using the following syntax:
-
-```php
-Relation::morphMap([
-    'YourCustomMorphName' => YourModel::class,
-]);
-```
-
-For example, if you previously defined the following `$morphClass`:
-
-```php
-class User extends Model
-{
-    protected $morphClass = 'user'
-}
-```
-
-You should define the following `morphMap` in the `boot` method of your `AppServiceProvider`:
-
-```php
-use Illuminate\Database\Eloquent\Relations\Relation;
-
-Relation::morphMap([
-    'user' => User::class,
-]);
-```
-
-#### Eloquent Scopes
-
-Eloquent scopes now respect the leading boolean of scope constraints. For example, if you are starting your scope with an `orWhere` constraint it will no longer be converted to normal `where`. If you were relying on this feature (e.g. adding multiple `orWhere` constraints within a loop), you should verify that the first condition is a normal `where` to avoid any boolean logic issues.
-
-If your scopes begin with `where` constraints no action is required. Remember, you can verify your query SQL using the `toSql` method of a query:
-
-    User::where('foo', 'bar')->toSql();
-
-#### Join Clause
-
-The `JoinClause` class has been rewritten to unify its syntax with the query builder. The optional `$where` parameter of the `on` clause has been removed. To add a "where" conditions you should explicitly use one of the `where` methods offered by the [query builder](queries.md#where-clauses):
-
-    $query->join('table', function ($join) {
-        $join->on('foo', 'bar')->where('bar', 'baz');
-    });
-
-The operator of the `on` clause is now validated and can no longer contain invalid values. If you were relying on this feature (e.g. `$join->on('foo', 'in', DB::raw('("bar")'))`) you should rewrite the condition using the appropriate where clause:
-
-    $join->whereIn('foo', ['bar']);
-
-The `$bindings` property was also removed. To manipulate join bindings directly you may use the `addBinding` method:
-
-    $query->join(DB::raw('('.$subquery->toSql().') table'), function ($join) use ($subquery) {
-        $join->addBinding($subquery->getBindings(), 'join');
-    });
-
-### Encryption
-
-#### Mcrypt Encrypter Has Been Removed
-
-The Mcrypt encrypter was deprecated during the Laravel 5.1.0 release in June 2015. This encrypter has been totally removed in the 5.3.0 release in favor of the newer encryption implementation based on OpenSSL, which has been the default encryption scheme for all releases since Laravel 5.1.0.
-
-If you are still using an Mcrypt based `cipher` in your `config/app.php` configuration file, you should update the cipher to `AES-256-CBC` and set your key to a random 32 byte string which may be securely generated using `php artisan key:generate`.
-
-If you are storing encrypted data in your database using the Mcrypt encrypter, you may install the `laravel/legacy-encrypter` [package](https://github.com/laravel/legacy-encrypter) which includes the legacy Mcrypt encrypter implementation. You should use this package to decrypt your encrypted data and re-encrypt it using the new OpenSSL encrypter. For example, you may do something like the following in a [custom Artisan command](artisan.md):
-
-    $legacy = new McryptEncrypter($encryptionKey);
-
-    foreach ($records as $record) {
-        $record->encrypted = encrypt(
-            $legacy->decrypt($record->encrypted)
-        );
-
-        $record->save();
-    }
-
-### Exception Handler
-
-#### Constructor
-
-The base exception handler class now requires a `Illuminate\Container\Container` instance to be passed to its constructor. This change will only affect your application if you have defined a custom `__construct` method in your `app/Exceptions/Handler.php` file. If you have done this, you should pass a container instance into the `parent::__construct` method:
-
-    parent::__construct(app());
-
-#### Unauthenticated Method
-
-You should add the `unauthenticated` method to your `App\Exceptions\Handler` class. This method will convert authentication exceptions into HTTP responses:
-
-    /**
-     * Convert an authentication exception into an unauthenticated response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Auth\AuthenticationException  $exception
-     * @return \Illuminate\Http\Response
-     */
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
-
-        return redirect()->guest('login');
-    }
-
-### Middleware
-
-#### `can` Middleware Namespace Change
-
-The `can` middleware listed in the `$routeMiddleware` property of your HTTP kernel should be updated to the following class:
-
-    'can' => \Illuminate\Auth\Middleware\Authorize::class,
-
-#### `can` Middleware Authentication Exception
-
-The `can` middleware will now throw an instance of `Illuminate\Auth\AuthenticationException` if the user is not authenticated. If you were manually catching a different exception type, you should update your application to catch this exception. In most cases, this change will not affect your application.
-
-#### Binding Substitution Middleware
-
-Route model binding is now accomplished using middleware. All applications should add the `Illuminate\Routing\Middleware\SubstituteBindings` to your `web` middleware group in your `app/Http/Kernel.php` file:
-
-    \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
-You should also register a route middleware for binding substitution in the `$routeMiddleware` property of your HTTP kernel:
-
-    'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-
-Once this route middleware has been registered, you should add it to the `api` middleware group:
-
-    'api' => [
-        'throttle:60,1',
-        'bindings',
-    ],
-
-### Notifications
-
-#### Installation
-
-Laravel 5.3 includes a new, driver based notification system. You should register the `Illuminate\Notifications\NotificationServiceProvider` in the `providers` array of your `config/app.php` configuration file.
-
-You should also add the `Illuminate\Support\Facades\Notification` facade to the `aliases` array of your `config/app.php` configuration file.
-
-Finally, you may use the `Illuminate\Notifications\Notifiable` trait on your `User` model or any other model you wish to receive notifications.
-
-### Pagination
-
-#### Customization
-
-Customizing the paginator's generated HTML is much easier in Laravel 5.3 compared to previous Laravel 5.x releases. Instead of defining a "Presenter" class, you only need to define a simple Blade template. The easiest way to customize the pagination views is by exporting them to your `resources/views/vendor` directory using the `vendor:publish` command:
-
-    php artisan vendor:publish --tag=laravel-pagination
-
-This command will place the views in the `resources/views/vendor/pagination` directory. The `default.blade.php` file within this directory corresponds to the default pagination view. Simply edit this file to modify the pagination HTML.
-
-Be sure to review the full [pagination documentation](pagination.md) for more information.
-
-### Queue
-
-#### Configuration
-
-In your queue configuration, all `expire` configuration items should be renamed to `retry_after`. Likewise, the Beanstalk configuration's `ttr` item should be renamed to `retry_after`. This name change provides more clarity on the purpose of this configuration option.
-
-#### Closures
-
-Queueing Closures is no longer supported. If you are queueing a Closure in your application, you should convert the Closure to a class and queue an instance of the class:
-
-    dispatch(new ProcessPodcast($podcast));
-
-#### Collection Serialization
-
-The `Illuminate\Queue\SerializesModels` trait now properly serializes instances of `Illuminate\Database\Eloquent\Collection`. This will most likely not be a breaking change for the vast majority of applications; however, if your application is absolutely dependent on collections not being re-retrieved from the database by queued jobs, you should verify that this change does not negatively affect your application.
-
-#### Daemon Workers
-
-It is no longer necessary to specify the `--daemon` option when calling the `queue:work` Artisan command. Running the `php artisan queue:work` command will automatically assume that you want to run the worker in daemon mode. If you would like to process a single job, you may use the `--once` option on the command:
-
-    // Start a daemon queue worker...
-    php artisan queue:work
-
-    // Process a single job...
-    php artisan queue:work --once
-
-#### Failed Jobs Table
-
-If your application contains a `failed_jobs` table, you should add an `exception` column to the table:
-
-    $table->longText('exception')->after('payload');
-
-#### Database Driver Changes
-
-If you are using the `database` driver to store your queued jobs, you should drop the `jobs_queue_reserved_reserved_at_index` index then drop the `reserved` column from your `jobs` table. This column is no longer required when using the `database` driver. Once you have completed these changes, you should add a new compound index on the `queue` and `reserved_at` columns.
-
-Below is an example migration you may use to perform the necessary changes:
-
-    public function up()
-    {
-        Schema::table('jobs', function (Blueprint $table) {
-            $table->dropIndex('jobs_queue_reserved_reserved_at_index');
-            $table->dropColumn('reserved');
-            $table->index(['queue', 'reserved_at']);
-        });
-
-        Schema::table('failed_jobs', function (Blueprint $table) {
-            $table->longText('exception')->after('payload');
-        });
-    }
-
-    public function down()
-    {
-        Schema::table('jobs', function (Blueprint $table) {
-            $table->tinyInteger('reserved')->unsigned();
-            $table->index(['queue', 'reserved', 'reserved_at']);
-            $table->dropIndex('jobs_queue_reserved_at_index');
-        });
-
-        Schema::table('failed_jobs', function (Blueprint $table) {
-            $table->dropColumn('exception');
-        });
-    }
-
-#### Event Data Changes
-
-Various queue job events such as `JobProcessing` and `JobProcessed` no longer contain the `$data` property. You should update your application to call `$event->job->payload()` to get the equivalent data.
-
-#### Failed Job Events
-
-If you are calling the `Queue::failing` method in your `AppServiceProvider`, you should update the method signature to the following:
-
-    use Illuminate\Queue\Events\JobFailed;
-
-    Queue::failing(function (JobFailed $event) {
-        // $event->connectionName
-        // $event->job
-        // $event->exception
-    });
-
-#### Process Control Extension
-
-If your application makes use of the `--timeout` option for queue workers, you'll need to verify that the [pcntl extension](https://secure.php.net/manual/en/pcntl.installation.php) is installed.
-
-#### Serializing Models On Legacy Style Queue Jobs
-
-Typically, jobs in Laravel are queued by passing a new job instance to the `Queue::push` method. However, some applications may be queuing jobs using the following legacy syntax:
-
-    Queue::push('ClassName@method');
-
-If you are queueing jobs using this syntax, Eloquent models will no longer be automatically serialized and re-retrieved by the queue. If you would like your Eloquent models to be automatically serialized by the queue, you should use the `Illuminate\Queue\SerializesModels` trait on your job class and queue the job using the new `push` syntax:
-
-    Queue::push(new ClassName);
-
-### Routing
-
-#### Resource Parameters Are Singular By Default
-
-In previous versions of Laravel, route parameters registered using `Route::resource` were not "singularized". This could lead to some unexpected behavior when registering route model bindings. For example, given the following `Route::resource` call:
-
-    Route::resource('photos', 'PhotoController');
-
-The URI for the `show` route would be defined as follows:
-
-    /photos/{photos}
-
-In Laravel 5.3, all resource route parameters are singularized by default. So, the same call to `Route::resource` would register the following URI:
-
-    /photos/{photo}
-
-If you would like to maintain the previous behavior instead of automatically singularizing resource route parameters, you may make the following call to the `singularResourceParameters` method in your `AppServiceProvider`:
-
-    use Illuminate\Support\Facades\Route;
-
-    Route::singularResourceParameters(false);
-
-#### Resource Route Names No Longer Affected By Prefixes
-
-URL prefixes no longer affect the route names assigned to routes when using `Route::resource`, since this behavior defeated the entire purpose of using route names in the first place.
-
-If your application is using `Route::resource` within a `Route::group` call that specified a `prefix` option, you should examine all of your `route` helper and `UrlGenerator::route` calls to verify that you are no longer appending this URI prefix to the route name.
-
-If this change causes you to have two routes with the same name, you have two options. First, you may use the `names` option when calling `Route::resource` to specify a custom name for a given route. Refer to the [resource routing documentation](/docs/5.3/controllers#resource-controllers) for more information. Alternatively, you may add the `as` option on your route group:
-
-    Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
-        //
-    });
-
-### Validation
-
-#### Form Request Exceptions
-
-If a form request's validation fails, Laravel will now throw an instance of `Illuminate\Validation\ValidationException` instead of an instance of `HttpException`. If you are manually catching the `HttpException` instance thrown by a form request, you should update your `catch` blocks to catch the `ValidationException` instead.
-
-#### The Message Bag
-
-If you were previously using the `has` method to determine if an `Illuminate\Support\MessageBag` instance contained any messages, you should use the `count` method instead. The `has` method now requires a parameter and only determines if a specific key exists in the message bag.
-
-#### Nullable Primitives
-
-When validating arrays, booleans, integers, numerics, and strings, `null` will no longer be considered a valid value unless the rule set contains the new `nullable` rule:
-
-    Validator::make($request->all(), [
-        'field' => 'nullable|max:5',
-    ]);
-
 <a name="upgrade-5.2.0"></a>
 ## Upgrading To 5.2.0 From 5.1
 
 #### Estimated Upgrade Time: Less Than 1 Hour
 
-> {note} We attempt to provide a very comprehensive listing of every possible breaking change made to the framework. However, many of these changes may not apply to your own application.
+> **Note:** We attempt to provide a very comprehensive listing of every possible breaking change made to the framework. However, many of these changes may not apply to your own application.
 
 ### Updating Dependencies
 
@@ -566,7 +27,7 @@ Add `"symfony/dom-crawler": "~3.0"` and `"symfony/css-selector": "~3.0"` to the 
 
 #### Configuration File
 
-You should update your `config/auth.php` configuration file with the following: [https://github.com/laravel/laravel/blob/5.2/config/auth.php](https://github.com/laravel/laravel/blob/5.2/config/auth.php)
+You should update your `config/auth.php` configuration file with the following: [https://github.com/laravel/laravel/blob/638b261a68913bae9a64f6d540612b862fa3c4dd/config/auth.php](https://github.com/laravel/laravel/blob/638b261a68913bae9a64f6d540612b862fa3c4dd/config/auth.php)
 
 Once you have updated the file with a fresh copy, set your authentication configuration options to their desired value based on your old configuration file. If you were using the typical, Eloquent based authentication services available in Laravel 5.1, most values should remain the same.
 
@@ -763,7 +224,7 @@ If you were type-hinting a model instance in your route or controller and were e
 
 The IronMQ queue driver has been moved into its own package and is no longer shipped with the core framework.
 
-[https://github.com/LaravelCollective/iron-queue](https://github.com/laravelcollective/iron-queue)
+[http://github.com/LaravelCollective/iron-queue](http://github.com/laravelcollective/iron-queue)
 
 ### Jobs / Queue
 
@@ -803,7 +264,6 @@ The "Stringy" library is no longer included with the framework. You may install 
 
 The `ValidatesRequests` trait now throws an instance of `Illuminate\Foundation\Validation\ValidationException` instead of throwing an instance of `Illuminate\Http\Exception\HttpResponseException`. This is unlikely to affect your application unless you were manually catching this exception.
 
-<a name="5.2-deprecations"></a>
 ### Deprecations
 
 The following features are deprecated in 5.2 and will be removed in the 5.3 release in June 2016:
@@ -823,7 +283,7 @@ The following features are deprecated in 5.2 and will be removed in the 5.3 rele
 
 Laravel 5.1.11 includes support for [authorization](authorization.md) and [policies](authorization.md#policies). Incorporating these new features into your existing Laravel 5.1 applications is simple.
 
-> {note} These upgrades are **optional**, and ignoring them will not affect your application.
+> **Note:** These upgrades are **optional**, and ignoring them will not affect your application.
 
 #### Create The Policies Directory
 
@@ -831,7 +291,7 @@ First, create an empty `app/Policies` directory within your application.
 
 #### Create / Register The AuthServiceProvider & Gate Facade
 
-Create a `AuthServiceProvider` within your `app/Providers` directory. You may copy the contents of the default provider [from GitHub](https://raw.githubusercontent.com/laravel/laravel/5.1/app/Providers/AuthServiceProvider.php). Remember to change the provider's namespace if your application is using a custom namespace. After creating the provider, be sure to register it in your `app.php` configuration file's `providers` array.
+Create a `AuthServiceProvider` within your `app/Providers` directory. You may copy the contents of the default provider [from GitHub](https://raw.githubusercontent.com/laravel/laravel/master/app/Providers/AuthServiceProvider.php). Remember to change the provider's namespace if your application is using a custom namespace. After creating the provider, be sure to register it in your `app.php` configuration file's `providers` array.
 
 Also, you should register the `Gate` facade in your `app.php` configuration file's `aliases` array:
 
@@ -980,7 +440,7 @@ The `sortBy` method now returns a fresh collection instance instead of modifying
 
 The `groupBy` method now returns `Collection` instances for each item in the parent `Collection`. If you would like to convert all of the items back to plain arrays, you may `map` over them:
 
-    $collection->groupBy('type')->map(function ($item)
+    $collection->groupBy('type')->map(function($item)
     {
         return $item->all();
     });
@@ -1082,7 +542,7 @@ Additionally, copy any custom values you had in your old `.env.php` file and pla
 
 For more information on environment configuration, view the [full documentation](installation.md#environment-configuration).
 
-> {note} You will need to place the appropriate `.env` file and values on your production server before deploying your Laravel 5 application.
+> **Note:** You will need to place the appropriate `.env` file and values on your production server before deploying your Laravel 5 application.
 
 #### Configuration Files
 
@@ -1280,7 +740,7 @@ Add a new `cipher` option in your `app/config/app.php` configuration file. The v
 
 This setting may be used to control the default cipher used by the Laravel encryption facilities.
 
-> {note} In Laravel 4.2, the default cipher is `MCRYPT_RIJNDAEL_128` (AES), which is considered to be the most secure cipher. Changing the cipher back to `MCRYPT_RIJNDAEL_256` is required to decrypt cookies/values that were encrypted in Laravel <= 4.1
+> **Note:** In Laravel 4.2, the default cipher is `MCRYPT_RIJNDAEL_128` (AES), which is considered to be the most secure cipher. Changing the cipher back to `MCRYPT_RIJNDAEL_256` is required to decrypt cookies/values that were encrypted in Laravel <= 4.1
 
 ### Soft Deleting Models Now Use Traits
 
@@ -1304,7 +764,7 @@ You must also manually add the `deleted_at` column to your `dates` property:
 
 The API for all soft delete operations remains the same.
 
-> {note} The `SoftDeletingTrait` can not be applied on a base model. It must be used on an actual model class.
+> **Note:** The `SoftDeletingTrait` can not be applied on a base model. It must be used on an actual model class.
 
 ### View / Pagination Environment Renamed
 
@@ -1357,7 +817,7 @@ Next, if you are using the Eloquent authentication driver, update your `User` cl
         return 'remember_token';
     }
 
-> {note} All existing "remember me" sessions will be invalidated by this change, so all users will be forced to re-authenticate with your application.
+> **Note:** All existing "remember me" sessions will be invalidated by this change, so all users will be forced to re-authenticate with your application.
 
 ### Package Maintainers
 

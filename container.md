@@ -2,13 +2,10 @@
 
 - [Introduction](#introduction)
 - [Binding](#binding)
-    - [Binding Basics](#binding-basics)
     - [Binding Interfaces To Implementations](#binding-interfaces-to-implementations)
     - [Contextual Binding](#contextual-binding)
     - [Tagging](#tagging)
 - [Resolving](#resolving)
-    - [The Make Method](#the-make-method)
-    - [Automatic Injection](#automatic-injection)
 - [Container Events](#container-events)
 
 <a name="introduction"></a>
@@ -20,105 +17,82 @@ Let's look at a simple example:
 
     <?php
 
-    namespace App\Http\Controllers;
+    namespace App\Jobs;
 
     use App\User;
-    use App\Repositories\UserRepository;
-    use App\Http\Controllers\Controller;
+    use Illuminate\Contracts\Mail\Mailer;
+    use Illuminate\Contracts\Bus\SelfHandling;
 
-    class UserController extends Controller
+    class PurchasePodcast implements SelfHandling
     {
         /**
-         * The user repository implementation.
-         *
-         * @var UserRepository
+         * The mailer implementation.
          */
-        protected $users;
+        protected $mailer;
 
         /**
-         * Create a new controller instance.
+         * Create a new instance.
          *
-         * @param  UserRepository  $users
+         * @param  Mailer  $mailer
          * @return void
          */
-        public function __construct(UserRepository $users)
+        public function __construct(Mailer $mailer)
         {
-            $this->users = $users;
+            $this->mailer = $mailer;
         }
 
         /**
-         * Show the profile for the given user.
+         * Purchase a podcast.
          *
-         * @param  int  $id
-         * @return Response
+         * @return void
          */
-        public function show($id)
+        public function handle()
         {
-            $user = $this->users->find($id);
-
-            return view('user.profile', ['user' => $user]);
+            //
         }
     }
 
-In this example, the `UserController` needs to retrieve users from a data source. So, we will **inject** a service that is able to retrieve users. In this context, our `UserRepository` most likely uses [Eloquent](eloquent.md) to retrieve user information from the database. However, since the repository is injected, we are able to easily swap it out with another implementation. We are also able to easily "mock", or create a dummy implementation of the `UserRepository` when testing our application.
+In this example, the `PurchasePodcast` job needs to send e-mails when a podcast is purchased. So, we will **inject** a service that is able to send e-mails. Since the service is injected, we are able to easily swap it out with another implementation. We are also able to easily "mock", or create a dummy implementation of the mailer when testing our application.
 
 A deep understanding of the Laravel service container is essential to building a powerful, large application, as well as for contributing to the Laravel core itself.
 
 <a name="binding"></a>
 ## Binding
 
-<a name="binding-basics"></a>
-### Binding Basics
+Almost all of your service container bindings will be registered within [service providers](providers.md), so all of these examples will demonstrate using the container in that context. However, there is no need to bind classes into the container if they do not depend on any interfaces. The container does not need to be instructed on how to build these objects, since it can automatically resolve such "concrete" objects using PHP's reflection services.
 
-Almost all of your service container bindings will be registered within [service providers](providers.md), so most of these examples will demonstrate using the container in that context.
-
-> {tip} There is no need to bind classes into the container if they do not depend on any interfaces. The container does not need to be instructed on how to build these objects, since it can automatically resolve these objects using reflection.
-
-#### Simple Bindings
-
-Within a service provider, you always have access to the container via the `$this->app` property. We can register a binding using the `bind` method, passing the class or interface name that we wish to register along with a `Closure` that returns an instance of the class:
+Within a service provider, you always have access to the container via the `$this->app` instance variable. We can register a binding using the `bind` method, passing the class or interface name that we wish to register along with a `Closure` that returns an instance of the class:
 
     $this->app->bind('HelpSpot\API', function ($app) {
-        return new HelpSpot\API($app->make('HttpClient'));
+        return new HelpSpot\API($app['HttpClient']);
     });
 
-Note that we receive the container itself as an argument to the resolver. We can then use the container to resolve sub-dependencies of the object we are building.
+Notice that we receive the container itself as an argument to the resolver. We can then use the container to resolve sub-dependencies of the object we are building.
 
 #### Binding A Singleton
 
-The `singleton` method binds a class or interface into the container that should only be resolved one time. Once a singleton binding is resolved, the same object instance will be returned on subsequent calls into the container:
+The `singleton` method binds a class or interface into the container that should only be resolved one time, and then that same instance will be returned on subsequent calls into the container:
 
-    $this->app->singleton('HelpSpot\API', function ($app) {
-        return new HelpSpot\API($app->make('HttpClient'));
+    $this->app->singleton('FooBar', function ($app) {
+        return new FooBar($app['SomethingElse']);
     });
 
 #### Binding Instances
 
 You may also bind an existing object instance into the container using the `instance` method. The given instance will always be returned on subsequent calls into the container:
 
-    $api = new HelpSpot\API(new HttpClient);
+    $fooBar = new FooBar(new SomethingElse);
 
-    $this->app->instance('HelpSpot\Api', $api);
-
-#### Binding Primitives
-
-Sometimes you may have a class that receives some injected classes, but also needs an injected primitive value such as an integer. You may easily use contextual binding to inject any value your class may need:
-
-    $this->app->when('App\Http\Controllers\UserController')
-              ->needs('$variableName')
-              ->give($value);
+    $this->app->instance('FooBar', $fooBar);
 
 <a name="binding-interfaces-to-implementations"></a>
 ### Binding Interfaces To Implementations
 
 A very powerful feature of the service container is its ability to bind an interface to a given implementation. For example, let's assume we have an `EventPusher` interface and a `RedisEventPusher` implementation. Once we have coded our `RedisEventPusher` implementation of this interface, we can register it with the service container like so:
 
-    $this->app->bind(
-        'App\Contracts\EventPusher',
-        'App\Services\RedisEventPusher'
-    );
+    $this->app->bind('App\Contracts\EventPusher', 'App\Services\RedisEventPusher');
 
-This statement tells the container that it should inject the `RedisEventPusher` when a class needs an implementation of `EventPusher`. Now we can type-hint the `EventPusher` interface in a constructor, or any other location where dependencies are injected by the service container:
+This tells the container that it should inject the `RedisEventPusher` when a class needs an implementation of `EventPusher`. Now we can type-hint the `EventPusher` interface in a constructor, or any other location where dependencies are injected by the service container:
 
     use App\Contracts\EventPusher;
 
@@ -136,24 +110,27 @@ This statement tells the container that it should inject the `RedisEventPusher` 
 <a name="contextual-binding"></a>
 ### Contextual Binding
 
-Sometimes you may have two classes that utilize the same interface, but you wish to inject different implementations into each class. For example, two controllers may depend on different implementations of the `Illuminate\Contracts\Filesystem\Filesystem` [contract](contracts.md). Laravel provides a simple, fluent interface for defining this behavior:
+Sometimes you may have two classes that utilize the same interface, but you wish to inject different implementations into each class. For example, when our system receives a new Order, we may want to send an event via [PubNub](http://www.pubnub.com/) rather than Pusher. Laravel provides a simple, fluent interface for defining this behavior:
 
-    use Illuminate\Support\Facades\Storage;
-    use App\Http\Controllers\PhotoController;
-    use App\Http\Controllers\VideoController;
-    use Illuminate\Contracts\Filesystem\Filesystem;
+    $this->app->when('App\Handlers\Commands\CreateOrderHandler')
+              ->needs('App\Contracts\EventPusher')
+              ->give('App\Services\PubNubEventPusher');
 
-    $this->app->when(PhotoController::class)
-              ->needs(Filesystem::class)
+You may even pass a Closure to the `give` method:
+
+    $this->app->when('App\Handlers\Commands\CreateOrderHandler')
+              ->needs('App\Contracts\EventPusher')
               ->give(function () {
-                  return Storage::disk('local');
-              });
+                      // Resolve dependency...
+                  });
 
-    $this->app->when(VideoController::class)
-              ->needs(Filesystem::class)
-              ->give(function () {
-                  return Storage::disk('s3');
-              });
+#### Binding Primitives
+
+Sometimes you may have a class that receives some injected classes, but also needs an injected primitive value such as an integer. You may easily use contextual binding to inject any value your class may need:
+
+    $this->app->when('App\Handlers\Commands\CreateOrderHandler')
+              ->needs('$maxOrderCount')
+              ->give(10);
 
 <a name="tagging"></a>
 ### Tagging
@@ -179,23 +156,17 @@ Once the services have been tagged, you may easily resolve them all via the `tag
 <a name="resolving"></a>
 ## Resolving
 
-<a name="the-make-method"></a>
-#### The `make` Method
+There are several ways to resolve something out of the container. First, you may use the `make` method, which accepts the name of the class or interface you wish to resolve:
 
-You may use the `make` method to resolve a class instance out of the container. The `make` method accepts the name of the class or interface you wish to resolve:
+    $fooBar = $this->app->make('FooBar');
 
-    $api = $this->app->make('HelpSpot\API');
+Secondly, you may access the container like an array, since it implements PHP's `ArrayAccess` interface:
 
-If you are in a location of your code that does not have access to the `$app` variable, you may use the global `resolve` helper:
+    $fooBar = $this->app['FooBar'];
 
-    $api = resolve('HelpSpot\API');
+Lastly, but most importantly, you may simply "type-hint" the dependency in the constructor of a class that is resolved by the container, including [controllers](controllers.md), [event listeners](events.md), [queue jobs](queues.md), [middleware](middleware.md), and more. In practice, this is how most of your objects are resolved by the container.
 
-<a name="automatic-injection"></a>
-#### Automatic Injection
-
-Alternatively, and importantly, you may simply "type-hint" the dependency in the constructor of a class that is resolved by the container, including [controllers](controllers.md), [event listeners](events.md), [queue jobs](queues.md), [middleware](middleware.md), and more. In practice, this is how most of your objects should be resolved by the container.
-
-For example, you may type-hint a repository defined by your application in a controller's constructor. The repository will automatically be resolved and injected into the class:
+The container will automatically inject dependencies for the classes it resolves. For example, you may type-hint a repository defined by your application in a controller's constructor. The repository will automatically be resolved and injected into the class:
 
     <?php
 
@@ -242,8 +213,8 @@ The service container fires an event each time it resolves an object. You may li
         // Called when container resolves object of any type...
     });
 
-    $this->app->resolving(HelpSpot\API::class, function ($api, $app) {
-        // Called when container resolves objects of type "HelpSpot\API"...
+    $this->app->resolving(FooBar::class, function (FooBar $fooBar, $app) {
+        // Called when container resolves objects of type "FooBar"...
     });
 
 As you can see, the object being resolved will be passed to the callback, allowing you to set any additional properties on the object before it is given to its consumer.

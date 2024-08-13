@@ -26,7 +26,7 @@ As mentioned above, the `collect` helper returns a new `Illuminate\Support\Colle
 
     $collection = collect([1, 2, 3]);
 
-> {tip} The results of [Eloquent](eloquent.md) queries are always returned as `Collection` instances.
+The results of [Eloquent](eloquent.md) queries are always returned as `Collection` instances.
 
 <a name="available-methods"></a>
 ## Available Methods
@@ -53,7 +53,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [collapse](#method-collapse)
 [combine](#method-combine)
 [contains](#method-contains)
-[containsStrict](#method-containsstrict)
 [count](#method-count)
 [diff](#method-diff)
 [diffKeys](#method-diffkeys)
@@ -73,19 +72,16 @@ For the remainder of this documentation, we'll discuss each method available on 
 [implode](#method-implode)
 [intersect](#method-intersect)
 [isEmpty](#method-isempty)
-[isNotEmpty](#method-isnotempty)
 [keyBy](#method-keyby)
 [keys](#method-keys)
 [last](#method-last)
 [map](#method-map)
-[mapWithKeys](#method-mapwithkeys)
 [max](#method-max)
 [median](#method-median)
 [merge](#method-merge)
 [min](#method-min)
 [mode](#method-mode)
 [only](#method-only)
-[partition](#method-partition)
 [pipe](#method-pipe)
 [pluck](#method-pluck)
 [pop](#method-pop)
@@ -105,7 +101,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [sortBy](#method-sortby)
 [sortByDesc](#method-sortbydesc)
 [splice](#method-splice)
-[split](#method-split)
 [sum](#method-sum)
 [take](#method-take)
 [toArray](#method-toarray)
@@ -113,12 +108,11 @@ For the remainder of this documentation, we'll discuss each method available on 
 [transform](#method-transform)
 [union](#method-union)
 [unique](#method-unique)
-[uniqueStrict](#method-uniquestrict)
 [values](#method-values)
 [where](#method-where)
-[whereStrict](#method-wherestrict)
+[whereLoose](#method-whereloose)
 [whereIn](#method-wherein)
-[whereInStrict](#method-whereinstrict)
+[whereInLoose](#method-whereinloose)
 [zip](#method-zip)
 
 </div>
@@ -242,18 +236,13 @@ Finally, you may also pass a callback to the `contains` method to perform your o
 
     $collection = collect([1, 2, 3, 4, 5]);
 
-    $collection->contains(function ($value, $key) {
+    $collection->contains(function ($key, $value) {
         return $value > 5;
     });
 
     // false
 
-The `contains` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value. Use the [`containsStrict`](#method-containsstrict) method to filter using "strict" comparisons.
-
-<a name="method-containsstrict"></a>
-#### `containsStrict()` {#collection-method}
-
-This method has the same signature as the [`contains`](#method-contains) method; however, all values are compared using "strict" comparisons.
+The `contains` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value.
 
 <a name="method-count"></a>
 #### `count()` {#collection-method}
@@ -382,7 +371,7 @@ For the inverse of `filter`, see the [reject](#method-reject) method.
 
 The `first` method returns the first element in the collection that passes a given truth test:
 
-    collect([1, 2, 3, 4])->first(function ($value, $key) {
+    collect([1, 2, 3, 4])->first(function ($key, $value) {
         return $value > 2;
     });
 
@@ -476,7 +465,7 @@ The `forget` method removes an item from the collection by its key:
 
     // ['framework' => 'laravel']
 
-> {note} Unlike most other collection methods, `forget` does not return a new modified collection; it modifies the collection it is called on.
+> **Note:** Unlike most other collection methods, `forget` does not return a new modified collection; it modifies the collection it is called on.
 
 <a name="method-forpage"></a>
 #### `forPage()` {#collection-method}
@@ -618,15 +607,6 @@ The `isEmpty` method returns `true` if the collection is empty; otherwise, `fals
 
     // true
 
-<a name="method-isnotempty"></a>
-#### `isNotEmpty()` {#collection-method}
-
-The `isNotEmpty` method returns `true` if the collection is not empty; otherwise, `false` is returned:
-
-    collect([])->isNotEmpty();
-
-    // false
-
 <a name="method-keyby"></a>
 #### `keyBy()` {#collection-method}
 
@@ -684,7 +664,7 @@ The `keys` method returns all of the collection's keys:
 
 The `last` method returns the last element in the collection that passes a given truth test:
 
-    collect([1, 2, 3, 4])->last(function ($value, $key) {
+    collect([1, 2, 3, 4])->last(function ($key, $value) {
         return $value < 3;
     });
 
@@ -711,38 +691,7 @@ The `map` method iterates through the collection and passes each value to the gi
 
     // [2, 4, 6, 8, 10]
 
-> {note} Like most other collection methods, `map` returns a new collection instance; it does not modify the collection it is called on. If you want to transform the original collection, use the [`transform`](#method-transform) method.
-
-<a name="method-mapwithkeys"></a>
-#### `mapWithKeys()` {#collection-method}
-
-The `mapWithKeys` method iterates through the collection and passes each value to the given callback. The callback should return an associative array containing a single key / value pair:
-
-    $collection = collect([
-        [
-            'name' => 'John',
-            'department' => 'Sales',
-            'email' => 'john@example.com'
-        ],
-        [
-            'name' => 'Jane',
-            'department' => 'Marketing',
-            'email' => 'jane@example.com'
-        ]
-    ]);
-
-    $keyed = $collection->mapWithKeys(function ($item) {
-        return [$item['email'] => $item['name']];
-    });
-
-    $keyed->all();
-
-    /*
-        [
-            'john@example.com' => 'John',
-            'jane@example.com' => 'Jane',
-        ]
-    */
+> **Note:** Like most other collection methods, `map` returns a new collection instance; it does not modify the collection it is called on. If you want to transform the original collection, use the [`transform`](#method-transform) method.
 
 <a name="method-max"></a>
 #### `max()` {#collection-method}
@@ -833,17 +782,6 @@ The `only` method returns the items in the collection with the specified keys:
     // ['product_id' => 1, 'name' => 'Desk']
 
 For the inverse of `only`, see the [except](#method-except) method.
-
-<a name="method-partition"></a>
-#### `partition()` {#collection-method}
-
-The `partition` method may be combined with the `list` PHP function to separate elements that pass a given truth test from those that do not:
-
-    $collection = collect([1, 2, 3, 4, 5, 6]);
-
-    list($underThree, $aboveThree) = $collection->partition(function ($i) {
-        return $i < 3;
-    });
 
 <a name="method-pipe"></a>
 #### `pipe()` {#collection-method}
@@ -1122,7 +1060,7 @@ The `sort` method sorts the collection. The sorted collection keeps the original
 
 If your sorting needs are more advanced, you may pass a callback to `sort` with your own algorithm. Refer to the PHP documentation on [`usort`](https://secure.php.net/manual/en/function.usort.php#refsect1-function.usort-parameters), which is what the collection's `sort` method calls under the hood.
 
-> {tip} If you need to sort a collection of nested arrays or objects, see the [`sortBy`](#method-sortby) and [`sortByDesc`](#method-sortbydesc) methods.
+If you need to sort a collection of nested arrays or objects, see the [`sortBy`](#method-sortby) and [`sortByDesc`](#method-sortbydesc) methods.
 
 <a name="method-sortby"></a>
 #### `sortBy()` {#collection-method}
@@ -1219,19 +1157,6 @@ In addition, you can pass a third argument containing the new items to replace t
 
     // [1, 2, 10, 11, 4, 5]
 
-<a name="method-split"></a>
-#### `split()` {#collection-method}
-
-The `split` method breaks a collection into the given number of groups:
-
-    $collection = collect([1, 2, 3, 4, 5]);
-
-    $groups = $collection->split(3);
-
-    $groups->toArray();
-
-    // [[1, 2], [3, 4], [5]]
-
 <a name="method-sum"></a>
 #### `sum()` {#collection-method}
 
@@ -1304,7 +1229,7 @@ The `toArray` method converts the collection into a plain PHP `array`. If the co
         ]
     */
 
-> {note} `toArray` also converts all of the collection's nested objects to an array. If you want to get the raw underlying array, use the [`all`](#method-all) method instead.
+> **Note:** `toArray` also converts all of the collection's nested objects to an array. If you want to get the raw underlying array, use the [`all`](#method-all) method instead.
 
 <a name="method-tojson"></a>
 #### `toJson()` {#collection-method}
@@ -1332,7 +1257,7 @@ The `transform` method iterates over the collection and calls the given callback
 
     // [2, 4, 6, 8, 10]
 
-> {note} Unlike most other collection methods, `transform` modifies the collection itself. If you wish to create a new collection instead, use the [`map`](#method-map) method.
+> **Note:** Unlike most other collection methods, `transform` modifies the collection itself. If you wish to create a new collection instead, use the [`map`](#method-map) method.
 
 <a name="method-union"></a>
 #### `union()` {#collection-method}
@@ -1398,12 +1323,7 @@ You may also pass your own callback to determine item uniqueness:
         ]
     */
 
-The `unique` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value. Use the [`uniqueStrict`](#method-uniquestrict) method to filter using "strict" comparisons.
-
-<a name="method-uniquestrict"></a>
-#### `uniqueStrict()` {#collection-method}
-
-This method has the same signature as the [`unique`](#method-unique) method; however, all values are compared using "strict" comparisons.
+The `unique` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value.
 
 <a name="method-values"></a>
 #### `values()` {#collection-method}
@@ -1425,6 +1345,7 @@ The `values` method returns a new collection with the keys reset to consecutive 
             1 => ['product' => 'Desk', 'price' => 200],
         ]
     */
+
 <a name="method-where"></a>
 #### `where()` {#collection-method}
 
@@ -1448,12 +1369,12 @@ The `where` method filters the collection by a given key / value pair:
         ]
     */
 
-The `where` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value. Use the [`whereStrict`](#method-wherestrict) method to filter using "strict" comparisons.
+The `where` method uses "strict" comparisons when checking item values, meaning a string with an integer value will not be considered equal to an integer of the same value. Use the [`whereLoose`](#method-whereloose) method to filter using "loose" comparisons.
 
-<a name="method-wherestrict"></a>
-#### `whereStrict()` {#collection-method}
+<a name="method-whereloose"></a>
+#### `whereLoose()` {#collection-method}
 
-This method has the same signature as the [`where`](#method-where) method; however, all values are compared using "strict" comparisons.
+This method has the same signature as the [`where`](#method-where) method; however, all values are compared using "loose" comparisons.
 
 <a name="method-wherein"></a>
 #### `whereIn()` {#collection-method}
@@ -1478,12 +1399,12 @@ The `whereIn` method filters the collection by a given key / value contained wit
         ]
     */
 
-The `whereIn` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value. Use the [`whereInStrict`](#method-whereinstrict) method to filter using "strict" comparisons.
+The `whereIn` method uses "strict" comparisons when checking item values, meaning a string with an integer value will not be considered equal to an integer of the same value. Use the [`whereInLoose`](#method-whereinloose) method to filter using "loose" comparisons.
 
-<a name="method-whereinstrict"></a>
-#### `whereInStrict()` {#collection-method}
+<a name="method-whereinloose"></a>
+#### `whereInLoose()` {#collection-method}
 
-This method has the same signature as the [`whereIn`](#method-wherein) method; however, all values are compared using "strict" comparisons.
+This method has the same signature as the [`whereIn`](#method-wherein) method; however, all values are compared using "loose" comparisons.
 
 <a name="method-zip"></a>
 #### `zip()` {#collection-method}

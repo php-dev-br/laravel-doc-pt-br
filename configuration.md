@@ -1,9 +1,9 @@
 # Configuration
 
 - [Introduction](#introduction)
+- [Accessing Configuration Values](#accessing-configuration-values)
 - [Environment Configuration](#environment-configuration)
     - [Determining The Current Environment](#determining-the-current-environment)
-- [Accessing Configuration Values](#accessing-configuration-values)
 - [Configuration Caching](#configuration-caching)
 - [Maintenance Mode](#maintenance-mode)
 
@@ -12,16 +12,23 @@
 
 All of the configuration files for the Laravel framework are stored in the `config` directory. Each option is documented, so feel free to look through the files and get familiar with the options available to you.
 
+<a name="accessing-configuration-values"></a>
+## Accessing Configuration Values
+
+You may easily access your configuration values using the global `config` helper function from anywhere in your application. The configuration values may be accessed using "dot" syntax, which includes the name of the file and option you wish to access. A default value may also be specified and will be returned if the configuration option does not exist:
+
+    $value = config('app.timezone');
+
+To set configuration values at runtime, pass an array to the `config` helper:
+
+    config(['app.timezone' => 'America/Chicago']);
+
 <a name="environment-configuration"></a>
 ## Environment Configuration
 
-It is often helpful to have different configuration values based on the environment the application is running in. For example, you may wish to use a different cache driver locally than you do on your production server.
+It is often helpful to have different configuration values based on the environment the application is running in. For example, you may wish to use a different cache driver locally than you do on your production server. It's easy using environment based configuration.
 
 To make this a cinch, Laravel utilizes the [DotEnv](https://github.com/vlucas/phpdotenv) PHP library by Vance Lucas. In a fresh Laravel installation, the root directory of your application will contain a `.env.example` file. If you install Laravel via Composer, this file will automatically be renamed to `.env`. Otherwise, you should rename the file manually.
-
-> {tip} You may also create a `.env.testing` file. This file will override values from the `.env` file when running PHPUnit tests or executing Artisan commands with the `--env=testing` option.
-
-#### Retrieving Environment Configuration
 
 All of the variables listed in this file will be loaded into the `$_ENV` PHP super-global when your application receives a request. However, you may use the `env` helper to retrieve values from these variables in your configuration files. In fact, if you review the Laravel configuration files, you will notice several of the options already using this helper:
 
@@ -40,7 +47,7 @@ The current application environment is determined via the `APP_ENV` variable fro
 
     $environment = App::environment();
 
-You may also pass arguments to the `environment` method to check if the environment matches a given value. The method will return `true` if the environment matches any of the given values:
+You may also pass arguments to the `environment` method to check if the environment matches a given value. If necessary, you may even pass multiple values to the `environment` method. If the environment matches any of the given values, the method will return `true`:
 
     if (App::environment('local')) {
         // The environment is local
@@ -50,16 +57,9 @@ You may also pass arguments to the `environment` method to check if the environm
         // The environment is either local OR staging...
     }
 
-<a name="accessing-configuration-values"></a>
-## Accessing Configuration Values
+An application instance may also be accessed via the `app` helper method:
 
-You may easily access your configuration values using the global `config` helper function from anywhere in your application. The configuration values may be accessed using "dot" syntax, which includes the name of the file and option you wish to access. A default value may also be specified and will be returned if the configuration option does not exist:
-
-    $value = config('app.timezone');
-
-To set configuration values at runtime, pass an array to the `config` helper:
-
-    config(['app.timezone' => 'America/Chicago']);
+    $environment = app()->environment();
 
 <a name="configuration-caching"></a>
 ## Configuration Caching
@@ -68,20 +68,14 @@ To give your application a speed boost, you should cache all of your configurati
 
 You should typically run the `php artisan config:cache` command as part of your production deployment routine. The command should not be run during local development as configuration options will frequently need to be changed during the course of your application's development.
 
-> {note} If you execute the `config:cache` command during your deployment process, you should be sure that you are only calling the `env` function from within your configuration files.
-
 <a name="maintenance-mode"></a>
 ## Maintenance Mode
 
-When your application is in maintenance mode, a custom view will be displayed for all requests into your application. This makes it easy to "disable" your application while it is updating or when you are performing maintenance. A maintenance mode check is included in the default middleware stack for your application. If the application is in maintenance mode, a `MaintenanceModeException` will be thrown with a status code of 503.
+When your application is in maintenance mode, a custom view will be displayed for all requests into your application. This makes it easy to "disable" your application while it is updating or when you are performing maintenance. A maintenance mode check is included in the default middleware stack for your application. If the application is in maintenance mode, an `HttpException` will be thrown with a status code of 503.
 
 To enable maintenance mode, simply execute the `down` Artisan command:
 
     php artisan down
-
-You may also provide `message` and `retry` options to the `down` command. The `message` value may be used to display or log a custom message, while the `retry` value will be set as the `Retry-After` HTTP header's value:
-
-    php artisan down --message="Upgrading Database" --retry=60
 
 To disable maintenance mode, use the `up` command:
 
@@ -97,4 +91,4 @@ While your application is in maintenance mode, no [queued jobs](queues.md) will 
 
 #### Alternatives To Maintenance Mode
 
-Since maintenance mode requires your application to have several seconds of downtime, consider alternatives like [Envoyer](https://envoyer.io) to accomplish zero-downtime deployment with Laravel.
+Since maintenance mode requires your application to have several seconds of downtime, you may consider alternatives like [Envoyer](https://envoyer.io) to accomplish zero-downtime deployment with Laravel.
