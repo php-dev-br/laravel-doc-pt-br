@@ -1,8 +1,8 @@
 <!-- source_url: https://github.com/laravel/docs/blob/11.x/container.md -->
-<!-- revision: 46c2634ef5a4f15427c94a3157b626cf5bd3937f -->
-<!-- status: wip -->
+<!-- revision: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224 -->
+<!-- status: ready -->
 
-# Contêiner de Serviço
+# Contêiner de Serviços
 
 - [Introdução](#introducao)
     - [Resolução sem Configuração](#resolucao-sem-configuracao)
@@ -18,17 +18,17 @@
 - [Resolvendo](#resolvendo)
     - [O Método `make`](#o-metodo-make)
     - [Injeção Automática](#injecao-automatica)
-- [Invocação e Injeção de Método](#invocacao-e-injecao-de-metodo)
+- [Invocação de Método e Injeção](#invocacao-de-metodo-e-injecao)
 - [Eventos de Contêiner](#eventos-de-conteiner)
 - [PSR-11](#psr-11)
 
 ## Introdução
 
-O contêiner de serviço Laravel é uma ferramenta poderosa para gerenciar
+O contêiner de serviços do Laravel é uma ferramenta poderosa para gerenciar
 dependências de classe e realizar injeção de dependência.
 Injeção de dependência é uma frase sofisticada que significa essencialmente o
-seguinte: dependências de classe são injetadas na classe por meio do construtor
-ou, em alguns casos, métodos _setters_.
+seguinte: dependências de classe são “injetadas” na classe por meio do
+construtor ou, em alguns casos, métodos _setters_.
 
 Vejamos um exemplo simples:
 
@@ -37,44 +37,37 @@ Vejamos um exemplo simples:
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Repositories\UserRepository;
-use App\Models\User;
+use App\Services\AppleMusic;
 use Illuminate\View\View;
 
-class UserController extends Controller
+class PodcastController extends Controller
 {
     /**
      * Cria uma nova instância do controlador.
      */
     public function __construct(
-        protected UserRepository $users,
+        protected AppleMusic $apple,
     ) {}
 
     /**
-     * Exibe o perfil do usuário fornecido.
+     * Exibe informações sobre o podcast fornecido.
      */
     public function show(string $id): View
     {
-        $user = $this->users->find($id);
-
-        return view('user.profile', ['user' => $user]);
+        return view('podcasts.show', [
+            'podcast' => $this->apple->findPodcast($id)
+        ]);
     }
 }
 ```
 
-Neste exemplo, o `UserController` precisa recuperar usuários de uma fonte de
-dados.
-Então, vamos **injetar** um serviço capaz de recuperar usuários.
-Nesse contexto, nosso `UserRepository` provavelmente usa o
-[Eloquent](../eloquent.md) para recuperar informações do usuário do banco de
-dados.
-No entanto, como o repositório é injetado, podemos trocá-lo facilmente por outra
-implementação.
-Também podemos simular facilmente ou criar uma implementação fictícia do
-`UserRepository` ao testar nossa aplicação.
+Neste exemplo, o `PodcastController` precisa recuperar _podcasts_ de uma fonte
+de dados como Apple Music.
+Então, **injetaremos** um serviço capaz de recuperar podcasts.
+Como o serviço é injetado, podemos facilmente “simular” ou criar uma
+implementação fictícia do serviço `AppleMusic` ao testar nossa aplicação.
 
-Um conhecimento profundo do contêiner de serviço do Laravel é essencial para
+Um conhecimento profundo do contêiner de serviços do Laravel é essencial para
 construir uma aplicação grande e poderosa, bem como para contribuir com o
 próprio núcleo do Laravel.
 
@@ -108,7 +101,7 @@ configuração gigantescos.
 Felizmente, muitas das classes que você escreverá ao construir uma aplicação
 Laravel recebem automaticamente suas dependências por meio do contêiner,
 incluindo [controladores](../controllers.md),
-[ouvintes de eventos](../events.md), [middlewares](../middleware.md) e muito
+[ouvintes de eventos](../events.md), [_middlewares_](../middleware.md) e muito
 mais.
 Além disso, você pode declarar o tipo das dependências no método `handle` dos
 [trabalhos em fila](../queues.md).
@@ -152,11 +145,11 @@ necessário vincular os serviços do seu pacote ao contêiner.
 
 #### Vinculações Simples
 
-Quase todas as suas vinculações de contêiner de serviço serão registradas nos
+Quase todas as suas vinculações de contêiner de serviços serão registradas nos
 [provedores de serviços](provedores.md), portanto, a maioria desses exemplos
 demonstrará o uso do contêiner nesse contexto.
 
-Em um provedor de serviço, você sempre tem acesso ao contêiner por meio da
+Em um provedor de serviços, você sempre tem acesso ao contêiner por meio da
 propriedade `$this->app`.
 Podemos registrar uma vinculação usando o método `bind`, passando o nome da
 classe ou interface que desejamos registrar com uma _clojure_ que retorna uma
@@ -207,8 +200,6 @@ $this->app->bindIf(Transistor::class, function (Application $app) {
 > O contêiner não precisa ser instruído sobre como construir esses objetos, pois
 > ele pode resolvê-los automaticamente usando reflexão.
 
-<a name="binding-a-singleton"></a>
-
 #### Vinculando um Singleton
 
 O método `singleton` vincula uma classe ou interface ao contêiner que deve ser
@@ -236,8 +227,6 @@ $this->app->singletonIf(Transistor::class, function (Application $app) {
 });
 ```
 
-<a name="binding-scoped"></a>
-
 #### Vinculação de Singletons com Escopo
 
 O método `scoped` vincula uma classe ou interface ao contêiner que deve ser
@@ -245,7 +234,7 @@ resolvida apenas uma vez em um determinado ciclo de vida da requisição/trabalh
 do Laravel.
 Embora este método seja semelhante ao método `singleton`, as instâncias
 registradas usando o método `scoped` serão liberadas sempre que a aplicação
-Laravel iniciar um novo ciclo de vida, como quando um _worker_
+Laravel iniciar um novo “ciclo de vida”, como quando um _worker_
 [Laravel Octane](../octane.md) processa uma nova requisição ou quando um
 [_worker_ de fila](../queues.md) do Laravel processa um novo trabalho:
 
@@ -277,12 +266,12 @@ $this->app->instance(Transistor::class, $service);
 
 ### Vinculando Interfaces a Implementações
 
-Um recurso muito poderoso do contêiner de serviço é a capacidade de vincular uma
+Um recurso muito poderoso do contêiner de serviços é a capacidade de vincular uma
 interface a uma determinada implementação.
 Por exemplo, vamos supor que temos uma interface `EventPusher` e uma
 implementação `RedisEventPusher`.
 Após codificarmos nossa implementação `RedisEventPusher` desta interface,
-podemos registrá-la no contêiner de serviço da seguinte forma:
+podemos registrá-la no contêiner de serviços da seguinte forma:
 
 ```php
 use App\Contracts\EventPusher;
@@ -452,7 +441,7 @@ $this->app->when(ReportAggregator::class)
 
 ### _Tagging_
 
-Ocasionalmente, pode ser necessário resolver toda uma determinada categoria de
+Ocasionalmente, pode ser necessário resolver toda uma determinada “categoria” de
 vinculação.
 Por exemplo, talvez você esteja construindo um analisador de relatórios que
 receba um _array_ de muitas implementações diferentes da interface `Report`.
@@ -545,15 +534,15 @@ $transistor = App::make(Transistor::class);
 $transistor = app(Transistor::class);
 ```
 
-Se você quiser que a própria instância do contêiner Laravel seja injetada em uma
-classe que está sendo resolvida pelo contêiner, você pode digitar a classe
+Se você quiser que a própria instância do contêiner do Laravel seja injetada em
+uma classe que está sendo resolvida pelo contêiner, você pode digitar a classe
 `Illuminate\Container\Container` no construtor da sua classe:
 
 ```php
 use Illuminate\Container\Container;
 
 /**
- * Crie uma nova instância da classe.
+ * Cria uma nova instância da classe.
  */
 public function __construct(
     protected Container $container
@@ -571,40 +560,37 @@ dos [trabalhos em fila](../queues.md).
 Na prática, é assim que a maioria dos seus objetos devem ser resolvidos pelo
 container.
 
-Por exemplo, você pode declarar o tipo um repositório definido pela sua
-aplicação no construtor de um controlador.
-O repositório será automaticamente resolvido e injetado na classe:
+Por exemplo, você pode declarar o tipo de um serviço definido pela sua aplicação
+no construtor de um controlador.
+O serviço será automaticamente resolvido e injetado na classe:
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use App\Repositories\UserRepository;
-use App\Models\User;
+use App\Services\AppleMusic;
 
-class UserController extends Controller
+class PodcastController extends Controller
 {
     /**
-     * Crie uma nova instância do controlador.
+     * Cria uma nova instância do controlador.
      */
     public function __construct(
-        protected UserRepository $users,
+        protected AppleMusic $apple,
     ) {}
 
     /**
-     * Exibe o usuário com o ID fornecido.
+     * Exibe informações sobre o podcast fornecido.
      */
-    public function show(string $id): User
+    public function show(string $id): Podcast
     {
-        $user = $this->users->findOrFail($id);
-
-        return $user;
+        return $this->apple->findPodcast($id);
     }
 }
 ```
 
-## Invocação e Injeção de Método
+## Invocação de Método e Injeção
 
 Às vezes você pode desejar invocar um método em uma instância de objeto enquanto
 permite que o contêiner injete automaticamente as dependências desse método.
@@ -615,14 +601,14 @@ Por exemplo, dada a seguinte classe:
 
 namespace App;
 
-use App\Repositories\UserRepository;
+use App\Services\AppleMusic;
 
-class UserReport
+class PodcastStats
 {
     /**
-     * Gera um novo relatório de usuário.
+     * Gera um novo relatório de estatísticas do podcast.
      */
-    public function generate(UserRepository $repository): array
+    public function generate(AppleMusic $apple): array
     {
         return [
             // ...
@@ -634,10 +620,10 @@ class UserReport
 Você pode invocar o método `generate` através do contêiner assim:
 
 ```php
-use App\UserReport;
+use App\PodcastStats;
 use Illuminate\Support\Facades\App;
 
-$report = App::call([new UserReport, 'generate']);
+$stats = App::call([new PodcastStats, 'generate']);
 ```
 
 O método `call` aceita qualquer _callable_ PHP.
@@ -645,17 +631,17 @@ O método `call` do contêiner pode até ser usado para invocar uma _conjure_
 enquanto injeta automaticamente suas dependências:
 
 ```php
-use App\Repositories\UserRepository;
+use App\Services\AppleMusic;
 use Illuminate\Support\Facades\App;
 
-$result = App::call(function (UserRepository $repository) {
+$result = App::call(function (AppleMusic $apple) {
     // ...
 });
 ```
 
 ## Eventos de Contêiner
 
-O contêiner de serviço dispara um evento sempre que resolve um objeto.
+O contêiner de serviços dispara um evento sempre que resolve um objeto.
 Você pode ouvir este evento usando o método `resolving`:
 
 ```php
@@ -677,10 +663,10 @@ objeto antes que ele seja fornecido ao seu consumidor.
 
 ## PSR-11
 
-O contêiner de serviço do Laravel implementa a interface
+O contêiner de serviços do Laravel implementa a interface
 [PSR-11](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-11-container.md).
 Portanto, você pode declarar o tipo da interface de contêiner PSR-11 para obter
-uma instância do contêiner Laravel:
+uma instância do contêiner do Laravel:
 
 ```php
 use App\Services\Transistor;
