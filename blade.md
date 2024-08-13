@@ -4,6 +4,7 @@
 - [Template Inheritance](#template-inheritance)
     - [Defining A Layout](#defining-a-layout)
     - [Extending A Layout](#extending-a-layout)
+- [Components & Slots](#components-and-slots)
 - [Displaying Data](#displaying-data)
     - [Blade & JavaScript Frameworks](#blade-and-javascript-frameworks)
 - [Control Structures](#control-structures)
@@ -13,18 +14,10 @@
     - [The Loop Variable](#the-loop-variable)
     - [Comments](#comments)
     - [PHP](#php)
-    - [The `@once` Directive](#the-once-directive)
 - [Forms](#forms)
     - [CSRF Field](#csrf-field)
     - [Method Field](#method-field)
     - [Validation Errors](#validation-errors)
-- [Components](#components)
-    - [Displaying Components](#displaying-components)
-    - [Passing Data To Components](#passing-data-to-components)
-    - [Managing Attributes](#managing-attributes)
-    - [Slots](#slots)
-    - [Inline Component Views](#inline-component-views)
-    - [Anonymous Components](#anonymous-components)
 - [Including Subviews](#including-subviews)
     - [Rendering Views For Collections](#rendering-views-for-collections)
 - [Stacks](#stacks)
@@ -101,6 +94,77 @@ Blade views may be returned from routes using the global `view` helper:
         return view('child');
     });
 
+<a name="components-and-slots"></a>
+## Components & Slots
+
+Components and slots provide similar benefits to sections and layouts; however, some may find the mental model of components and slots easier to understand. First, let's imagine a reusable "alert" component we would like to reuse throughout our application:
+
+    <!-- /resources/views/alert.blade.php -->
+
+    <div class="alert alert-danger">
+        {{ $slot }}
+    </div>
+
+The `{{ $slot }}` variable will contain the content we wish to inject into the component. Now, to construct this component, we can use the `@component` Blade directive:
+
+    @component('alert')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
+
+To instruct Laravel to load the first view that exists from a given array of possible views for the component, you may use the `componentFirst` directive:
+
+    @componentfirst(['custom.alert', 'alert'])
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponentfirst
+
+Sometimes it is helpful to define multiple slots for a component. Let's modify our alert component to allow for the injection of a "title". Named slots may be displayed by "echoing" the variable that matches their name:
+
+    <!-- /resources/views/alert.blade.php -->
+
+    <div class="alert alert-danger">
+        <div class="alert-title">{{ $title }}</div>
+
+        {{ $slot }}
+    </div>
+
+Now, we can inject content into the named slot using the `@slot` directive. Any content not within a `@slot` directive will be passed to the component in the `$slot` variable:
+
+    @component('alert')
+        @slot('title')
+            Forbidden
+        @endslot
+
+        You are not allowed to access this resource!
+    @endcomponent
+
+#### Passing Additional Data To Components
+
+Sometimes you may need to pass additional data to a component. For this reason, you can pass an array of data as the second argument to the `@component` directive. All of the data will be made available to the component template as variables:
+
+    @component('alert', ['foo' => 'bar'])
+        ...
+    @endcomponent
+
+#### Aliasing Components
+
+If your Blade components are stored in a subdirectory, you may wish to alias them for easier access. For example, imagine a Blade component that is stored at `resources/views/components/alert.blade.php`. You may use the `component` method to alias the component from `components.alert` to `alert`. Typically, this should be done in the `boot` method of your `AppServiceProvider`:
+
+    use Illuminate\Support\Facades\Blade;
+
+    Blade::component('components.alert', 'alert');
+
+Once the component has been aliased, you may render it using a directive:
+
+    @alert(['type' => 'danger'])
+        You are not allowed to access this resource!
+    @endalert
+
+You may omit the component parameters if it has no additional slots:
+
+    @alert
+        You are not allowed to access this resource!
+    @endalert
+
 <a name="displaying-data"></a>
 ## Displaying Data
 
@@ -146,6 +210,12 @@ However, instead of manually calling `json_encode`, you may use the `@json` Blad
 
 > {note} You should only use the `@json` directive to render existing variables as JSON. The Blade templating is based on regular expressions and attempts to pass a complex expression to the directive may cause unexpected failures.
 
+The `@json` directive is also useful for seeding Vue components or `data-*` attributes:
+
+    <example-component :some-prop='@json($array)'></example-component>
+
+> {note} Using `@json` in element attributes requires that it be surrounded by single quotes.
+
 #### HTML Entity Encoding
 
 By default, Blade (and the Laravel `e` helper) will double encode HTML entities. If you would like to disable double encoding, call the `Blade::withoutDoubleEncoding` method from the `boot` method of your `AppServiceProvider`:
@@ -180,14 +250,6 @@ Since many JavaScript frameworks also use "curly" braces to indicate a given exp
     Hello, @{{ name }}.
 
 In this example, the `@` symbol will be removed by Blade; however, `{{ name }}` expression will remain untouched by the Blade engine, allowing it to instead be rendered by your JavaScript framework.
-
-The `@` symbol may also be used to escape Blade directives:
-
-    {{-- Blade --}}
-    @@json()
-
-    <!-- HTML output -->
-    @json()
 
 #### The `@verbatim` Directive
 
@@ -266,32 +328,6 @@ You may check if a section has content using the `@hasSection` directive:
 
         <div class="clearfix"></div>
     @endif
-
-You may use the `sectionMissing` directive to determine if a section does not have content:
-
-    @sectionMissing('navigation')
-        <div class="pull-right">
-            @include('default-navigation')
-        </div>
-    @endif
-
-#### Environment Directives
-
-You may check if the application is running in the production environment using the `@production` directive:
-
-    @production
-        // Production specific content...
-    @endproduction
-
-Or, you may determine if the application is running in a specific environment using the `@env` directive:
-
-    @env('staging')
-        // The application is running in "staging"...
-    @endenv
-
-    @env(['staging', 'production'])
-        // The application is running in "staging" or "production"...
-    @endenv
 
 <a name="switch-statements"></a>
 ### Switch Statements
@@ -420,19 +456,6 @@ In some situations, it's useful to embed PHP code into your views. You can use t
 
 > {tip} While Blade provides this feature, using it frequently may be a signal that you have too much logic embedded within your template.
 
-<a name="the-once-directive"></a>
-### The `@once` Directive
-
-The `@once` directive allows you to define a portion of the template that will only be evaluated once per rendering cycle. This may be useful for pushing a given piece of JavaScript into the page's header using [stacks](#stacks). For example, if you are rendering a given [component](#components) within a loop, you may wish to only push the JavaScript to the header the first time the component is rendered:
-
-    @once
-        @push('scripts')
-            <script>
-                // Your custom JavaScript...
-            </script>
-        @endpush
-    @endonce
-
 <a name="forms"></a>
 ## Forms
 
@@ -484,340 +507,6 @@ You may pass [the name of a specific error bag](validation.md#named-error-bags) 
     @error('email', 'login')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
-
-<a name="components"></a>
-## Components
-
-Components and slots provide similar benefits to sections and layouts; however, some may find the mental model of components and slots easier to understand. There are two approaches to writing components: class based components and anonymous components.
-
-To create a class based component, you may use the `make:component` Artisan command. To illustrate how to use components, we will create a simple `Alert` component. The `make:component` command will place the component in the `app/View/Components` directory:
-
-    php artisan make:component Alert
-
-The `make:component` command will also create a view template for the component. The view will be placed in the `resources/views/components` directory.
-
-#### Manually Registering Package Components
-
-When writing components for your own application, components are automatically discovered within the `app/View/Components` directory and `resources/views/components` directory.
-
-However, if you are building a package that utilizes Blade components, you will need to manually register your component class and its HTML tag alias. You should typically register your components in the `boot` method of your package's service provider:
-
-    use Illuminate\Support\Facades\Blade;
-
-    /**
-     * Bootstrap your package's services.
-     */
-    public function boot()
-    {
-        Blade::component('package-alert', AlertComponent::class);
-    }
-
-Once your component has been registered, it may be rendered using its tag alias:
-
-    <x-package-alert/>
-
-<a name="displaying-components"></a>
-### Displaying Components
-
-To display a component, you may use a Blade component tag within one of your Blade templates. Blade component tags start with the string `x-` followed by the kebab case name of the component class:
-
-    <x-alert/>
-
-    <x-user-profile/>
-
-If the component class is nested deeper within the `app/View/Components` directory, you may use the `.` character to indicate directory nesting. For example, if we assume a component is located at `App/View/Components/Inputs/Button.php`, we may render it like so:
-
-    <x-inputs.button/>
-
-<a name="passing-data-to-components"></a>
-### Passing Data To Components
-
-You may pass data to Blade components using HTML attributes. Hard-coded, primitive values may be passed to the component using simple HTML attributes. PHP expressions and variables should be passed to the component via attributes that are prefixed with `:`:
-
-    <x-alert type="error" :message="$message"/>
-
-You should define the component's required data in its class constructor. All public properties on a component will automatically be made available to the component's view. It is not necessary to pass the data to the view from the component's `render` method:
-
-    <?php
-
-    namespace App\View\Components;
-
-    use Illuminate\View\Component;
-
-    class Alert extends Component
-    {
-        /**
-         * The alert type.
-         *
-         * @var string
-         */
-        public $type;
-
-        /**
-         * The alert message.
-         *
-         * @var string
-         */
-        public $message;
-
-        /**
-         * Create the component instance.
-         *
-         * @param  string  $type
-         * @param  string  $message
-         * @return void
-         */
-        public function __construct($type, $message)
-        {
-            $this->type = $type;
-            $this->message = $message;
-        }
-
-        /**
-         * Get the view / contents that represent the component.
-         *
-         * @return \Illuminate\View\View|\Closure|string
-         */
-        public function render()
-        {
-            return view('components.alert');
-        }
-    }
-
-When your component is rendered, you may display the contents of your component's public variables by echoing the variables by name:
-
-    <div class="alert alert-{{ $type }}">
-        {{ $message }}
-    </div>
-
-#### Casing
-
-Component constructor arguments should be specified using `camelCase`, while `kebab-case` should be used when referencing the argument names in your HTML attributes. For example, given the following component constructor:
-
-    /**
-     * Create the component instance.
-     *
-     * @param  string  $alertType
-     * @return void
-     */
-    public function __construct($alertType)
-    {
-        $this->alertType = $alertType;
-    }
-
-The `$alertType` argument may be provided like so:
-
-    <x-alert alert-type="danger" />
-
-#### Component Methods
-
-In addition to public variables being available to your component template, any public methods on the component may also be executed. For example, imagine a component that has a `isSelected` method:
-
-    /**
-     * Determine if the given option is the current selected option.
-     *
-     * @param  string  $option
-     * @return bool
-     */
-    public function isSelected($option)
-    {
-        return $option === $this->selected;
-    }
-
-You may execute this method from your component template by invoking the variable matching the name of the method:
-
-    <option {{ $isSelected($value) ? 'selected="selected"' : '' }} value="{{ $value }}">
-        {{ $label }}
-    </option>
-
-#### Using Attributes & Slots Inside The Class
-
-Blade components also allow you to access the component name, attributes, and slot inside the class's render method. However, in order to access this data, you should return a Closure from your component's `render` method. The Closure will receive a `$data` array as its only argument:
-
-    /**
-     * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\View\View|\Closure|string
-     */
-    public function render()
-    {
-        return function (array $data) {
-            // $data['componentName'];
-            // $data['attributes'];
-            // $data['slot'];
-
-            return '<div>Component content</div>';
-        };
-    }
-
-The `componentName` is equal to the name used in the HTML tag after the `x-` prefix. So `<x-alert />`'s `componentName` will be `alert`. The `attributes` element will contain all of the attributes that were present on the HTML tag. The `slot` element is a `Illuminate\Support\HtmlString` instance with the contents of the slot from the component.
-
-#### Additional Dependencies
-
-If your component requires dependencies from Laravel's [service container](container.md), you may list them before any of the component's data attributes and they will automatically be injected by the container:
-
-    use App\AlertCreator
-
-    /**
-     * Create the component instance.
-     *
-     * @param  \App\AlertCreator  $creator
-     * @param  string  $type
-     * @param  string  $message
-     * @return void
-     */
-    public function __construct(AlertCreator $creator, $type, $message)
-    {
-        $this->creator = $creator;
-        $this->type = $type;
-        $this->message = $message;
-    }
-
-<a name="managing-attributes"></a>
-### Managing Attributes
-
-We've already examined how to pass data attributes to a component; however, sometimes you may need to specify additional HTML attributes, such as `class`, that are not part of the data required for a component to function. Typically, you want to pass these additional attributes down to the root element of the component template. For example, imagine we want to render an `alert` component like so:
-
-    <x-alert type="error" :message="$message" class="mt-4"/>
-
-All of the attributes that are not part of the component's constructor will automatically be added to the component's "attribute bag". This attribute bag is automatically made available to the component via the `$attributes` variable. All of the attributes may be rendered within the component by echoing this variable:
-
-    <div {{ $attributes }}>
-        <!-- Component Content -->
-    </div>
-
-> {note} Echoing variables (`{{ $attributes }}`) or using directives such as `@env` directly on a component is not supported at this time.
-
-#### Default / Merged Attributes
-
-Sometimes you may need to specify default values for attributes or merge additional values into some of the component's attributes. To accomplish this, you may use the attribute bag's `merge` method:
-
-    <div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
-        {{ $message }}
-    </div>
-
-If we assume this component is utilized like so:
-
-    <x-alert type="error" :message="$message" class="mb-4"/>
-
-The final, rendered HTML of the component will appear like the following:
-
-    <div class="alert alert-error mb-4">
-        <!-- Contents of the $message variable -->
-    </div>
-
-#### Filtering Attributes
-
-You may filter attributes using the `filter` method. This method accepts a Closure which should return `true` if you wish to retain the attribute in the attribute bag:
-
-    {{ $attributes->filter(fn ($value, $key) => $key == 'foo') }}
-
-For convenience, you may use the `whereStartsWith` method to retrieve all attributes whose keys begin with a given string:
-
-    {{ $attributes->whereStartsWith('wire:model') }}
-
-Using the `first` method, you may render the first attribute in a given attribute bag:
-
-    {{ $attributes->whereStartsWith('wire:model')->first() }}
-
-<a name="slots"></a>
-### Slots
-
-Often, you will need to pass additional content to your component via "slots". Let's imagine that an `alert` component we created has the following markup:
-
-    <!-- /resources/views/components/alert.blade.php -->
-
-    <div class="alert alert-danger">
-        {{ $slot }}
-    </div>
-
-We may pass content to the `slot` by injecting content into the component:
-
-    <x-alert>
-        <strong>Whoops!</strong> Something went wrong!
-    </x-alert>
-
-Sometimes a component may need to render multiple different slots in different locations within the component. Let's modify our alert component to allow for the injection of a "title":
-
-    <!-- /resources/views/components/alert.blade.php -->
-
-    <span class="alert-title">{{ $title }}</span>
-
-    <div class="alert alert-danger">
-        {{ $slot }}
-    </div>
-
-You may define the content of the named slot using the `x-slot` tag. Any content not within a `x-slot` tag will be passed to the component in the `$slot` variable:
-
-    <x-alert>
-        <x-slot name="title">
-            Server Error
-        </x-slot>
-
-        <strong>Whoops!</strong> Something went wrong!
-    </x-alert>
-
-#### Scoped Slots
-
-If you have used a JavaScript framework such as Vue, you may be familiar with "scoped slots", which allow you to access data or methods from the component within your slot. You may achieve similar behavior in Laravel by defining public methods or properties on your component and accessing the component within your slot via the `$component` variable:
-
-    <x-alert>
-        <x-slot name="title">
-            {{ $component->formatAlert('Server Error') }}
-        </x-slot>
-
-        <strong>Whoops!</strong> Something went wrong!
-    </x-alert>
-
-<a name="inline-component-views"></a>
-### Inline Component Views
-
-For very small components, it may feel cumbersome to manage both the component class and the component's view template. For this reason, you may return the component's markup directly from the `render` method:
-
-    /**
-     * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\View\View|\Closure|string
-     */
-    public function render()
-    {
-        return <<<'blade'
-            <div class="alert alert-danger">
-                {{ $slot }}
-            </div>
-        blade;
-    }
-
-#### Generating Inline View Components
-
-To create a component that renders an inline view, you may use the `inline` option when executing the `make:component` command:
-
-    php artisan make:component Alert --inline
-
-<a name="anonymous-components"></a>
-### Anonymous Components
-
-Similar to inline components, anonymous components provide a mechanism for managing a component via a single file. However, anonymous components utilize a single view file and have no associated class. To define an anonymous component, you only need to place a Blade template within your `resources/views/components` directory. For example, assuming you have defined a component at `resources/views/components/alert.blade.php`:
-
-    <x-alert/>
-
-You may use the `.` character to indicate if a component is nested deeper inside the `components` directory. For example, assuming the component is defined at `resources/views/components/inputs/button.blade.php`, you may render it like so:
-
-    <x-inputs.button/>
-
-#### Data Properties / Attributes
-
-Since anonymous components do not have any associated class, you may wonder how you may differentiate which data should be passed to the component as variables and which attributes should be placed in the component's [attribute bag](#managing-attributes).
-
-You may specify which attributes should be considered data variables using the `@props` directive at the top of your component's Blade template. All other attributes on the component will be available via the component's attribute bag. If you wish to give a data variable a default value, you may specify the variable's name as the array key and the default value as the array value:
-
-    <!-- /resources/views/components/alert.blade.php -->
-
-    @props(['type' => 'info', 'message'])
-
-    <div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
-        {{ $message }}
-    </div>
 
 <a name="including-subviews"></a>
 ## Including Subviews
@@ -973,7 +662,7 @@ As you can see, we will chain the `format` method onto whatever expression is pa
 <a name="custom-if-statements"></a>
 ### Custom If Statements
 
-Programming a custom directive is sometimes more complex than necessary when defining simple, custom conditional statements. For that reason, Blade provides a `Blade::if` method which allows you to quickly define custom conditional directives using Closures. For example, let's define a custom conditional that checks the current application cloud provider. We may do this in the `boot` method of our `AppServiceProvider`:
+Programming a custom directive is sometimes more complex than necessary when defining simple, custom conditional statements. For that reason, Blade provides a `Blade::if` method which allows you to quickly define custom conditional directives using Closures. For example, let's define a custom conditional that checks the current application environment. We may do this in the `boot` method of our `AppServiceProvider`:
 
     use Illuminate\Support\Facades\Blade;
 
@@ -984,21 +673,21 @@ Programming a custom directive is sometimes more complex than necessary when def
      */
     public function boot()
     {
-        Blade::if('cloud', function ($provider) {
-            return config('filesystems.default') === $provider;
+        Blade::if('env', function ($environment) {
+            return app()->environment($environment);
         });
     }
 
 Once the custom conditional has been defined, we can easily use it on our templates:
 
-    @cloud('digitalocean')
-        // The application is using the digitalocean cloud provider...
-    @elsecloud('aws')
-        // The application is using the aws provider...
+    @env('local')
+        // The application is in the local environment...
+    @elseenv('testing')
+        // The application is in the testing environment...
     @else
-        // The application is not using the digitalocean or aws environment...
-    @endcloud
+        // The application is not in the local or testing environment...
+    @endenv
 
-    @unlesscloud('aws')
-        // The application is not using the aws environment...
-    @endcloud
+    @unlessenv('production')
+        // The application is not in the production environment...
+    @endenv

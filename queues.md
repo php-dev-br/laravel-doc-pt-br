@@ -120,8 +120,6 @@ By default, all of the queueable jobs for your application are stored in the `ap
 
 The generated class will implement the `Illuminate\Contracts\Queue\ShouldQueue` interface, indicating to Laravel that the job should be pushed onto the queue to run asynchronously.
 
-> {tip} Job stubs may be customized using [stub publishing](artisan.md#stub-customization)
-
 <a name="class-structure"></a>
 ### Class Structure
 
@@ -200,7 +198,7 @@ Because loaded relationships also get serialized, the serialized job string can 
 <a name="job-middleware"></a>
 ### Job Middleware
 
-Job middleware allow you to wrap custom logic around the execution of queued jobs, reducing boilerplate in the jobs themselves. For example, consider the following `handle` method which leverages Laravel's Redis rate limiting features to allow only one job to process every five seconds:
+Job middleware allow you wrap custom logic around the execution of queued jobs, reducing boilerplate in the jobs themselves. For example, consider the following `handle` method which leverages Laravel's Redis rate limiting features to allow only one job to process every five seconds:
 
     /**
      * Execute the job.
@@ -300,12 +298,6 @@ Once you have written your job class, you may dispatch it using the `dispatch` m
         }
     }
 
-If you would like to conditionally dispatch a job, you may use the `dispatchIf` and `dispatchUnless` methods:
-
-    ProcessPodcast::dispatchIf($accountActive === true, $podcast);
-
-    ProcessPodcast::dispatchUnless($accountSuspended === false, $podcast);
-
 <a name="delayed-dispatching"></a>
 ### Delayed Dispatching
 
@@ -337,23 +329,6 @@ If you would like to delay the execution of a queued job, you may use the `delay
     }
 
 > {note} The Amazon SQS queue service has a maximum delay time of 15 minutes.
-
-#### Dispatching After The Response Is Sent To Browser
-
-Alternatively, the `dispatchAfterResponse` method delays dispatching a job until after the response is sent to the user's browser. This will still allow the user to begin using the application even though a queued job is still executing. This should typically only be used for jobs that take about a second, such as sending an email:
-
-    use App\Jobs\SendNotification;
-
-    SendNotification::dispatchAfterResponse();
-
-You may `dispatch` a Closure and chain the `afterResponse` method onto the helper to execute a Closure after the response has been sent to the browser:
-
-    use App\Mail\WelcomeMessage;
-    use Illuminate\Support\Facades\Mail;
-
-    dispatch(function () {
-        Mail::to('taylor@laravel.com')->send(new WelcomeMessage);
-    })->afterResponse();
 
 <a name="synchronous-dispatching"></a>
 ### Synchronous Dispatching
@@ -392,16 +367,6 @@ Job chaining allows you to specify a list of queued jobs that should be run in s
     ProcessPodcast::withChain([
         new OptimizePodcast,
         new ReleasePodcast
-    ])->dispatch();
-
-In addition to chaining job class instances, you may also chain Closures:
-
-    ProcessPodcast::withChain([
-        new OptimizePodcast,
-        new ReleasePodcast,
-        function () {
-            Podcast::update(...);
-        },
     ])->dispatch();
 
 > {note} Deleting jobs using the `$this->delete()` method will not prevent chained jobs from being processed. The chain will only stop executing if a job in the chain fails.
@@ -480,6 +445,22 @@ You may chain the `onConnection` and `onQueue` methods to specify the connection
                   ->onConnection('sqs')
                   ->onQueue('processing');
 
+Alternatively, you may specify the `connection` as a property on the job class:
+
+    <?php
+
+    namespace App\Jobs;
+
+    class ProcessPodcast implements ShouldQueue
+    {
+        /**
+         * The queue connection that should handle the job.
+         *
+         * @var string
+         */
+        public $connection = 'sqs';
+    }
+
 <a name="max-job-attempts-and-timeout"></a>
 ### Specifying Max Job Attempts / Timeout Values
 
@@ -522,51 +503,9 @@ As an alternative to defining how many times a job may be attempted before it fa
 
 > {tip} You may also define a `retryUntil` method on your queued event listeners.
 
-#### Max Exceptions
-
-Sometimes you may wish to specify that a job may be attempted many times, but should fail if the retries are triggered by a given number of exceptions. To accomplish this, you may define a `maxExceptions` property on your job class:
-
-    <?php
-
-    namespace App\Jobs;
-
-    class ProcessPodcast implements ShouldQueue
-    {
-        /**
-         * The number of times the job may be attempted.
-         *
-         * @var int
-         */
-        public $tries = 25;
-
-        /**
-         * The maximum number of exceptions to allow before failing.
-         *
-         * @var int
-         */
-        public $maxExceptions = 3;
-
-        /**
-         * Execute the job.
-         *
-         * @return void
-         */
-        public function handle()
-        {
-            Redis::throttle('key')->allow(10)->every(60)->then(function () {
-                // Lock obtained, process the podcast...
-            }, function () {
-                // Unable to obtain lock...
-                return $this->release(10);
-            });
-        }
-    }
-
-In this example, the job is released for ten seconds if the application is unable to obtain a Redis lock and will continue to be retried up to 25 times. However, the job will fail if three unhandled exceptions are thrown by the job.
-
 #### Timeout
 
-> {note} The `pcntl` PHP extension must be installed in order to specify job timeouts.
+> {note} The `timeout` feature is optimized for PHP 7.1+ and the `pcntl` PHP extension.
 
 Likewise, the maximum number of seconds that jobs can run may be specified using the `--timeout` switch on the Artisan command line:
 
@@ -587,8 +526,6 @@ However, you may also define the maximum number of seconds a job should be allow
          */
         public $timeout = 120;
     }
-
-Sometimes, IO blocking processes such as sockets or outgoing HTTP connections may not respect your specified timeout. Therefore, when using these features, you should always attempt to specify a timeout using their APIs as well. For example, when using Guzzle, you should always specify a connection and request timeout value.
 
 <a name="rate-limiting"></a>
 ### Rate Limiting
@@ -797,22 +734,10 @@ If you would like to configure the failed job retry delay on a per-job basis, yo
      */
     public $retryAfter = 3;
 
-If you require more complex logic for determining the retry delay, you may define a `retryAfter` method on your queued job class:
-
-    /**
-    * Calculate the number of seconds to wait before retrying the job.
-    *
-    * @return int
-    */
-    public function retryAfter()
-    {
-        return 3;
-    }
-
 <a name="cleaning-up-after-failed-jobs"></a>
 ### Cleaning Up After Failed Jobs
 
-You may define a `failed` method directly on your job class, allowing you to perform job specific clean-up when a failure occurs. This is the perfect location to send an alert to your users or revert any actions performed by the job. The `Throwable` exception that caused the job to fail will be passed to the `failed` method:
+You may define a `failed` method directly on your job class, allowing you to perform job specific clean-up when a failure occurs. This is the perfect location to send an alert to your users or revert any actions performed by the job. The `Exception` that caused the job to fail will be passed to the `failed` method:
 
     <?php
 
@@ -820,7 +745,7 @@ You may define a `failed` method directly on your job class, allowing you to per
 
     use App\AudioProcessor;
     use App\Podcast;
-    use Throwable;
+    use Exception;
     use Illuminate\Bus\Queueable;
     use Illuminate\Contracts\Queue\ShouldQueue;
     use Illuminate\Queue\InteractsWithQueue;
@@ -835,7 +760,7 @@ You may define a `failed` method directly on your job class, allowing you to per
         /**
          * Create a new job instance.
          *
-         * @param  \App\Podcast  $podcast
+         * @param  Podcast  $podcast
          * @return void
          */
         public function __construct(Podcast $podcast)
@@ -846,7 +771,7 @@ You may define a `failed` method directly on your job class, allowing you to per
         /**
          * Execute the job.
          *
-         * @param  \App\AudioProcessor  $processor
+         * @param  AudioProcessor  $processor
          * @return void
          */
         public function handle(AudioProcessor $processor)
@@ -855,12 +780,12 @@ You may define a `failed` method directly on your job class, allowing you to per
         }
 
         /**
-         * Handle a job failure.
+         * The job failed to process.
          *
-         * @param  \Throwable  $exception
+         * @param  Exception  $exception
          * @return void
          */
-        public function failed(Throwable $exception)
+        public function failed(Exception $exception)
         {
             // Send user notification of failure, etc...
         }
@@ -915,15 +840,9 @@ To view all of your failed jobs that have been inserted into your `failed_jobs` 
 
     php artisan queue:failed
 
-The `queue:failed` command will list the job ID, connection, queue, failure time, and other information about the job. The job ID may be used to retry the failed job. For instance, to retry a failed job that has an ID of `5`, issue the following command:
+The `queue:failed` command will list the job ID, connection, queue, and failure time. The job ID may be used to retry the failed job. For instance, to retry a failed job that has an ID of `5`, issue the following command:
 
     php artisan queue:retry 5
-
-If necessary, you may pass multiple IDs or an ID range (when using numeric IDs) to the command:
-
-    php artisan queue:retry 5 6 7 8 9 10
-
-    php artisan queue:retry --range=5-10
 
 To retry all of your failed jobs, execute the `queue:retry` command and pass `all` as the ID:
 

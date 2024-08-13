@@ -25,7 +25,7 @@ All of your worker configuration is stored in a single, simple configuration fil
 
 You may use Composer to install Horizon into your Laravel project:
 
-    composer require laravel/horizon
+    composer require laravel/horizon ~3.0
 
 After installing Horizon, publish its assets using the `horizon:install` Artisan command:
 
@@ -46,7 +46,7 @@ Horizon allows you to choose from three balancing strategies: `simple`, `auto`, 
 
 The `auto` strategy adjusts the number of worker processes per queue based on the current workload of the queue. For example, if your `notifications` queue has 1,000 waiting jobs while your `render` queue is empty, Horizon will allocate more workers to your `notifications` queue until it is empty. When the `balance` option is set to `false`, the default Laravel behavior will be used, which processes queues in the order they are listed in your configuration.
 
-When using the `auto` strategy, you may define the `minProcesses` and `maxProcesses` configuration options to control the minimum and maximum number of processes Horizon should scale up and down to:
+When using the `auto` strategy, you may define the `minProcesses` and `maxProcesses` configuration options to control the minimum and maximum number of processes Horizon should scale up and down to. The `minProcesses` value specifies the minimum number of processes per queue, while the `maxProcesses` value specifies the maximum number of processes across all queues:
 
     'environments' => [
         'production' => [
@@ -98,19 +98,9 @@ Horizon exposes a dashboard at `/horizon`. By default, you will only be able to 
 
 When upgrading to a new major version of Horizon, it's important that you carefully review [the upgrade guide](https://github.com/laravel/horizon/blob/master/UPGRADE.md).
 
-In addition, when upgrading to any new Horizon version, you should re-publish Horizon's assets:
+In addition, you should re-publish Horizon's assets:
 
-    php artisan horizon:publish
-
-To keep the assets up-to-date and avoid issues in future updates, you may add the command to the `post-update-cmd` scripts in your `composer.json` file:
-
-    {
-        "scripts": {
-            "post-update-cmd": [
-                "@php artisan horizon:publish --ansi"
-            ]
-        }
-    }
+    php artisan horizon:assets
 
 <a name="running-horizon"></a>
 ## Running Horizon
@@ -263,7 +253,6 @@ You may configure how many seconds are considered a "long wait" within your `con
 
     'waits' => [
         'redis:default' => 60,
-        'redis:critical,high' => 90,
     ],
 
 <a name="metrics"></a>

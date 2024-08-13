@@ -1,7 +1,6 @@
 # Mail
 
 - [Introduction](#introduction)
-    - [Configuration](#configuration)
     - [Driver Prerequisites](#driver-prerequisites)
 - [Generating Mailables](#generating-mailables)
 - [Writing Mailables](#writing-mailables)
@@ -28,11 +27,6 @@
 
 Laravel provides a clean, simple API over the popular [SwiftMailer](https://swiftmailer.symfony.com/) library with drivers for SMTP, Mailgun, Postmark, Amazon SES, and `sendmail`, allowing you to quickly get started sending mail through a local or cloud based service of your choice.
 
-<a name="configuration"></a>
-### Configuration
-
-Laravel's email services may be configured via the `mail` configuration file. Each mailer configured within this file may have its own options and even its own unique "transport", allowing your application to use different email services to send certain email messages. For example, your application might use Postmark to send transactional mail while using Amazon SES to send bulk mail.
-
 <a name="driver-prerequisites"></a>
 ### Driver Prerequisites
 
@@ -42,7 +36,7 @@ The API based drivers such as Mailgun and Postmark are often simpler and faster 
 
 #### Mailgun Driver
 
-To use the Mailgun driver, first install Guzzle, then set the `default` option in your `config/mail.php` configuration file to `mailgun`. Next, verify that your `config/services.php` configuration file contains the following options:
+To use the Mailgun driver, first install Guzzle, then set the `driver` option in your `config/mail.php` configuration file to `mailgun`. Next, verify that your `config/services.php` configuration file contains the following options:
 
     'mailgun' => [
         'domain' => 'your-mailgun-domain',
@@ -63,7 +57,7 @@ To use the Postmark driver, install Postmark's SwiftMailer transport via Compose
 
     composer require wildbit/swiftmailer-postmark
 
-Next, install Guzzle and set the `default` option in your `config/mail.php` configuration file to `postmark`. Finally, verify that your `config/services.php` configuration file contains the following options:
+Next, install Guzzle and set the `driver` option in your `config/mail.php` configuration file to `postmark`. Finally, verify that your `config/services.php` configuration file contains the following options:
 
     'postmark' => [
         'token' => 'your-postmark-token',
@@ -75,7 +69,7 @@ To use the Amazon SES driver you must first install the Amazon AWS SDK for PHP. 
 
     "aws/aws-sdk-php": "~3.0"
 
-Next, set the `default` option in your `config/mail.php` configuration file to `ses` and verify that your `config/services.php` configuration file contains the following options:
+Next, set the `driver` option in your `config/mail.php` configuration file to `ses` and verify that your `config/services.php` configuration file contains the following options:
 
     'ses' => [
         'key' => 'your-ses-key',
@@ -202,7 +196,6 @@ Typically, you will want to pass some data to your view that you can utilize whe
         /**
          * Create a new message instance.
          *
-         * @param  \App\Order  $order
          * @return void
          */
         public function __construct(Order $order)
@@ -254,7 +247,6 @@ If you would like to customize the format of your email's data before it is sent
         /**
          * Create a new message instance.
          *
-         * @param  \App\Order $order
          * @return void
          */
         public function __construct(Order $order)
@@ -326,7 +318,7 @@ If you have stored a file on one of your [filesystem disks](filesystem.md), you 
      */
     public function build()
     {
-       return $this->view('emails.orders.shipped')
+       return $this->view('email.orders.shipped')
                    ->attachFromStorage('/path/to/file');
     }
 
@@ -339,7 +331,7 @@ If necessary, you may specify the file's attachment name and additional options 
      */
     public function build()
     {
-       return $this->view('emails.orders.shipped')
+       return $this->view('email.orders.shipped')
                    ->attachFromStorage('/path/to/file', 'name.pdf', [
                        'mime' => 'application/pdf'
                    ]);
@@ -354,7 +346,7 @@ The `attachFromStorageDisk` method may be used if you need to specify a storage 
      */
     public function build()
     {
-       return $this->view('emails.orders.shipped')
+       return $this->view('email.orders.shipped')
                    ->attachFromStorageDisk('s3', '/path/to/file');
     }
 
@@ -543,28 +535,30 @@ To send a message, use the `to` method on the `Mail` [facade](facades.md). The `
 
 You are not limited to just specifying the "to" recipients when sending a message. You are free to set "to", "cc", and "bcc" recipients all within a single, chained method call:
 
-    use Illuminate\Support\Facades\Mail;
-
     Mail::to($request->user())
         ->cc($moreUsers)
         ->bcc($evenMoreUsers)
         ->send(new OrderShipped($order));
 
-#### Looping Over Recipients
+<a name="rendering-mailables"></a>
+## Rendering Mailables
 
-Occasionally, you may need to send a mailable to a list of recipients by iterating over an array of recipients / email addresses. Since the `to` method appends email addresses to the mailable's list of recipients, you should always re-create the mailable instance for each recipient:
+Sometimes you may wish to capture the HTML content of a mailable without sending it. To accomplish this, you may call the `render` method of the mailable. This method will return the evaluated contents of the mailable as a string:
 
-    foreach (['taylor@example.com', 'dries@example.com'] as $recipient) {
-        Mail::to($recipient)->send(new OrderShipped($order));
-    }
+    $invoice = App\Invoice::find(1);
 
-#### Sending Mail Via A Specific Mailer
+    return (new App\Mail\InvoicePaid($invoice))->render();
 
-By default, Laravel will use the mailer configured as the `default` mailer in your `mail` configuration file. However, you may use the `mailer` method to send a message using a specific mailer configuration:
+<a name="previewing-mailables-in-the-browser"></a>
+### Previewing Mailables In The Browser
 
-    Mail::mailer('postmark')
-            ->to($request->user())
-            ->send(new OrderShipped($order));
+When designing a mailable's template, it is convenient to quickly preview the rendered mailable in your browser like a typical Blade template. For this reason, Laravel allows you to return any mailable directly from a route Closure or controller. When a mailable is returned, it will be rendered and displayed in the browser, allowing you to quickly preview its design without needing to send it to an actual email address:
+
+    Route::get('mailable', function () {
+        $invoice = App\Invoice::find(1);
+
+        return new App\Mail\InvoicePaid($invoice);
+    });
 
 <a name="queueing-mail"></a>
 ### Queueing Mail
@@ -614,26 +608,6 @@ If you have mailable classes that you want to always be queued, you may implemen
     {
         //
     }
-
-<a name="rendering-mailables"></a>
-## Rendering Mailables
-
-Sometimes you may wish to capture the HTML content of a mailable without sending it. To accomplish this, you may call the `render` method of the mailable. This method will return the evaluated contents of the mailable as a string:
-
-    $invoice = App\Invoice::find(1);
-
-    return (new App\Mail\InvoicePaid($invoice))->render();
-
-<a name="previewing-mailables-in-the-browser"></a>
-### Previewing Mailables In The Browser
-
-When designing a mailable's template, it is convenient to quickly preview the rendered mailable in your browser like a typical Blade template. For this reason, Laravel allows you to return any mailable directly from a route Closure or controller. When a mailable is returned, it will be rendered and displayed in the browser, allowing you to quickly preview its design without needing to send it to an actual email address:
-
-    Route::get('mailable', function () {
-        $invoice = App\Invoice::find(1);
-
-        return new App\Mail\InvoicePaid($invoice);
-    });
 
 <a name="localizing-mailables"></a>
 ## Localizing Mailables

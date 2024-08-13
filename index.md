@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/10.x/documentation.md -->
-<!-- revision: 04ad01474ea43f445af1cb45b5229b01f218f166 -->
+<!-- source_url: https://github.com/laravel/docs/blob/6.x/documentation.md -->
+<!-- revision: 990c96b63b55650663403b72483b31c4d24ecebc -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -53,6 +53,7 @@
 ## Security
 
 - [Authentication](authentication.md)
+- [API Authentication](api-authentication.md)
 - [Authorization](authorization.md)
 - [Email Verification](verification.md)
 - [Encryption](encryption.md)
@@ -68,7 +69,6 @@
 - [Eventos](events.md)
 - [Armazenamento de arquivos](filesystem.md)
 - [Auxiliares](helpers.md)
-- [Cliente HTTP](http-client.md)
 - [E-mail](mail.md)
 - [Notificações](notifications.md)
 - [Desenvolvimento de pacotes](packages.md)
@@ -104,18 +104,15 @@
 
 ## Pacotes Oficiais
 
-- [Cashier (Stripe)](billing.md)
-- [Cashier (Paddle)](cashier-paddle.md)
-- [Cashier (Mollie)](https://github.com/laravel/cashier-mollie)
+- [Cashier](billing.md)
 - [Dusk](dusk.md)
 - [Envoy](envoy.md)
 - [Horizon](horizon.md)
 - [Passport](passport.md)
-- [Sanctum](sanctum.md)
 - [Scout](scout.md)
 - [Socialite](socialite.md)
 - [Telescope](telescope.md)
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/7.x/index.html)
+- [Documentação da API](https://laravel.com/api/6.x/index.html)

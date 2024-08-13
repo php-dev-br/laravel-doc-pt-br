@@ -6,10 +6,8 @@
     - [Defining A Mutator](#defining-a-mutator)
 - [Date Mutators](#date-mutators)
 - [Attribute Casting](#attribute-casting)
-    - [Custom Casts](#custom-casts)
     - [Array & JSON Casting](#array-and-json-casting)
     - [Date Casting](#date-casting)
-    - [Query Time Casting](#query-time-casting)
 
 <a name="introduction"></a>
 ## Introduction
@@ -140,7 +138,7 @@ As noted above, when retrieving attributes that are listed in your `$dates` prop
 
 #### Date Formats
 
-By default, timestamps are formatted as `'Y-m-d H:i:s'`. If you need to customize the timestamp format, set the `$dateFormat` property on your model. This property determines how date attributes are stored in the database:
+By default, timestamps are formatted as `'Y-m-d H:i:s'`. If you need to customize the timestamp format, set the `$dateFormat` property on your model. This property determines how date attributes are stored in the database, as well as their format when the model is serialized to an array or JSON:
 
     <?php
 
@@ -174,7 +172,7 @@ To demonstrate attribute casting, let's cast the `is_admin` attribute, which is 
     class User extends Model
     {
         /**
-         * The attributes that should be cast.
+         * The attributes that should be cast to native types.
          *
          * @var array
          */
@@ -191,234 +189,6 @@ Now the `is_admin` attribute will always be cast to a boolean when you access it
         //
     }
 
-> {note} Attributes that are `null` will not be cast. In addition, you should never define a cast (or an attribute) that has the same name as a relationship.
-
-<a name="custom-casts"></a>
-### Custom Casts
-
-Laravel has a variety of built-in, helpful cast types; however, you may occasionally need to define your own cast types. You may accomplish this by defining a class that implements the `CastsAttributes` interface.
-
-Classes that implement this interface must define a `get` and `set` method. The `get` method is responsible for transforming a raw value from the database into a cast value, while the `set` method should transform a cast value into a raw value that can be stored in the database. As an example, we will re-implement the built-in `json` cast type as a custom cast type:
-
-    <?php
-
-    namespace App\Casts;
-
-    use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-
-    class Json implements CastsAttributes
-    {
-        /**
-         * Cast the given value.
-         *
-         * @param  \Illuminate\Database\Eloquent\Model  $model
-         * @param  string  $key
-         * @param  mixed  $value
-         * @param  array  $attributes
-         * @return array
-         */
-        public function get($model, $key, $value, $attributes)
-        {
-            return json_decode($value, true);
-        }
-
-        /**
-         * Prepare the given value for storage.
-         *
-         * @param  \Illuminate\Database\Eloquent\Model  $model
-         * @param  string  $key
-         * @param  array  $value
-         * @param  array  $attributes
-         * @return string
-         */
-        public function set($model, $key, $value, $attributes)
-        {
-            return json_encode($value);
-        }
-    }
-
-Once you have defined a custom cast type, you may attach it to a model attribute using its class name:
-
-    <?php
-
-    namespace App;
-
-    use App\Casts\Json;
-    use Illuminate\Database\Eloquent\Model;
-
-    class User extends Model
-    {
-        /**
-         * The attributes that should be cast.
-         *
-         * @var array
-         */
-        protected $casts = [
-            'options' => Json::class,
-        ];
-    }
-
-#### Value Object Casting
-
-You are not limited to casting values to primitive types. You may also cast values to objects. Defining custom casts that cast values to objects is very similar to casting to primitive types; however, the `set` method should return an array of key / value pairs that will be used to set raw, storable values on the model.
-
-As an example, we will define a custom cast class that casts multiple model values into a single `Address` value object. We will assume the `Address` value has two public properties: `lineOne` and `lineTwo`:
-
-    <?php
-
-    namespace App\Casts;
-
-    use App\Address;
-    use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-    use InvalidArgumentException;
-
-    class Address implements CastsAttributes
-    {
-        /**
-         * Cast the given value.
-         *
-         * @param  \Illuminate\Database\Eloquent\Model  $model
-         * @param  string  $key
-         * @param  mixed  $value
-         * @param  array  $attributes
-         * @return \App\Address
-         */
-        public function get($model, $key, $value, $attributes)
-        {
-            return new Address(
-                $attributes['address_line_one'],
-                $attributes['address_line_two']
-            );
-        }
-
-        /**
-         * Prepare the given value for storage.
-         *
-         * @param  \Illuminate\Database\Eloquent\Model  $model
-         * @param  string  $key
-         * @param  \App\Address  $value
-         * @param  array  $attributes
-         * @return array
-         */
-        public function set($model, $key, $value, $attributes)
-        {
-            if (! $value instanceof Address) {
-                throw new InvalidArgumentException('The given value is not an Address instance.');
-            }
-
-            return [
-                'address_line_one' => $value->lineOne,
-                'address_line_two' => $value->lineTwo,
-            ];
-        }
-    }
-
-When casting to value objects, any changes made to the value object will automatically be synced back to the model before the model is saved:
-
-    $user = App\User::find(1);
-
-    $user->address->lineOne = 'Updated Address Value';
-
-    $user->save();
-
-> {tip} If you plan to serialize your Eloquent models containing value objects to JSON or arrays, you should implement the `Illuminate\Contracts\Support\Arrayable` and `JsonSerializable` interfaces on the value object.
-
-#### Inbound Casting
-
-Occasionally, you may need to write a custom cast that only transforms values that are being set on the model and does not perform any operations when attributes are being retrieved from the model. A classic example of an inbound only cast is a "hashing" cast. Inbound only custom casts should implement the `CastsInboundAttributes` interface, which only requires a `set` method to be defined.
-
-    <?php
-
-    namespace App\Casts;
-
-    use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
-
-    class Hash implements CastsInboundAttributes
-    {
-        /**
-         * The hashing algorithm.
-         *
-         * @var string
-         */
-        protected $algorithm;
-
-        /**
-         * Create a new cast class instance.
-         *
-         * @param  string|null  $algorithm
-         * @return void
-         */
-        public function __construct($algorithm = null)
-        {
-            $this->algorithm = $algorithm;
-        }
-
-        /**
-         * Prepare the given value for storage.
-         *
-         * @param  \Illuminate\Database\Eloquent\Model  $model
-         * @param  string  $key
-         * @param  array  $value
-         * @param  array  $attributes
-         * @return string
-         */
-        public function set($model, $key, $value, $attributes)
-        {
-            return is_null($this->algorithm)
-                        ? bcrypt($value)
-                        : hash($this->algorithm, $value);
-        }
-    }
-
-#### Cast Parameters
-
-When attaching a custom cast to a model, cast parameters may be specified by separating them from the class name using a `:` character and comma-delimiting multiple parameters. The parameters will be passed to the constructor of the cast class:
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'secret' => Hash::class.':sha256',
-    ];
-
-#### Castables
-
-Instead of attaching the custom cast to your model, you may alternatively attach a class that implements the `Illuminate\Contracts\Database\Eloquent\Castable` interface:
-
-    protected $casts = [
-        'address' => \App\Address::class,
-    ];
-
-Objects that implement the `Castable` interface must define a `castUsing` method that returns the class name of the custom caster class that is responsible for casting to and from the `Castable` class:
-
-    <?php
-
-    namespace App;
-
-    use Illuminate\Contracts\Database\Eloquent\Castable;
-    use App\Casts\Address as AddressCast;
-
-    class Address implements Castable
-    {
-        /**
-         * Get the name of the caster class to use when casting from / to this cast target.
-         *
-         * @return string
-         */
-        public static function castUsing()
-        {
-            return AddressCast::class;
-        }
-    }
-
-When using `Castable` classes, you may still provide arguments in the `$casts` definition. The arguments will be passed directly to the caster class:
-
-    protected $casts = [
-        'address' => \App\Address::class.':argument',
-    ];
-
 <a name="array-and-json-casting"></a>
 ### Array & JSON Casting
 
@@ -433,7 +203,7 @@ The `array` cast type is particularly useful when working with columns that are 
     class User extends Model
     {
         /**
-         * The attributes that should be cast.
+         * The attributes that should be cast to native types.
          *
          * @var array
          */
@@ -460,34 +230,10 @@ Once the cast is defined, you may access the `options` attribute and it will aut
 When using the `date` or `datetime` cast type, you may specify the date's format. This format will be used when the [model is serialized to an array or JSON](eloquent-serialization.md):
 
     /**
-     * The attributes that should be cast.
+     * The attributes that should be cast to native types.
      *
      * @var array
      */
     protected $casts = [
         'created_at' => 'datetime:Y-m-d',
     ];
-
-<a name="query-time-casting"></a>
-### Query Time Casting
-
-Sometimes you may need to apply casts while executing a query, such as when selecting a raw value from a table. For example, consider the following query:
-
-    use App\Post;
-    use App\User;
-
-    $users = User::select([
-        'users.*',
-        'last_posted_at' => Post::selectRaw('MAX(created_at)')
-                ->whereColumn('user_id', 'users.id')
-    ])->get();
-
-The `last_posted_at` attribute on the results of this query will be a raw string. It would be convenient if we could apply a `date` cast to this attribute when executing the query. To accomplish this, we may use the `withCasts` method:
-
-    $users = User::select([
-        'users.*',
-        'last_posted_at' => Post::selectRaw('MAX(created_at)')
-                ->whereColumn('user_id', 'users.id')
-    ])->withCasts([
-        'last_posted_at' => 'datetime'
-    ])->get();

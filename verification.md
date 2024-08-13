@@ -1,7 +1,6 @@
 # Email Verification
 
 - [Introduction](#introduction)
-- [Model Preparation](#model-preparation)
 - [Database Considerations](#verification-database)
 - [Routing](#verification-routing)
     - [Protecting Routes](#protecting-routes)
@@ -14,8 +13,7 @@
 
 Many web applications require users to verify their email addresses before using the application. Rather than forcing you to re-implement this on each application, Laravel provides convenient methods for sending and verifying email verification requests.
 
-<a name="model-preparation"></a>
-## Model Preparation
+### Model Preparation
 
 To get started, verify that your `App\User` model implements the `Illuminate\Contracts\Auth\MustVerifyEmail` contract:
 
@@ -34,10 +32,8 @@ To get started, verify that your `App\User` model implements the `Illuminate\Con
         // ...
     }
 
-Once this interface has been added to your model, newly registered users will automatically be sent an email containing an email verification link. As you can see by examining your `EventServiceProvider`, Laravel already contains a `SendEmailVerificationNotification` listener that is attached to the `Illuminate\Auth\Events\Registered` event.
-
 <a name="verification-database"></a>
-### Database Considerations
+## Database Considerations
 
 #### The Email Verification Column
 
@@ -66,7 +62,7 @@ Laravel includes the `Auth\VerificationController` class that contains the neces
 
 To generate all of the necessary view for email verification, you may use the `laravel/ui` Composer package:
 
-    composer require laravel/ui
+    composer require laravel/ui  "^1.2" --dev
 
     php artisan ui vue --auth
 

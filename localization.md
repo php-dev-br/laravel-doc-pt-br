@@ -27,7 +27,7 @@ All language files return an array of keyed strings. For example:
     <?php
 
     return [
-        'welcome' => 'Welcome to our application',
+        'welcome' => 'Welcome to our application'
     ];
 
 > {note} For languages that differ by territory, you should name the language directories according to the ISO 15897. For example, "en_GB" should be used for British English rather than "en-gb".
@@ -38,10 +38,6 @@ All language files return an array of keyed strings. For example:
 The default language for your application is stored in the `config/app.php` configuration file. You may modify this value to suit the needs of your application. You may also change the active language at runtime using the `setLocale` method on the `App` facade:
 
     Route::get('welcome/{locale}', function ($locale) {
-        if (! in_array($locale, ['en', 'es', 'fr'])) {
-            abort(400);
-        }
-
         App::setLocale($locale);
 
         //
@@ -83,7 +79,7 @@ All language files return an array of keyed strings. For example:
     // resources/lang/en/messages.php
 
     return [
-        'welcome' => 'Welcome to our application',
+        'welcome' => 'Welcome to our application'
     ];
 
 <a name="using-translation-strings-as-keys"></a>

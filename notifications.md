@@ -13,7 +13,6 @@
     - [Customizing The Sender](#customizing-the-sender)
     - [Customizing The Recipient](#customizing-the-recipient)
     - [Customizing The Subject](#customizing-the-subject)
-    - [Customizing The Mailer](#customizing-the-mailer)
     - [Customizing The Templates](#customizing-the-templates)
     - [Previewing Mail Notifications](#previewing-mail-notifications)
 - [Markdown Mail Notifications](#markdown-mail-notifications)
@@ -47,7 +46,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-In addition to support for [sending email](mail.md), Laravel provides support for sending notifications across a variety of delivery channels, including mail, SMS (via [Vonage](https://www.vonage.com/communications-apis/), formerly known as Nexmo), and [Slack](https://slack.com). Notifications may also be stored in a database so they may be displayed in your web interface.
+In addition to support for [sending email](mail.md), Laravel provides support for sending notifications across a variety of delivery channels, including mail, SMS (via [Nexmo](https://www.nexmo.com/)), and [Slack](https://slack.com). Notifications may also be stored in a database so they may be displayed in your web interface.
 
 Typically, notifications should be short, informational messages that notify users of something that occurred in your application. For example, if you are writing a billing application, you might send an "Invoice Paid" notification to your users via the email and SMS channels.
 
@@ -147,27 +146,10 @@ If you would like to delay the delivery of the notification, you may chain the `
 
     $user->notify((new InvoicePaid($invoice))->delay($when));
 
-#### Customizing Notification Channel Queues
-
-If you would like to specify a specific queue that should be used for each notification channel supported by the notification, you may define a `viaQueues` method on your notification. This method should return an array of channel name / queue name pairs:
-
-    /**
-     * Determine which queues should be used for each notification channel.
-     *
-     * @return array
-     */
-    public function viaQueues()
-    {
-        return [
-            'mail' => 'mail-queue',
-            'slack' => 'slack-queue',
-        ];
-    }
-
 <a name="on-demand-notifications"></a>
 ### On-Demand Notifications
 
-Sometimes you may need to send a notification to someone who is not stored as a "user" of your application. Using the `Notification::route` facade method, you may specify ad-hoc notification routing information before sending the notification:
+Sometimes you may need to send a notification to someone who is not stored as a "user" of your application. Using the `Notification::route` method, you may specify ad-hoc notification routing information before sending the notification:
 
     Notification::route('mail', 'taylor@example.com')
                 ->route('nexmo', '5555555555')
@@ -224,23 +206,7 @@ Instead of defining the "lines" of text in the notification class, you may use t
         );
     }
 
-You may specify a plain-text view for the mail message by passing the view name as the second element of an array that is given to the `view` method of the `MailMessage`:
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)->view(
-            ['emails.name.html', 'emails.name.plain'],
-            ['invoice' => $this->invoice]
-        );
-    }
-
-In addition, you may return a full [mailable object](mail.md) from the `toMail` method:
+In addition, you may return a [mailable object](mail.md) from the `toMail` method:
 
     use App\Mail\InvoicePaid as Mailable;
 
@@ -252,7 +218,7 @@ In addition, you may return a full [mailable object](mail.md) from the `toMail` 
      */
     public function toMail($notifiable)
     {
-        return (new Mailable($this->invoice))->to($notifiable->email);
+        return (new Mailable($this->invoice))->to($this->user->email);
     }
 
 <a name="error-messages"></a>
@@ -339,24 +305,6 @@ By default, the email's subject is the class name of the notification formatted 
     {
         return (new MailMessage)
                     ->subject('Notification Subject')
-                    ->line('...');
-    }
-
-<a name="customizing-the-mailer"></a>
-### Customizing The Mailer
-
-By default, the email notification will be sent using the default driver defined in the `config/mail.php` configuration file. However, you may specify a different mailer at runtime by calling the `mailer` method when building your message:
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-                    ->mailer('postmark')
                     ->line('...');
     }
 
@@ -604,21 +552,7 @@ All broadcast notifications are queued for broadcasting. If you would like to co
                     ->onConnection('sqs')
                     ->onQueue('broadcasts');
 
-#### Customizing The Notification Type
-
-In addition to the data you specify, all broadcast notifications also have a `type` field containing the full class name of the notification. If you would like to customize the notification `type` that is provided to your JavaScript client, you may define a `broadcastType` method on the notification class:
-
-    use Illuminate\Notifications\Messages\BroadcastMessage;
-
-    /**
-     * Get the type of the notification being broadcast.
-     *
-     * @return string
-     */
-    public function broadcastType()
-    {
-        return 'broadcast.message';
-    }
+> {tip} In addition to the data you specify, broadcast notifications will also contain a `type` field containing the class name of the notification.
 
 <a name="listening-for-notifications"></a>
 ### Listening For Notifications
@@ -790,7 +724,7 @@ Before you can send notifications via Slack, you must install the notification c
 
     composer require laravel/slack-notification-channel
 
-You will also need to configure an ["Incoming Webhook"](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) integration for your Slack team. This integration will provide you with a URL you may use when [routing Slack notifications](#routing-slack-notifications).
+You will also need to configure an ["Incoming Webhook"](https://api.slack.com/incoming-webhooks) integration for your Slack team. This integration will provide you with a URL you may use when [routing Slack notifications](#routing-slack-notifications).
 
 <a name="formatting-slack-notifications"></a>
 ### Formatting Slack Notifications

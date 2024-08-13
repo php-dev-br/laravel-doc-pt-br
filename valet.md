@@ -8,12 +8,12 @@
     - [The "Park" Command](#the-park-command)
     - [The "Link" Command](#the-link-command)
     - [Securing Sites With TLS](#securing-sites)
-    - [Serving a Default Site](#serving-a-default-site)
 - [Sharing Sites](#sharing-sites)
+- [Serving A Default Site](#serving-a-default-site)
 - [Site Specific Environment Variables](#site-specific-environment-variables)
-- [Proxying Services](#proxying-services)
 - [Custom Valet Drivers](#custom-valet-drivers)
     - [Local Drivers](#local-drivers)
+- [PHP Configuration](#php-configuration)
 - [Other Valet Commands](#other-valet-commands)
 - [Valet Directories & Files](#valet-directories-and-files)
 
@@ -43,9 +43,8 @@ Out of the box, Valet support includes, but is not limited to:
 - [CakePHP 3](https://cakephp.org)
 - [Concrete5](https://www.concrete5.org/)
 - [Contao](https://contao.org/en/)
-- [Craft](https://craftcms.com)
+- [Craft CMS](https://craftcms.com)
 - [Drupal](https://www.drupal.org/)
-- [ExpressionEngine](https://www.expressionengine.com/)
 - [Jigsaw](https://jigsaw.tighten.co)
 - [Joomla](https://www.joomla.org/)
 - [Katana](https://github.com/themsaid/katana)
@@ -166,13 +165,6 @@ To "unsecure" a site and revert back to serving its traffic over plain HTTP, use
 
     valet unsecure laravel
 
-<a name="serving-a-default-site"></a>
-### Serving A Default Site
-
-Sometimes, you may wish to configure Valet to serve a "default" site instead of a `404` when visiting an unknown `test` domain. To accomplish this, you may add a `default` option to your `~/.config/valet/config.json` configuration file containing the path to the site that should serve as your default site:
-
-    "default": "/Users/Sally/Sites/foo",
-
 <a name="sharing-sites"></a>
 ## Sharing Sites
 
@@ -186,17 +178,11 @@ To stop sharing your site, hit `Control + C` to cancel the process.
 
 > {tip} You may pass additional parameters to the share command, such as `valet share --region=eu`. For more information, consult the [ngrok documentation](https://ngrok.com/docs).
 
-### Sharing Sites Via Expose
-
-If you have [Expose](https://beyondco.de/docs/expose) installed, you can share your site by navigating to the site's directory in your terminal and running the `expose` command. Consult the expose documentation for additional command-line parameters it supports. After sharing the site, Expose will display the sharable URL that you may use on your other devices or amongst team members.
-
-To stop sharing your site, hit `Control + C` to cancel the process.
-
 ### Sharing Sites On Your Local Network
 
 Valet restricts incoming traffic to the internal `127.0.0.1` interface by default. This way your development machine isn't exposed to security risks from the Internet.
 
-If you wish to allow other devices on your local network to access the Valet sites on your machine via your machine's IP address (eg: `192.168.1.10/app-name.test`), you will need to manually edit the appropriate Nginx configuration file for that site to remove the restriction on the `listen` directive by removing the `127.0.0.1:` prefix on the directive for ports 80 and 443.
+If you wish to allow other devices on your local network to access the Valet sites on your machine via your machine's IP address (eg: `192.168.1.10/app-name.test`), you will need to manually edit the appropriate Nginx configuration file for that site to remove the restriction on the `listen` directive by removing the the `127.0.0.1:` prefix on the directive for ports 80 and 443.
 
 If you have not run `valet secure` on the project, you can open up network access for all non-HTTPS sites by editing the `/usr/local/etc/nginx/valet/valet.conf` file. However, if you're serving the project site over HTTPS (you have run `valet secure` for the site) then you should edit the `~/.config/valet/Nginx/app-name.test` file.
 
@@ -223,22 +209,12 @@ Some applications using other frameworks may depend on server environment variab
         ],
     ];
 
-<a name="proxying-services"></a>
-## Proxying Services
+<a name="serving-a-default-site"></a>
+## Serving A Default Site
 
-Sometimes you may wish to proxy a Valet domain to another service on your local machine. For example, you may occasionally need to run Valet while also running a separate site in Docker; however, Valet and Docker can't both bind to port 80 at the same time.
+Sometimes, you may wish to configure Valet to serve a "default" site instead of a `404` when visiting an unknown `test` domain. To accomplish this, you may add a `default` option to your `~/.config/valet/config.json` configuration file containing the path to the site that should function as your default site:
 
-To solve this, you may use the `proxy` command to generate a proxy. For example, you may proxy all traffic from `http://elasticsearch.test` to `http://127.0.0.1:9200`:
-
-    valet proxy elasticsearch http://127.0.0.1:9200
-
-You may remove a proxy using the `unproxy` command:
-
-    valet unproxy elasticsearch
-
-You may use the `proxies` command to list all site configuration that are proxied:
-
-    valet proxies
+    "default": "/Users/Sally/Sites/foo",
 
 <a name="custom-valet-drivers"></a>
 ## Custom Valet Drivers
@@ -343,6 +319,19 @@ If you would like to define a custom Valet driver for a single application, crea
             return $sitePath.'/public_html/index.php';
         }
     }
+
+<a name="php-configuration"></a>
+## PHP Configuration
+
+You may add additional PHP configuration `.ini` files in the `/usr/local/etc/php/7.X/conf.d/` directory to customize your PHP installation. Once you've added or updated these settings you should run `valet restart php`.
+
+### PHP Memory Limits
+
+By default, Valet specifies the PHP installation's memory limit and max file upload size in the `/usr/local/etc/php/7.X/conf.d/php-memory-limits.ini` configuration file. This affects both the CLI and FPM PHP processes.
+
+### PHP-FPM Pool Processes
+
+Valet's PHP-FPM configuration is contained within the `/usr/local/etc/php/7.X/php-fpm.d/valet-fpm.conf` configuration file. In this file you may increase the number of FPM servers and child processes utilized by your PHP application.
 
 <a name="other-valet-commands"></a>
 ## Other Valet Commands

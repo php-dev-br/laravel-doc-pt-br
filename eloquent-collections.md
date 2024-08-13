@@ -46,14 +46,6 @@ In addition, the `Illuminate\Database\Eloquent\Collection` class provides a supe
     #collection-method-list a {
         display: block;
     }
-
-    .collection-method code {
-        font-size: 14px;
-    }
-
-    .collection-method:not(.first-collection-method) {
-        margin-top: 50px;
-    }
 </style>
 
 <div id="collection-method-list" markdown="1">
@@ -70,14 +62,12 @@ In addition, the `Illuminate\Database\Eloquent\Collection` class provides a supe
 [makeVisible](#method-makeVisible)
 [makeHidden](#method-makeHidden)
 [only](#method-only)
-[toQuery](#method-toquery)
 [unique](#method-unique)
 
 </div>
 
 <a name="method-contains"></a>
-#### `contains($key, $operator = null, $value = null)` {.collection-method .first-collection-method}
-
+#### `contains($key, $operator = null, $value = null)`
 
 The `contains` method may be used to determine if a given model instance is contained by the collection. This method accepts a primary key or a model instance:
 
@@ -86,7 +76,7 @@ The `contains` method may be used to determine if a given model instance is cont
     $users->contains(User::find(1));
 
 <a name="method-diff"></a>
-#### `diff($items)` {.collection-method}
+#### `diff($items)`
 
 The `diff` method returns all of the models that are not present in the given collection:
 
@@ -95,14 +85,14 @@ The `diff` method returns all of the models that are not present in the given co
     $users = $users->diff(User::whereIn('id', [1, 2, 3])->get());
 
 <a name="method-except"></a>
-#### `except($keys)` {.collection-method}
+#### `except($keys)`
 
 The `except` method returns all of the models that do not have the given primary keys:
 
     $users = $users->except([1, 2, 3]);
 
 <a name="method-find"></a>
-#### `find($key)` {.collection-method}
+#### `find($key)` {#collection-method .first-collection-method}
 
 The `find` method finds a model that has a given primary key. If `$key` is a model instance, `find` will attempt to return a model matching the primary key. If `$key` is an array of keys, `find` will return all models which match the `$keys` using `whereIn()`:
 
@@ -111,7 +101,7 @@ The `find` method finds a model that has a given primary key. If `$key` is a mod
     $user = $users->find(1);
 
 <a name="method-fresh"></a>
-#### `fresh($with = [])` {.collection-method}
+#### `fresh($with = [])`
 
 The `fresh` method retrieves a fresh instance of each model in the collection from the database. In addition, any specified relationships will be eager loaded:
 
@@ -120,7 +110,7 @@ The `fresh` method retrieves a fresh instance of each model in the collection fr
     $users = $users->fresh('comments');
 
 <a name="method-intersect"></a>
-#### `intersect($items)` {.collection-method}
+#### `intersect($items)`
 
 The `intersect` method returns all of the models that are also present in the given collection:
 
@@ -129,7 +119,7 @@ The `intersect` method returns all of the models that are also present in the gi
     $users = $users->intersect(User::whereIn('id', [1, 2, 3])->get());
 
 <a name="method-load"></a>
-#### `load($relations)` {.collection-method}
+#### `load($relations)`
 
 The `load` method eager loads the given relationships for all models in the collection:
 
@@ -138,7 +128,7 @@ The `load` method eager loads the given relationships for all models in the coll
     $users->load('comments.author');
 
 <a name="method-loadMissing"></a>
-#### `loadMissing($relations)` {.collection-method}
+#### `loadMissing($relations)`
 
 The `loadMissing` method eager loads the given relationships for all models in the collection if the relationships are not already loaded:
 
@@ -147,7 +137,7 @@ The `loadMissing` method eager loads the given relationships for all models in t
     $users->loadMissing('comments.author');
 
 <a name="method-modelKeys"></a>
-#### `modelKeys()` {.collection-method}
+#### `modelKeys()`
 
 The `modelKeys` method returns the primary keys for all models in the collection:
 
@@ -156,39 +146,28 @@ The `modelKeys` method returns the primary keys for all models in the collection
     // [1, 2, 3, 4, 5]
 
 <a name="method-makeVisible"></a>
-#### `makeVisible($attributes)` {.collection-method}
+#### `makeVisible($attributes)`
 
 The `makeVisible` method makes attributes visible that are typically "hidden" on each model in the collection:
 
     $users = $users->makeVisible(['address', 'phone_number']);
 
 <a name="method-makeHidden"></a>
-#### `makeHidden($attributes)` {.collection-method}
+#### `makeHidden($attributes)`
 
 The `makeHidden` method hides attributes that are typically "visible" on each model in the collection:
 
     $users = $users->makeHidden(['address', 'phone_number']);
 
 <a name="method-only"></a>
-#### `only($keys)` {.collection-method}
+#### `only($keys)`
 
 The `only` method returns all of the models that have the given primary keys:
 
     $users = $users->only([1, 2, 3]);
 
-<a name="method-toquery"></a>
-#### `toQuery()` {.collection-method}
-
-The `toQuery` method returns an Eloquent query builder instance containing a `whereIn` constraint on the collection model's primary keys:
-
-    $users = App\User::where('status', 'VIP')->get();
-
-    $users->toQuery()->update([
-        'status' => 'Administrator',
-    ]);
-
 <a name="method-unique"></a>
-#### `unique($key = null, $strict = false)` {.collection-method}
+#### `unique($key = null, $strict = false)`
 
 The `unique` method returns all of the unique models in the collection. Any models of the same type with the same primary key as another model in the collection are removed.
 

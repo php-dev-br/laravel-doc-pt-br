@@ -21,7 +21,6 @@
 - [Rate Limiting](#rate-limiting)
 - [Form Method Spoofing](#form-method-spoofing)
 - [Accessing The Current Route](#accessing-the-current-route)
-- [Cross-Origin Resource Sharing (CORS)](#cors)
 
 <a name="basic-routing"></a>
 ## Basic Routing
@@ -65,7 +64,7 @@ Sometimes you may need to register a route that responds to multiple HTTP verbs.
 
 #### CSRF Protection
 
-Any HTML forms pointing to `POST`, `PUT`, `PATCH`, or `DELETE` routes that are defined in the `web` routes file should include a CSRF token field. Otherwise, the request will be rejected. You can read more about CSRF protection in the [CSRF documentation](csrf.md):
+Any HTML forms pointing to `POST`, `PUT`, or `DELETE` routes that are defined in the `web` routes file should include a CSRF token field. Otherwise, the request will be rejected. You can read more about CSRF protection in the [CSRF documentation](csrf.md):
 
     <form method="POST" action="/profile">
         @csrf
@@ -192,8 +191,6 @@ Named routes allow the convenient generation of URLs or redirects for specific r
 You may also specify route names for controller actions:
 
     Route::get('user/profile', 'UserProfileController@show')->name('profile');
-
-> {note} Route names should always be unique.
 
 #### Generating URLs To Named Routes
 
@@ -329,30 +326,9 @@ Laravel automatically resolves Eloquent models defined in routes or controller a
 
 Since the `$user` variable is type-hinted as the `App\User` Eloquent model and the variable name matches the `{user}` URI segment, Laravel will automatically inject the model instance that has an ID matching the corresponding value from the request URI. If a matching model instance is not found in the database, a 404 HTTP response will automatically be generated.
 
-#### Customizing The Key
+#### Customizing The Key Name
 
-Sometimes you may wish to resolve Eloquent models using a column other than `id`. To do so, you may specify the column in the route parameter definition:
-
-    Route::get('api/posts/{post:slug}', function (App\Post $post) {
-        return $post;
-    });
-
-#### Custom Keys & Scoping
-
-Sometimes, when implicitly binding multiple Eloquent models in a single route definition, you may wish to scope the second Eloquent model such that it must be a child of the first Eloquent model. For example, consider this situation that retrieves a blog post by slug for a specific user:
-
-    use App\Post;
-    use App\User;
-
-    Route::get('api/users/{user}/posts/{post:slug}', function (User $user, Post $post) {
-        return $post;
-    });
-
-When using a custom keyed implicit binding as a nested route parameter, Laravel will automatically scope the query to retrieve the nested model by its parent using conventions to guess the relationship name on the parent. In this case, it will be assumed that the `User` model has a relationship named `posts` (the plural of the route parameter name) which can be used to retrieve the `Post` model.
-
-#### Customizing The Default Key Name
-
-If you would like model binding to use a default database column other than `id` when retrieving a given model class, you may override the `getRouteKeyName` method on the Eloquent model:
+If you would like model binding to use a database column other than `id` when retrieving a given model class, you may override the `getRouteKeyName` method on the Eloquent model:
 
     /**
      * Get the route key for the model.
@@ -410,10 +386,9 @@ Alternatively, you may override the `resolveRouteBinding` method on your Eloquen
      * Retrieve the model for a bound value.
      *
      * @param  mixed  $value
-     * @param  string|null  $field
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function resolveRouteBinding($value, $field = null)
+    public function resolveRouteBinding($value)
     {
         return $this->where('name', $value)->firstOrFail();
     }
@@ -513,10 +488,3 @@ You may use the `current`, `currentRouteName`, and `currentRouteAction` methods 
     $action = Route::currentRouteAction();
 
 Refer to the API documentation for both the [underlying class of the Route facade](https://laravel.com/api/{{version}}/Illuminate/Routing/Router.html) and [Route instance](https://laravel.com/api/{{version}}/Illuminate/Routing/Route.html) to review all accessible methods.
-
-<a name="cors"></a>
-## Cross-Origin Resource Sharing (CORS)
-
-Laravel can automatically respond to CORS OPTIONS requests with values that you configure. All CORS settings may be configured in your `cors` configuration file and OPTIONS requests will automatically be handled by the `HandleCors` middleware that is included by default in your global middleware stack.
-
-> {tip} For more information on CORS and CORS headers, please consult the [MDN web documentation on CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#The_HTTP_response_headers).
