@@ -21,7 +21,7 @@ In addition to typical, form based authentication, Laravel also provides a simpl
 
 To get started with Socialite, use Composer to add the package to your project's dependencies:
 
-    composer require laravel/socialite "^3.2.0"
+    composer require laravel/socialite
 
 <a name="configuration"></a>
 ## Configuration
@@ -99,7 +99,7 @@ Before redirecting the user, you may also add additional "scopes" on the request
         ->scopes(['read:user', 'public_repo'])
         ->redirect();
 
-You can overwrite all existing scopes using the `setScopes` method:
+You can overwrite all exisiting scopes using the `setScopes` method:
 
     return Socialite::driver('github')
         ->setScopes(['read:user', 'public_repo'])

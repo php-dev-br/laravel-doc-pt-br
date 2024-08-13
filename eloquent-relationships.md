@@ -120,6 +120,41 @@ If your parent model does not use `id` as its primary key, or you wish to join t
         return $this->belongsTo('App\User', 'foreign_key', 'other_key');
     }
 
+<a name="default-models"></a>
+#### Default Models
+
+The `belongsTo` relationship allows you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `App\User` model if no `user` is attached to the post:
+
+    /**
+     * Get the author of the post.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User')->withDefault();
+    }
+
+To populate the default model with attributes, you may pass an array or Closure to the `withDefault` method:
+
+    /**
+     * Get the author of the post.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User')->withDefault([
+            'name' => 'Guest Author',
+        ]);
+    }
+
+    /**
+     * Get the author of the post.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User')->withDefault(function ($user) {
+            $user->name = 'Guest Author';
+        });
+    }
+
 <a name="one-to-many"></a>
 ### One To Many
 
@@ -154,7 +189,7 @@ Once the relationship has been defined, we can access the collection of comments
 
 Of course, since all relationships also serve as query builders, you can add further constraints to which comments are retrieved by calling the `comments` method and continuing to chain conditions onto the query:
 
-    $comment = App\Post::find(1)->comments()->where('title', 'foo')->first();
+    $comments = App\Post::find(1)->comments()->where('title', 'foo')->first();
 
 Like the `hasOne` method, you may also override the foreign and local keys by passing additional arguments to the `hasMany` method:
 
@@ -190,7 +225,7 @@ Once the relationship has been defined, we can retrieve the `Post` model for a `
 
     echo $comment->post->title;
 
-In the example above, Eloquent will try to match the `post_id` from the `Comment` model to an `id` on the `Post` model. Eloquent determines the default foreign key name by examining the name of the relationship method and suffixing the method name with a `_` followed by the name of the primary key column. However, if the foreign key on the `Comment` model is not `post_id`, you may pass a custom key name as the second argument to the `belongsTo` method:
+In the example above, Eloquent will try to match the `post_id` from the `Comment` model to an `id` on the `Post` model. Eloquent determines the default foreign key name by examining the name of the relationship method and suffixing the method name with `_id`. However, if the foreign key on the `Comment` model is not `post_id`, you may pass a custom key name as the second argument to the `belongsTo` method:
 
     /**
      * Get the post that owns the comment.
@@ -325,7 +360,7 @@ You can also filter the results returned by `belongsToMany` using the `wherePivo
 
 #### Defining Custom Intermediate Table Models
 
-If you would like to define a custom model to represent the intermediate table of your relationship, you may call the `using` method when defining the relationship. Custom many-to-many pivot models should extend the `Illuminate\Database\Eloquent\Relations\Pivot` class while custom polymorphic many-to-many pivot models should extend the `Illuminate\Database\Eloquent\Relations\MorphPivot` class. For example, we may define a `Role` which uses a custom `UserRole` pivot model:
+If you would like to define a custom model to represent the intermediate table of your relationship, you may call the `using` method when defining the relationship. All custom models used to represent intermediate tables of relationships must extend the `Illuminate\Database\Eloquent\Relations\Pivot` class. For example, we may define a `Role` which uses a custom `UserRole` pivot model:
 
     <?php
 
@@ -421,7 +456,7 @@ Typical Eloquent foreign key conventions will be used when performing the relati
 
 #### Table Structure
 
-Polymorphic relations allow a model to belong to more than one other model on a single association. For example, imagine users of your application can "comment" on both posts and videos. Using polymorphic relationships, you can use a single `comments` table for both of these scenarios. First, let's examine the table structure required to build this relationship:
+Polymorphic relations allow a model to belong to more than one other model on a single association. For example, imagine users of your application can "comment" both posts and videos. Using polymorphic relationships, you can use a single `comments` table for both of these scenarios. First, let's examine the table structure required to build this relationship:
 
     posts
         id - integer
@@ -690,12 +725,6 @@ If you need even more power, you may use the `whereDoesntHave` and `orWhereDoesn
         $query->where('content', 'like', 'foo%');
     })->get();
 
-You may use "dot" notation to execute a query against a nested relationship. For example, the following query will retrieve all posts with comments from authors that are not banned:
-
-    $posts = App\Post::whereDoesntHave('comments.author', function ($query) {
-        $query->where('banned', 1);
-    })->get();
-
 <a name="counting-related-models"></a>
 ### Counting Related Models
 
@@ -906,41 +935,6 @@ When removing a `belongsTo` relationship, you may use the `dissociate` method. T
     $user->account()->dissociate();
 
     $user->save();
-
-<a name="default-models"></a>
-#### Default Models
-
-The `belongsTo` relationship allows you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `App\User` model if no `user` is attached to the post:
-
-    /**
-     * Get the author of the post.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User')->withDefault();
-    }
-
-To populate the default model with attributes, you may pass an array or Closure to the `withDefault` method:
-
-    /**
-     * Get the author of the post.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User')->withDefault([
-            'name' => 'Guest Author',
-        ]);
-    }
-
-    /**
-     * Get the author of the post.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User')->withDefault(function ($user) {
-            $user->name = 'Guest Author';
-        });
-    }
 
 <a name="updating-many-to-many-relationships"></a>
 ### Many To Many Relationships

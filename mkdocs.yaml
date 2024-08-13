@@ -12,7 +12,7 @@ nav:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
-      - Documentação da API: https://laravel.com/api/5.6
+      - Documentação da API: https://laravel.com/api/5.5
   - Começando:
       - Instalação: contributions.md
       - Configuração: configuration.md
@@ -39,8 +39,7 @@ nav:
       - Geração de URL: urls.md
       - Sessão: session.md
       - Validação: validation.md
-      - Tratamento de erros: errors.md
-      - Logging: logging.md
+      - Tratamento de erros e Logging: errors.md
   - Frontend:
       - Blade Templates: blade.md
       - Localization: localization.md

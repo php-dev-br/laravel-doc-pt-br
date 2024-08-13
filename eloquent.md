@@ -19,7 +19,6 @@
 - [Query Scopes](#query-scopes)
     - [Global Scopes](#global-scopes)
     - [Local Scopes](#local-scopes)
-- [Comparing Models](#comparing-models)
 - [Events](#events)
     - [Observers](#observers)
 
@@ -37,13 +36,13 @@ To get started, let's create an Eloquent model. Models typically live in the `ap
 
 The easiest way to create a model instance is using the `make:model` [Artisan command](artisan.md):
 
-    php artisan make:model Flight
+    php artisan make:model User
 
 If you would like to generate a [database migration](migrations.md) when you generate the model, you may use the `--migration` or `-m` option:
 
-    php artisan make:model Flight --migration
+    php artisan make:model User --migration
 
-    php artisan make:model Flight -m
+    php artisan make:model User -m
 
 <a name="eloquent-model-conventions"></a>
 ### Eloquent Model Conventions
@@ -629,10 +628,6 @@ If you would like to remove a global scope for a given query, you may use the `w
 
     User::withoutGlobalScope(AgeScope::class)->get();
 
-Or, if you defined the global scope using a Closure:
-
-    User::withoutGlobalScope('age')->get();
-
 If you would like to remove several or even all of the global scopes, you may use the `withoutGlobalScopes` method:
 
     // Remove all of the global scopes...
@@ -716,23 +711,12 @@ Now, you may pass the parameters when calling the scope:
 
     $users = App\User::ofType('admin')->get();
 
-<a name="comparing-models"></a>
-## Comparing Models
-
-Sometimes you may need to determine if two models are the "same". The `is` method may be used to quickly verify two models have same primary key, table, and database connection:
-
-    if ($post->is($anotherPost)) {
-        //
-    }
-
 <a name="events"></a>
 ## Events
 
-Eloquent models fire several events, allowing you to hook into the following points in a model's lifecycle: `retrieved`, `creating`, `created`, `updating`, `updated`, `saving`, `saved`, `deleting`, `deleted`, `restoring`, `restored`. Events allow you to easily execute code each time a specific model class is saved or updated in the database. Each event receives the instance of the model through its constructor.
+Eloquent models fire several events, allowing you to hook into the following points in a model's lifecycle: `retrieved`, `creating`, `created`, `updating`, `updated`, `saving`, `saved`, `deleting`, `deleted`, `restoring`, `restored`. Events allow you to easily execute code each time a specific model class is saved or updated in the database.
 
 The `retrieved` event will fire when an existing model is retrieved from the database. When a new model is saved for the first time, the `creating` and `created` events will fire. If a model already existed in the database and the `save` method is called, the `updating` / `updated` events will fire. However, in both cases, the `saving` / `saved` events will fire.
-
-> {note} When issuing a mass update via Eloquent, the `saved` and `updated` model events will not be fired for the updated models. This is because the models are never actually retrieved when issuing a mass update.
 
 To get started, define a `$dispatchesEvents` property on your Eloquent model that maps various points of the Eloquent model's lifecycle to your own [event classes](events.md):
 
@@ -763,13 +747,7 @@ To get started, define a `$dispatchesEvents` property on your Eloquent model tha
 <a name="observers"></a>
 ### Observers
 
-#### Defining Observers
-
-If you are listening for many events on a given model, you may use observers to group all of your listeners into a single class. Observers classes have method names which reflect the Eloquent events you wish to listen for. Each of these methods receives the model as their only argument. The `make:observer` Artisan command is the easiest way to create a new observer class:
-
-    php artisan make:observer UserObserver --model=User
-
-This command will place the new observer in your `App/Observers` directory. If this directory does not exist, Artisan will create it for you. Your fresh observer will look like the following:
+If you are listening for many events on a given model, you may use observers to group all of your listeners into a single class. Observers classes have method names which reflect the Eloquent events you wish to listen for. Each of these methods receives the model as their only argument. Laravel does not include a default directory for observers, so you may create any directory you like to house your observer classes:
 
     <?php
 
@@ -780,7 +758,7 @@ This command will place the new observer in your `App/Observers` directory. If t
     class UserObserver
     {
         /**
-         * Handle to the User "created" event.
+         * Listen to the User created event.
          *
          * @param  \App\User  $user
          * @return void
@@ -791,23 +769,12 @@ This command will place the new observer in your `App/Observers` directory. If t
         }
 
         /**
-         * Handle the User "updated" event.
+         * Listen to the User deleting event.
          *
          * @param  \App\User  $user
          * @return void
          */
-        public function updated(User $user)
-        {
-            //
-        }
-
-        /**
-         * Handle the User "deleted" event.
-         *
-         * @param  \App\User  $user
-         * @return void
-         */
-        public function deleted(User $user)
+        public function deleting(User $user)
         {
             //
         }

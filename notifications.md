@@ -147,7 +147,7 @@ If you would like to delay the delivery of the notification, you may chain the `
 
 Sometimes you may need to send a notification to someone who is not stored as a "user" of your application. Using the `Notification::route` method, you may specify ad-hoc notification routing information before sending the notification:
 
-    Notification::route('mail', 'taylor@example.com')
+    Notification::route('mail', 'taylor@laravel.com')
                 ->route('nexmo', '5555555555')
                 ->notify(new InvoicePaid($invoice));
 
@@ -254,10 +254,9 @@ When sending notifications via the `mail` channel, the notification system will 
         /**
          * Route notifications for the mail channel.
          *
-         * @param  \Illuminate\Notifications\Notification  $notification
          * @return string
          */
-        public function routeNotificationForMail($notification)
+        public function routeNotificationForMail()
         {
             return $this->email_address;
         }
@@ -623,10 +622,9 @@ When sending notifications via the `nexmo` channel, the notification system will
         /**
          * Route notifications for the Nexmo channel.
          *
-         * @param  \Illuminate\Notifications\Notification  $notification
          * @return string
          */
-        public function routeNotificationForNexmo($notification)
+        public function routeNotificationForNexmo()
         {
             return $this->phone;
         }
@@ -800,10 +798,9 @@ To route Slack notifications to the proper location, define a `routeNotification
         /**
          * Route notifications for the Slack channel.
          *
-         * @param  \Illuminate\Notifications\Notification  $notification
          * @return string
          */
-        public function routeNotificationForSlack($notification)
+        public function routeNotificationForSlack()
         {
             return $this->slack_webhook_url;
         }

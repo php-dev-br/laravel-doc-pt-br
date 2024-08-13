@@ -6,9 +6,7 @@
     - [Scheduling Queued Jobs](#scheduling-queued-jobs)
     - [Scheduling Shell Commands](#scheduling-shell-commands)
     - [Schedule Frequency Options](#schedule-frequency-options)
-    - [Timezones](#timezones)
     - [Preventing Task Overlaps](#preventing-task-overlaps)
-    - [Running Tasks On One Server](#running-tasks-on-one-server)
     - [Maintenance Mode](#maintenance-mode)
 - [Task Output](#task-output)
 - [Task Hooks](#task-hooks)
@@ -24,7 +22,7 @@ Laravel's command scheduler allows you to fluently and expressively define your 
 
 When using the scheduler, you only need to add the following Cron entry to your server. If you do not know how to add Cron entries to your server, consider using a service such as [Laravel Forge](https://forge.laravel.com) which can manage the Cron entries for you:
 
-    * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+    * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 
 This Cron will call the Laravel command scheduler every minute. When the `schedule:run` command is executed, Laravel will evaluate your scheduled tasks and runs the tasks that are due.
 
@@ -66,10 +64,6 @@ You may define all of your scheduled tasks in the `schedule` method of the `App\
         }
     }
 
-In addition to scheduling using Closures, you may also using [invokable objects](http://php.net/manual/en/language.oop5.magic.php#object.invoke). Invokable objects are simple PHP classes that contain an `__invoke` method:
-
-    $schedule->call(new DeleteRecentUsers)->daily();
-
 <a name="scheduling-artisan-commands"></a>
 ### Scheduling Artisan Commands
 
@@ -86,9 +80,6 @@ The `job` method may be used to schedule a [queued job](queues.md). This method 
 
     $schedule->job(new Heartbeat)->everyFiveMinutes();
 
-    // Dispatch the job to the "heartbeats" queue...
-    $schedule->job(new Heartbeat, 'heartbeats')->everyFiveMinutes();
-
 <a name="scheduling-shell-commands"></a>
 ### Scheduling Shell Commands
 
@@ -103,7 +94,7 @@ Of course, there are a variety of schedules you may assign to your task:
 
 Method  | Description
 ------------- | -------------
-`->cron('* * * * *');`  |  Run the task on a custom Cron schedule
+`->cron('* * * * * *');`  |  Run the task on a custom Cron schedule
 `->everyMinute();`  |  Run the task every minute
 `->everyFiveMinutes();`  |  Run the task every five minutes
 `->everyTenMinutes();`  |  Run the task every ten minutes
@@ -115,7 +106,6 @@ Method  | Description
 `->dailyAt('13:00');`  |  Run the task every day at 13:00
 `->twiceDaily(1, 13);`  |  Run the task daily at 1:00 & 13:00
 `->weekly();`  |  Run the task every week
-`->weeklyOn(1, '8:00');`  |  Run the task every week on Monday at 8:00
 `->monthly();`  |  Run the task every month
 `->monthlyOn(4, '15:00');`  |  Run the task every month on the 4th at 15:00
 `->quarterly();` |  Run the task every quarter
@@ -181,17 +171,6 @@ The `skip` method may be seen as the inverse of `when`. If the `skip` method ret
 
 When using chained `when` methods, the scheduled command will only execute if all `when` conditions return `true`.
 
-<a name="timezones"></a>
-### Timezones
-
-Using the `timezone` method, you may specify that a scheduled task's time should be interpreted within a given timezone:
-
-    $schedule->command('report:generate')
-             ->timezone('America/New_York')
-             ->at('02:00')
-
-> {note} Remember that some timezones utilize daylight savings time. When daylight saving time changes occur, your scheduled task may run twice or even not run at all. For this reason, we recommend avoiding timezone scheduling when possible.
-
 <a name="preventing-task-overlaps"></a>
 ### Preventing Task Overlaps
 
@@ -204,20 +183,6 @@ In this example, the `emails:send` [Artisan command](artisan.md) will be run eve
 If needed, you may specify how many minutes must pass before the "without overlapping" lock expires. By default, the lock will expire after 24 hours:
 
     $schedule->command('emails:send')->withoutOverlapping(10);
-
-<a name="running-tasks-on-one-server"></a>
-### Running Tasks On One Server
-
-> {note} To utilize this feature, your application must be using the `memcached` or `redis` cache driver as your application's default cache driver. In addition, all servers must be communicating with the same central cache server.
-
-If your application is running on multiple servers, you may limit a scheduled job to only execute on a single server. For instance, assume you have a scheduled task that generates a new report every Friday night. If the task scheduler is running on three worker servers, the scheduled task will run on all three servers and generate the report three times. Not good!
-
-To indicate that the task should run on only one server, use the `onOneServer` method when defining the scheduled task. The first server to obtain the task will secure an atomic lock on the job to prevent other servers from running the same task at the same time:
-
-    $schedule->command('report:generate')
-                    ->fridays()
-                    ->at('17:00')
-                    ->onOneServer();
 
 <a name="maintenance-mode"></a>
 ### Maintenance Mode
@@ -248,7 +213,7 @@ Using the `emailOutputTo` method, you may e-mail the output to an e-mail address
              ->sendOutputTo($filePath)
              ->emailOutputTo('foo@example.com');
 
-> {note} The `emailOutputTo`, `sendOutputTo` and `appendOutputTo` methods are exclusive to the `command` and `exec` methods.
+> {note} The `emailOutputTo`, `sendOutputTo` and `appendOutputTo` methods are exclusive to the `command` method and are not supported for `call`.
 
 <a name="task-hooks"></a>
 ## Task Hooks

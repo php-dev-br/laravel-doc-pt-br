@@ -1,24 +1,24 @@
 # Upgrade Guide
 
-- [Upgrading To 5.6.30 From 5.6](#upgrade-5.6.30)
-- [Upgrading To 5.6.0 From 5.5](#upgrade-5.6.0)
+- [Upgrading To 5.5.42 From 5.5](#upgrade-5.5.42)
+- [Upgrading To 5.5.0 From 5.4](#upgrade-5.5.0)
 
-<a name="upgrade-5.6.30"></a>
-## Upgrading To 5.6.30 From 5.6 (Security Release)
+<a name="upgrade-5.5.42"></a>
+## Upgrading To 5.5.42 From 5.5 (Security Release)
 
-Laravel 5.6.30 is a security release of Laravel and is recommended as an immediate upgrade for all users. Laravel 5.6.30 also contains a breaking change to cookie encryption and serialization logic, so please read the following notes carefully when upgrading your application.
+Laravel 5.5.42 is a security release of Laravel and is recommended as an immediate upgrade for all users. Laravel 5.5.42 also contains a breaking change to cookie encryption and serialization logic, so please read the following notes carefully when upgrading your application.
 
 **This vulnerability may only be exploited if your application encryption key (`APP_KEY` environment variable) has been accessed by a malicious user.** Typically, it is not possible for users of your application to gain access to this value. However, ex-employees that had access to the encryption key may be able to use the key to attack your applications. If you have any reason to believe your encryption key is in the hands of a malicious party, you should **always** rotate the key to a new value.
 
 ### Cookie Serialization
 
-Laravel 5.6.30 disables all serialization / unserialization of cookie values. Since all Laravel cookies are encrypted and signed, cookie values are typically considered safe from client tampering. **However, if your application's encryption key is in the hands of a malicious party, that party could craft cookie values using the encryption key and exploit vulnerabilities inherent to PHP object serialization / unserialization, such as calling arbitrary class methods within your application.**
+Laravel 5.5.42 disables all serialization / unserialization of cookie values. Since all Laravel cookies are encrypted and signed, cookie values are typically considered safe from client tampering. **However, if your application's encryption key is in the hands of a malicious party, that party could craft cookie values using the encryption key and exploit vulnerabilities inherit to PHP object serialization / unserialization, such as calling arbitary class methods within your application.**
 
-Disabling serialization on all cookie values will invalidate all of your application's sessions and users will need to log into the application again (unless they have a `remember_token` set, in which case the user will be logged into a new session automatically). In addition, any other encrypted cookies your application is setting will have invalid values. For this reason, you may wish to add additional logic to your application to validate that your custom cookie values match an expected list of values; otherwise, you should discard them.
+Disabling serialization on all cookie values will invalidate all of your application's sessions and users will need to log into the application again. In addition, any other encrypted cookies your application is setting will have invalid values. For this reason, you may wish to add additional logic to your application to validate that your custom cookie values match an expected list of values you expect; otherwise, you should discard them.
 
 #### Configuring Cookie Serialization
 
-Since this vulnerability is not able to be exploited without access to your application's encryption key, we have chosen to provide a way to re-enable encrypted cookie serialization while you make your application compatible with these changes. To enable / disable cookie serialization, you may change the static `serialize` property of the `App\Http\Middleware\EncryptCookies` [middleware](https://github.com/laravel/laravel/blob/5.6/app/Http/Middleware/EncryptCookies.php):
+Since this vulnerability is not able to be exploited without access to your application's encryption key, we have chosen to provide a way to re-enable encrypted cookie serialization while you make your application compatible with these changes. To enable / disable cookie serialization, you may change the static `serialize` property of the `App\Http\Middleware\EncryptCookies` [middleware](https://github.com/laravel/laravel/blob/master/app/Http/Middleware/EncryptCookies.php):
 
     /**
      * Indicates if cookies should be serialized.
@@ -29,214 +29,370 @@ Since this vulnerability is not able to be exploited without access to your appl
 
 > **Note:** When encrypted cookie serialization is enabled, your application will be vulnerable to attack if its encryption key is accessed by a malicious party. If you believe your key may be in the hands of a malicious party, you should rotate the key to a new value before enabling encrypted cookie serialization.
 
-### Dusk 4.0.0
+<a name="upgrade-5.5.0"></a>
+## Upgrading To 5.5.0 From 5.4
 
-Dusk 4.0.0 has been released and does not serialize cookies. If you choose to enable cookie serialization, you should continue to use Dusk 3.0.0. Otherwise, you should upgrade to Dusk 4.0.0.
-
-### Passport 6.0.7
-
-Passport 6.0.7 has been released with a new `Laravel\Passport\Passport::withoutCookieSerialization()` method. Once you have disabled cookie serialization, you should call this method within your application's `AppServiceProvider`.
-
-<a name="upgrade-5.6.0"></a>
-## Upgrading To 5.6.0 From 5.5
-
-#### Estimated Upgrade Time: 10 - 30 Minutes
+#### Estimated Upgrade Time: 1 Hour
 
 > {note} We attempt to document every possible breaking change. Since some of these breaking changes are in obscure parts of the framework only a portion of these changes may actually affect your application.
 
 ### PHP
 
-Laravel 5.6 requires PHP 7.1.3 or higher.
+Laravel 5.5 requires PHP 7.0.0 or higher.
 
 ### Updating Dependencies
 
-Update your `laravel/framework` dependency to `5.6.*` and your `fideloper/proxy` dependency to `^4.0` in your `composer.json` file.
+Update your `laravel/framework` dependency to `5.5.*` in your `composer.json` file. In addition, you should update your `phpunit/phpunit` dependency to `~6.0`. Next, add the `filp/whoops` package with version `~2.0` to the `require-dev` section of your `composer.json` file. Finally, in the `scripts` section of your `composer.json` file, add the `package:discover` command to the `post-autoload-dump` event:
 
-If you are using the `laravel/browser-kit-testing` package, you should update the package to `4.*` in your composer.json file.
+    "scripts": {
+        ...
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
+        ],
+    }
 
-In addition, if you are using the following first-party Laravel packages, you should upgrade them to their latest release:
+If you are using the `laravel/browser-kit-testing` package, you should update the package to `2.*` in your `composer.json` file.
 
-<div class="content-list" markdown="1">
-- Dusk (Upgrade To `^3.0`)
-- Passport (Upgrade To `^6.0`)
-- Scout (Upgrade To `^4.0`)
-</div>
+Of course, don't forget to examine any 3rd party packages consumed by your application and verify you are using the proper version for Laravel 5.5 support.
 
-Of course, don't forget to examine any 3rd party packages consumed by your application and verify you are using the proper version for Laravel 5.6 support.
+#### Laravel Installer
 
-#### Symfony 4
+> {tip} If you commonly use the Laravel installer via `laravel new`, you should update your Laravel installer package using the `composer global update` command.
 
-All of the underlying Symfony components used by Laravel have been upgraded to the Symfony `^4.0` release series. If you are directly interacting with Symfony components within your application, you should review the [Symfony change log](https://github.com/symfony/symfony/blob/4.0/UPGRADE-4.0.md).
+#### Laravel Dusk
 
-#### PHPUnit
+Laravel Dusk `2.0.0` has been released to provide compatibility with Laravel 5.5 and headless Chrome testing.
 
-You should update the `phpunit/phpunit` dependency of your application to `^7.0`.
+#### Pusher
 
-### Arrays
+The Pusher event broadcasting driver now requires version `~3.0` of the Pusher SDK.
 
-#### The `Arr::wrap` Method
+#### Swift Mailer
 
-Passing `null` to the `Arr::wrap` method will now return an empty array.
+Laravel 5.5 requires version `~6.0` of Swift Mailer.
 
 ### Artisan
 
+#### Auto-Loading Commands
+
+In Laravel 5.5, Artisan can automatically discover commands so that you do not have to manually register them in your kernel. To take advantage of this new feature, you should add the following line to the `commands` method of your  `App\Console\Kernel` class:
+
+    $this->load(__DIR__.'/Commands');
+
+#### The `fire` Method
+
+Any `fire` methods present on your Artisan commands should be renamed to `handle`.
+
 #### The `optimize` Command
 
-The previously deprecated `optimize` Artisan command has been removed. With recent improvements to PHP itself including the OPcache, the `optimize` command no longer provides any relevant performance benefit. Therefore, you may remove `php artisan optimize` from the `scripts` within your `composer.json` file.
+With recent improvements to PHP op-code caching, the `optimize` Artisan command is no longer needed. You should remove any references to this command from your deployment scripts as it will be removed in a future release of Laravel.
 
-### Blade
+### Authorization
 
-#### HTML Entity Encoding
+> {note} When upgrading from Laravel 5.4 to 5.5, all `remember_me` cookies will be rendered invalid and users will be logged out.
 
-In previous versions of Laravel, Blade (and the `e` helper) would not double encode HTML entities. This was not the default behavior of the underlying `htmlspecialchars` function and could lead to unexpected behavior when rendering content or passing in-line JSON content to JavaScript frameworks.
+#### The `authorizeResource` Controller Method
 
-In Laravel 5.6, Blade and the `e` helper will double encode special characters by default. This brings these features into alignment with the default behavior of the underlying `htmlspecialchars` PHP function. If you would like to maintain the previous behavior of preventing double encoding, you may use the `Blade::withoutDoubleEncoding` method:
+When passing a multi-word model name to the `authorizeResource` method, the resulting route segment will now be "snake" case, matching the behavior of resource controllers.
 
-    <?php
+#### The `basic` and `onceBasic` Methods
 
-    namespace App\Providers;
+`Auth::basic` and `Auth::onceBasic` now throw `\Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException` rather than returning a `Response` when authentication fails. By default, this will still result in a 401 response being sent to the client. However, if your application logic checked the return value of `Auth::basic` in order to return a custom response or implement other behavior on authentication failure, you will now need to handle the `UnauthorizedHttpException` instead, either in a `catch` block or in your application's exception handler.
 
-    use Illuminate\Support\Facades\Blade;
-    use Illuminate\Support\ServiceProvider;
+#### The `before` Policy Method
 
-    class AppServiceProvider extends ServiceProvider
-    {
-        /**
-         * Bootstrap any application services.
-         *
-         * @return void
-         */
-        public function boot()
-        {
-            Blade::withoutDoubleEncoding();
-        }
-    }
+The `before` method of a policy class will not be called if the class doesn't contain a method matching the name of the ability being checked.
 
 ### Cache
 
-#### The Rate Limiter `tooManyAttempts` Method
+#### Database Driver
 
-The unused `$decayMinutes` parameter was removed from this method's signature. If you were overriding this method with your own implementation, you should also remove the argument from your method's signature.
-
-### Database
-
-#### Index Order Of Morph Columns
-
-The indexing of the columns built by the `morphs` migration method has been reversed for better performance. If you are using the `morphs` method in one of your migrations, you may receive an error when attempting to run the migration's `down` method. If the application is still in development, you may use the `migrate:fresh` command to rebuild the database from scratch. If the application is in production, you should pass an explicit index name to the `morphs` method.
-
-#### `MigrationRepositoryInterface` Method Addition
-
-A new `getMigrationsBatches` method has been added to the `MigrationRepositoryInterface`. In the very unlikely event that you were defining your own implementation of this class, you should add this method to your implementation. You may view the default implementation in the framework as an example.
+If you are using the database cache driver, you should run `php artisan cache:clear` when deploying your upgraded Laravel 5.5 application for the first time.
 
 ### Eloquent
 
-#### The `getDateFormat` Method
+#### The `belongsToMany` Method
 
-This `getDateFormat` method is now `public` instead of `protected`.
+If you are overriding the `belongsToMany` method on your Eloquent model, you should update your method signature to reflect the addition of new arguments:
 
-### Hashing
-
-#### New Configuration File
-
-All hashing configuration is now housed in its own `config/hashing.php` configuration file. You should place a copy of the [default configuration file](https://github.com/laravel/laravel/blob/5.6/config/hashing.php) in your own application. Most likely, you should maintain the `bcrypt` driver as your default driver. However, `argon` is also supported.
-
-### Helpers
-
-#### The `e` Helper
-
-In previous versions of Laravel, Blade (and the `e` helper) would not double encode HTML entities. This was not the default behavior of the underlying `htmlspecialchars` function and could lead to unexpected behavior when rendering content or passing in-line JSON content to JavaScript frameworks.
-
-In Laravel 5.6, Blade and the `e` helper will double encode special characters by default. This brings these features into alignment with the default behavior of the underlying `htmlspecialchars` PHP function. If you would like to maintain the previous behavior of preventing double encoding, you may pass `false` as the second argument to the `e` helper:
-
-    <?php echo e($string, false); ?>
-
-### Logging
-
-#### New Configuration File
-
-All logging configuration is now housed in its own `config/logging.php` configuration file. You should place a copy of the [default configuration file](https://github.com/laravel/laravel/blob/5.6/config/logging.php) in your own application and tweak the settings based on your application's needs.
-
-The `log` and `log_level` configuration options may be removed from the `config/app.php` configuration file.
-
-#### The `configureMonologUsing` Method
-
-If you were using the `configureMonologUsing` method to customize the Monolog instance for your application, you should now create a `custom` Log channel. For more information on how to create custom channels, check out the [full logging documentation](/docs/5.6/logging#creating-custom-channels).
-
-#### The Log `Writer` Class
-
-The `Illuminate\Log\Writer` class has been renamed to `Illuminate\Log\Logger`. If you were explicitly type-hinting this class as a dependency of one of your application's classes, you should update the class reference to the new name. Or, alternatively, you should strongly consider type-hinting the standardized `Psr\Log\LoggerInterface` interface instead.
-
-#### The `Illuminate\Contracts\Logging\Log` Interface
-
-This interface has been removed since this interface was a total duplication of the `Psr\Log\LoggerInterface` interface. You should type-hint the `Psr\Log\LoggerInterface` interface instead.
-
-### Mail
-
-#### `withSwiftMessage` Callbacks
-
-In previous releases of Laravel, Swift Messages customization callbacks registered using `withSwiftMessage` were called _after_ the content was already encoded and added to the message. These callbacks are now called _before_ the content is added, which allows you to customize the encoding or other message options as needed.
-
-### Pagination
-
-#### Bootstrap 4
-
-The pagination links generated by the paginator now default to Bootstrap 4. To instruct the paginator to generate Bootstrap 3 links, call the `Paginator::useBootstrapThree` method from the `boot` method of your `AppServiceProvider`:
-
-    <?php
-
-    namespace App\Providers;
-
-    use Illuminate\Pagination\Paginator;
-    use Illuminate\Support\ServiceProvider;
-
-    class AppServiceProvider extends ServiceProvider
+    /**
+     * Define a many-to-many relationship.
+     *
+     * @param  string  $related
+     * @param  string  $table
+     * @param  string  $foreignPivotKey
+     * @param  string  $relatedPivotKey
+     * @param  string  $parentKey
+     * @param  string  $relatedKey
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function belongsToMany($related, $table = null, $foreignPivotKey = null,
+                                  $relatedPivotKey = null, $parentKey = null,
+                                  $relatedKey = null, $relation = null)
     {
-        /**
-         * Bootstrap any application services.
-         *
-         * @return void
-         */
-        public function boot()
-        {
-            Paginator::useBootstrapThree();
+        //
+    }
+
+#### BelongsToMany `getQualifiedRelatedKeyName`
+
+The `getQualifiedRelatedKeyName` method has been renamed to `getQualifiedRelatedPivotKeyName`.
+
+#### BelongsToMany `getQualifiedForeignKeyName`
+
+The `getQualifiedForeignKeyName` method has been renamed to `getQualifiedForeignPivotKeyName`.
+
+#### Model `is` Method
+
+If you are overriding the `is` method of your Eloquent model, you should remove the `Model` type-hint from the method. This allows the `is` method to receive `null` as an argument:
+
+    /**
+     * Determine if two models have the same ID and belong to the same table.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model
+     * @return bool
+     */
+    public function is($model)
+    {
+        //
+    }
+
+#### Model `$events` Property
+
+The `$events` property on your models should be renamed to `$dispatchesEvents`. This change was made because of a high number of users needing to define an `events` relationship, which caused a conflict with the old property name.
+
+#### Pivot `$parent` Property
+
+The protected `$parent` property on the `Illuminate\Database\Eloquent\Relations\Pivot` class has been renamed to `$pivotParent`.
+
+#### Relationship `create` Methods
+
+The `BelongsToMany`, `HasOneOrMany`, and `MorphOneOrMany` classes' `create` methods have been modified to provide a default value for the `$attributes` argument. If you are overriding these methods, you should update your signatures to match the new definition:
+
+    public function create(array $attributes = [])
+    {
+        //
+    }
+
+#### Soft Deleted Models
+
+When deleting a "soft deleted" model, the `exists` property on the model will remain `true`.
+
+#### `withCount` Column Formatting
+
+When using an alias, the `withCount` method will no longer automatically append `_count` onto the resulting column name. For example, in Laravel 5.4, the following query would result in a `bar_count` column being added to the query:
+
+    $users = User::withCount('foo as bar')->get();
+
+However, in Laravel 5.5, the alias will be used exactly as it is given. If you would like to append `_count` to the resulting column, you must specify that suffix when defining the alias:
+
+    $users = User::withCount('foo as bar_count')->get();
+
+#### Model Methods & Attribute Names
+
+To prevent accessing a model's private properties when using array access, it's no longer possible to have a model method with the same name as an attribute or property. Doing so will cause exceptions to be thrown when accessing the model's attributes via array access (`$user['name']`) or the `data_get` helper function.
+
+### Exception Format
+
+In Laravel 5.5, all exceptions, including validation exceptions, are converted into HTTP responses by the exception handler. In addition, the default format for JSON validation errors has changed. The new format conforms to the following convention:
+
+    {
+        "message": "The given data was invalid.",
+        "errors": {
+            "field-1": [
+                "Error 1",
+                "Error 2"
+            ],
+            "field-2": [
+                "Error 1",
+                "Error 2"
+            ],
         }
     }
 
-### Resources
+However, if you would like to maintain the Laravel 5.4 JSON error format, you may add the following method to your `App\Exceptions\Handler` class:
 
-#### The `original` Property
-
-The `original` property of [resource responses](/docs/5.6/eloquent-resources) is now set to the original model instead of a JSON string / array. This allows for easier inspection of the response's model during testing.
-
-### Routing
-
-#### Returning Newly Created Models
-
-When returning a newly created Eloquent model directly from a route, the response status will now automatically be set to `201` instead of `200`. If any of your application's tests were explicitly expecting a `200` response, those tests should be updated to expect `201`.
-
-### Trusted Proxies
-
-Due to underlying changes in the trusted proxy functionality of Symfony HttpFoundation, slight changes must be made to your application's `App\Http\Middleware\TrustProxies` middleware.
-
-The `$headers` property, which was previously an array, is now a bit property that accepts several different values. For example, to trust all forwarded headers, you may update your `$headers` property to the following value:
-
-    use Illuminate\Http\Request;
+    use Illuminate\Validation\ValidationException;
 
     /**
-     * The headers that should be used to detect proxies.
+     * Convert a validation exception into a JSON response.
      *
-     * @var int
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Validation\ValidationException  $exception
+     * @return \Illuminate\Http\JsonResponse
      */
-    protected $headers = Request::HEADER_X_FORWARDED_ALL;
+    protected function invalidJson($request, ValidationException $exception)
+    {
+        return response()->json($exception->errors(), $exception->status);
+    }
 
-For more information on the available `$headers` values, check out the full documentation on [trusting proxies](/docs/5.6/requests#configuring-trusted-proxies).
+#### JSON Authentication Attempts
+
+This change also affects the validation error formatting for authentication attempts made over JSON. In Laravel 5.5, JSON authentication failures will return the error messages following the new formatting convention described above.
+
+#### A Note On Form Requests
+
+If you were customizing the response format of an individual form request, you should now override the `failedValidation` method of that form request, and throw an `HttpResponseException` instance containing your custom response:
+
+    use Illuminate\Http\Exceptions\HttpResponseException;
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json(..., 422));
+    }
+
+### Filesystem
+
+#### The `files` Method
+
+The `files` method of the `Illuminate\Filesystem\Filesystem` class has changed its signature to add the `$hidden` argument and now returns an array of `SplFileInfo` objects, similar to the `allFiles` method. Previously, the `files` method returned an array of string path names. The new signature is as follows:
+
+    public function files($directory, $hidden = false)
+
+### Mail
+
+#### Unused Parameters
+
+The unused `$data` and `$callback` arguments were removed from the `Illuminate\Contracts\Mail\MailQueue` contract's `queue` and `later` methods:
+
+    /**
+     * Queue a new e-mail message for sending.
+     *
+     * @param  string|array|MailableContract  $view
+     * @param  string  $queue
+     * @return mixed
+     */
+    public function queue($view, $queue = null);
+
+    /**
+     * Queue a new e-mail message for sending after (n) seconds.
+     *
+     * @param  \DateTimeInterface|\DateInterval|int  $delay
+     * @param  string|array|MailableContract  $view
+     * @param  string  $queue
+     * @return mixed
+     */
+    public function later($delay, $view, $queue = null);
+
+### Queues
+
+#### The `dispatch` Helper
+
+If you would like to dispatch a job that runs immediately and returns a value from the `handle` method, you should use the `dispatch_now` or `Bus::dispatchNow` method to dispatch the job:
+
+    use Illuminate\Support\Facades\Bus;
+
+    $value = dispatch_now(new Job);
+
+    $value = Bus::dispatchNow(new Job);
+
+### Requests
+
+#### The `all` Method
+
+If you are overriding the `all` method of the `Illuminate\Http\Request` class, you should update your method signature to reflect the new `$keys` argument:
+
+    /**
+     * Get all of the input and files for the request.
+     *
+     * @param  array|mixed  $keys
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        //
+    }
+
+#### The `has` Method
+
+The `$request->has` method will now return `true` even if the input value is an empty string or `null`. A new `$request->filled` method has been added that provides the previous behavior of the `has` method.
+
+#### The `intersect` Method
+
+The `intersect` method has been removed. You may replicate this behavior using `array_filter` on a call to `$request->only`:
+
+    return array_filter($request->only('foo'));
+
+#### The `only` Method
+
+The `only` method will now only return attributes that are actually present in the request payload. If you would like to preserve the old behavior of the `only` method, you may use the `all` method instead.
+
+    return $request->all('foo');
+
+#### The `request()` Helper
+
+The `request` helper will no longer retrieve nested keys. If needed, you may use the `input` method of the request to achieve this behavior:
+
+    return request()->input('filters.date');
+
+### Testing
+
+#### Authentication Assertions
+
+Some authentication assertions were renamed for better consistency with the rest of the framework's assertions:
+
+<div class="content-list" markdown="1">
+- `seeIsAuthenticated` was renamed to `assertAuthenticated`.
+- `dontSeeIsAuthenticated` was renamed to `assertGuest`.
+- `seeIsAuthenticatedAs` was renamed to `assertAuthenticatedAs`.
+- `seeCredentials` was renamed to `assertCredentials`.
+- `dontSeeCredentials` was renamed to `assertInvalidCredentials`.
+</div>
+
+#### Mail Fake
+
+If you are using the `Mail` fake to determine if a mailable was **queued** during a request, you should now use `Mail::assertQueued` instead of `Mail::assertSent`. This distinction allows you to specifically assert that the mail was queued for background sending and not sent during the request itself.
+
+#### Tinker
+
+Laravel Tinker now supports omitting namespaces when referring to your application classes. This feature requires an optimized Composer class-map, so you should add the `optimize-autoloader` directive to the `config` section of your `composer.json` file:
+
+    "config": {
+        ...
+        "optimize-autoloader": true
+    }
+
+### Translation
+
+#### The `LoaderInterface`
+
+The `Illuminate\Translation\LoaderInterface` interface has been moved to `Illuminate\Contracts\Translation\Loader`.
 
 ### Validation
 
-#### The `ValidatesWhenResolved` Interface
+#### Validator Methods
 
-The `validate` method of the `ValidatesWhenResolved` interface / trait has been renamed to `validateResolved` in order to avoid conflicts with the `$request->validate()` method.
+All of the validator's validation methods are now `public` instead of `protected`.
+
+### Views
+
+#### Dynamic "With" Variable Names
+
+When allowing the dynamic `__call` method to share variables with a view, these variables will automatically use "camel" case. For example, given the following:
+
+    return view('pool')->withMaximumVotes(100);
+
+The `maximumVotes` variable may be accessed in the template like so:
+
+    {{ $maximumVotes }}
+
+#### `@php` Blade Directive
+
+The `@php` blade directive no longer accepts inline tags. Instead, use the full form of the directive:
+
+    @php
+        $teamMember = true;
+    @endphp
 
 ### Miscellaneous
 
-We also encourage you to view the changes in the `laravel/laravel` [GitHub repository](https://github.com/laravel/laravel). While many of these changes are not required, you may wish to keep these files in sync with your application. Some of these changes will be covered in this upgrade guide, but others, such as changes to configuration files or comments, will not be. You can easily view the changes with the [GitHub comparison tool](https://github.com/laravel/laravel/compare/5.5...5.6) and choose which updates are important to you.
+We also encourage you to view the changes in the `laravel/laravel` [GitHub repository](https://github.com/laravel/laravel). While many of these changes are not required, you may wish to keep these files in sync with your application. Some of these changes will be covered in this upgrade guide, but others, such as changes to configuration files or comments, will not be. You can easily view the changes with the [GitHub comparison tool](https://github.com/laravel/laravel/compare/5.4...5.5) and choose which updates are important to you.

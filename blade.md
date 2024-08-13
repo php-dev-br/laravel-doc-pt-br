@@ -131,26 +131,6 @@ Sometimes you may need to pass additional data to a component. For this reason, 
         ...
     @endcomponent
 
-#### Aliasing Components
-
-If your Blade components are stored in a sub-directory, you may wish to alias them for easier access. For example, imagine a Blade component that is stored at `resources/views/components/alert.blade.php`. You may use the `component` method to alias the component from `components.alert` to `alert`. Typically, this should be done in the `boot` method of your `AppServiceProvider`:
-
-    use Illuminate\Support\Facades\Blade;
-
-    Blade::component('components.alert', 'alert');
-
-Once the component has been aliased, you may render it using a directive:
-
-    @alert(['type' => 'danger'])
-        You are not allowed to access this resource!
-    @endalert
-
-You may omit the component parameters if it has no additional slots:
-
-    @alert
-        You are not allowed to access this resource!
-    @endalert
-
 <a name="displaying-data"></a>
 ## Displaying Data
 
@@ -191,30 +171,6 @@ However, instead of manually calling `json_encode`, you may use the `@json` Blad
     <script>
         var app = @json($array);
     </script>
-
-#### HTML Entity Encoding
-
-By default, Blade (and the Laravel `e` helper) will double encode HTML entities. If you would like to disable double encoding, call the `Blade::withoutDoubleEncoding` method from the `boot` method of your `AppServiceProvider`:
-
-    <?php
-
-    namespace App\Providers;
-
-    use Illuminate\Support\Facades\Blade;
-    use Illuminate\Support\ServiceProvider;
-
-    class AppServiceProvider extends ServiceProvider
-    {
-        /**
-         * Bootstrap any application services.
-         *
-         * @return void
-         */
-        public function boot()
-        {
-            Blade::withoutDoubleEncoding();
-        }
-    }
 
 <a name="blade-and-javascript-frameworks"></a>
 ### Blade & JavaScript Frameworks
@@ -405,7 +361,7 @@ Property  | Description
 ------------- | -------------
 `$loop->index`  |  The index of the current loop iteration (starts at 0).
 `$loop->iteration`  |  The current loop iteration (starts at 1).
-`$loop->remaining`  |  The iterations remaining in the loop.
+`$loop->remaining`  |  The iteration remaining in the loop.
 `$loop->count`  |  The total number of items in the array being iterated.
 `$loop->first`  |  Whether this is the first iteration through the loop.
 `$loop->last`  |  Whether this is the last iteration through the loop.
@@ -492,18 +448,6 @@ You may push to a stack as many times as needed. To render the complete stack co
 
         @stack('scripts')
     </head>
-
-If you would like to prepend content onto the beginning of a stack, you should use the `@prepend` directive:
-
-    @push('scripts')
-        This will be second...
-    @endpush
-
-    // Later...
-
-    @prepend('scripts')
-        This will be first...
-    @endprepend
 
 <a name="service-injection"></a>
 ## Service Injection

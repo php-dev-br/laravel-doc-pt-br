@@ -96,10 +96,6 @@ When registering routes for single action controllers, you do not need to specif
 
     Route::get('user/{id}', 'ShowProfile');
 
-You may generate an invokable controller by using the `--invokable` option of the `make:controller` Artisan command:
-
-    php artisan make:controller ShowProfile --invokable
-
 <a name="controller-middleware"></a>
 ## Controller Middleware
 
@@ -178,30 +174,28 @@ If you are using route model binding and would like the resource controller's me
 
 #### Spoofing Form Methods
 
-Since HTML forms can't make `PUT`, `PATCH`, or `DELETE` requests, you will need to add a hidden `_method` field to spoof these HTTP verbs. The `@method` Blade directive can create this field for you:
+Since HTML forms can't make `PUT`, `PATCH`, or `DELETE` requests, you will need to add a hidden `_method` field to spoof these HTTP verbs. The `method_field` helper can create this field for you:
 
-    <form action="/foo/bar" method="POST">
-        @method('PUT')
-    </form>
+    {{ method_field('PUT') }}
 
 <a name="restful-partial-resource-routes"></a>
 ### Partial Resource Routes
 
 When declaring a resource route, you may specify a subset of actions the controller should handle instead of the full set of default actions:
 
-    Route::resource('photos', 'PhotoController')->only([
+    Route::resource('photo', 'PhotoController', ['only' => [
         'index', 'show'
-    ]);
+    ]]);
 
-    Route::resource('photos', 'PhotoController')->except([
+    Route::resource('photo', 'PhotoController', ['except' => [
         'create', 'store', 'update', 'destroy'
-    ]);
+    ]]);
 
 #### API Resource Routes
 
 When declaring resource routes that will be consumed by APIs, you will commonly want to exclude routes that present HTML templates such as `create` and `edit`. For convenience, you may use the `apiResource` method to automatically exclude these two routes:
 
-    Route::apiResource('photos', 'PhotoController');
+    Route::apiResource('photo', 'PhotoController');
 
 You may register many API resource controllers at once by passing an array to the `apiResources` method:
 
@@ -210,31 +204,27 @@ You may register many API resource controllers at once by passing an array to th
         'posts' => 'PostController'
     ]);
 
-To quickly generate an API resource controller that does not include the `create` or `edit` methods, use the `--api` switch when executing the `make:controller` command:
-
-    php artisan make:controller API/PhotoController --api
-
 <a name="restful-naming-resource-routes"></a>
 ### Naming Resource Routes
 
 By default, all resource controller actions have a route name; however, you can override these names by passing a `names` array with your options:
 
-    Route::resource('photos', 'PhotoController')->names([
-        'create' => 'photos.build'
-    ]);
+    Route::resource('photo', 'PhotoController', ['names' => [
+        'create' => 'photo.build'
+    ]]);
 
 <a name="restful-naming-resource-route-parameters"></a>
 ### Naming Resource Route Parameters
 
-By default, `Route::resource` will create the route parameters for your resource routes based on the "singularized" version of the resource name. You can easily override this on a per resource basis by using the `parameters` method. The array passed into the `parameters` method should be an associative array of resource names and parameter names:
+By default, `Route::resource` will create the route parameters for your resource routes based on the "singularized" version of the resource name. You can easily override this on a per resource basis by passing `parameters` in the options array. The `parameters` array should be an associative array of resource names and parameter names:
 
-    Route::resource('users', 'AdminUserController')->parameters([
-        'users' => 'admin_user'
-    ]);
+    Route::resource('user', 'AdminUserController', ['parameters' => [
+        'user' => 'admin_user'
+    ]]);
 
  The example above generates the following URIs for the resource's `show` route:
 
-    /users/{admin_user}
+    /user/{admin_user}
 
 <a name="restful-localizing-resource-uris"></a>
 ### Localizing Resource URIs

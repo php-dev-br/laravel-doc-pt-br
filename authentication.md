@@ -14,11 +14,8 @@
     - [Other Authentication Methods](#other-authentication-methods)
 - [HTTP Basic Authentication](#http-basic-authentication)
     - [Stateless HTTP Basic Authentication](#stateless-http-basic-authentication)
-- [Logging Out](#logging-out)
-    - [Invalidating Sessions On Other Devices](#invalidating-sessions-on-other-devices)
 - [Social Authentication](https://github.com/laravel/socialite)
 - [Adding Custom Guards](#adding-custom-guards)
-    - [Closure Request Guards](#closure-request-guards)
 - [Adding Custom User Providers](#adding-custom-user-providers)
     - [The User Provider Contract](#the-user-provider-contract)
     - [The Authenticatable Contract](#the-authenticatable-contract)
@@ -27,7 +24,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-> {tip} **Want to get started fast?** Just run `php artisan make:auth` and `php artisan migrate` in a fresh Laravel application. Then, navigate your browser to `http://your-app.test/register` or any other URL that is assigned to your application. These two commands will take care of scaffolding your entire authentication system!
+> {tip} **Want to get started fast?** Just run `php artisan make:auth` and `php artisan migrate` in a fresh Laravel application. Then, navigate your browser to `http://your-app.dev/register` or any other URL that is assigned to your application. These two commands will take care of scaffolding your entire authentication system!
 
 Laravel makes implementing authentication very simple. In fact, almost everything is configured for you out of the box. The authentication configuration file is located at `config/auth.php`, which contains several well documented options for tweaking the behavior of the authentication services.
 
@@ -77,8 +74,6 @@ Now that you have routes and views setup for the included authentication control
 When a user is successfully authenticated, they will be redirected to the `/home` URI. You can customize the post-authentication redirect location by defining a `redirectTo` property on the `LoginController`, `RegisterController`, and `ResetPasswordController`:
 
     protected $redirectTo = '/';
-
-Next, you should modify the `RedirectIfAuthenticated` middleware's `handle` method to use your new URI when redirecting the user.
 
 If the redirect path needs custom generation logic you may define a `redirectTo` method instead of a `redirectTo` property:
 
@@ -180,21 +175,6 @@ Of course, if you are using [controllers](controllers.md), you may call the `mid
         $this->middleware('auth');
     }
 
-#### Redirecting Unauthenticated Users
-
-When the `auth` middleware detects an unauthorized user, it will either return a JSON `401` response, or, if the request was not an AJAX request, redirect the user to the `login` [named route](routing.md#named-routes).
-
-You may modify this behavior by defining an `unauthenticated` function in your `app/Exceptions/Handler.php` file:
-
-    use Illuminate\Auth\AuthenticationException;
-
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return $request->expectsJson()
-                    ? response()->json(['message' => $exception->getMessage()], 401)
-                    : redirect()->guest(route('login'));
-    }
-
 #### Specifying A Guard
 
 When attaching the `auth` middleware to a route, you may also specify which guard should be used to authenticate the user. The guard specified should correspond to one of the keys in the `guards` array of your `auth.php` configuration file:
@@ -220,7 +200,6 @@ We will access Laravel's authentication services via the `Auth` [facade](facades
 
     namespace App\Http\Controllers;
 
-    use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
 
     class LoginController extends Controller
@@ -228,15 +207,11 @@ We will access Laravel's authentication services via the `Auth` [facade](facades
         /**
          * Handle an authentication attempt.
          *
-         * @param  \Illuminate\Http\Request $request
-         *
          * @return Response
          */
-        public function authenticate(Request $request)
+        public function authenticate()
         {
-            $credentials = $request->only('email', 'password');
-
-            if (Auth::attempt($credentials)) {
+            if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 // Authentication passed...
                 return redirect()->intended('dashboard');
             }
@@ -365,7 +340,8 @@ You may also use HTTP Basic Authentication without setting a user identifier coo
          */
         public function handle($request, $next)
         {
-            return Auth::onceBasic() ?: $next($request);
+            Auth::onceBasic();
+            return $next($request);
         }
 
     }
@@ -375,34 +351,6 @@ Next, [register the route middleware](middleware.md#registering-middleware) and 
     Route::get('api/user', function () {
         // Only authenticated users may enter...
     })->middleware('auth.basic.once');
-
-<a name="logging-out"></a>
-## Logging Out
-
-To manually log users out of your application, you may use the `logout` method on the `Auth` facade. This will clear the authentication information in the user's session:
-
-    use Illuminate\Support\Facades\Auth;
-
-    Auth::logout();
-
-<a name="invalidating-sessions-on-other-devices"></a>
-### Invalidating Sessions On Other Devices
-
-Laravel also provides a mechanism for invalidating and "logging out" a user's sessions that are active on other devices without invalidating the session on their current device. Before getting started, you should make sure that the `Illuminate\Session\Middleware\AuthenticateSession` middleware is present and un-commented in your `app/Http/Kernel.php` class' `web` middleware group:
-
-    'web' => [
-        // ...
-        \Illuminate\Session\Middleware\AuthenticateSession::class,
-        // ...
-    ],
-
-Then, you may use the `logoutOtherDevices` method on the `Auth` facade. This method requires the user to provide their current password, which your application should accept through an input form:
-
-    use Illuminate\Support\Facades\Auth;
-
-    Auth::logoutOtherDevices($password);
-
-> {note} When the `logoutOtherDevices` method is invoked, the user's other sessions will be invalidated entirely, meaning they will be "logged out" of all guards they were previously authenticated by.
 
 <a name="adding-custom-guards"></a>
 ## Adding Custom Guards
@@ -442,39 +390,6 @@ As you can see in the example above, the callback passed to the `extend` method 
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
-        ],
-    ],
-
-<a name="closure-request-guards"></a>
-### Closure Request Guards
-
-The simplest way to implement a custom, HTTP request based authentication system is by using the `Auth::viaRequest` method. This method allows you to quickly define your authentication process using a single Closure.
-
-To get started, call the `Auth::viaRequest` method within the `boot` method of your `AuthServiceProvider`. The `viaRequest` method accepts a guard name as its first argument. This name can be any string that describes your custom guard. The second argument passed to the method should be a Closure that receives the incoming HTTP request and returns a user instance or, if authentication fails, `null`:
-
-    use App\User;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Auth;
-
-    /**
-     * Register any application authentication / authorization services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->registerPolicies();
-
-        Auth::viaRequest('custom-token', function ($request) {
-            return User::where('token', $request->token)->first();
-        });
-    }
-
-Once your custom guard has been defined, you may use this guard in the `guards` configuration of your `auth.php` configuration file:
-
-    'guards' => [
-        'api' => [
-            'driver' => 'custom-token',
         ],
     ],
 
@@ -552,7 +467,7 @@ The `retrieveById` function typically receives a key representing the user, such
 
 The `retrieveByToken` function retrieves a user by their unique `$identifier` and "remember me" `$token`, stored in a field `remember_token`. As with the previous method, the `Authenticatable` implementation should be returned.
 
-The `updateRememberToken` method updates the `$user` field `remember_token` with the new `$token`. A fresh token is assigned on a successful "remember me" login attempt or when the user is logging out.
+The `updateRememberToken` method updates the `$user` field `remember_token` with the new `$token`. The new token can be either a fresh token, assigned on a successful "remember me" login attempt, or when the user is logging out.
 
 The `retrieveByCredentials` method receives the array of credentials passed to the `Auth::attempt` method when attempting to sign into an application. The method should then "query" the underlying persistent storage for the user matching those credentials. Typically, this method will run a query with a "where" condition on `$credentials['username']`. The method should then return an implementation of `Authenticatable`. **This method should not attempt to do any password validation or authentication.**
 
@@ -561,7 +476,7 @@ The `validateCredentials` method should compare the given `$user` with the `$cre
 <a name="the-authenticatable-contract"></a>
 ### The Authenticatable Contract
 
-Now that we have explored each of the methods on the `UserProvider`, let's take a look at the `Authenticatable` contract. Remember, the provider should return implementations of this interface from the `retrieveById`, `retrieveByToken`, and `retrieveByCredentials` methods:
+Now that we have explored each of the methods on the `UserProvider`, let's take a look at the `Authenticatable` contract. Remember, the provider should return implementations of this interface from the `retrieveById` and `retrieveByCredentials` methods:
 
     <?php
 

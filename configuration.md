@@ -2,7 +2,6 @@
 
 - [Introduction](#introduction)
 - [Environment Configuration](#environment-configuration)
-    - [Environment Variable Types](#environment-variable-types)
     - [Retrieving Environment Configuration](#retrieving-environment-configuration)
     - [Determining The Current Environment](#determining-the-current-environment)
 - [Accessing Configuration Values](#accessing-configuration-values)
@@ -21,31 +20,11 @@ It is often helpful to have different configuration values based on the environm
 
 To make this a cinch, Laravel utilizes the [DotEnv](https://github.com/vlucas/phpdotenv) PHP library by Vance Lucas. In a fresh Laravel installation, the root directory of your application will contain a `.env.example` file. If you install Laravel via Composer, this file will automatically be renamed to `.env`. Otherwise, you should rename the file manually.
 
-Your `.env` file should not be committed to your application's source control, since each developer / server using your application could require a different environment configuration. Furthermore, this would be a security risk in the event an intruder gains access to your source control repository, since any sensitive credentials would get exposed.
+Your `.env` file should not be committed to your application's source control, since each developer / server using your application could require a different environment configuration. Furthermore, this would be a security risk in the event an intruder gain access to your source control repository, since any sensitive credentials would get exposed.
 
 If you are developing with a team, you may wish to continue including a `.env.example` file with your application. By putting place-holder values in the example configuration file, other developers on your team can clearly see which environment variables are needed to run your application. You may also create a `.env.testing` file. This file will override the `.env` file when running PHPUnit tests or executing Artisan commands with the `--env=testing` option.
 
 > {tip} Any variable in your `.env` file can be overridden by external environment variables such as server-level or system-level environment variables.
-
-<a name="environment-variable-types"></a>
-### Environment Variable Types
-
-All variables in your `.env` files are parsed as strings, so some reserved values have been created to allow you to return a wider range of types from the `env()` function:
-
-`.env` Value  | `env()` Value
-------------- | -------------
-true | (bool) true
-(true) | (bool) true
-false | (bool) false
-(false) | (bool) false
-empty | (string) ''
-(empty) | (string) ''
-null | (null) null
-(null) | (null) null
-
-If you need to define an environment variable with a value that contains spaces, you may do so by enclosing the value in double quotes.
-
-    APP_NAME="My Application"
 
 <a name="retrieving-environment-configuration"></a>
 ### Retrieving Environment Configuration
@@ -107,10 +86,6 @@ To enable maintenance mode, execute the `down` Artisan command:
 You may also provide `message` and `retry` options to the `down` command. The `message` value may be used to display or log a custom message, while the `retry` value will be set as the `Retry-After` HTTP header's value:
 
     php artisan down --message="Upgrading Database" --retry=60
-
-Even while in maintenance mode, specific IP addresses or networks may be allowed to access the application using the command's `allow` option:
-
-    php artisan down --allow=127.0.0.1 --allow=192.168.0.0/16
 
 To disable maintenance mode, use the `up` command:
 

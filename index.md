@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.6/documentation.md -->
-<!-- revision: 1efdd3af78c3b8fb9a68846e2c148f172826cc7f -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.5/documentation.md -->
+<!-- revision: f8a4ae04bc3986c37216fc5808080ca494cb0d5b -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -9,7 +9,7 @@
 - [Notas de Versão](releases.md)
 - [Guia de Atualização](upgrade.md)
 - [Guia de Contribuição](contributions.md)
-- [Documentação da API](https://laravel.com/api/5.6)
+- [Documentação da API](https://laravel.com/api/5.5)
 
 ## Começando
 
@@ -41,8 +41,7 @@
 - [Geração de URL](urls.md)
 - [Sessão](session.md)
 - [Validação](validation.md)
-- [Tratamento de erros](errors.md)
-- [Logging](logging.md)
+- [Tratamento de erros e Logging](errors.md)
 
 ## Frontend
 

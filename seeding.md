@@ -46,8 +46,6 @@ As an example, let's modify the default `DatabaseSeeder` class and add a databas
         }
     }
 
-> {tip} You may type-hint any dependencies you need within the `run` method's signature. They will automatically be resolved via the Laravel [service container](container.md).
-
 <a name="using-model-factories"></a>
 ### Using Model Factories
 

@@ -273,7 +273,7 @@ Mix provides a useful `webpackConfig` method that allows you to merge any short 
 
 #### Custom Configuration Files
 
-If you would like to completely customize your Webpack configuration, copy the `node_modules/laravel-mix/setup/webpack.config.js` file to your project's root directory. Next, point all of the `--config` references in your `package.json` file to the newly copied configuration file. If you choose to take this approach to customization, any future upstream updates to Mix's `webpack.config.js` must be manually merged into your customized file.
+If you would like completely customize your Webpack configuration, copy the `node_modules/laravel-mix/setup/webpack.config.js` file to your project's root directory. Next, point all of the `--config` references in your `package.json` file to the newly copied configuration file. If you choose to take this approach to customization, any future upstream updates to Mix's `webpack.config.js` must be manually merged into your customized file.
 
 <a name="copying-files-and-directories"></a>
 ## Copying Files & Directories
@@ -291,17 +291,14 @@ When copying a directory, the `copy` method will flatten the directory's structu
 
 Many developers suffix their compiled assets with a timestamp or unique token to force browsers to load the fresh assets instead of serving stale copies of the code. Mix can handle this for you using the `version` method.
 
-The `version` method will generate unique hashes for all of your compiled files and use this hash when including the file from your templates. In other words, this provides a convenient, built-in "cache busting" mechanism:
+The `version` method will automatically append a unique hash to the filenames of all compiled files, allowing for more convenient cache busting:
 
     mix.js('resources/assets/js/app.js', 'public/js')
-       .sass('resources/assets/sass/app.scss', 'public/css')
        .version();
 
-After generating the versioned file, you should use Laravel's global `mix` function within your [views](views.md) to generate the appropriately versioned asset URL:
+After generating the versioned file, you won't know the exact file name. So, you should use Laravel's global `mix` function within your [views](views.md) to load the appropriately hashed asset. The `mix` function will automatically determine the current name of the hashed file:
 
     <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
-
-    <script src="{{ mix('/js/app.js') }}"></script>
 
 Because versioned files are usually unnecessary in development, you may instruct the versioning process to only run during `npm run production`:
 

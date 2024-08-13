@@ -53,7 +53,7 @@ Typically, you should declare collection macros in a [service provider](provider
 <a name="available-methods"></a>
 ## Available Methods
 
-For the remainder of this documentation, we'll discuss each method available on the `Collection` class. Remember, all of these methods may be chained to fluently manipulate the underlying array. Furthermore, almost every method returns a new `Collection` instance, allowing you to preserve the original copy of the collection when necessary:
+For the remainder of this documentation, we'll discuss each method available on the `Collection` class. Remember, all of these methods may be chained to fluently manipulating the underlying array. Furthermore, almost every method returns a new `Collection` instance, allowing you to preserve the original copy of the collection when necessary:
 
 <style>
     #collection-method-list > p {
@@ -141,8 +141,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [sort](#method-sort)
 [sortBy](#method-sortby)
 [sortByDesc](#method-sortbydesc)
-[sortKeys](#method-sortkeys)
-[sortKeysDesc](#method-sortkeysdesc)
 [splice](#method-splice)
 [split](#method-split)
 [sum](#method-sum)
@@ -163,7 +161,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [whereStrict](#method-wherestrict)
 [whereIn](#method-wherein)
 [whereInStrict](#method-whereinstrict)
-[whereInstanceOf](#method-whereinstanceof)
 [whereNotIn](#method-wherenotin)
 [whereNotInStrict](#method-wherenotinstrict)
 [wrap](#method-wrap)
@@ -470,13 +467,13 @@ If you want to stop executing the script after dumping the collection, use the [
 
 The `each` method iterates over the items in the collection and passes each item to a callback:
 
-    $collection->each(function ($item, $key) {
+    $collection = $collection->each(function ($item, $key) {
         //
     });
 
 If you would like to stop iterating through the items, you may return `false` from your callback:
 
-    $collection->each(function ($item, $key) {
+    $collection = $collection->each(function ($item, $key) {
         if (/* some condition */) {
             return false;
         }
@@ -740,7 +737,7 @@ The `groupBy` method groups the collection's items by a given key:
         ]
     */
 
-Instead of passing a string `key`, you may pass a callback. The callback should return the value you wish to key the group by:
+In addition to passing a string `key`, you may also pass a callback. The callback should return the value you wish to key the group by:
 
     $grouped = $collection->groupBy(function ($item, $key) {
         return substr($item['account_id'], -3);
@@ -760,7 +757,7 @@ Instead of passing a string `key`, you may pass a callback. The callback should 
         ]
     */
 
-Multiple grouping criteria may be passed as an array. Each array element will be applied to the corresponding level within a multi-dimensional array:
+Multiple grouping criteria may be passed as an array. Each array element will applied for the corresponding level within a multi-dimensional array:
 
     $data = new Collection([
         10 => ['user' => 1, 'skill' => 1, 'roles' => ['Role_1', 'Role_3']],
@@ -1227,14 +1224,6 @@ The `partition` method may be combined with the `list` PHP function to separate 
         return $i < 3;
     });
 
-    $underThree->all();
-
-    // [1, 2]
-
-    $aboveThree->all();
-
-    // [3, 4, 5, 6]
-
 <a name="method-pipe"></a>
 #### `pipe()` {#collection-method}
 
@@ -1271,21 +1260,6 @@ You may also specify how you wish the resulting collection to be keyed:
     $plucked->all();
 
     // ['prod-100' => 'Desk', 'prod-200' => 'Chair']
-
-If duplicate keys exist, the last matching element will be inserted into the plucked collection:
-
-    $collection = collect([
-        ['brand' => 'Tesla',  'color' => 'red'],
-        ['brand' => 'Pagani', 'color' => 'white'],
-        ['brand' => 'Tesla',  'color' => 'black'],
-        ['brand' => 'Pagani', 'color' => 'orange'],
-    ]);
-
-    $plucked = $collection->pluck('color', 'brand');
-
-    $plucked->all();
-
-    // ['Tesla' => 'black', 'Pagani' => 'orange']
 
 <a name="method-pop"></a>
 #### `pop()` {#collection-method}
@@ -1588,34 +1562,6 @@ You can also pass your own callback to determine how to sort the collection valu
 #### `sortByDesc()` {#collection-method}
 
 This method has the same signature as the [`sortBy`](#method-sortby) method, but will sort the collection in the opposite order.
-
-<a name="method-sortkeys"></a>
-#### `sortKeys()` {#collection-method}
-
-The `sortKeys` method sorts the collection by the keys of the underlying associative array:
-
-    $collection = collect([
-        'id' => 22345,
-        'first' => 'John',
-        'last' => 'Doe',
-    ]);
-
-    $sorted = $collection->sortKeys();
-
-    $sorted->all();
-
-    /*
-        [
-            'first' => 'John',
-            'id' => 22345,
-            'last' => 'Doe',
-        ]
-    */
-
-<a name="method-sortkeysdesc"></a>
-#### `sortKeysDesc()` {#collection-method}
-
-This method has the same signature as the [`sortKeys`](#method-sortkeys) method, but will sort the collection in the opposite order.
 
 <a name="method-splice"></a>
 #### `splice()` {#collection-method}
@@ -2031,19 +1977,6 @@ The `whereIn` method uses "loose" comparisons when checking item values, meaning
 
 This method has the same signature as the [`whereIn`](#method-wherein) method; however, all values are compared using "strict" comparisons.
 
-<a name="method-whereinstanceof"></a>
-#### `whereInstanceOf()` {#collection-method}
-
-The `whereInstanceOf` method filters the collection by a given class type:
-
-    $collection = collect([
-        new User,
-        new User,
-        new Post,
-    ]);
-
-    return $collection->whereInstanceOf(User::class);
-
 <a name="method-wherenotin"></a>
 #### `whereNotIn()` {#collection-method}
 
@@ -2113,7 +2046,7 @@ The `zip` method merges together the values of the given array with the values o
 <a name="higher-order-messages"></a>
 ## Higher Order Messages
 
-Collections also provide support for "higher order messages", which are short-cuts for performing common actions on collections. The collection methods that provide higher order messages are: [`average`](#method-average), [`avg`](#method-avg), [`contains`](#method-contains), [`each`](#method-each), [`every`](#method-every), [`filter`](#method-filter), [`first`](#method-first), [`flatMap`](#method-flatmap), [`groupBy`](#method-groupby), [`keyBy`](#method-keyby), [`map`](#method-map), [`max`](#method-max), [`min`](#method-min), [`partition`](#method-partition), [`reject`](#method-reject), [`sortBy`](#method-sortby), [`sortByDesc`](#method-sortbydesc), [`sum`](#method-sum), and [`unique`](#method-unique).
+Collections also provide support for "higher order messages", which are short-cuts for performing common actions on collections. The collection methods that provide higher order messages are: `average`, `avg`, `contains`, `each`, `every`, `filter`, `first`, `flatMap`, `map`, `partition`, `reject`, `sortBy`, `sortByDesc`, `sum`, and `unique`.
 
 Each higher order message can be accessed as a dynamic property on a collection instance. For instance, let's use the `each` higher order message to call a method on each object within a collection:
 

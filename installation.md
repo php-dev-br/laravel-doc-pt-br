@@ -10,7 +10,7 @@
 <a name="installation"></a>
 ## Installation
 
-> {video} Laracasts provides a [free, thorough introduction to Laravel](http://laravelfromscratch.com) for newcomers to the framework. It's a great place to start your journey.
+> {video} Are you a visual learner? Laracasts provides a [free, thorough introduction to Laravel](http://laravelfromscratch.com) for newcomers to the framework. It's a great place to start your journey.
 
 <a name="server-requirements"></a>
 ### Server Requirements
@@ -21,14 +21,12 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 <div class="content-list" markdown="1">
 
-- PHP >= 7.1.3
+- PHP >= 7.0.0
 - OpenSSL PHP Extension
 - PDO PHP Extension
 - Mbstring PHP Extension
 - Tokenizer PHP Extension
 - XML PHP Extension
-- Ctype PHP Extension
-- JSON PHP Extension
 
 </div>
 
@@ -58,7 +56,7 @@ Once installed, the `laravel new` command will create a fresh Laravel installati
 
 Alternatively, you may also install Laravel by issuing the Composer `create-project` command in your terminal:
 
-    composer create-project --prefer-dist laravel/laravel blog "5.6.*"
+    composer create-project --prefer-dist laravel/laravel blog "5.5.*"
 
 #### Local Development Server
 
@@ -113,7 +111,7 @@ Laravel includes a `public/.htaccess` file that is used to provide URLs without 
 
 If the `.htaccess` file that ships with Laravel does not work with your Apache installation, try this alternative:
 
-    Options +FollowSymLinks -Indexes
+    Options +FollowSymLinks
     RewriteEngine On
 
     RewriteCond %{REQUEST_FILENAME} !-d

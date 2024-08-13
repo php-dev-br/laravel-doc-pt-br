@@ -58,45 +58,10 @@ Let's take a look at a basic service provider. Within any of your service provid
 
 This service provider only defines a `register` method, and uses that method to define an implementation of `Riak\Connection` in the service container. If you don't understand how the service container works, check out [its documentation](container.md).
 
-#### The `bindings` And `singletons` Properties
-
-If your service provider registers many simple bindings, you may wish to use the `bindings` and `singletons` properties instead of manually registering each container binding. When the service provider is loaded by the framework, it will automatically check for these properties and register their bindings:
-
-    <?php
-
-    namespace App\Providers;
-
-    use App\Contracts\ServerProvider;
-    use App\Contracts\DowntimeNotifier;
-    use Illuminate\Support\ServiceProvider;
-    use App\Services\PingdomDowntimeNotifier;
-    use App\Services\DigitalOceanServerProvider;
-
-    class AppServiceProvider extends ServiceProvider
-    {
-        /**
-         * All of the container bindings that should be registered.
-         *
-         * @var array
-         */
-        public $bindings = [
-            ServerProvider::class => DigitalOceanServerProvider::class,
-        ];
-
-        /**
-         * All of the container singletons that should be registered.
-         *
-         * @var array
-         */
-        public $singletons = [
-            DowntimeNotifier::class => PingdomDowntimeNotifier::class,
-        ];
-    }
-
 <a name="the-boot-method"></a>
 ### The Boot Method
 
-So, what if we need to register a [view composer](views.md#view-composers) within our service provider? This should be done within the `boot` method. **This method is called after all other service providers have been registered**, meaning you have access to all other services that have been registered by the framework:
+So, what if we need to register a view composer within our service provider? This should be done within the `boot` method. **This method is called after all other service providers have been registered**, meaning you have access to all other services that have been registered by the framework:
 
     <?php
 

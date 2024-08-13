@@ -43,17 +43,17 @@ To see how read / write connections should be configured, let's look at this exa
 
     'mysql' => [
         'read' => [
-            'host' => ['192.168.1.1'],
+            'host' => '192.168.1.1',
         ],
         'write' => [
-            'host' => ['196.168.1.2'],
+            'host' => '196.168.1.2'
         ],
         'sticky'    => true,
         'driver'    => 'mysql',
         'database'  => 'database',
         'username'  => 'root',
         'password'  => '',
-        'charset'   => 'utf8mb4',
+        'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'prefix'    => '',
     ],
@@ -110,7 +110,7 @@ To run a basic query, you may use the `select` method on the `DB` facade:
 
 The first argument passed to the `select` method is the raw SQL query, while the second argument is any parameter bindings that need to be bound to the query. Typically, these are the values of the `where` clause constraints. Parameter binding provides protection against SQL injection.
 
-The `select` method will always return an `array` of results. Each result within the array will be a PHP `stdClass` object, allowing you to access the values of the results:
+The `select` method will always return an `array` of results. Each result within the array will be a PHP `StdClass` object, allowing you to access the values of the results:
 
     foreach ($users as $user) {
         echo $user->name;

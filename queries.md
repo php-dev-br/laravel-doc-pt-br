@@ -57,7 +57,7 @@ You may use the `table` method on the `DB` facade to begin a query. The `table` 
         }
     }
 
-The `get` method returns an `Illuminate\Support\Collection` containing the results where each result is an instance of the PHP `stdClass` object. You may access each column's value by accessing the column as a property of the object:
+The `get` method returns an `Illuminate\Support\Collection` containing the results where each result is an instance of the PHP `StdClass` object. You may access each column's value by accessing the column as a property of the object:
 
     foreach ($users as $user) {
         echo $user->name;
@@ -65,7 +65,7 @@ The `get` method returns an `Illuminate\Support\Collection` containing the resul
 
 #### Retrieving A Single Row / Column From A Table
 
-If you just need to retrieve a single row from the database table, you may use the `first` method. This method will return a single `stdClass` object:
+If you just need to retrieve a single row from the database table, you may use the `first` method. This method will return a single `StdClass` object:
 
     $user = DB::table('users')->where('name', 'John')->first();
 
@@ -127,14 +127,6 @@ Of course, you may combine these methods with other clauses:
                     ->where('finalized', 1)
                     ->avg('price');
 
-#### Determining If Records Exist
-
-Instead of using the `count` method to determine if any records exist that match your query's constraints, you may use the `exists` and `doesntExist` methods:
-
-    return DB::table('orders')->where('finalized', 1)->exists();
-
-    return DB::table('orders')->where('finalized', 1)->doesntExist();
-
 <a name="selects"></a>
 ## Selects
 
@@ -190,12 +182,12 @@ The `whereRaw` and `orWhereRaw` methods can be used to inject a raw `where` clau
 
 #### `havingRaw / orHavingRaw`
 
-The `havingRaw` and `orHavingRaw` methods may be used to set a raw string as the value of the `having` clause. These methods accept an optional array of bindings as their second argument:
+The `havingRaw` and `orHavingRaw` methods may be used to set a raw string as the value of the `having` clause:
 
     $orders = DB::table('orders')
                     ->select('department', DB::raw('SUM(price) as total_sales'))
                     ->groupBy('department')
-                    ->havingRaw('SUM(price) > ?', [2500])
+                    ->havingRaw('SUM(price) > 2500')
                     ->get();
 
 #### `orderByRaw`
@@ -253,20 +245,6 @@ If you would like to use a "where" style clause on your joins, you may use the `
                      ->where('contacts.user_id', '>', 5);
             })
             ->get();
-
-#### Sub-Query Joins
-
-You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a query to a sub-query. Each of these methods receive three arguments: the sub-query, its table alias, and a Closure that defines the related columns:
-
-    $latestPosts = DB::table('posts')
-                       ->select('user_id', DB::raw('MAX(created_at) as last_post_created_at'))
-                       ->where('is_published', true)
-                       ->groupBy('user_id');
-
-    $users = DB::table('users')
-            ->joinSub($latestPosts, 'latest_posts', function($join) {
-                $join->on('users.id', '=', 'latest_posts.user_id');
-            })->get();
 
 <a name="unions"></a>
 ## Unions
@@ -402,7 +380,7 @@ The `whereYear` method may be used to compare a column's value against a specifi
 The `whereTime` method may be used to compare a column's value against a specific time:
 
     $users = DB::table('users')
-                    ->whereTime('created_at', '=', '11:20:45')
+                    ->whereTime('created_at', '=', '11:20')
                     ->get();
 
 **whereColumn**
@@ -434,17 +412,15 @@ Sometimes you may need to create more advanced where clauses such as "where exis
 
     DB::table('users')
                 ->where('name', '=', 'John')
-                ->where(function ($query) {
+                ->orWhere(function ($query) {
                     $query->where('votes', '>', 100)
-                          ->orWhere('title', '=', 'Admin');
+                          ->where('title', '<>', 'Admin');
                 })
                 ->get();
 
-As you can see, passing a `Closure` into the `where` method instructs the query builder to begin a constraint group. The `Closure` will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
+As you can see, passing a `Closure` into the `orWhere` method instructs the query builder to begin a constraint group. The `Closure` will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
 
-    select * from users where name = 'John' and (votes > 100 or title = 'Admin')
-
-> {tip} You should always group `orWhere` calls in order to avoid unexpected behavior when global scopes are applied.
+    select * from users where name = 'John' or (votes > 100 and title <> 'Admin')
 
 <a name="where-exists-clauses"></a>
 ### Where Exists Clauses
@@ -469,7 +445,7 @@ The query above will produce the following SQL:
 <a name="json-where-clauses"></a>
 ### JSON Where Clauses
 
-Laravel also supports querying JSON column types on databases that provide support for JSON column types. Currently, this includes MySQL 5.7, PostgreSQL, SQL Server 2016, and SQLite 3.9.0 (with the [JSON1 extension](https://www.sqlite.org/json1.html)). To query a JSON column, use the `->` operator:
+Laravel also supports querying JSON column types on databases that provide support for JSON column types. Currently, this includes MySQL 5.7 and PostgreSQL. To query a JSON column, use the `->` operator:
 
     $users = DB::table('users')
                     ->where('options->language', 'en')
@@ -477,18 +453,6 @@ Laravel also supports querying JSON column types on databases that provide suppo
 
     $users = DB::table('users')
                     ->where('preferences->dining->meal', 'salad')
-                    ->get();
-
-You may use `whereJsonContains` to query JSON arrays (not supported on SQLite):
-
-    $users = DB::table('users')
-                    ->whereJsonContains('options->languages', 'en')
-                    ->get();
-
-MySQL and PostgreSQL support `whereJsonContains` with multiple values:
-
-    $users = DB::table('users')
-                    ->whereJsonContains('options->languages', ['en', 'de'])
                     ->get();
 
 <a name="ordering-grouping-limit-and-offset"></a>
@@ -557,7 +521,7 @@ Sometimes you may want clauses to apply to a query only when something else is t
     $role = $request->input('role');
 
     $users = DB::table('users')
-                    ->when($role, function ($query, $role) {
+                    ->when($role, function ($query) use ($role) {
                         return $query->where('role_id', $role);
                     })
                     ->get();
@@ -569,7 +533,7 @@ You may pass another Closure as the third parameter to the `when` method. This C
     $sortBy = null;
 
     $users = DB::table('users')
-                    ->when($sortBy, function ($query, $sortBy) {
+                    ->when($sortBy, function ($query) use ($sortBy) {
                         return $query->orderBy($sortBy);
                     }, function ($query) {
                         return $query->orderBy('name');
@@ -614,7 +578,7 @@ Of course, in addition to inserting records into the database, the query builder
 <a name="updating-json-columns"></a>
 ### Updating JSON Columns
 
-When updating a JSON column, you should use `->` syntax to access the appropriate key in the JSON object. This operation is only supported on MySQL 5.7+:
+When updating a JSON column, you should use `->` syntax to access the appropriate key in the JSON object. This operation is only supported on databases that support JSON columns:
 
     DB::table('users')
                 ->where('id', 1)

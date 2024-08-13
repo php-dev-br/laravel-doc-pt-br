@@ -4,7 +4,6 @@
 - [Gates](#gates)
     - [Writing Gates](#writing-gates)
     - [Authorizing Actions](#authorizing-actions-via-gates)
-    - [Intercepting Gate Checks](#intercepting-gate-checks)
 - [Creating Policies](#creating-policies)
     - [Generating Policies](#generating-policies)
     - [Registering Policies](#registering-policies)
@@ -76,7 +75,7 @@ This is identical to manually defining the following Gate definitions:
     Gate::define('posts.update', 'App\Policies\PostPolicy@update');
     Gate::define('posts.delete', 'App\Policies\PostPolicy@delete');
 
-By default, the `view`, `create`, `update`, and `delete` abilities will be defined. You may override the default abilities by passing an array as a third argument to the `resource` method. The keys of the array define the names of the abilities while the values define the method names. For example, the following code will only create two new Gate definitions - `posts.image` and `posts.photo`:
+By default, the `view`, `create`, `update`, and `delete` abilities will be defined. You may override or add to the default abilities by passing an array as a third argument to the `resource` method. The keys of the array define the names of the abilities while the values define the method names. For example, the following code will create two new Gate definitions - `posts.image` and `posts.photo`:
 
     Gate::resource('posts', 'PostPolicy', [
         'image' => 'updateImage',
@@ -105,25 +104,6 @@ If you would like to determine if a particular user is authorized to perform an 
     if (Gate::forUser($user)->denies('update-post', $post)) {
         // The user can't update the post...
     }
-
-<a name="intercepting-gate-checks"></a>
-#### Intercepting Gate Checks
-
-Sometimes, you may wish to grant all abilities to a specific user. You may use the `before` method to define a callback that is run before all other authorization checks:
-
-    Gate::before(function ($user, $ability) {
-        if ($user->isSuperAdmin()) {
-            return true;
-        }
-    });
-
-If the `before` callback returns a non-null result that result will be considered the result of the check.
-
-You may use the `after` method to define a callback to be executed after every authorization check. However, you may not modify the result of the authorization check from an `after` callback:
-
-    Gate::after(function ($user, $ability, $result, $arguments) {
-        //
-    });
 
 <a name="creating-policies"></a>
 ## Creating Policies
@@ -317,7 +297,6 @@ In addition to helpful methods provided to the `User` model, Laravel provides a 
          * @param  Request  $request
          * @param  Post  $post
          * @return Response
-         * @throws \Illuminate\Auth\Access\AuthorizationException
          */
         public function update(Request $request, Post $post)
         {
@@ -336,7 +315,6 @@ As previously discussed, some actions like `create` may not require a model inst
      *
      * @param  Request  $request
      * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create(Request $request)
     {

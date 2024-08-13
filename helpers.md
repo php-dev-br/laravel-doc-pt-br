@@ -88,7 +88,6 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [str_finish](#method-str-finish)
 [str_is](#method-str-is)
 [str_limit](#method-str-limit)
-[Str::orderedUuid](#method-str-ordered-uuid)
 [str_plural](#method-str-plural)
 [str_random](#method-str-random)
 [str_replace_array](#method-str-replace-array)
@@ -101,7 +100,6 @@ Laravel includes a variety of global "helper" PHP functions. Many of these funct
 [title_case](#method-title-case)
 [trans](#method-trans)
 [trans_choice](#method-trans-choice)
-[Str::uuid](#method-str-uuid)
 
 </div>
 
@@ -215,7 +213,7 @@ The `array_collapse` function collapses an array of arrays into a single array:
 
 The `array_divide` function returns two arrays, one containing the keys, and the other containing the values of the given array:
 
-    [$keys, $values] = array_divide(['name' => 'Desk']);
+    list($keys, $values) = array_divide(['name' => 'Desk']);
 
     // $keys: ['name']
 
@@ -487,7 +485,7 @@ The `array_where` function filters an array using the given Closure:
         return is_string($value);
     });
 
-    // [1 => '200', 3 => '400']
+    // [1 => 200, 3 => 400]
 
 <a name="method-array-wrap"></a>
 #### `array_wrap()` {#collection-method}
@@ -729,7 +727,7 @@ The `class_basename` returns the class name of the given class with the class' n
 <a name="method-e"></a>
 #### `e()` {#collection-method}
 
-The `e` function runs PHP's `htmlspecialchars` function with the `double_encode` option set to `true` by default:
+The `e` function runs PHP's `htmlspecialchars` function with the `double_encode` option set to `false`:
 
     echo e('<html>foo</html>');
 
@@ -856,15 +854,6 @@ You may also pass a third argument to change the string that will be appended to
 
     // The quick brown fox (...)
 
-<a name="method-str-ordered-uuid"></a>
-#### `Str::orderedUuid()` {#collection-method}
-
-The `Str::orderedUuid` method generates a "timestamp first" UUID that may be efficiently stored in an indexed database column:
-
-    use Illuminate\Support\Str;
-
-    return (string) Str::orderedUuid();
-
 <a name="method-str-plural"></a>
 #### `str_plural()` {#collection-method}
 
@@ -955,7 +944,7 @@ The `str_start` function adds a single instance of the given value to a string i
 
     // /this/string
 
-    $adjusted = str_start('/this/string', '/');
+    $adjusted = str_start('/this/string/', '/');
 
     // /this/string
 
@@ -994,15 +983,6 @@ The `trans_choice` function translates the given translation key with inflection
     echo trans_choice('messages.notifications', $unreadCount);
 
 If the specified translation key does not exist, the `trans_choice` function will return the given key. So, using the example above, the `trans_choice` function would return `messages.notifications` if the translation key does not exist.
-
-<a name="method-str-uuid"></a>
-#### `Str::uuid()` {#collection-method}
-
-The `Str::uuid` method generates a UUID (version 4):
-
-    use Illuminate\Support\Str;
-
-    return (string) Str::uuid();
 
 <a name="urls"></a>
 ## URLs
@@ -1188,7 +1168,7 @@ You may add items to the cache by passing an array of key / value pairs to the f
 <a name="method-class-uses-recursive"></a>
 #### `class_uses_recursive()` {#collection-method}
 
-The `class_uses_recursive` function returns all traits used by a class, including traits used by all of its parent classes:
+The `class_uses_recursive` function returns all traits used by a class, including traits used by any subclasses:
 
     $traits = class_uses_recursive(App\User::class);
 
@@ -1383,23 +1363,11 @@ The `old` function [retrieves](requests.md#retrieving-input) an [old input](requ
 <a name="method-optional"></a>
 #### `optional()` {#collection-method}
 
-The `optional` function accepts any argument and allows you to access properties on that object. If the given object is `null`, accessing a property will return `null` instead of causing an error:
+The `optional` function accepts any argument and allows you to access properties or call methods on that object. If the given object is `null`, properties and methods will return `null` instead of causing an error:
 
     return optional($user->address)->street;
 
     {!! old('name', optional($user)->name) !!}
-
-You can also call methods on the returned object. As with property access, if the given object is `null`, calling a method will return `null` instead of causing an error:
-
-    return optional($user)->getTwitterProfile();
-
-If the method you want to call is not actually on the object itself, you can pass a Closure to `optional` as its second argument:
-
-    return optional(User::find($id), function ($user) {
-        return TwitterApi::findUser($user->twitter_id);
-    });
-
-If the given object is not `null`, the Closure will be called and its return value will be returned as is. If the given object is actually `null`, the Closure will not be called, and `optional` will return `null` instead of causing an error.
 
 <a name="method-policy"></a>
 #### `policy()` {#collection-method}
