@@ -1,93 +1,122 @@
 # Events
 
 - [Basic Usage](#basic-usage)
-- [Queued Event Handlers](#queued-event-handlers)
+- [Wildcard Listeners](#wildcard-listeners)
+- [Using Classes As Listeners](#using-classes-as-listeners)
+- [Queued Events](#queued-events)
 - [Event Subscribers](#event-subscribers)
 
 <a name="basic-usage"></a>
 ## Basic Usage
 
-The Laravel event facilities provides a simple observer implementation, allowing you to subscribe and listen for events in your application. Event classes are typically stored in the `app/Events` directory, while their handlers are stored in `app/Handlers/Events`.
-
-You can generate a new event class using the Artisan CLI tool:
-
-	php artisan make:event PodcastWasPurchased
+The Laravel `Event` class provides a simple observer implementation, allowing you to subscribe and listen for events in your application.
 
 #### Subscribing To An Event
 
-The `EventServiceProvider` included with your Laravel application provides a convenient place to register all event handlers. The `listen` property contains an array of all events (keys) and their handlers (values). Of course, you may add as many events to this array as your application requires. For example, let's add our `PodcastWasPurchased` event:
+	Event::listen('auth.login', function($user)
+	{
+		$user->last_login = new DateTime;
 
-	/**
-	 * The event handler mappings for the application.
-	 *
-	 * @var array
-	 */
-	protected $listen = [
-		'App\Events\PodcastWasPurchased' => [
-			'App\Handlers\Events\EmailPurchaseConfirmation',
-		],
-	];
-
-To generate a handler for an event, use the `handler:event` Artisan CLI command:
-
-	php artisan handler:event EmailPurchaseConfirmation --event=PodcastWasPurchased
-
-Of course, manually running the `make:event` and `handler:event` commands each time you need a handler or event is cumbersome. Instead, simply add handlers and events to your `EventServiceProvider` and use the `event:generate` command. This command will generate any events or handlers that are listed in your `EventServiceProvider`:
-
-	php artisan event:generate
+		$user->save();
+	});
 
 #### Firing An Event
 
-Now we are ready to fire our event using the `Event` facade:
-
-	$response = Event::fire(new PodcastWasPurchased($podcast));
+	$response = Event::fire('auth.login', array($user));
 
 The `fire` method returns an array of responses that you can use to control what happens next in your application.
 
-You may also use the `event` helper to fire an event:
+#### Subscribing To Events With Priority
 
-	event(new PodcastWasPurchased($podcast));
+You may also specify a priority when subscribing to events. Listeners with higher priority will be run first, while listeners that have the same priority will be run in order of subscription.
 
-#### Closure Listeners
+	Event::listen('auth.login', 'LoginHandler', 10);
 
-You can even listen to events without creating a separate handler class at all. For example, in the `boot` method of your `EventServiceProvider`, you could do the following:
-
-	Event::listen('App\Events\PodcastWasPurchased', function($event)
-	{
-		// Handle the event...
-	});
+	Event::listen('auth.login', 'OtherHandler', 5);
 
 #### Stopping The Propagation Of An Event
 
-Sometimes, you may wish to stop the propagation of an event to other listeners. You may do so using by returning `false` from your handler:
+Sometimes, you may wish to stop the propagation of an event to other listeners. You may do so using by returning `false` from your listener:
 
-	Event::listen('App\Events\PodcastWasPurchased', function($event)
+	Event::listen('auth.login', function($event)
 	{
 		// Handle the event...
 
 		return false;
 	});
 
-<a name="queued-event-handlers"></a>
-## Queued Event Handlers
+### Where To Register Events
 
-Need to [queue](queues.md) an event handler? It couldn't be any easier. When generating the handler, simply use the `--queued` flag:
+So, you know how to register events, but you may be wondering _where_ to register them. Don't worry, this is a common question. Unfortunately, it's a hard question to answer because you can register an event almost anywhere! But, here are some tips. Again, like most other bootstrapping code, you may register events in one of your `start` files such as `app/start/global.php`.
 
-	php artisan handler:event SendPurchaseConfirmation --event=PodcastWasPurchased --queued
+If your `start` files are getting too crowded, you could create a separate `app/events.php` file that is included from a `start` file. This is a simple solution that keeps your event registration cleanly separated from the rest of your bootstrapping.
 
-This will generate a handler class that implements the `Illuminate\Contracts\Queue\ShouldBeQueued` interface. That's it! Now when this handler is called for an event, it will be queued automatically by the event dispatcher.
+If you prefer a class based approach, you may register your events in a [service provider](/docs/4.2/ioc#service-providers). Since none of these approaches is inherently "correct", choose an approach you feel comfortable with based on the size of your application.
 
-If no exceptions are thrown when the handler is executed by the queue, the queued job will be deleted automatically after it has processed. If you need to access the queued job's `delete` and `release` methods manually, you may do so. The `Illuminate\Queue\InteractsWithQueue` trait, which is included by default on queued handlers, gives you access to these methods:
+<a name="wildcard-listeners"></a>
+## Wildcard Listeners
 
-	public function handle(PodcastWasPurchased $event)
+#### Registering Wildcard Event Listeners
+
+When registering an event listener, you may use asterisks to specify wildcard listeners:
+
+	Event::listen('foo.*', function($param)
 	{
-		if (true)
+		// Handle the event...
+	});
+
+This listener will handle all events that begin with `foo.`.
+
+You may use the `Event::firing` method to determine exactly which event was fired:
+
+	Event::listen('foo.*', function($param)
+	{
+		if (Event::firing() == 'foo.bar')
 		{
-			$this->release(30);
+			//
 		}
+	});
+
+<a name="using-classes-as-listeners"></a>
+## Using Classes As Listeners
+
+In some cases, you may wish to use a class to handle an event rather than a Closure. Class event listeners will be resolved out of the [Laravel IoC container](/docs/4.2/ioc), providing you the full power of dependency injection on your listeners.
+
+#### Registering A Class Listener
+
+	Event::listen('auth.login', 'LoginHandler');
+
+#### Defining An Event Listener Class
+
+By default, the `handle` method on the `LoginHandler` class will be called:
+
+	class LoginHandler {
+
+		public function handle($data)
+		{
+			//
+		}
+
 	}
 
-If you have an existing handler that you would like to convert to a queued handler, simply add the `ShouldBeQueued` interface to the class manually.
+#### Specifying Which Method To Subscribe
+
+If you do not wish to use the default `handle` method, you may specify the method that should be subscribed:
+
+	Event::listen('auth.login', 'LoginHandler@onLogin');
+
+<a name="queued-events"></a>
+## Queued Events
+
+#### Registering A Queued Event
+
+Using the `queue` and `flush` methods, you may "queue" an event for firing, but not fire it immediately:
+
+	Event::queue('foo', array($user));
+
+You may run the "flusher" and flush all queued events using the `flush` method:
+
+	Event::flush('foo');
 
 <a name="event-subscribers"></a>
 ## Event Subscribers
@@ -118,13 +147,13 @@ Event subscribers are classes that may subscribe to multiple events from within 
 		 * Register the listeners for the subscriber.
 		 *
 		 * @param  Illuminate\Events\Dispatcher  $events
-		 * @return void
+		 * @return array
 		 */
 		public function subscribe($events)
 		{
-			$events->listen('App\Events\UserLoggedIn', 'UserEventHandler@onUserLogin');
+			$events->listen('auth.login', 'UserEventHandler@onUserLogin');
 
-			$events->listen('App\Events\UserLoggedOut', 'UserEventHandler@onUserLogout');
+			$events->listen('auth.logout', 'UserEventHandler@onUserLogout');
 		}
 
 	}
@@ -137,7 +166,7 @@ Once the subscriber has been defined, it may be registered with the `Event` clas
 
 	Event::subscribe($subscriber);
 
-You may also use the [service container](container.md) to resolve your subscriber. To do so, simply pass the name of your subscriber to the `subscribe` method:
+You may also use the [Laravel IoC container](/docs/4.2/ioc) to resolve your subscriber. To do so, simply pass the name of your subscriber to the `subscribe` method:
 
 	Event::subscribe('UserEventHandler');
 

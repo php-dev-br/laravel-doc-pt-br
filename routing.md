@@ -1,18 +1,20 @@
-# HTTP Routing
+# Routing
 
 - [Basic Routing](#basic-routing)
-- [CSRF Protection](#csrf-protection)
-- [Method Spoofing](#method-spoofing)
 - [Route Parameters](#route-parameters)
+- [Route Filters](#route-filters)
 - [Named Routes](#named-routes)
 - [Route Groups](#route-groups)
+- [Sub-Domain Routing](#sub-domain-routing)
+- [Route Prefixing](#route-prefixing)
 - [Route Model Binding](#route-model-binding)
 - [Throwing 404 Errors](#throwing-404-errors)
+- [Routing To Controllers](#routing-to-controllers)
 
 <a name="basic-routing"></a>
 ## Basic Routing
 
-You will define most of the routes for your application in the `app/Http/routes.php` file, which is loaded by the `App\Providers\RouteServiceProvider` class. The most basic Laravel routes simply accept a URI and a `Closure`:
+Most of the routes for your application will be defined in the `app/routes.php` file. The simplest Laravel routes consist of a URI and a Closure callback.
 
 #### Basic GET Route
 
@@ -21,107 +23,45 @@ You will define most of the routes for your application in the `app/Http/routes.
 		return 'Hello World';
 	});
 
-#### Other Basic Routes
+#### Basic POST Route
 
 	Route::post('foo/bar', function()
 	{
 		return 'Hello World';
 	});
 
-	Route::put('foo/bar', function()
-	{
-		//
-	});
-
-	Route::delete('foo/bar', function()
-	{
-		//
-	});
-
 #### Registering A Route For Multiple Verbs
 
-	Route::match(['get', 'post'], '/', function()
+	Route::match(array('GET', 'POST'), '/', function()
 	{
 		return 'Hello World';
 	});
 
-#### Registering A Route That Responds To Any HTTP Verb
+#### Registering A Route Responding To Any HTTP Verb
 
 	Route::any('foo', function()
 	{
 		return 'Hello World';
 	});
 
-Often, you will need to generate URLs to your routes, you may do so using the `url` helper:
+#### Forcing A Route To Be Served Over HTTPS
 
-	$url = url('foo');
+	Route::get('foo', array('https', function()
+	{
+		return 'Must be over HTTPS';
+	}));
 
-<a name="csrf-protection"></a>
-## CSRF Protection
+Often, you will need to generate URLs to your routes, you may do so using the `URL::to` method:
 
-Laravel makes it easy to protect your application from [cross-site request forgeries](http://en.wikipedia.org/wiki/Cross-site_request_forgery). Cross-site request forgeries are a type of malicious exploit whereby unauthorized commands are performed on behalf of the authenticated user.
-
-Laravel automatically generates a CSRF "token" for each active user session managed by the application. This token is used to verify that the authenticated user is the one actually making the requests to the application.
-
-#### Insert The CSRF Token Into A Form
-
-	<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-
-Of course, using the Blade [templating engine](templates.md):
-
-	<input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-You do not need to manually verify the CSRF token on POST, PUT, or DELETE requests. The `VerifyCsrfToken` [HTTP middleware](middleware.md) will verify token in the request input matches the token stored in the session.
-
-#### X-CSRF-TOKEN
-
-In addition to looking for the CSRF token as a "POST" parameter, the middleware will also check for the `X-CSRF-TOKEN` request header. You could, for example, store the token in a "meta" tag and instruct jQuery to add it to all request headers:
-
-	<meta name="csrf-token" content="{{ csrf_token() }}" />
-
-	$.ajaxSetup({
-			headers: {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}
-		});
-
-Now all AJAX requests will automatically include the CSRF token:
-
-	$.ajax({
-	   url: "/foo/bar",
-	})
-
-#### X-XSRF-TOKEN
-
-Laravel also stores the CSRF token in a `XSRF-TOKEN` cookie. You can use the cookie value to set the `X-XSRF-TOKEN` request header. Some JavaScript frameworks, like Angular, do this automatically for you.
-
-> Note: The difference between the `X-CSRF-TOKEN` and `X-XSRF-TOKEN` is that the first uses a plain text value and the latter uses an encrypted value, because cookies in Laravel are always encrypted. If you use the `csrf_token()` function to supply the token value, you probably want to use the `X-CSRF-TOKEN` header.
-
-<a name="method-spoofing"></a>
-## Method Spoofing
-
-HTML forms do not support `PUT`, `PATCH` or `DELETE` actions. So, when defining `PUT`, `PATCH` or `DELETE` routes that are called from an HTML form, you will need to add a hidden `_method` field to the form.
-
-The value sent with the `_method` field will be used as the HTTP request method. For example:
-
-	<form action="/foo/bar" method="POST">
-		<input type="hidden" name="_method" value="PUT">
-		<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-	</form>
+	$url = URL::to('foo');
 
 <a name="route-parameters"></a>
 ## Route Parameters
-
-Of course, you can capture segments of the request URI within your route:
-
-#### Basic Route Parameter
 
 	Route::get('user/{id}', function($id)
 	{
 		return 'User '.$id;
 	});
-
-> **Note:** Route parameters cannot contain the `-` character. Use an underscore (`_`) instead.
 
 #### Optional Route Parameters
 
@@ -130,14 +70,14 @@ Of course, you can capture segments of the request URI within your route:
 		return $name;
 	});
 
-#### Optional Route Parameters With Default Value
+#### Optional Route Parameters With Defaults
 
 	Route::get('user/{name?}', function($name = 'John')
 	{
 		return $name;
 	});
 
-#### Regular Expression Parameter Constraints
+#### Regular Expression Route Constraints
 
 	Route::get('user/{name}', function($name)
 	{
@@ -151,21 +91,21 @@ Of course, you can capture segments of the request URI within your route:
 	})
 	->where('id', '[0-9]+');
 
-#### Passing An Array Of Constraints
+#### Passing An Array Of Wheres
+
+Of course, you may pass an array of constraints when necessary:
 
 	Route::get('user/{id}/{name}', function($id, $name)
 	{
 		//
 	})
-	->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
+	->where(array('id' => '[0-9]+', 'name' => '[a-z]+'))
 
 #### Defining Global Patterns
 
-If you would like a route parameter to always be constrained by a given regular expression, you may use the `pattern` method. You should define these patterns in the `boot` method of your `RouteServiceProvider`:
+If you would like a route parameter to always be constrained by a given regular expression, you may use the `pattern` method:
 
-	$router->pattern('id', '[0-9]+');
-
-Once the pattern has been defined, it is applied to all routes using that parameter:
+	Route::pattern('id', '[0-9]+');
 
 	Route::get('user/{id}', function($id)
 	{
@@ -174,102 +114,176 @@ Once the pattern has been defined, it is applied to all routes using that parame
 
 #### Accessing A Route Parameter Value
 
-If you need to access a route parameter value outside of a route, use the `input` method:
+If you need to access a route parameter value outside of a route, you may use the `Route::input` method:
 
-	if ($route->input('id') == 1)
+	Route::filter('foo', function()
 	{
-		//
-	}
-
-You may also access the current route parameters via the `Illuminate\Http\Request` instance. The request instance for the current request may be accessed via the `Request` facade, or by type-hinting the `Illuminate\Http\Request` where dependencies are injected:
-
-	use Illuminate\Http\Request;
-
-	Route::get('user/{id}', function(Request $request, $id)
-	{
-		if ($request->route('id'))
+		if (Route::input('id') == 1)
 		{
 			//
 		}
 	});
 
+<a name="route-filters"></a>
+## Route Filters
+
+Route filters provide a convenient way of limiting access to a given route, which is useful for creating areas of your site which require authentication. There are several filters included in the Laravel framework, including an `auth` filter, an `auth.basic` filter, a `guest` filter, and a `csrf` filter. These are located in the `app/filters.php` file.
+
+> **Note:** Filters are disabled when the application environment is `testing`.
+
+#### Defining A Route Filter
+
+	Route::filter('old', function()
+	{
+		if (Input::get('age') < 200)
+		{
+			return Redirect::to('home');
+		}
+	});
+
+If the filter returns a response, that response is considered the response to the request and the route will not execute. Any `after` filters on the route are also cancelled.
+
+#### Attaching A Filter To A Route
+
+	Route::get('user', array('before' => 'old', function()
+	{
+		return 'You are over 200 years old!';
+	}));
+
+#### Attaching A Filter To A Controller Action
+
+	Route::get('user', array('before' => 'old', 'uses' => 'UserController@showProfile'));
+
+#### Attaching Multiple Filters To A Route
+
+	Route::get('user', array('before' => 'auth|old', function()
+	{
+		return 'You are authenticated and over 200 years old!';
+	}));
+
+#### Attaching Multiple Filters Via Array
+
+	Route::get('user', array('before' => array('auth', 'old'), function()
+	{
+		return 'You are authenticated and over 200 years old!';
+	}));
+
+#### Specifying Filter Parameters
+
+	Route::filter('age', function($route, $request, $value)
+	{
+		//
+	});
+
+	Route::get('user', array('before' => 'age:200', function()
+	{
+		return 'Hello World';
+	}));
+
+After filters receive a `$response` as the third argument passed to the filter:
+
+	Route::filter('log', function($route, $request, $response)
+	{
+		//
+	});
+
+#### Pattern Based Filters
+
+You may also specify that a filter applies to an entire set of routes based on their URI.
+
+	Route::filter('admin', function()
+	{
+		//
+	});
+
+	Route::when('admin/*', 'admin');
+
+In the example above, the `admin` filter would be applied to all routes beginning with `admin/`. The asterisk is used as a wildcard, and will match any combination of characters.
+
+You may also constrain pattern filters by HTTP verbs:
+
+	Route::when('admin/*', 'admin', array('post'));
+
+#### Filter Classes
+
+For advanced filtering, you may wish to use a class instead of a Closure. Since filter classes are resolved out of the application [IoC Container](/docs/4.2/ioc), you will be able to utilize dependency injection in these filters for greater testability.
+
+#### Registering A Class Based Filter
+
+	Route::filter('foo', 'FooFilter');
+
+By default, the `filter` method on the `FooFilter` class will be called:
+
+	class FooFilter {
+
+		public function filter()
+		{
+			// Filter logic...
+		}
+
+	}
+
+If you do not wish to use the `filter` method, just specify another method:
+
+	Route::filter('foo', 'FooFilter@foo');
+
 <a name="named-routes"></a>
 ## Named Routes
 
-Named routes allow you to conveniently generate URLs or redirects for a specific route. You may specify a name for a route with the `as` array key:
+Named routes make referring to routes when generating redirects or URLs more convenient. You may specify a name for a route like so:
 
-	Route::get('user/profile', ['as' => 'profile', function()
+	Route::get('user/profile', array('as' => 'profile', function()
 	{
 		//
-	}]);
+	}));
 
 You may also specify route names for controller actions:
 
-	Route::get('user/profile', [
-		'as' => 'profile', 'uses' => 'UserController@showProfile'
-	]);
+	Route::get('user/profile', array('as' => 'profile', 'uses' => 'UserController@showProfile'));
 
 Now, you may use the route's name when generating URLs or redirects:
 
-	$url = route('profile');
+	$url = URL::route('profile');
 
-	$redirect = redirect()->route('profile');
+	$redirect = Redirect::route('profile');
 
-The `currentRouteName` method returns the name of the route handling the current request:
+You may access the name of a route that is running via the `currentRouteName` method:
 
 	$name = Route::currentRouteName();
 
 <a name="route-groups"></a>
 ## Route Groups
 
-Sometimes many of your routes will share common requirements such as URL segments, middleware, namespaces, etc. Instead of specifying each of these options on every route individually, you may use a route group to apply attributes to many routes.
+Sometimes you may need to apply filters to a group of routes. Instead of specifying the filter on each route, you may use a route group:
 
-Shared attributes are specified in an array format as the first parameter to the `Route::group` method.
-
-<a name="route-group-middleware"></a>
-### Middleware
-
-Middleware are applied to all routes within the group by defining the list of middleware with the `middleware` parameter on the group attribute array. Middleware will be executed in the order you define this array:
-
-	Route::group(['middleware' => ['foo', 'bar']], function()
+	Route::group(array('before' => 'auth'), function()
 	{
 		Route::get('/', function()
 		{
-			// Has Foo And Bar Middleware
+			// Has Auth Filter
 		});
 
 		Route::get('user/profile', function()
 		{
-			// Has Foo And Bar Middleware
+			// Has Auth Filter
 		});
-
 	});
 
-<a name="route-group-namespace"></a>
-### Namespaces
+You may also use the `namespace` parameter within your `group` array to specify all controllers within that group as being in a given namespace:
 
-You may use the `namespace` parameter in your group attribute array to specify the namespace for all controllers within the group:
-
-	Route::group(['namespace' => 'Admin'], function()
+	Route::group(array('namespace' => 'Admin'), function()
 	{
-		// Controllers Within The "App\Http\Controllers\Admin" Namespace
-
-		Route::group(['namespace' => 'User'], function()
-		{
-			// Controllers Within The "App\Http\Controllers\Admin\User" Namespace
-		});
+		//
 	});
-
-> **Note:** By default, the `RouteServiceProvider` includes your `routes.php` file within a namespace group, allowing you to register controller routes without specifying the full `App\Http\Controllers` namespace prefix.
 
 <a name="sub-domain-routing"></a>
-### Sub-Domain Routing
+## Sub-Domain Routing
 
-Laravel routes also handle wildcard sub-domains, and will pass your wildcard parameters from the domain:
+Laravel routes are also able to handle wildcard sub-domains, and will pass your wildcard parameters from the domain:
 
 #### Registering Sub-Domain Routes
 
-	Route::group(['domain' => '{account}.myapp.com'], function()
+	Route::group(array('domain' => '{account}.myapp.com'), function()
 	{
 
 		Route::get('user/{id}', function($account, $id)
@@ -280,77 +294,50 @@ Laravel routes also handle wildcard sub-domains, and will pass your wildcard par
 	});
 
 <a name="route-prefixing"></a>
-### Route Prefixing
+## Route Prefixing
 
 A group of routes may be prefixed by using the `prefix` option in the attributes array of a group:
 
-	Route::group(['prefix' => 'admin'], function()
+	Route::group(array('prefix' => 'admin'), function()
 	{
-		Route::get('users', function()
-		{
-			// Matches The "/admin/users" URL
-		});
-	});
 
-You can also utilize the `prefix` parameter to pass common parameters to your routes:
-
-#### Registering a URL parameter in a route prefix
-
-	Route::group(['prefix' => 'accounts/{account_id}'], function()
-	{
-		Route::get('detail', function($account_id)
+		Route::get('user', function()
 		{
 			//
 		});
-	});
 
-You can even define parameter constraints for the named parameters in your prefix:
-
-	Route::group([
-		'prefix' => 'accounts/{account_id}',
-		'where' => ['account_id' => '[0-9]+'],
-	], function() {
-
-		// Define Routes Here
 	});
 
 <a name="route-model-binding"></a>
 ## Route Model Binding
 
-Laravel model binding provides a convenient way to inject class instances into your routes. For example, instead of injecting a user's ID, you can inject the entire User class instance that matches the given ID.
-
-First, use the router's `model` method to specify the class for a given parameter. You should define your model bindings in the `RouteServiceProvider::boot` method:
+Model binding provides a convenient way to inject model instances into your routes. For example, instead of injecting a user's ID, you can inject the entire User model instance that matches the given ID. First, use the `Route::model` method to specify the model that should be used for a given parameter:
 
 #### Binding A Parameter To A Model
 
-	public function boot(Router $router)
-	{
-		parent::boot($router);
-
-		$router->model('user', 'App\User');
-	}
+	Route::model('user', 'User');
 
 Next, define a route that contains a `{user}` parameter:
 
-	Route::get('profile/{user}', function(App\User $user)
+	Route::get('profile/{user}', function(User $user)
 	{
 		//
 	});
 
-Since we have bound the `{user}` parameter to the `App\User` model, a `User` instance will be injected into the route. So, for example, a request to `profile/1` will inject the `User` instance which has an ID of 1.
+Since we have bound the `{user}` parameter to the `User` model, a `User` instance will be injected into the route. So, for example, a request to `profile/1` will inject the `User` instance which has an ID of 1.
 
 > **Note:** If a matching model instance is not found in the database, a 404 error will be thrown.
 
-If you wish to specify your own "not found" behavior, pass a Closure as the third argument to the `model` method:
+If you wish to specify your own "not found" behavior, you may pass a Closure as the third argument to the `model` method:
 
 	Route::model('user', 'User', function()
 	{
 		throw new NotFoundHttpException;
 	});
 
-If you wish to use your own resolution logic, you should use the `Route::bind` method. The Closure you pass to the `bind` method will receive the value of the URI segment, and should return an instance of the class you want to be injected into the route:
+Sometimes you may wish to use your own resolver for route parameters. Simply use the `Route::bind` method:
 
-	Route::bind('user', function($value)
+	Route::bind('user', function($value, $route)
 	{
 		return User::where('name', $value)->first();
 	});
@@ -358,12 +345,17 @@ If you wish to use your own resolution logic, you should use the `Route::bind` m
 <a name="throwing-404-errors"></a>
 ## Throwing 404 Errors
 
-There are two ways to manually trigger a 404 error from a route. First, you may use the `abort` helper:
+There are two ways to manually trigger a 404 error from a route. First, you may use the `App::abort` method:
 
-	abort(404);
+	App::abort(404);
 
-The `abort` helper simply throws a `Symfony\Component\HttpKernel\Exception\HttpException` with the specified status code.
+Second, you may throw an instance of `Symfony\Component\HttpKernel\Exception\NotFoundHttpException`.
 
-Secondly, you may manually throw an instance of `Symfony\Component\HttpKernel\Exception\NotFoundHttpException`.
+More information on handling 404 exceptions and using custom responses for these errors may be found in the [errors](/docs/4.2/errors#handling-404-errors) section of the documentation.
 
-More information on handling 404 exceptions and using custom responses for these errors may be found in the [errors](errors.md#http-exceptions) section of the documentation.
+<a name="routing-to-controllers"></a>
+## Routing To Controllers
+
+Laravel allows you to not only route to Closures, but also to controller classes, and even allows the creation of [resource controllers](/docs/4.2/controllers#restful-resource-controllers).
+
+See the documentation on [Controllers](/docs/4.2/controllers) for more details.

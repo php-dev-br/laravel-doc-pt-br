@@ -1,140 +1,46 @@
-# HTTP Requests
+# Requests & Input
 
-- [Obtaining A Request Instance](#obtaining-a-request-instance)
-- [Retrieving Input](#retrieving-input)
-- [Old Input](#old-input)
+- [Basic Input](#basic-input)
 - [Cookies](#cookies)
+- [Old Input](#old-input)
 - [Files](#files)
-- [Other Request Information](#other-request-information)
+- [Request Information](#request-information)
 
-<a name="obtaining-a-request-instance"></a>
-## Obtaining A Request Instance
+<a name="basic-input"></a>
+## Basic Input
 
-### Via Facade
-
-The `Request` facade will grant you access to the current request that is bound in the container. For example:
-
-	$name = Request::input('name');
-
-Remember, if you are in a namespace, you will have to import the `Request` facade using a `use Request;` statement at the top of your class file.
-
-### Via Dependency Injection
-
-To obtain an instance of the current HTTP request via dependency injection, you should type-hint the class on your controller constructor or method. The current request instance will automatically be injected by the [service container](container.md):
-
-	<?php namespace App\Http\Controllers;
-
-	use Illuminate\Http\Request;
-	use Illuminate\Routing\Controller;
-
-	class UserController extends Controller {
-
-		/**
-		 * Store a new user.
-		 *
-		 * @param  Request  $request
-		 * @return Response
-		 */
-		public function store(Request $request)
-		{
-			$name = $request->input('name');
-
-			//
-		}
-
-	}
-
-If your controller method is also expecting input from a route parameter, simply list your route arguments after your other dependencies:
-
-	<?php namespace App\Http\Controllers;
-
-	use Illuminate\Http\Request;
-	use Illuminate\Routing\Controller;
-
-	class UserController extends Controller {
-
-		/**
-		 * Update the specified user.
-		 *
-		 * @param  Request  $request
-		 * @param  int  $id
-		 * @return Response
-		 */
-		public function update(Request $request, $id)
-		{
-			//
-		}
-
-	}
-
-<a name="retrieving-input"></a>
-## Retrieving Input
+You may access all user input with a few simple methods. You do not need to worry about the HTTP verb used for the request, as input is accessed in the same way for all verbs.
 
 #### Retrieving An Input Value
 
-Using a few simple methods, you may access all user input from your `Illuminate\Http\Request` instance. You do not need to worry about the HTTP verb used for the request, as input is accessed in the same way for all verbs.
-
-	$name = Request::input('name');
+	$name = Input::get('name');
 
 #### Retrieving A Default Value If The Input Value Is Absent
 
-	$name = Request::input('name', 'Sally');
+	$name = Input::get('name', 'Sally');
 
 #### Determining If An Input Value Is Present
 
-	if (Request::has('name'))
+	if (Input::has('name'))
 	{
 		//
 	}
 
 #### Getting All Input For The Request
 
-	$input = Request::all();
+	$input = Input::all();
 
 #### Getting Only Some Of The Request Input
 
-	$input = Request::only('username', 'password');
+	$input = Input::only('username', 'password');
 
-	$input = Request::except('credit_card');
+	$input = Input::except('credit_card');
 
 When working on forms with "array" inputs, you may use dot notation to access the arrays:
 
-	$input = Request::input('products.0.name');
+	$input = Input::get('products.0.name');
 
-<a name="old-input"></a>
-## Old Input
-
-Laravel also allows you to keep input from one request during the next request. For example, you may need to re-populate a form after checking it for validation errors.
-
-#### Flashing Input To The Session
-
-The `flash` method will flash the current input to the [session](session.md) so that it is available during the user's next request to the application:
-
-	Request::flash();
-
-#### Flashing Only Some Input To The Session
-
-	Request::flashOnly('username', 'email');
-
-	Request::flashExcept('password');
-
-#### Flash & Redirect
-
-Since you often will want to flash input in association with a redirect to the previous page, you may easily chain input flashing onto a redirect.
-
-	return redirect('form')->withInput();
-
-	return redirect('form')->withInput(Request::except('password'));
-
-#### Retrieving Old Data
-
-To retrieve flashed input from the previous request, use the `old` method on the `Request` instance.
-
-	$username = Request::old('username');
-
-If you are displaying old input within a Blade template, it is more convenient to use the `old` helper:
-
-	{{ old('username') }}
+> **Note:** Some JavaScript libraries such as Backbone may send input to the application as JSON. You may access this data via `Input::get` like normal.
 
 <a name="cookies"></a>
 ## Cookies
@@ -143,56 +49,61 @@ All cookies created by the Laravel framework are encrypted and signed with an au
 
 #### Retrieving A Cookie Value
 
-	$value = Request::cookie('name');
+	$value = Cookie::get('name');
 
 #### Attaching A New Cookie To A Response
 
-The `cookie` helper serves as a simple factory for generating new `Symfony\Component\HttpFoundation\Cookie` instances. The cookies may be attached to a `Response` instance using the `withCookie` method:
+	$response = Response::make('Hello World');
 
-	$response = new Illuminate\Http\Response('Hello World');
+	$response->withCookie(Cookie::make('name', 'value', $minutes));
 
-	$response->withCookie(cookie('name', 'value', $minutes));
+#### Queueing A Cookie For The Next Response
 
-#### Creating A Cookie That Lasts Forever*
+If you would like to set a cookie before a response has been created, use the `Cookie::queue()` method. The cookie will automatically be attached to the final response from your application.
 
-_By "forever", we really mean five years._
+	Cookie::queue($name, $value, $minutes);
 
-	$response->withCookie(cookie()->forever('name', 'value'));
+#### Creating A Cookie That Lasts Forever
 
-#### Queueing Cookies
+	$cookie = Cookie::forever('name', 'value');
 
-You may also "queue" a cookie to be added to the outgoing response, even before that response has been created:
+<a name="old-input"></a>
+## Old Input
 
-	<?php namespace App\Http\Controllers;
+You may need to keep input from one request until the next request. For example, you may need to re-populate a form after checking it for validation errors.
 
-	use Cookie;
-	use Illuminate\Routing\Controller;
+#### Flashing Input To The Session
 
-	class UserController extends Controller
-	{
-		/**
-		 * Update a resource
-		 *
-		 * @return Response
-		 */
-		 public function update()
-		 {
-		 	Cookie::queue('name', 'value');
+	Input::flash();
 
-		 	return response('Hello World');
-		 }
-	}
+#### Flashing Only Some Input To The Session
+
+	Input::flashOnly('username', 'email');
+
+	Input::flashExcept('password');
+
+Since you often will want to flash input in association with a redirect to the previous page, you may easily chain input flashing onto a redirect.
+
+	return Redirect::to('form')->withInput();
+
+	return Redirect::to('form')->withInput(Input::except('password'));
+
+> **Note:** You may flash other data across requests using the [Session](/docs/4.2/session) class.
+
+#### Retrieving Old Data
+
+	Input::old('username');
 
 <a name="files"></a>
 ## Files
 
 #### Retrieving An Uploaded File
 
-	$file = Request::file('photo');
+	$file = Input::file('photo');
 
 #### Determining If A File Was Uploaded
 
-	if (Request::hasFile('photo'))
+	if (Input::hasFile('photo'))
 	{
 		//
 	}
@@ -201,36 +112,45 @@ The object returned by the `file` method is an instance of the `Symfony\Componen
 
 #### Determining If An Uploaded File Is Valid
 
-	if (Request::file('photo')->isValid())
+	if (Input::file('photo')->isValid())
 	{
 		//
 	}
 
 #### Moving An Uploaded File
 
-	Request::file('photo')->move($destinationPath);
+	Input::file('photo')->move($destinationPath);
 
-	Request::file('photo')->move($destinationPath, $fileName);
+	Input::file('photo')->move($destinationPath, $fileName);
 
-### Other File Methods
+#### Retrieving The Path To An Uploaded File
 
-There are a variety of other methods available on `UploadedFile` instances. Check out the [API documentation for the class](http://api.symfony.com/2.5/Symfony/Component/HttpFoundation/File/UploadedFile.html) for more information regarding these methods.
+	$path = Input::file('photo')->getRealPath();
 
-<a name="other-request-information"></a>
-## Other Request Information
+#### Retrieving The Original Name Of An Uploaded File
+
+	$name = Input::file('photo')->getClientOriginalName();
+
+#### Retrieving The Extension Of An Uploaded File
+
+	$extension = Input::file('photo')->getClientOriginalExtension();
+
+#### Retrieving The Size Of An Uploaded File
+
+	$size = Input::file('photo')->getSize();
+
+#### Retrieving The MIME Type Of An Uploaded File
+
+	$mime = Input::file('photo')->getMimeType();
+
+<a name="request-information"></a>
+## Request Information
 
 The `Request` class provides many methods for examining the HTTP request for your application and extends the `Symfony\Component\HttpFoundation\Request` class. Here are some of the highlights.
 
 #### Retrieving The Request URI
 
 	$uri = Request::path();
-
-#### Determine If The Request Is Using AJAX
-
-	if (Request::ajax())
-	{
-		//
-	}
 
 #### Retrieving The Request Method
 
@@ -248,6 +168,55 @@ The `Request` class provides many methods for examining the HTTP request for you
 		//
 	}
 
-#### Get The Current Request URL
+#### Get The Request URL
 
 	$url = Request::url();
+
+#### Retrieve A Request URI Segment
+
+	$segment = Request::segment(1);
+
+#### Retrieving A Request Header
+
+	$value = Request::header('Content-Type');
+
+#### Retrieving Values From $_SERVER
+
+	$value = Request::server('PATH_INFO');
+
+#### Determining If The Request Is Over HTTPS
+
+	if (Request::secure())
+	{
+		//
+	}
+
+#### Determine If The Request Is Using AJAX
+
+	if (Request::ajax())
+	{
+		//
+	}
+
+#### Determine If The Request Has JSON Content Type
+
+	if (Request::isJson())
+	{
+		//
+	}
+
+#### Determine If The Request Is Asking For JSON
+
+	if (Request::wantsJson())
+	{
+		//
+	}
+
+#### Checking The Requested Response Format
+
+The `Request::format` method will return the requested response format based on the HTTP Accept header:
+
+	if (Request::format() == 'json')
+	{
+		//
+	}

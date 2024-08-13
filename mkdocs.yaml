@@ -7,53 +7,41 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel: index.md
-  - Prólogo:
+  - Documentação do Laravel 7.2: index.md
+  - Prefácio:
+      - Introdução: introduction.md
+      - Início Rápido: quick.md
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
-  - Configuração:
-      - Instalação: contributions.md
+  - Começando:
+      - Instalação: installation.md
       - Configuration: configuration.md
       - Homestead: homestead.md
-  - O Básico:
-      - Roteamento: routing.md
-      - Redirecionamentos: redirects.md
-      - Middleware: middleware.md
-      - Controladores: controllers.md
-      - Requisições: requests.md
-      - Respostas: responses.md
-      - Visualizações: views.md
-  - Fundamentos de Arquitetura:
-      - Provedores de Serviços: providers.md
-      - Contêiner de Serviços: container.md
-      - Contratos: contracts.md
-      - Fachadas: facades.md
       - Ciclo de Vida da Requisição: lifecycle.md
-      - Estrutura da Aplicação: structure.md
-  - Serviços:
-      - Authentication: authentication.md
-      - Authorization: authorization.md
-      - Console Artisan: artisan.md
+      - Roteamento: routing.md
+      - Requisições e Entradas: requests.md
+      - Visualizações e Respostas: responses.md
+      - Controladores: controllers.md
+      - Erros e Logging: errors.md
+  - Aprendendo Mais:
+      - Authentication: security.md
       - Cobrança: billing.md
       - Cache: cache.md
-      - Coleções: collections.md
-      - Command Bus: bus.md
       - Core Extension: extending.md
-      - Elixir: elixir.md
-      - Encryption: encryption.md
-      - Envoy: envoy.md
-      - Tratamento de erros e Logging: errors.md
       - Eventos: events.md
-      - Sistema de Arquivos / Armazenamento em Nuvem: filesystem.md
-      - Hashing: hashing.md
+      - Fachadas: facades.md
+      - Formulários e HTML: html.md
       - Auxiliares: helpers.md
+      - IoC Container: ioc.md
       - Localization: localization.md
       - E-mail: mail.md
       - Desenvolvimento de Pacotes: packages.md
       - Paginação: pagination.md
       - Filas: queues.md
+      - Segurança: security.md
       - Sessão: session.md
+      - SSH: ssh.md
       - Modelos: templates.md
       - Testes Unitários: testing.md
       - Validação: validation.md

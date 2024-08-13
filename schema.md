@@ -3,7 +3,6 @@
 - [Introduction](#introduction)
 - [Creating & Dropping Tables](#creating-and-dropping-tables)
 - [Adding Columns](#adding-columns)
-- [Changing Columns](#changing-columns)
 - [Renaming Columns](#renaming-columns)
 - [Dropping Columns](#dropping-columns)
 - [Checking Existence](#checking-existence)
@@ -61,7 +60,7 @@ The table builder contains a variety of column types that you may use when build
 
 Command  | Description
 ------------- | -------------
-`$table->bigIncrements('id');`  |  Incrementing ID using a "big integer" equivalent
+`$table->bigIncrements('id');`  |  Incrementing ID using a "big integer" equivalent.
 `$table->bigInteger('votes');`  |  BIGINT equivalent to the table
 `$table->binary('data');`  |  BLOB equivalent to the table
 `$table->boolean('confirmed');`  |  BOOLEAN equivalent to the table
@@ -69,13 +68,11 @@ Command  | Description
 `$table->date('created_at');`  |  DATE equivalent to the table
 `$table->dateTime('created_at');`  |  DATETIME equivalent to the table
 `$table->decimal('amount', 5, 2);`  |  DECIMAL equivalent with a precision and scale
-`$table->double('column', 15, 8);`  |  DOUBLE equivalent with precision, 15 digits in total and 8 after the decimal point
-`$table->enum('choices', ['foo', 'bar']);` | ENUM equivalent to the table
+`$table->double('column', 15, 8);`  |  DOUBLE equivalent with precision, 15 digits in total and 8 after the decimal point 
+`$table->enum('choices', array('foo', 'bar'));` | ENUM equivalent to the table
 `$table->float('amount');`  |  FLOAT equivalent to the table
-`$table->increments('id');`  |  Incrementing ID to the table (primary key)
+`$table->increments('id');`  |  Incrementing ID to the table (primary key).
 `$table->integer('votes');`  |  INTEGER equivalent to the table
-`$table->json('options');`  |  JSON equivalent to the table
-`$table->jsonb('options');`  |  JSONB equivalent to the table
 `$table->longText('description');`  |  LONGTEXT equivalent to the table
 `$table->mediumInteger('numbers');`  |  MEDIUMINT equivalent to the table
 `$table->mediumText('description');`  |  MEDIUMTEXT equivalent to the table
@@ -101,25 +98,6 @@ If you are using the MySQL database, you may use the `after` method to specify t
 
 	$table->string('name')->after('email');
 
-<a name="changing-columns"></a>
-## Changing Columns
-
-**Note:** Before changing a column, be sure to add the `doctrine/dbal` dependency to your `composer.json` file.
-
-Sometimes you may need to modify an existing column. For example, you may wish to increase the size of a string column. The `change` method makes it easy! For example, let's increase the size of the `name` column from 25 to 50:
-
-	Schema::table('users', function($table)
-	{
-		$table->string('name', 50)->change();
-	});
-
-We could also modify a column to be nullable:
-
-	Schema::table('users', function($table)
-	{
-		$table->string('name', 50)->nullable()->change();
-	});
-
 <a name="renaming-columns"></a>
 ## Renaming Columns
 
@@ -130,7 +108,7 @@ To rename a column, you may use the `renameColumn` method on the Schema builder.
 		$table->renameColumn('from', 'to');
 	});
 
-> **Note:** Renaming columns in a table with `enum` column is currently not supported.
+> **Note:** Renaming `enum` column types is not supported.
 
 <a name="dropping-columns"></a>
 ## Dropping Columns
@@ -148,7 +126,7 @@ To drop a column, you may use the `dropColumn` method on the Schema builder. Bef
 
 	Schema::table('users', function($table)
 	{
-		$table->dropColumn(['votes', 'avatar', 'location']);
+		$table->dropColumn(array('votes', 'avatar', 'location'));
 	});
 
 <a name="checking-existence"></a>
@@ -182,7 +160,7 @@ Or, you may choose to add the indexes on separate lines. Below is a list of all 
 Command  | Description
 ------------- | -------------
 `$table->primary('id');`  |  Adding a primary key
-`$table->primary(['first', 'last']);`  |  Adding composite keys
+`$table->primary(array('first', 'last'));`  |  Adding composite keys
 `$table->unique('email');`  |  Adding a unique index
 `$table->index('state');`  |  Adding a basic index
 
@@ -234,9 +212,9 @@ Command  | Description
 
 To set the storage engine for a table, set the `engine` property on the schema builder:
 
-	Schema::create('users', function($table)
-	{
-		$table->engine = 'InnoDB';
+    Schema::create('users', function($table)
+    {
+        $table->engine = 'InnoDB';
 
-		$table->string('email');
-	});
+        $table->string('email');
+    });

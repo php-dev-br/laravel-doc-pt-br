@@ -11,6 +11,7 @@
 - [Deletes](#deletes)
 - [Unions](#unions)
 - [Pessimistic Locking](#pessimistic-locking)
+- [Caching Queries](#caching-queries)
 
 <a name="introduction"></a>
 ## Introduction
@@ -30,25 +31,6 @@ The database query builder provides a convenient, fluent interface to creating a
 	{
 		var_dump($user->name);
 	}
-
-#### Chunking Results From A Table
-
-	DB::table('users')->chunk(100, function($users)
-	{
-		foreach ($users as $user)
-		{
-			//
-		}
-	});
-
-You may stop further chunks from being processed by returning `false` from the `Closure`:
-
-	DB::table('users')->chunk(100, function($users)
-	{
-		//
-
-		return false;
-	});
 
 #### Retrieving A Single Row From A Table
 
@@ -96,39 +78,25 @@ This method will return an array of role titles. You may also specify a custom k
 #### Using Where Between
 
 	$users = DB::table('users')
-	                    ->whereBetween('votes', [1, 100])->get();
+	                    ->whereBetween('votes', array(1, 100))->get();
 
 #### Using Where Not Between
 
 	$users = DB::table('users')
-	                    ->whereNotBetween('votes', [1, 100])->get();
+	                    ->whereNotBetween('votes', array(1, 100))->get();
 
 #### Using Where In With An Array
 
 	$users = DB::table('users')
-	                    ->whereIn('id', [1, 2, 3])->get();
+	                    ->whereIn('id', array(1, 2, 3))->get();
 
 	$users = DB::table('users')
-	                    ->whereNotIn('id', [1, 2, 3])->get();
+	                    ->whereNotIn('id', array(1, 2, 3))->get();
 
 #### Using Where Null To Find Records With Unset Values
 
 	$users = DB::table('users')
 	                    ->whereNull('updated_at')->get();
-
-#### Dynamic Where Clauses
-
-You may even use "dynamic" where statements to fluently build where statements using magic methods:
-
-	$admin = DB::table('users')->whereId(1)->first();
-
-	$john = DB::table('users')
-	                    ->whereIdAndEmail(2, 'john@doe.com')
-	                    ->first();
-
-	$jane = DB::table('users')
-	                    ->whereNameOrAge('Jane', 22)
-	                    ->first();
 
 #### Order By, Group By, And Having
 
@@ -254,7 +222,7 @@ Sometimes you may need to use a raw expression in a query. These expressions wil
 #### Inserting Records Into A Table
 
 	DB::table('users')->insert(
-		['email' => 'john@example.com', 'votes' => 0]
+		array('email' => 'john@example.com', 'votes' => 0)
 	);
 
 #### Inserting Records Into A Table With An Auto-Incrementing ID
@@ -262,17 +230,17 @@ Sometimes you may need to use a raw expression in a query. These expressions wil
 If the table has an auto-incrementing id, use `insertGetId` to insert a record and retrieve the id:
 
 	$id = DB::table('users')->insertGetId(
-		['email' => 'john@example.com', 'votes' => 0]
+		array('email' => 'john@example.com', 'votes' => 0)
 	);
 
 > **Note:** When using PostgreSQL the insertGetId method expects the auto-incrementing column to be named "id".
 
 #### Inserting Multiple Records Into A Table
 
-	DB::table('users')->insert([
-		['email' => 'taylor@example.com', 'votes' => 0],
-		['email' => 'dayle@example.com', 'votes' => 0]
-	]);
+	DB::table('users')->insert(array(
+		array('email' => 'taylor@example.com', 'votes' => 0),
+		array('email' => 'dayle@example.com', 'votes' => 0),
+	));
 
 <a name="updates"></a>
 ## Updates
@@ -281,7 +249,7 @@ If the table has an auto-incrementing id, use `insertGetId` to insert a record a
 
 	DB::table('users')
 	            ->where('id', 1)
-	            ->update(['votes' => 1]);
+	            ->update(array('votes' => 1));
 
 #### Incrementing or decrementing a value of a column
 
@@ -295,7 +263,7 @@ If the table has an auto-incrementing id, use `insertGetId` to insert a record a
 
 You may also specify additional columns to update:
 
-	DB::table('users')->increment('votes', 1, ['name' => 'John']);
+	DB::table('users')->increment('votes', 1, array('name' => 'John'));
 
 <a name="deletes"></a>
 ## Deletes
@@ -335,3 +303,16 @@ To run the SELECT statement with a "shared lock", you may use the `sharedLock` m
 To "lock for update" on a SELECT statement, you may use the `lockForUpdate` method on a query:
 
 	DB::table('users')->where('votes', '>', 100)->lockForUpdate()->get();
+
+<a name="caching-queries"></a>
+## Caching Queries
+
+You may easily cache the results of a query using the `remember` or `rememberForever` method:
+
+	$users = DB::table('users')->remember(10)->get();
+
+In this example, the results of the query will be cached for ten minutes. While the results are cached, the query will not be run against the database, and the results will be loaded from the default cache driver specified for your application.
+
+If you are using a [supported cache driver](/docs/4.2/cache#cache-tags), you can also add tags to the caches:
+
+	$users = DB::table('users')->cacheTags(array('people', 'authors'))->remember(10)->get();

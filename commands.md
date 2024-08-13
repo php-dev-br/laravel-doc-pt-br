@@ -3,28 +3,31 @@
 - [Introduction](#introduction)
 - [Building A Command](#building-a-command)
 - [Registering Commands](#registering-commands)
+- [Calling Other Commands](#calling-other-commands)
 
 <a name="introduction"></a>
 ## Introduction
 
-In addition to the commands provided with Artisan, you may also build your own custom commands for working with your application. You may store your custom commands in the `app/Console/Commands` directory; however, you are free to choose your own storage location as long as your commands can be autoloaded based on your `composer.json` settings.
+In addition to the commands provided with Artisan, you may also build your own custom commands for working with your application. You may store your custom commands in the `app/commands` directory; however, you are free to choose your own storage location as long as your commands can be autoloaded based on your `composer.json` settings.
 
 <a name="building-a-command"></a>
 ## Building A Command
 
 ### Generating The Class
 
-To create a new command, you may use the `make:console` Artisan command, which will generate a command stub to help you get started:
+To create a new command, you may use the `command:make` Artisan command, which will generate a command stub to help you get started:
 
 #### Generate A New Command Class
 
-	php artisan make:console FooCommand
+	php artisan command:make FooCommand
 
-The command above would generate a class at `app/Console/Commands/FooCommand.php`.
+By default, generated commands will be stored in the `app/commands` directory; however, you may specify custom path or namespace:
+
+	php artisan command:make FooCommand --path=app/classes --namespace=Classes
 
 When creating the command, the `--command` option may be used to assign the terminal command name:
 
-	php artisan make:console AssignUsers --command=users:assign
+	php artisan command:make AssignUsers --command=users:assign
 
 ### Writing The Command
 
@@ -38,21 +41,17 @@ The `getArguments` and `getOptions` methods are where you may define any argumen
 
 When defining `arguments`, the array definition values represent the following:
 
-	[$name, $mode, $description, $defaultValue]
+	array($name, $mode, $description, $defaultValue)
 
 The argument `mode` may be any of the following: `InputArgument::REQUIRED` or `InputArgument::OPTIONAL`.
 
 When defining `options`, the array definition values represent the following:
 
-	[$name, $shortcut, $mode, $description, $defaultValue]
+	array($name, $shortcut, $mode, $description, $defaultValue)
 
 For options, the argument `mode` may be: `InputOption::VALUE_REQUIRED`, `InputOption::VALUE_OPTIONAL`, `InputOption::VALUE_IS_ARRAY`, `InputOption::VALUE_NONE`.
 
 The `VALUE_IS_ARRAY` mode indicates that the switch may be used multiple times when calling the command:
-
-	InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY
-
-Would then allow for this command:
 
 	php artisan foo --option=bar --option=baz
 
@@ -115,21 +114,33 @@ You may also specify a default value to the `confirm` method, which should be `t
 
 	$this->confirm($question, true);
 
-### Calling Other Commands
-
-Sometimes you may wish to call other commands from your command. You may do so using the `call` method:
-
-	$this->call('command:name', ['argument' => 'foo', '--option' => 'bar']);
-
 <a name="registering-commands"></a>
 ## Registering Commands
 
 #### Registering An Artisan Command
 
-Once your command is finished, you need to register it with Artisan so it will be available for use. This is typically done in the `app/Console/Kernel.php` file. Within this file, you will find a list of commands in the `commands` property. To register your command, simply add it to this list.
+Once your command is finished, you need to register it with Artisan so it will be available for use. This is typically done in the `app/start/artisan.php` file. Within this file, you may use the `Artisan::add` method to register the command:
 
-	protected $commands = [
-		'App\Console\Commands\FooCommand'
-	];
+	Artisan::add(new CustomCommand);
 
-When Artisan boots, all the commands listed in this property will be resolved by the [service container](container.md) and registered with Artisan.
+#### Registering A Command That Is In The IoC Container
+
+If your command is registered in the application [IoC container](/docs/4.2/ioc), you may use the `Artisan::resolve` method to make it available to Artisan:
+
+	Artisan::resolve('binding.name');
+
+#### Registering Commands In A Service Provider
+
+If you need to register commands from within a service provider, you should call the `commands` method from the provider's `boot` method, passing the [IoC container](/docs/4.2/ioc) binding for the command:
+
+	public function boot()
+	{
+		$this->commands('command.binding');
+	}
+
+<a name="calling-other-commands"></a>
+## Calling Other Commands
+
+Sometimes you may wish to call other commands from your command. You may do so using the `call` method:
+
+	$this->call('command:name', array('argument' => 'foo', '--option' => 'bar'));
