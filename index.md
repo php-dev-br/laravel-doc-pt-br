@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/10.x/documentation.md -->
-<!-- revision: 04ad01474ea43f445af1cb45b5229b01f218f166 -->
+<!-- source_url: https://github.com/laravel/docs/blob/7.x/documentation.md -->
+<!-- revision: 9a43373c5a454d96e9ec25ceb550d7348742a3bd -->
 <!-- status: ready -->
 
 # Documentação do Laravel
