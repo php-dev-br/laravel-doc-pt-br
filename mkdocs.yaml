@@ -14,9 +14,10 @@ nav:
       - Guia de Contribuição: contributions.md
   - Configuração:
       - Instalação: contributions.md
-      - Configuração: configuration.md
       - Homestead: homestead.md
-      - Valet: valet.md
+  - Tutoriais:
+      - Beginner Task List: quickstart.md
+      - Intermediate Task List: quickstart-intermediate.md
   - O Básico:
       - Roteamento: routing.md
       - Redirecionamentos: redirects.md

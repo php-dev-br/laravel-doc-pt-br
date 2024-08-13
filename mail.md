@@ -11,7 +11,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel provides a clean, simple API over the popular [SwiftMailer](http://swiftmailer.org) library. Laravel provides drivers for SMTP, Mailgun, Mandrill, SparkPost, Amazon SES, PHP's `mail` function, and `sendmail`, allowing you to quickly get started sending mail through a local or cloud based service of your choice.
+Laravel provides a clean, simple API over the popular [SwiftMailer](http://swiftmailer.org) library. Laravel provides drivers for SMTP, Mailgun, Mandrill, Amazon SES, PHP's `mail` function, and `sendmail`, allowing you to quickly get started sending mail through a local or cloud based service of your choice.
 
 ### Driver Prerequisites
 
@@ -34,14 +34,6 @@ To use the Mandrill driver, first install Guzzle, then set the `driver` option i
 
     'mandrill' => [
         'secret' => 'your-mandrill-key',
-    ],
-
-#### SparkPost Driver
-
-To use the SparkPost driver, first install Guzzle, then set the `driver` option in your `config/mail.php` configuration file to `sparkpost`. Next, verify that your `config/services.php` configuration file contains the following options:
-
-    'sparkpost' => [
-        'secret' => 'your-sparkpost-key',
     ],
 
 #### SES Driver
@@ -164,12 +156,6 @@ When attaching files to a message, you may also specify the display name and / o
 
     $message->attach($pathToFile, ['as' => $display, 'mime' => $mime]);
 
-The `attachData` method may be used to attach a raw string of bytes as an attachment. For example, you might use this method if you have generated a PDF in memory and want to attach it to the e-mail without writing it to disk:
-
-    $message->attachData($pdf, 'invoice.pdf');
-
-    $message->attachData($pdf, 'invoice.pdf', ['mime' => $mime]);
-
 <a name="inline-attachments"></a>
 ### Inline Attachments
 
@@ -251,16 +237,20 @@ Finally, you may use a service like [Mailtrap](https://mailtrap.io) and the `smt
 <a name="events"></a>
 ## Events
 
-Laravel fires an event just before sending mail messages. Remember, this event is fired when the mail is *sent*, not when it is queued. You may register an event listener in your `EventServiceProvider`:
+Laravel fires the `mailer.sending` event just before sending mail messages. Remember, this event is fired when the mail is *sent*, not when it is queued. You may register an event listener in your `EventServiceProvider`:
 
     /**
-     * The event listener mappings for the application.
+     * Register any other events for your application.
      *
-     * @var array
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @return void
      */
-    protected $listen = [
-        'Illuminate\Mail\Events\MessageSending' => [
-            'App\Listeners\LogSentMessage',
-        ],
-    ];
+    public function boot(DispatcherContract $events)
+    {
+        parent::boot($events);
+
+        $events->listen('mailer.sending', function ($message) {
+            //
+        });
+    }
 

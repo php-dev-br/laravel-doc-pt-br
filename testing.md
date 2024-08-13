@@ -27,7 +27,7 @@ An `ExampleTest.php` file is provided in the `tests` directory. After installing
 
 When running tests, Laravel will automatically set the configuration environment to `testing`. Laravel automatically configures the session and cache to the `array` driver while testing, meaning no session or cache data will be persisted while testing.
 
-You are free to create other testing environment configurations as necessary. The `testing` environment variables may be configured in the `phpunit.xml` file, but make sure to clear your configuration cache using the `config:clear` Artisan command before running your tests!
+You are free to create other testing environment configurations as necessary. The `testing` environment variables may be configured in the `phpunit.xml` file.
 
 ### Defining & Running Tests
 
@@ -110,7 +110,7 @@ Now, let's write a test that clicks the link and asserts the user lands on the c
 Laravel also provides several methods for testing forms. The `type`, `select`, `check`, `attach`, and `press` methods allow you to interact with all of your form's inputs. For example, let's imagine this form exists on the application's registration page:
 
     <form action="/register" method="POST">
-        {{ csrf_field() }}
+        {!! csrf_field() !!}
 
         <div>
             Name: <input type="text" name="name">
@@ -143,7 +143,6 @@ Method  | Description
 `$this->type($text, $elementName)`  |  "Type" text into a given field.
 `$this->select($value, $elementName)`  |  "Select" a radio button or drop-down field.
 `$this->check($elementName)`  |  "Check" a checkbox field.
-`$this->uncheck($elementName)`  |  "Uncheck" a checkbox field.
 `$this->attach($pathToFile, $elementName)`  |  "Attach" a file to the form.
 `$this->press($buttonTextOrElementName)`  |  "Press" a button with the given text or name.
 
@@ -154,7 +153,7 @@ If your form contains `file` input types, you may attach files to the form using
     public function testPhotoCanBeUploaded()
     {
         $this->visit('/upload')
-             ->type('File Name', 'name')
+             ->name('File Name', 'name')
              ->attach($absolutePathToFile, 'photo')
              ->press('Upload')
              ->see('Upload Successful!');
@@ -176,7 +175,7 @@ Laravel also provides several helpers for testing JSON APIs and their responses.
          */
         public function testBasicExample()
         {
-            $this->json('POST', '/user', ['name' => 'Sally'])
+            $this->post('/user', ['name' => 'Sally'])
                  ->seeJson([
                      'created' => true,
                  ]);
@@ -185,7 +184,6 @@ Laravel also provides several helpers for testing JSON APIs and their responses.
 
 The `seeJson` method converts the given array into JSON, and then verifies that the JSON fragment occurs **anywhere** within the entire JSON response returned by the application. So, if there are other properties in the JSON response, this test will still pass as long as the given fragment is present.
 
-<a name="verify-exact-json-match"></a>
 #### Verify Exact JSON Match
 
 If you would like to verify that the given array is an **exact** match for the JSON returned by the application, you should use the `seeJsonEquals` method:
@@ -201,76 +199,12 @@ If you would like to verify that the given array is an **exact** match for the J
          */
         public function testBasicExample()
         {
-            $this->json('POST', '/user', ['name' => 'Sally'])
+            $this->post('/user', ['name' => 'Sally'])
                  ->seeJsonEquals([
                      'created' => true,
                  ]);
         }
     }
-
-<a name="verify-structural-json-match"></a>
-#### Verify Structural JSON Match
-
-It is also possible to verify that a JSON response adheres to a specific structure. For this, you should use the `seeJsonStructure` method and pass it a list of (nested) keys:
-
-    <?php
-
-    class ExampleTest extends TestCase
-    {
-        /**
-         * A basic functional test example.
-         *
-         * @return void
-         */
-        public function testBasicExample()
-        {
-            $this->get('/user/1')
-                 ->seeJsonStructure([
-                     'name',
-                     'pet' => [
-                         'name', 'age'
-                     ]
-                 ]);
-        }
-    }
-
-The above example illustrates an expectation of receiving a `name` and a nested `pet` object with its own `name` and `age`. `seeJsonStructure` will not fail if additional keys are present in the response. For example, the test would still pass if the `pet` had a `weight` attribute.
-
-You may use the `*` to assert that the returned JSON structure has a list where each list item contains at least the attributes found in the set of values:
-
-    <?php
-
-    class ExampleTest extends TestCase
-    {
-        /**
-         * A basic functional test example.
-         *
-         * @return void
-         */
-        public function testBasicExample()
-        {
-            // Assert that each user in the list has at least an id, name and email attribute.
-            $this->get('/users')
-                 ->seeJsonStructure([
-                     '*' => [
-                         'id', 'name', 'email'
-                     ]
-                 ]);
-        }
-    }
-
-You may also nest the `*` notation. In this case, we will assert that each user in the JSON response contains a given set of attributes and that each pet on each user also contains a given set of attributes:
-
-    $this->get('/users')
-         ->seeJsonStructure([
-             '*' => [
-                 'id', 'name', 'email', 'pets' => [
-                     '*' => [
-                         'name', 'age'
-                     ]
-                 ]
-             ]
-         ]);
 
 <a name="sessions-and-authentication"></a>
 ### Sessions / Authentication
@@ -304,10 +238,6 @@ Of course, one common use of the session is for maintaining user state, such as 
                  ->see('Hello, '.$user->name);
         }
     }
-
-You may also specify which guard should be used to authenticate the given user by passing the guard name as the second argument to the `actingAs` method:
-
-    $this->actingAs($user, 'backend')
 
 <a name="disabling-middleware"></a>
 ### Disabling Middleware
@@ -381,7 +311,6 @@ Method  | Description
 `->assertSessionHasAll(array $bindings);`  |  Assert that the session has a given list of values.
 `->assertSessionHasErrors($bindings = [], $format = null);`  |  Assert that the session has errors bound.
 `->assertHasOldInput();`  |  Assert that the session has old input.
-`->assertSessionMissing($key);`  |  Assert that the session is missing a given key.
 
 <a name="working-with-databases"></a>
 ## Working With Databases
@@ -472,7 +401,7 @@ When testing, it is common to need to insert a few records into your database be
 
 Within the Closure, which serves as the factory definition, you may return the default test values of all attributes on the model. The Closure will receive an instance of the [Faker](https://github.com/fzaninotto/Faker) PHP library, which allows you to conveniently generate various kinds of random data for testing.
 
-Of course, you are free to add your own additional factories to the `ModelFactory.php` file. You may also create additional factory files for each model for better organization. For example, you could create `UserFactory.php` and `CommentFactory.php` files within your `database/factories` directory.
+Of course, you are free to add your own additional factories to the `ModelFactory.php` file.
 
 #### Multiple Factory Types
 
@@ -547,38 +476,9 @@ You may even persist multiple models to the database. In this example, we'll eve
 
     $users = factory(App\User::class, 3)
                ->create()
-               ->each(function ($u) {
+               ->each(function($u) {
                     $u->posts()->save(factory(App\Post::class)->make());
                 });
-
-#### Relations & Attribute Closures
-
-You may also attach relationships to models using Closure attributes in your factory definitions. For example, if you would like to create a new `User` instance when creating a `Post`, you may do the following:
-
-    $factory->define(App\Post::class, function ($faker) {
-        return [
-            'title' => $faker->title,
-            'content' => $faker->paragraph,
-            'user_id' => function () {
-                return factory(App\User::class)->create()->id;
-            }
-        ];
-    });
-
-These Closures also receive the evaluated attribute array of the factory that contains them:
-
-    $factory->define(App\Post::class, function ($faker) {
-        return [
-            'title' => $faker->title,
-            'content' => $faker->paragraph,
-            'user_id' => function () {
-                return factory(App\User::class)->create()->id;
-            },
-            'user_type' => function (array $post) {
-                return App\User::find($post['user_id'])->type;
-            }
-        ];
-    });
 
 <a name="mocking"></a>
 ## Mocking
@@ -598,23 +498,7 @@ Laravel provides a convenient `expectsEvents` method that verifies the expected 
         {
             $this->expectsEvents(App\Events\UserRegistered::class);
 
-            // Test user registration...
-        }
-    }
-
-You may use the `doesntExpectEvents` method to verify that the given events are **not** fired:
-
-    <?php
-
-    class ExampleTest extends TestCase
-    {
-        public function testPodcastPurchase()
-        {
-            $this->expectsEvents(App\Events\PodcastWasPurchased::class);
-
-            $this->doesntExpectEvents(App\Events\PaymentWasDeclined::class);
-
-            // Test purchasing podcast...
+            // Test user registration code...
         }
     }
 
@@ -651,7 +535,7 @@ Laravel provides a convenient `expectsJobs` method that will verify that the exp
         }
     }
 
-> **Note:** This method only detects jobs that are dispatched via the `DispatchesJobs` trait's dispatch methods or the `dispatch` helper function. It does not detect jobs that are sent directly to `Queue::push`.
+> **Note:** This method only detects jobs that are dispatched via the `DispatchesJobs` trait's dispatch methods. It does not detect jobs that are sent directly to `Queue::push`.
 
 <a name="mocking-facades"></a>
 ### Mocking Facades
@@ -663,6 +547,7 @@ When testing, you may often want to mock a call to a Laravel [facade](facades.md
     namespace App\Http\Controllers;
 
     use Cache;
+    use Illuminate\Routing\Controller;
 
     class UserController extends Controller
     {

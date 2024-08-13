@@ -23,7 +23,6 @@ The Laravel source code is managed on Github, and there are repositories for eac
 - [Laravel Application](https://github.com/laravel/laravel)
 - [Laravel Documentation](https://github.com/laravel/docs)
 - [Laravel Cashier](https://github.com/laravel/cashier)
-- [Laravel Cashier for Braintree](https://github.com/laravel/cashier-braintree)
 - [Laravel Envoy](https://github.com/laravel/envoy)
 - [Laravel Homestead](https://github.com/laravel/homestead)
 - [Laravel Homestead Build Scripts](https://github.com/laravel/settler)
@@ -58,10 +57,12 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 Laravel follows the [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standard and the [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md) autoloading standard.
 
+Please note that we do order our imports by length, rather than alphabetically.
+
 <a name="phpdoc"></a>
 ### PHPDoc
 
-Below is an example of a valid Laravel documentation block. Note that the `@param` attribute is followed by two spaces, the argument type, two more spaces, and finally the variable name:
+Below is an example of a valid Laravel documentation block. Note that the `@param` attribtue is followed by two spaces, the argument type, two more spaces, and finally the variable name:
 
     /**
      * Register a binding with the container.

@@ -8,9 +8,7 @@
 - [Unions](#unions)
 - [Where Clauses](#where-clauses)
     - [Advanced Where Clauses](#advanced-where-clauses)
-    - [JSON Where Clauses](#json-where-clauses)
 - [Ordering, Grouping, Limit, & Offset](#ordering-grouping-limit-and-offset)
-- [Conditional Statements](#conditional-statements)
 - [Inserts](#inserts)
 - [Updates](#updates)
 - [Deletes](#deletes)
@@ -74,7 +72,7 @@ If you don't even need an entire row, you may extract a single value from a reco
 
 If you need to work with thousands of database records, consider using the `chunk` method. This method retrieves a small "chunk" of the results at a time, and feeds each chunk into a `Closure` for processing. This method is very useful for writing [Artisan commands](artisan.md) that process thousands of records. For example, let's work with the entire `users` table in chunks of 100 records at a time:
 
-    DB::table('users')->orderBy('id')->chunk(100, function($users) {
+    DB::table('users')->chunk(100, function($users) {
         foreach ($users as $user) {
             //
         }
@@ -82,7 +80,7 @@ If you need to work with thousands of database records, consider using the `chun
 
 You may stop further chunks from being processed by returning `false` from the `Closure`:
 
-    DB::table('users')->orderBy('id')->chunk(100, function($users) {
+    DB::table('users')->chunk(100, function($users) {
         // Process the records...
 
         return false;
@@ -90,9 +88,9 @@ You may stop further chunks from being processed by returning `false` from the `
 
 #### Retrieving A List Of Column Values
 
-If you would like to retrieve an array containing the values of a single column, you may use the `pluck` method. In this example, we'll retrieve an array of role titles:
+If you would like to retrieve an array containing the values of a single column, you may use the `lists` method. In this example, we'll retrieve an array of role titles:
 
-    $titles = DB::table('roles')->pluck('title');
+    $titles = DB::table('roles')->lists('title');
 
     foreach ($titles as $title) {
         echo $title;
@@ -100,7 +98,7 @@ If you would like to retrieve an array containing the values of a single column,
 
  You may also specify a custom key column for the returned array:
 
-    $roles = DB::table('roles')->pluck('title', 'name');
+    $roles = DB::table('roles')->lists('title', 'name');
 
     foreach ($roles as $name => $title) {
         echo $title;
@@ -171,14 +169,6 @@ If you would like to perform a "left join" instead of an "inner join", use the `
                 ->leftJoin('posts', 'users.id', '=', 'posts.user_id')
                 ->get();
 
-#### Cross Join Statement
-
-To perform a "cross join" use the `crossJoin` method with the name of the table you wish to cross join to. Cross joins generate a cartesian product between the first table and the joined table:
-
-    $users = DB::table('sizes')
-                ->crossJoin('colours')
-                ->get();
-
 #### Advanced Join Statements
 
 You may also specify more advanced join clauses. To get started, pass a `Closure` as the second argument into the `join` method. The `Closure` will receive a `JoinClause` object which allows you to specify constraints on the `join` clause:
@@ -242,13 +232,6 @@ Of course, you may use a variety of other operators when writing a `where` claus
                     ->where('name', 'like', 'T%')
                     ->get();
 
-You may also pass an array of conditions to the `where` function:
-
-    $users = DB::table('users')->where([
-        ['status', '=', '1'],
-        ['subscribed', '<>', '1'],
-    ])->get();
-
 #### Or Statements
 
 You may chain where constraints together, as well as add `or` clauses to the query. The `orWhere` method accepts the same arguments as the `where` method:
@@ -303,26 +286,6 @@ The `whereNotNull` method verifies that the column's value is **not** `NULL`:
                         ->whereNotNull('updated_at')
                         ->get();
 
-**whereColumn**
-
-The `whereColumn` method may be used to verify that two columns are equal:
-
-    $users = DB::table('users')
-                    ->whereColumn('first_name', 'last_name');
-
-You may also pass a comparison operator to the method:
-
-    $users = DB::table('users')
-                    ->whereColumn('updated_at', '>', 'created_at');
-
-The `whereColumn` method can also be passed an array of multiple conditions. These conditions will be joined using the `and` operator:
-
-    $users = DB::table('users')
-                    ->whereColumn([
-                        ['first_name', 'last_name'],
-                        ['updated_at', '>', 'created_at']
-                    ]);
-
 <a name="advanced-where-clauses"></a>
 ## Advanced Where Clauses
 
@@ -338,13 +301,13 @@ Sometimes you may need to create more advanced where clauses such as "where exis
                 })
                 ->get();
 
-As you can see, passing a `Closure` into the `orWhere` method instructs the query builder to begin a constraint group. The `Closure` will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
+As you can see, passing `Closure` into the `orWhere` method instructs the query builder to begin a constraint group. The `Closure` will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
 
     select * from users where name = 'John' or (votes > 100 and title <> 'Admin')
 
 #### Exists Statements
 
-The `whereExists` method allows you to write `where exists` SQL clauses. The `whereExists` method accepts a `Closure` argument, which will receive a query builder instance allowing you to define the query that should be placed inside of the "exists" clause:
+The `whereExists` method allows you to write `where exist` SQL clauses. The `whereExists` method accepts a `Closure` argument, which will receive a query builder instance allowing you to define the query that should be placed inside of the "exists" clause:
 
     DB::table('users')
                 ->whereExists(function ($query) {
@@ -361,19 +324,6 @@ The query above will produce the following SQL:
         select 1 from orders where orders.user_id = users.id
     )
 
-<a name="json-where-clauses"></a>
-## JSON Where Clauses
-
-Laravel supports querying JSON column types on databases that provide support for JSON column types. Currently, this includes MySQL 5.7 and Postgres. To query a JSON column, use the `->` operator:
-
-    $users = DB::table('users')
-                    ->where('options->language', 'en')
-                    ->get();
-
-    $users = DB::table('users')
-                    ->where('preferences->dining->meal', 'salad')
-                    ->get();
-
 <a name="ordering-grouping-limit-and-offset"></a>
 ## Ordering, Grouping, Limit, & Offset
 
@@ -384,14 +334,6 @@ The `orderBy` method allows you to sort the result of the query by a given colum
     $users = DB::table('users')
                     ->orderBy('name', 'desc')
                     ->get();
-
-#### inRandomOrder
-
-The `inRandomOrder` method may be used to sort the query results randomly. For example, you may use this method to fetch a random user:
-
-    $randomUser = DB::table('users')
-                    ->inRandomOrder()
-                    ->first();
 
 #### groupBy / having / havingRaw
 
@@ -415,22 +357,6 @@ The `havingRaw` method may be used to set a raw string as the value of the `havi
 To limit the number of results returned from the query, or to skip a given number of results in the query (`OFFSET`), you may use the `skip` and `take` methods:
 
     $users = DB::table('users')->skip(10)->take(5)->get();
-
-<a name="conditional-statements"></a>
-## Conditional Statements
-
-Sometimes you may want statements to apply to a query only when something else is true. For instance you may only want to apply a `where` statement if a given input value is present on the incoming request. You may accomplish this using the `when` method:
-
-    $role = $request->input('role');
-
-    $users = DB::table('users')
-                    ->when($role, function ($query) use ($role) {
-                        return $query->where('role_id', $role);
-                    })
-                    ->get();
-
-
-The `when` method only executes the given Closure when the first parameter is `true`. If the first parameter is `false`, the Closure will not be executed.
 
 <a name="inserts"></a>
 ## Inserts
@@ -494,7 +420,7 @@ Of course, the query builder may also be used to delete records from the table v
 
 You may constrain `delete` statements by adding `where` clauses before calling the `delete` method:
 
-    DB::table('users')->where('votes', '>', 100)->delete();
+    DB::table('users')->where('votes', '<', 100)->delete();
 
 If you wish to truncate the entire table, which will remove all rows and reset the auto-incrementing ID to zero, you may use the `truncate` method:
 

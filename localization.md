@@ -41,16 +41,6 @@ You may also configure a "fallback language", which will be used when the active
 
     'fallback_locale' => 'en',
 
-You may check if a given locale is currently being used by calling the `isLocale` method on the `App` [facade](facades.md):
-
-    if (App::isLocale('en')) {
-        //
-    }
-
-To retrieve the current application locale, call the `getLocale` method on the `App` [facade](facades.md):
-
-    return App::getLocale();
-
 <a name="basic-usage"></a>
 ## Basic Usage
 
@@ -58,11 +48,9 @@ You may retrieve lines from language files using the `trans` helper function. Th
 
     echo trans('messages.welcome');
 
-Of course if you are using the [Blade templating engine](blade.md), you may use the `{{ }}` syntax to echo the language line or use the `@lang` directive:
+Of course if you are using the [Blade templating engine](blade.md), you may use the `{{ }}` syntax to echo the language line:
 
     {{ trans('messages.welcome') }}
-
-    @lang('messages.welcome')
 
 If the specified language line does not exist, the `trans` function will simply return the language line key. So, using the example above, the `trans` function would return `messages.welcome` if the language line does not exist.
 
@@ -74,13 +62,7 @@ If you wish, you may define place-holders in your language lines. All place-hold
 
 To replace the place-holders when retrieving a language line, pass an array of replacements as the second argument to the `trans` function:
 
-    echo trans('messages.welcome', ['name' => 'dayle']);
-
-If your place-holder contains all capital letters, or only has its first letter capitalized, the translated value will be capitalized accordingly:
-
-    'welcome' => 'Welcome, :NAME', // Welcome, DAYLE
-    'goodbye' => 'Goodbye, :Name', // Goodbye, Dayle
-
+    echo trans('messages.welcome', ['name' => 'Dayle']);
 
 <a name="pluralization"></a>
 ### Pluralization
@@ -89,7 +71,7 @@ Pluralization is a complex problem, as different languages have a variety of com
 
     'apples' => 'There is one apple|There are many apples',
 
-Then, you may use the `trans_choice` function to retrieve the line for a given "count". In this example, since the count is greater than one, the plural form of the language line is returned:
+Then, you may then use the `trans_choice` function to retrieve the line for a given "count". In this example, since the count is greater than one, the plural form of the language line is returned:
 
     echo trans_choice('messages.apples', 10);
 

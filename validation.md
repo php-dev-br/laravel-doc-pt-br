@@ -7,7 +7,6 @@
     - [Writing The Validation Logic](#quick-writing-the-validation-logic)
     - [Displaying The Validation Errors](#quick-displaying-the-validation-errors)
     - [AJAX Requests & Validation](#quick-ajax-requests-and-validation)
-    - [Validating Arrays](#validating-arrays)
 - [Other Validation Approaches](#other-validation-approaches)
     - [Manually Creating Validators](#manually-creating-validators)
     - [Form Request Validation](#form-request-validation)
@@ -103,17 +102,6 @@ To get a better understanding of the `validate` method, let's jump back into the
 
 As you can see, we simply pass the incoming HTTP request and desired validation rules into the `validate` method. Again, if the validation fails, the proper response will automatically be generated. If the validation passes, our controller will continue executing normally.
 
-#### Stopping On First Validation Failure
-
-Sometimes you may wish to stop running validation rules on an attribute after the first validation failure. To do so, assign the `bail` rule to the attribute:
-
-    $this->validate($request, [
-        'title' => 'bail|required|unique:posts|max:255',
-        'body' => 'required',
-    ]);
-
-In this example, if the `required` rule on the `title` attribute fails, the `unique` rule will not be checked. Rules will be validated in the order they are assigned.
-
 #### A Note On Nested Attributes
 
 If your HTTP request contains "nested" parameters, you may specify them in your validation rules using "dot" syntax:
@@ -129,9 +117,7 @@ If your HTTP request contains "nested" parameters, you may specify them in your 
 
 So, what if the incoming request parameters do not pass the given validation rules? As mentioned previously, Laravel will automatically redirect the user back to their previous location. In addition, all of the validation errors will automatically be [flashed to the session](session.md#flash-data).
 
-Again, notice that we did not have to explicitly bind the error messages to the view in our `GET` route. This is because Laravel will check for errors in the session data, and automatically bind them to the view if they are available. The `$errors` variable will be an instance of `Illuminate\Support\MessageBag`. For more information on working with this object, [check out its documentation](#working-with-error-messages).
-
-> **Note:** The `$errors` variable is bound to the view by the `Illuminate\View\Middleware\ShareErrorsFromSession` middleware, which is provided by the `web` middleware group. **When this middleware is applied an `$errors` variable will always be available in your views**, allowing you to conveniently assume the `$errors` variable is always defined and can be safely used.
+Again, notice that we did not have to explicitly bind the error messages to the view in our `GET` route. This is because Laravel will always check for errors in the session data, and automatically bind them to the view if they are available. **So, it is important to note that an `$errors` variable will always be available in all of your views on every request**, allowing you to conveniently assume the `$errors` variable is always defined and can be safely used. The `$errors` variable will be an instance of `Illuminate\Support\MessageBag`. For more information on working with this object, [check out its documentation](#working-with-error-messages).
 
 So, in our example, the user will be redirected to our controller's `create` method when validation fails, allowing us to display the error messages in the view:
 
@@ -182,24 +168,6 @@ If you wish to customize the format of the validation errors that are flashed to
 ### AJAX Requests & Validation
 
 In this example, we used a traditional form to send data to the application. However, many applications use AJAX requests. When using the `validate` method during an AJAX request, Laravel will not generate a redirect response. Instead, Laravel generates a JSON response containing all of the validation errors. This JSON response will be sent with a 422 HTTP status code.
-
-<a name="validating-arrays"></a>
-### Validating Arrays
-
-Validating array form input fields doesn't have to be a pain. For example, to validate that each e-mail in a given array input field is unique, you may do the following:
-
-    $validator = Validator::make($request->all(), [
-        'person.*.email' => 'email|unique:users',
-        'person.*.first_name' => 'required_with:person.*.last_name',
-    ]);
-
-Likewise, you may use the `*` character when specifying your validation messages in your language files, making it a breeze to use a single validation message for array based fields:
-
-    'custom' => [
-        'person.*.email' => [
-            'unique' => 'Each person must have a unique e-mail address',
-        ]
-    ],
 
 <a name="other-validation-approaches"></a>
 ## Other Validation Approaches
@@ -492,25 +460,18 @@ Below is a list of all available validation rules and their function:
 [Different](#rule-different)
 [Digits](#rule-digits)
 [Digits Between](#rule-digits-between)
-[Dimensions (Image Files)](#rule-dimensions)
-[Distinct](#rule-distinct)
 [E-Mail](#rule-email)
 [Exists (Database)](#rule-exists)
-[File](#rule-file)
-[Filled](#rule-filled)
 [Image (File)](#rule-image)
 [In](#rule-in)
-[In Array](#rule-in-array)
 [Integer](#rule-integer)
 [IP Address](#rule-ip)
 [JSON](#rule-json)
 [Max](#rule-max)
-[MIME Types](#rule-mimetypes)
-[MIME Type By File Extension](#rule-mimes)
+[MIME Types (File)](#rule-mimes)
 [Min](#rule-min)
 [Not In](#rule-not-in)
 [Numeric](#rule-numeric)
-[Present](#rule-present)
 [Regular Expression](#rule-regex)
 [Required](#rule-required)
 [Required If](#rule-required-if)
@@ -525,7 +486,6 @@ Below is a list of all available validation rules and their function:
 [Timezone](#rule-timezone)
 [Unique (Database)](#rule-unique)
 [URL](#rule-url)
-
 </div>
 
 <a name="rule-accepted"></a>
@@ -614,22 +574,6 @@ The field under validation must be _numeric_ and must have an exact length of _v
 
 The field under validation must have a length between the given _min_ and _max_.
 
-<a name="rule-dimensions"></a>
-#### dimensions
-
-The file under validation must be an image meeting the dimension constraints as specified by the rule's parameters:
-
-    'avatar' => 'dimensions:min_width=100,min_height=200'
-
-Available constraints are: _min\_width_, _max\_width_, _min\_height_, _max\_height_, _width_, _height_, _ratio_.
-
-<a name="rule-distinct"></a>
-#### distinct
-
-When working with arrays, the field under validation must not have any duplicate values.
-
-    'foo.*.id' => 'distinct'
-
 <a name="rule-email"></a>
 #### email
 
@@ -652,29 +596,11 @@ You may also specify more conditions that will be added as "where" clauses to th
 
     'email' => 'exists:staff,email,account_id,1'
 
-These conditions may be negated using the `!` sign:
-
-    'email' => 'exists:staff,email,role,!admin'
-
 You may also pass `NULL` or `NOT_NULL` to the "where" clause:
 
     'email' => 'exists:staff,email,deleted_at,NULL'
 
     'email' => 'exists:staff,email,deleted_at,NOT_NULL'
-
-Occasionally, you may need to specify a specific database connection to be used for the `exists` query. You can accomplish this by prepending the connection name to the table name using "dot" syntax:
-
-    'email' => 'exists:connection.staff,email'
-
-<a name="rule-file"></a>
-#### file
-
-The field under validation must be a successfully uploaded file.
-
-<a name="rule-filled"></a>
-#### filled
-
-The field under validation must not be empty when it is present.
 
 <a name="rule-image"></a>
 #### image
@@ -685,11 +611,6 @@ The file under validation must be an image (jpeg, png, bmp, gif, or svg)
 #### in:_foo_,_bar_,...
 
 The field under validation must be included in the given list of values.
-
-<a name="rule-in-array"></a>
-#### in_array:_anotherfield_
-
-The field under validation must exist in _anotherfield_'s values.
 
 <a name="rule-integer"></a>
 #### integer
@@ -710,15 +631,6 @@ The field under validation must be a valid JSON string.
 #### max:_value_
 
 The field under validation must be less than or equal to a maximum _value_. Strings, numerics, and files are evaluated in the same fashion as the [`size`](#rule-size) rule.
-
-<a name="rule-mimetypes"></a>
-#### mimetypes:_text/plain_,...
-
-The file under validation must match one of the given MIME types:
-
-    'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime'
-
-To determine the MIME type of the uploaded file, the file's contents will be read and the framework will attempt to guess the MIME type, which may be different from the client provided MIME type.
 
 <a name="rule-mimes"></a>
 #### mimes:_foo_,_bar_,...
@@ -748,11 +660,6 @@ The field under validation must not be included in the given list of values.
 
 The field under validation must be numeric.
 
-<a name="rule-present"></a>
-#### present
-
-The field under validation must be present in the input data but can be empty.
-
 <a name="rule-regex"></a>
 #### regex:_pattern_
 
@@ -763,7 +670,7 @@ The field under validation must match the given regular expression.
 <a name="rule-required"></a>
 #### required
 
-The field under validation must be present in the input data and not empty. A field is considered "empty" if one of the following conditions are true:
+The field under validation must be present in the input data and not empty. A field is considered "empty" is one of the following conditions are true:
 
 - The value is `null`.
 - The value is an empty string.
@@ -773,32 +680,32 @@ The field under validation must be present in the input data and not empty. A fi
 <a name="rule-required-if"></a>
 #### required_if:_anotherfield_,_value_,...
 
-The field under validation must be present and not empty if the _anotherfield_ field is equal to any _value_.
+The field under validation must be present if the _anotherfield_ field is equal to any _value_.
 
 <a name="rule-required-unless"></a>
 #### required_unless:_anotherfield_,_value_,...
 
-The field under validation must be present and not empty unless the _anotherfield_ field is equal to any _value_.
+The field under validation must be present unless the _anotherfield_ field is equal to any _value_.
 
 <a name="rule-required-with"></a>
 #### required_with:_foo_,_bar_,...
 
-The field under validation must be present and not empty _only if_ any of the other specified fields are present.
+The field under validation must be present _only if_ any of the other specified fields are present.
 
 <a name="rule-required-with-all"></a>
 #### required_with_all:_foo_,_bar_,...
 
-The field under validation must be present and not empty _only if_ all of the other specified fields are present.
+The field under validation must be present _only if_ all of the other specified fields are present.
 
 <a name="rule-required-without"></a>
 #### required_without:_foo_,_bar_,...
 
-The field under validation must be present and not empty _only when_ any of the other specified fields are not present.
+The field under validation must be present _only when_ any of the other specified fields are not present.
 
 <a name="rule-required-without-all"></a>
 #### required_without_all:_foo_,_bar_,...
 
-The field under validation must be present and not empty _only when_ all of the other specified fields are not present.
+The field under validation must be present _only when_ all of the other specified fields are not present.
 
 <a name="rule-same"></a>
 #### same:_field_
@@ -808,7 +715,7 @@ The given _field_ must match the field under validation.
 <a name="rule-size"></a>
 #### size:_value_
 
-The field under validation must have a size matching the given _value_. For string data, _value_ corresponds to the number of characters. For numeric data, _value_ corresponds to a given integer value. For an array, _size_ corresponds to the `count` of the array. For files, _size_ corresponds to the file size in kilobytes.
+The field under validation must have a size matching the given _value_. For string data, _value_ corresponds to the number of characters. For numeric data, _value_ corresponds to a given integer value. For files, _size_ corresponds to the file size in kilobytes.
 
 <a name="rule-string"></a>
 #### string
@@ -856,7 +763,7 @@ In the rule above, only rows with an `account_id` of `1` would be included in th
 <a name="rule-url"></a>
 #### url
 
-The field under validation must be a valid URL.
+The field under validation must be a valid URL according to PHP's `filter_var` function.
 
 <a name="conditionally-adding-rules"></a>
 ## Conditionally Adding Rules
@@ -963,11 +870,11 @@ When creating a custom validation rule, you may sometimes need to define custom 
 
 #### Implicit Extensions
 
-By default, when an attribute being validated is not present or contains an empty value as defined by the [`required`](#rule-required) rule, normal validation rules, including custom extensions, are not run. For example, the [`unique`](#rule-unique) rule will not be run against a `null` value:
+By default, when an attribute being validated is not present or contains an empty value as defined by the [`required`](#rule-required) rule, normal validation rules, including custom extensions, are not run. For example, the [`integer`](#rule-integer) rule will not be run against a `null` value:
 
-    $rules = ['name' => 'unique'];
+    $rules = ['count' => 'integer'];
 
-    $input = ['name' => null];
+    $input = ['count' => null];
 
     Validator::make($input, $rules)->passes(); // true
 

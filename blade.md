@@ -6,7 +6,6 @@
     - [Extending A Layout](#extending-a-layout)
 - [Displaying Data](#displaying-data)
 - [Control Structures](#control-structures)
-- [Stacks](#stacks)
 - [Service Injection](#service-injection)
 - [Extending Blade](#extending-blade)
 
@@ -145,16 +144,6 @@ For convenience, Blade also provides an `@unless` directive:
         You are not signed in.
     @endunless
 
-You may also determine if a given layout section has any content using the `@hasSection` directive:
-
-    <title>
-        @hasSection ('title')
-            @yield('title') - App Name
-        @else
-            App Name
-        @endif
-    </title>
-
 #### Loops
 
 In addition to conditional statements, Blade provides simple directives for working with PHP's supported loop structures. Again, each of these directives functions identically to their PHP counterparts:
@@ -176,30 +165,6 @@ In addition to conditional statements, Blade provides simple directives for work
     @while (true)
         <p>I'm looping forever.</p>
     @endwhile
-
-When using loops you might need to end the loop or skip the current iteration:
-
-    @foreach ($users as $user)
-        @if ($user->type == 1)
-            @continue
-        @endif
-
-        <li>{{ $user->name }}</li>
-
-        @if ($user->number == 5)
-            @break
-        @endif
-    @endforeach
-
-You may also include the condition with the directive declaration in one line:
-
-    @foreach ($users as $user)
-        @continue($user->type == 1)
-
-        <li>{{ $user->name }}</li>
-
-        @break($user->number == 5)
-    @endforeach
 
 #### Including Sub-Views
 
@@ -225,7 +190,7 @@ You may combine loops and includes into one line with Blade's `@each` directive:
 
     @each('view.name', $jobs, 'job')
 
-The first argument is the view partial to render for each element in the array or collection. The second argument is the array or collection you wish to iterate over, while the third argument is the variable name that will be assigned to the current iteration within the view. So, for example, if you are iterating over an array of `jobs`, typically you will want to access each job as a `job` variable within your view partial. The key for the current iteration will be available as the `key` variable within your view partial.
+The first argument is the view partial to render for each element in the array or collection. The second argument is the array or collection you wish to iterate over, while the third argument is the variable name that will be assigned to the current iteration within the view. So, for example, if you are iterating over an array of `jobs`, typically you will want to access each job as a `job` variable within your view partial.
 
 You may also pass a fourth argument to the `@each` directive. This argument determines the view that will be rendered if the given array is empty.
 
@@ -236,23 +201,6 @@ You may also pass a fourth argument to the `@each` directive. This argument dete
 Blade also allows you to define comments in your views. However, unlike HTML comments, Blade comments are not included in the HTML returned by your application:
 
     {{-- This comment will not be present in the rendered HTML --}}
-
-<a name="stacks"></a>
-## Stacks
-
-Blade also allows you to push to named stacks which can be rendered somewhere else in another view or layout:
-
-    @push('scripts')
-        <script src="/example.js"></script>
-    @endpush
-
-You may push to the same stack as many times as needed. To render a stack, use the `@stack` syntax:
-
-    <head>
-        <!-- Head Contents -->
-
-        @stack('scripts')
-    </head>
 
 <a name="service-injection"></a>
 ## Service Injection
@@ -308,4 +256,4 @@ As you can see, Laravel's `with` helper function was used in this directive. The
 
     <?php echo with($var)->format('m/d/Y H:i'); ?>
 
-After updating the logic of a Blade directive, you will need to delete all of the cached Blade views. The cached Blade views may be removed using the `view:clear` Artisan command.
+

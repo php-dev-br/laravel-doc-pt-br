@@ -23,27 +23,6 @@ Laravel makes connecting with databases and running queries extremely simple. Th
 
 By default, Laravel's sample [environment configuration](installation.md#environment-configuration) is ready to use with [Laravel Homestead](homestead.md), which is a convenient virtual machine for doing Laravel development on your local machine. Of course, you are free to modify this configuration as needed for your local database.
 
-#### SQLite Configuration
-
-After creating a new SQLite database using a command such as `touch database/database.sqlite`, you can easily configure your environment variables to point to this newly created database by using the database's absolute path:
-
-    DB_CONNECTION=sqlite
-    DB_DATABASE=/absolute/path/to/database.sqlite
-
-#### SQL Server Configuration
-
-Laravel supports SQL Server out of the box; however, you will need to add the connection configuration for the database:
-
-    'sqlsrv' => [
-        'driver' => 'sqlsrv',
-        'host' => env('DB_HOST', 'localhost'),
-        'database' => env('DB_DATABASE', 'forge'),
-        'username' => env('DB_USERNAME', 'forge'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => 'utf8',
-        'prefix' => '',
-    ],
-
 <a name="read-write-connections"></a>
 #### Read / Write Connections
 
@@ -104,7 +83,7 @@ To run a basic query, we can use the `select` method on the `DB` facade:
 
 The first argument passed to the `select` method is the raw SQL query, while the second argument is any parameter bindings that need to be bound to the query. Typically, these are the values of the `where` clause constraints. Parameter binding provides protection against SQL injection.
 
-The `select` method will always return an `array` of results. Each result within the array will be a PHP `StdClass` object, allowing you to access the values of the results:
+The `select` method will always return an `array` of results. Each result within the array will be a PHP `stdClass` object, allowing you to access the values of the results:
 
     foreach ($users as $user) {
         echo $user->name;
@@ -161,10 +140,8 @@ If you would like to receive each SQL query executed by your application, you ma
          */
         public function boot()
         {
-            DB::listen(function ($query) {
-                // $query->sql
-                // $query->bindings
-                // $query->time
+            DB::listen(function($sql, $bindings, $time) {
+                //
             });
         }
 

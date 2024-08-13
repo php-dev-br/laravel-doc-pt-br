@@ -18,41 +18,48 @@
     - [X-XSRF-Token](#csrf-x-xsrf-token)
 - [Route Model Binding](#route-model-binding)
 - [Form Method Spoofing](#form-method-spoofing)
-- [Accessing The Current Route](#accessing-the-current-route)
+- [Throwing 404 Errors](#throwing-404-errors)
 
 <a name="basic-routing"></a>
 ## Basic Routing
 
-All Laravel routes are defined in the `app/Http/routes.php` file, which is automatically loaded by the framework. The most basic Laravel routes simply accept a URI and a `Closure`, providing a very simple and expressive method of defining routes:
+You will define most of the routes for your application in the `app/Http/routes.php` file, which is loaded by the `App\Providers\RouteServiceProvider` class. The most basic Laravel routes simply accept a URI and a `Closure`:
 
-    Route::get('foo', function () {
+    Route::get('/', function () {
         return 'Hello World';
     });
 
-#### The Default Routes File
+    Route::post('foo/bar', function () {
+        return 'Hello World';
+    });
 
-The default `routes.php` file is loaded by the `RouteServiceProvider` and is automatically included in the `web` middleware group, which provides access to session state and CSRF protection. Most of the routes for your application will be defined within this file.
+    Route::put('foo/bar', function () {
+        //
+    });
 
-#### Available Router Methods
+    Route::delete('foo/bar', function () {
+        //
+    });
 
-The router allows you to register routes that respond to any HTTP verb:
+#### Registering A Route For Multiple Verbs
 
-    Route::get($uri, $callback);
-    Route::post($uri, $callback);
-    Route::put($uri, $callback);
-    Route::patch($uri, $callback);
-    Route::delete($uri, $callback);
-    Route::options($uri, $callback);
-
-Sometimes you may need to register a route that responds to multiple HTTP verbs. You may do so using the `match` method. Or, you may even register a route that responds to all HTTP verbs using the `any` method:
+Sometimes you may need to register a route that responds to multiple HTTP verbs. You may do so using the `match` method on the `Route` [facade](facades.md):
 
     Route::match(['get', 'post'], '/', function () {
-        //
+        return 'Hello World';
     });
 
+Or, you may even register a route that responds to all HTTP verbs using the `any` method:
+
     Route::any('foo', function () {
-        //
+        return 'Hello World';
     });
+
+#### Generating URLs To Routes
+
+You may generate URLs to your application's routes using the `url` helper:
+
+    $url = url('foo');
 
 <a name="route-parameters"></a>
 ## Route Parameters
@@ -79,7 +86,7 @@ Route parameters are always encased within "curly" braces. The parameters will b
 <a name="parameters-optional-parameters"></a>
 ### Optional Parameters
 
-Occasionally you may need to specify a route parameter, but make the presence of that route parameter optional. You may do so by placing a `?` mark after the parameter name. Make sure to give the route's corresponding variable a default value:
+Occasionally you may need to specify a route parameter, but make the presence of that route parameter optional. You may do so by placing a `?` mark after the parameter name:
 
     Route::get('user/{name?}', function ($name = null) {
         return $name;
@@ -136,7 +143,7 @@ Once the pattern has been defined, it is automatically applied to all routes usi
 <a name="named-routes"></a>
 ## Named Routes
 
-Named routes allow the convenient generation of URLs or redirects for specific routes. You may specify a name for a route using the `as` array key when defining the route:
+Named routes allow you to conveniently generate URLs or redirects for a specific route. You may specify a name for a route using the `as` array key when defining the route:
 
     Route::get('user/profile', ['as' => 'profile', function () {
         //
@@ -148,7 +155,7 @@ You may also specify route names for controller actions:
         'as' => 'profile', 'uses' => 'UserController@showProfile'
     ]);
 
-Alternatively, instead of specifying the route name in the route array definition, you may chain the `name` method onto the end of the route definition:
+Instead of specifying the route name in the route array definition, you may chain the `name` method onto the end of the route definition:
 
     Route::get('user/profile', 'UserController@showProfile')->name('profile');
 
@@ -164,15 +171,13 @@ If you are using [route groups](#route-groups), you may specify an `as` keyword 
 
 #### Generating URLs To Named Routes
 
-Once you have assigned a name to a given route, you may use the route's name when generating URLs or redirects via the global `route` function:
+Once you have assigned a name to a given route, you may use the route's name when generating URLs or redirects via the `route` function:
 
-    // Generating URLs...
     $url = route('profile');
 
-    // Generating Redirects...
-    return redirect()->route('profile');
+    $redirect = redirect()->route('profile');
 
-If the named route defines parameters, you may pass the parameters as the second argument to the `route` function. The given parameters will automatically be inserted into the URL in their correct positions:
+If the route defines parameters, you may pass the parameters as the second argument to the `route` method. The given parameters will automatically be inserted into the URL:
 
     Route::get('user/{id}/profile', ['as' => 'profile', function ($id) {
         //
@@ -211,12 +216,13 @@ Another common use-case for route groups is assigning the same PHP namespace to 
     {
         // Controllers Within The "App\Http\Controllers\Admin" Namespace
 
-        Route::group(['namespace' => 'User'], function() {
+        Route::group(['namespace' => 'User'], function()
+        {
             // Controllers Within The "App\Http\Controllers\Admin\User" Namespace
         });
     });
 
-Remember, by default, the `RouteServiceProvider` includes your `routes.php` file within a namespace group, allowing you to register controller routes without specifying the full `App\Http\Controllers` namespace prefix. So, we only need to specify the portion of the namespace that comes after the base `App\Http\Controllers` namespace.
+Remember, by default, the `RouteServiceProvider` includes your `routes.php` file within a namespace group, allowing you to register controller routes without specifying the full `App\Http\Controllers` namespace prefix. So, we only need to specify the portion of the namespace that comes after the base `App\Http\Controllers` namespace root.
 
 <a name="route-group-sub-domain-routing"></a>
 ### Sub-Domain Routing
@@ -232,7 +238,7 @@ Route groups may also be used to route wildcard sub-domains. Sub-domains may be 
 <a name="route-group-prefixes"></a>
 ### Route Prefixes
 
-The `prefix` group attribute may be used to prefix each route in the group with a given URI. For example, you may want to prefix all route URIs within the group with `admin`:
+The `prefix` group array attribute may be used to prefix each route in the group with a given URI. For example, you may want to prefix all route URIs within the group with `admin`:
 
     Route::group(['prefix' => 'admin'], function () {
         Route::get('users', function ()    {
@@ -243,8 +249,8 @@ The `prefix` group attribute may be used to prefix each route in the group with 
 You may also use the `prefix` parameter to specify common parameters for your grouped routes:
 
     Route::group(['prefix' => 'accounts/{account_id}'], function () {
-        Route::get('detail', function ($accountId)    {
-            // Matches The "/accounts/{account_id}/detail" URL
+        Route::get('detail', function ($account_id)    {
+            // Matches The accounts/{account_id}/detail URL
         });
     });
 
@@ -254,30 +260,28 @@ You may also use the `prefix` parameter to specify common parameters for your gr
 <a name="csrf-introduction"></a>
 ### Introduction
 
-Laravel makes it easy to protect your application from [cross-site request forgery](http://en.wikipedia.org/wiki/Cross-site_request_forgery) (CSRF) attacks. Cross-site request forgeries are a type of malicious exploit whereby unauthorized commands are performed on behalf of an authenticated user.
+Laravel makes it easy to protect your application from [cross-site request forgeries](http://en.wikipedia.org/wiki/Cross-site_request_forgery). Cross-site request forgeries are a type of malicious exploit whereby unauthorized commands are performed on behalf of the authenticated user.
 
-Laravel automatically generates a CSRF "token" for each active user session managed by the application. This token is used to verify that the authenticated user is the one actually making the requests to the application.
+Laravel automatically generates a CSRF "token" for each active user session managed by the application. This token is used to verify that the authenticated user is the one actually making the requests to the application. To generate a hidden input field `_token` containing the CSRF token, you may use the `csrf_field` helper function:
 
-Anytime you define a HTML form in your application, you should include a hidden CSRF token field in the form so that the CSRF protection middleware will be able to validate the request. To generate a hidden input field `_token` containing the CSRF token, you may use the `csrf_field` helper function:
-
-    // Vanilla PHP
     <?php echo csrf_field(); ?>
-
-    // Blade Template Syntax
-    {{ csrf_field() }}
 
 The `csrf_field` helper function generates the following HTML:
 
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
 
-You do not need to manually verify the CSRF token on POST, PUT, or DELETE requests. The `VerifyCsrfToken` [middleware](middleware.md), which is included in the `web` middleware group, will automatically verify that the token in the request input matches the token stored in the session.
+Of course, using the Blade [templating engine](blade.md):
+
+    {{ csrf_field() }}
+
+You do not need to manually verify the CSRF token on POST, PUT, or DELETE requests. The `VerifyCsrfToken` [HTTP middleware](middleware.md) will verify that the token in the request input matches the token stored in the session.
 
 <a name="csrf-excluding-uris"></a>
 ### Excluding URIs From CSRF Protection
 
 Sometimes you may wish to exclude a set of URIs from CSRF protection. For example, if you are using [Stripe](https://stripe.com) to process payments and are utilizing their webhook system, you will need to exclude your webhook handler route from Laravel's CSRF protection.
 
-You may exclude URIs by defining their routes outside of the `web` middleware group that is included in the default `routes.php` file, or by adding the URIs to the `$except` property of the `VerifyCsrfToken` middleware:
+You may exclude URIs by adding them to the `$except` property of the `VerifyCsrfToken` middleware:
 
     <?php
 
@@ -320,37 +324,9 @@ Laravel also stores the CSRF token in a `XSRF-TOKEN` cookie. You can use the coo
 <a name="route-model-binding"></a>
 ## Route Model Binding
 
-Laravel route model binding provides a convenient way to inject model instances into your routes. For example, instead of injecting a user's ID, you can inject the entire `User` model instance that matches the given ID.
+Laravel route model binding provides a convenient way to inject class instances into your routes. For example, instead of injecting a user's ID, you can inject the entire `User` class instance that matches the given ID.
 
-### Implicit Binding
-
-Laravel will automatically resolve type-hinted Eloquent models defined in routes or controller actions whose variable names match a route segment name. For example:
-
-    Route::get('api/users/{user}', function (App\User $user) {
-        return $user->email;
-    });
-
-In this example, since the Eloquent type-hinted `$user` variable defined on the route matches the `{user}` segment in the route's URI, Laravel will automatically inject the model instance that has an ID matching the corresponding value from the request URI.
-
-If a matching model instance is not found in the database, a 404 HTTP response will be automatically generated.
-
-#### Customizing The Key Name
-
-If you would like the implicit model binding to use a database column other than `id` when retrieving models, you may override the `getRouteKeyName` method on your Eloquent model:
-
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
-### Explicit Binding
-
-To register an explicit binding, use the router's `model` method to specify the class for a given parameter. You should define your model bindings in the `RouteServiceProvider::boot` method:
+First, use the router's `model` method to specify the class for a given parameter. You should define your model bindings in the `RouteServiceProvider::boot` method:
 
 #### Binding A Parameter To A Model
 
@@ -369,22 +345,18 @@ Next, define a route that contains a `{user}` parameter:
 
 Since we have bound the `{user}` parameter to the `App\User` model, a `User` instance will be injected into the route. So, for example, a request to `profile/1` will inject the `User` instance which has an ID of 1.
 
-If a matching model instance is not found in the database, a 404 HTTP response will be automatically generated.
+> **Note:** If a matching model instance is not found in the database, a 404 exception will be thrown automatically.
 
-#### Customizing The Resolution Logic
+If you wish to specify your own "not found" behavior, pass a Closure as the third argument to the `model` method:
 
-If you wish to use your own resolution logic, you should use the `Route::bind` method. The `Closure` you pass to the `bind` method will receive the value of the URI segment, and should return an instance of the class you want to be injected into the route:
-
-    $router->bind('user', function ($value) {
-        return App\User::where('name', $value)->first();
+    $router->model('user', 'App\User', function() {
+        throw new NotFoundHttpException;
     });
 
-#### Customizing The "Not Found" Behavior
+If you wish to use your own resolution logic, you should use the `Route::bind` method. The Closure you pass to the `bind` method will receive the value of the URI segment, and should return an instance of the class you want to be injected into the route:
 
-If you wish to specify your own "not found" behavior, pass a `Closure` as the third argument to the `model` method:
-
-    $router->model('user', 'App\User', function () {
-        throw new NotFoundHttpException;
+    $router->bind('user', function($value) {
+        return App\User::where('name', $value)->first();
     });
 
 <a name="form-method-spoofing"></a>
@@ -405,21 +377,13 @@ Of course, using the Blade [templating engine](blade.md):
 
     {{ method_field('PUT') }}
 
-<a name="accessing-the-current-route"></a>
-## Accessing The Current Route
+<a name="throwing-404-errors"></a>
+## Throwing 404 Errors
 
-The `Route::current()` method will return the route handling the current HTTP request, allowing you to inspect the full `Illuminate\Routing\Route` instance:
+There are two ways to manually trigger a 404 error from a route. First, you may use the `abort` helper. The `abort` helper simply throws a `Symfony\Component\HttpFoundation\Exception\HttpException` with the specified status code:
 
-    $route = Route::current();
+    abort(404);
 
-    $name = $route->getName();
+Secondly, you may manually throw an instance of `Symfony\Component\HttpKernel\Exception\NotFoundHttpException`.
 
-    $actionName = $route->getActionName();
-
-You may also use the `currentRouteName` and `currentRouteAction` helper methods on the `Route` facade to access the current route's name or action:
-
-    $name = Route::currentRouteName();
-
-    $action = Route::currentRouteAction();
-
-Please refer to the API documentation for both the [underlying class of the Route facade](http://laravel.com/api/{{version}}/Illuminate/Routing/Router.html) and [Route instance](http://laravel.com/api/{{version}}/Illuminate/Routing/Route.html) to review all accessible methods.
+More information on handling 404 exceptions and using custom responses for these errors may be found in the [errors](errors.md#http-exceptions) section of the documentation.

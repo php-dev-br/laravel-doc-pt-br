@@ -25,7 +25,6 @@ Laravel includes a variety of "helper" PHP functions. Many of these functions ar
 ### Arrays
 
 <div class="collection-method-list" markdown="1">
-
 [array_add](#method-array-add)
 [array_collapse](#method-array-collapse)
 [array_divide](#method-array-divide)
@@ -38,7 +37,6 @@ Laravel includes a variety of "helper" PHP functions. Many of these functions ar
 [array_has](#method-array-has)
 [array_only](#method-array-only)
 [array_pluck](#method-array-pluck)
-[array_prepend](#method-array-prepend)
 [array_pull](#method-array-pull)
 [array_set](#method-array-set)
 [array_sort](#method-array-sort)
@@ -51,22 +49,18 @@ Laravel includes a variety of "helper" PHP functions. Many of these functions ar
 ### Paths
 
 <div class="collection-method-list" markdown="1">
-
 [app_path](#method-app-path)
 [base_path](#method-base-path)
 [config_path](#method-config-path)
 [database_path](#method-database-path)
 [elixir](#method-elixir)
 [public_path](#method-public-path)
-[resource_path](#method-resource-path)
 [storage_path](#method-storage-path)
-
 </div>
 
 ### Strings
 
 <div class="collection-method-list" markdown="1">
-
 [camel_case](#method-camel-case)
 [class_basename](#method-class-basename)
 [e](#method-e)
@@ -84,25 +78,21 @@ Laravel includes a variety of "helper" PHP functions. Many of these functions ar
 [studly_case](#method-studly-case)
 [trans](#method-trans)
 [trans_choice](#method-trans-choice)
-
 </div>
 
 ### URLs
 
 <div class="collection-method-list" markdown="1">
-
 [action](#method-action)
 [asset](#method-asset)
 [secure_asset](#method-secure-asset)
 [route](#method-route)
 [url](#method-url)
-
 </div>
 
 ### Miscellaneous
 
 <div class="collection-method-list" markdown="1">
-
 [auth](#method-auth)
 [back](#method-back)
 [bcrypt](#method-bcrypt)
@@ -111,7 +101,6 @@ Laravel includes a variety of "helper" PHP functions. Many of these functions ar
 [csrf_field](#method-csrf-field)
 [csrf_token](#method-csrf-token)
 [dd](#method-dd)
-[dispatch](#method-dispatch)
 [env](#method-env)
 [event](#method-event)
 [factory](#method-factory)
@@ -124,7 +113,6 @@ Laravel includes a variety of "helper" PHP functions. Many of these functions ar
 [value](#method-value)
 [view](#method-view)
 [with](#method-with)
-
 </div>
 
 <a name="method-listing"></a>
@@ -155,7 +143,7 @@ The `array_add` function adds a given key / value pair to the array if the given
 <a name="method-array-collapse"></a>
 #### `array_collapse()` {#collection-method}
 
-The `array_collapse` function collapses an array of arrays into a single array:
+The `array_collapse` function collapse an array of arrays into a single array:
 
     $array = array_collapse([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
 
@@ -287,17 +275,6 @@ You may also specify how you wish the resulting list to be keyed:
     $array = array_pluck($array, 'developer.name', 'developer.id');
 
     // [1 => 'Taylor', 2 => 'Abigail'];
-
-<a name="method-array-prepend"></a>
-#### `array_prepend()` {#collection-method}
-
-The `array_prepend` function will push an item onto the beginning of an array:
-
-    $array = ['one', 'two', 'three', 'four'];
-
-    $array = array_prepend($array, 'zero');
-
-    // $array: ['zero', 'one', 'two', 'three', 'four']
 
 <a name="method-array-pull"></a>
 #### `array_pull()` {#collection-method}
@@ -467,17 +444,6 @@ The `public_path` function returns the fully qualified path to the `public` dire
 
     $path = public_path();
 
-<a name="method-resource-path"></a>
-#### `resource_path()` {#collection-method}
-
-The `resource_path` function returns the fully qualified path to the `resources` directory:
-
-    $path = resource_path();
-
-You may also use the `resource_path` function to generate a fully qualified path to a given file relative to the storage directory:
-
-    $path = resource_path('assets/sass/app.scss');
-
 <a name="method-storage-path"></a>
 #### `storage_path()` {#collection-method}
 
@@ -630,7 +596,7 @@ The `str_singular` function converts a string to its singular form. This functio
 
 The `str_slug` function generates a URL friendly "slug" from the given string:
 
-    $title = str_slug('Laravel 5 Framework', '-');
+    $title = str_slug("Laravel 5 Framework", "-");
 
     // laravel-5-framework
 
@@ -705,12 +671,6 @@ The `url` function generates a fully qualified URL to the given path:
 
     echo url('user/profile', [1]);
 
-If no path is provided, a `Illuminate\Routing\UrlGenerator` instance is returned:
-
-    echo url()->current();
-    echo url()->full();
-    echo url()->previous();
-
 <a name="miscellaneous"></a>
 ## Miscellaneous
 
@@ -760,7 +720,7 @@ The `config` helper may also be used to set configuration variables at runtime b
 
 The `csrf_field` function generates an HTML `hidden` input field containing the value of the CSRF token. For example, using [Blade syntax](blade.md):
 
-    {{ csrf_field() }}
+    {!! csrf_field() !!}
 
 <a name="method-csrf-token"></a>
 #### `csrf_token()` {#collection-method}
@@ -775,17 +735,6 @@ The `csrf_token` function retrieves the value of the current CSRF token:
 The `dd` function dumps the given variable and ends execution of the script:
 
     dd($value);
-
-If you do not want to halt the execution of your script, use the `dump` function instead:
-
-    dump($value);
-
-<a name="method-dispatch"></a>
-#### `dispatch()` {#collection-method}
-
-The `dispatch` function pushes a new job onto the Laravel [job queue](queues.md):
-
-    dispatch(new App\Jobs\SendEmails);
 
 <a name="method-env"></a>
 #### `env()` {#collection-method}
@@ -817,7 +766,7 @@ The `factory` function creates a model factory builder for a given class, name, 
 The `method_field` function generates an HTML `hidden` input field containing the spoofed value of the form's HTTP verb. For example, using [Blade syntax](blade.md):
 
     <form method="POST">
-        {{ method_field('DELETE') }}
+        {!! method_field('delete') !!}
     </form>
 
 <a name="method-old"></a>
@@ -826,8 +775,6 @@ The `method_field` function generates an HTML `hidden` input field containing th
 The `old` function [retrieves](requests.md#retrieving-input) an old input value flashed into the session:
 
     $value = old('value');
-
-    $value = old('value', 'default');
 
 <a name="method-redirect"></a>
 #### `redirect()` {#collection-method}

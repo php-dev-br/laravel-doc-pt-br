@@ -87,7 +87,7 @@ If you would like to make your views available for publishing to the application
         $this->loadViewsFrom(__DIR__.'/path/to/views', 'courier');
 
         $this->publishes([
-            __DIR__.'/path/to/views' => resource_path('views/vendor/courier'),
+            __DIR__.'/path/to/views' => base_path('resources/views/vendor/courier'),
         ]);
     }
 
@@ -114,7 +114,7 @@ Package translations are referenced using a double-colon `package::file.line` sy
 
 #### Publishing Translations
 
-If you would like to publish your package's translations to the application's `resources/lang/vendor` directory, you may use the service provider's `publishes` method. The `publishes` method accepts an array of package paths and their corresponding publish locations. For example, to publish the translation files for our example `courier` package:
+If you would like to publish your package's translations to the application's `resources/lang/vendor` directory, you may use the service provider's `publishes` method. The `publishes` method accepts an array of package paths and their corresponding publish locations. For example, to the publish the translation files for our example `courier` package:
 
     /**
      * Perform post-registration booting of services.
@@ -126,7 +126,7 @@ If you would like to publish your package's translations to the application's `r
         $this->loadTranslationsFrom(__DIR__.'/path/to/translations', 'courier');
 
         $this->publishes([
-            __DIR__.'/path/to/translations' => resource_path('lang/vendor/courier'),
+            __DIR__.'/path/to/translations' => base_path('resources/lang/vendor/courier'),
         ]);
     }
 

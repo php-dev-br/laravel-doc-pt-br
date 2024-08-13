@@ -86,26 +86,13 @@ Method  | Description
 `->twiceDaily(1, 13);`  |  Run the task daily at 1:00 & 13:00
 `->weekly();`  |  Run the task every week
 `->monthly();`  |  Run the task every month
-`->monthlyOn(4, '15:00');`  |  Run the task every month on the 4th at 15:00
-`->quarterly();` |  Run the task every quarter
 `->yearly();`  |  Run the task every year
-`->timezone('America/New_York');` | Set the timezone
 
 These methods may be combined with additional constraints to create even more finely tuned schedules that only run on certain days of the week. For example, to schedule a command to run weekly on Monday:
 
-    // Run once per week on Monday at 1 PM...
     $schedule->call(function () {
-        //
+        // Runs once a week on Monday at 13:00...
     })->weekly()->mondays()->at('13:00');
-
-    // Run hourly from 8 AM to 5 PM on weekdays...
-    $schedule->command('foo')
-              ->weekdays()
-              ->hourly()
-              ->timezone('America/Chicago')
-              ->when(function () {
-                    return date('H') >= 8 && date('H') <= 17;
-              });
 
 Below is a list of the additional schedule constraints:
 
@@ -126,12 +113,6 @@ Method  | Description
 The `when` method may be used to limit the execution of a task based on the result of a given truth test. In other words, if the given `Closure` returns `true`, the task will execute as long as no other constraining conditions prevent the task from running:
 
     $schedule->command('emails:send')->daily()->when(function () {
-        return true;
-    });
-
-The `skip` method may be seen as the inverse of `when`. If the `skip` method returns `true`, the scheduled task will not be executed:
-
-    $schedule->command('emails:send')->daily()->skip(function () {
         return true;
     });
 

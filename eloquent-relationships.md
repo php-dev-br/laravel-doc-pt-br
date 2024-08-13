@@ -67,7 +67,7 @@ Eloquent assumes the foreign key of the relationship based on the model name. In
 
     return $this->hasOne('App\Phone', 'foreign_key');
 
-Additionally, Eloquent assumes that the foreign key should have a value matching the `id` (or the custom `$primaryKey`) column of the parent. In other words, Eloquent will look for the value of the user's `id` column in the `user_id` column of the `Phone` record. If you would like the relationship to use a value other than `id`, you may pass a third argument to the `hasOne` method specifying your custom key:
+Additionally, Eloquent assumes that the foreign key should have a value matching the `id` column of the parent. In other words, Eloquent will look for the value of the user's `id` column in the `user_id` column of the `Phone` record. If you would like the relationship to use a value other than `id`, you may pass a third argument to the `hasOne` method specifying your custom key:
 
     return $this->hasOne('App\Phone', 'foreign_key', 'local_key');
 
@@ -239,11 +239,11 @@ Of course, like all other relationship types, you may call the `roles` method to
 
 As mentioned previously, to determine the table name of the relationship's joining table, Eloquent will join the two related model names in alphabetical order. However, you are free to override this convention. You may do so by passing a second argument to the `belongsToMany` method:
 
-    return $this->belongsToMany('App\Role', 'role_user');
+    return $this->belongsToMany('App\Role', 'user_roles');
 
 In addition to customizing the name of the joining table, you may also customize the column names of the keys on the table by passing additional arguments to the `belongsToMany` method. The third argument is the foreign key name of the model on which you are defining the relationship, while the fourth argument is the foreign key name of the model that you are joining to:
 
-    return $this->belongsToMany('App\Role', 'role_user', 'user_id', 'role_id');
+    return $this->belongsToMany('App\Role', 'user_roles', 'user_id', 'role_id');
 
 #### Defining The Inverse Of The Relationship
 
@@ -288,14 +288,6 @@ If you want your pivot table to have automatically maintained `created_at` and `
 
     return $this->belongsToMany('App\Role')->withTimestamps();
 
-#### Filtering Relationships Via Intermediate Table Columns
-
-You can also filter the results returned by `belongsToMany` using the `wherePivot` and `wherePivotIn` methods when defining the relationship:
-
-    return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
-
-    return $this->belongsToMany('App\Role')->wherePivotIn('approved', [1, 2]);
-
 <a name="has-many-through"></a>
 ### Has Many Through
 
@@ -338,16 +330,13 @@ Now that we have examined the table structure for the relationship, let's define
 
 The first argument passed to the `hasManyThrough` method is the name of the final model we wish to access, while the second argument is the name of the intermediate model.
 
-Typical Eloquent foreign key conventions will be used when performing the relationship's queries. If you would like to customize the keys of the relationship, you may pass them as the third and fourth arguments to the `hasManyThrough` method. The third argument is the name of the foreign key on the intermediate model, the fourth argument is the name of the foreign key on the final model, and the fifth argument is the local key:
+Typical Eloquent foreign key conventions will be used when performing the relationship's queries. If you would like to customize the keys of the relationship, you may pass them as the third and fourth arguments to the `hasManyThrough` method. The third argument is the name of the foreign key on the intermediate model, while the fourth argument is the name of the foreign key on the final model.
 
     class Country extends Model
     {
         public function posts()
         {
-            return $this->hasManyThrough(
-                'App\Post', 'App\User',
-                'country_id', 'user_id', 'id'
-            );
+            return $this->hasManyThrough('App\Post', 'App\User', 'country_id', 'user_id');
         }
     }
 
@@ -356,24 +345,23 @@ Typical Eloquent foreign key conventions will be used when performing the relati
 
 #### Table Structure
 
-Polymorphic relations allow a model to belong to more than one other model on a single association. For example, imagine users of your application can "like" both posts and comments. Using polymorphic relationships, you can use a single `likes` table for both of these scenarios. First, let's examine the table structure required to build this relationship:
+Polymorphic relations allow a model to belong to more than one other model on a single association. For example, imagine you want to store photos for your staff members and for your products. Using polymorphic relationships, you can use a single `photos` table for both of these scenarios. First, let's examine the table structure required to build this relationship:
 
-    posts
+    staff
         id - integer
-        title - string
-        body - text
+        name - string
 
-    comments
+    products
         id - integer
-        post_id - integer
-        body - text
+        price - integer
 
-    likes
+    photos
         id - integer
-        likeable_id - integer
-        likeable_type - string
+        path - string
+        imageable_id - integer
+        imageable_type - string
 
-Two important columns to note are the `likeable_id` and `likeable_type` columns on the `likes` table. The `likeable_id` column will contain the ID value of the post or comment, while the `likeable_type` column will contain the class name of the owning model. The `likeable_type` column is how the ORM determines which "type" of owning model to return when accessing the `likeable` relation.
+Two important columns to note are the `imageable_id` and `imageable_type` columns on the `photos` table. The `imageable_id` column will contain the ID value of the owning staff or product, while the `imageable_type` column will contain the class name of the owning model. The `imageable_type` column is how the ORM determines which "type" of owning model to return when accessing the `imageable` relation.
 
 #### Model Structure
 
@@ -385,62 +373,60 @@ Next, let's examine the model definitions needed to build this relationship:
 
     use Illuminate\Database\Eloquent\Model;
 
-    class Like extends Model
+    class Photo extends Model
     {
         /**
-         * Get all of the owning likeable models.
+         * Get all of the owning imageable models.
          */
-        public function likeable()
+        public function imageable()
         {
             return $this->morphTo();
         }
     }
 
-    class Post extends Model
+    class Staff extends Model
     {
         /**
-         * Get all of the post's likes.
+         * Get all of the staff member's photos.
          */
-        public function likes()
+        public function photos()
         {
-            return $this->morphMany('App\Like', 'likeable');
+            return $this->morphMany('App\Photo', 'imageable');
         }
     }
 
-    class Comment extends Model
+    class Product extends Model
     {
         /**
-         * Get all of the comment's likes.
+         * Get all of the product's photos.
          */
-        public function likes()
+        public function photos()
         {
-            return $this->morphMany('App\Like', 'likeable');
+            return $this->morphMany('App\Photo', 'imageable');
         }
     }
 
 #### Retrieving Polymorphic Relations
 
-Once your database table and models are defined, you may access the relationships via your models. For example, to access all of the likes for a post, we can simply use the `likes` dynamic property:
+Once your database table and models are defined, you may access the relationships via your models. For example, to access all of the photos for a staff member, we can simply use the `photos` dynamic property:
 
-    $post = App\Post::find(1);
+    $staff = App\Staff::find(1);
 
-    foreach ($post->likes as $like) {
+    foreach ($staff->photos as $photo) {
         //
     }
 
-You may also retrieve the owner of a polymorphic relation from the polymorphic model by accessing the name of the method that performs the call to `morphTo`. In our case, that is the `likeable` method on the `Like` model. So, we will access that method as a dynamic property:
+You may also retrieve the owner of a polymorphic relation from the polymorphic model by accessing the name of the method that performs the call to `morphTo`. In our case, that is the `imageable` method on the `Photo` model. So, we will access that method as a dynamic property:
 
-    $like = App\Like::find(1);
+    $photo = App\Photo::find(1);
 
-    $likeable = $like->likeable;
+    $imageable = $photo->imageable;
 
-The `likeable` relation on the `Like` model will return either a `Post` or `Comment` instance, depending on which type of model owns the like.
+The `imageable` relation on the `Photo` model will return either a `Staff` or `Product` instance, depending on which type of model owns the photo.
 
 #### Custom Polymorphic Types
 
 By default, Laravel will use the fully qualified class name to store the type of the related model. For instance, given the example above where a `Like` may belong to a `Post` or a `Comment`, the default `likable_type` would be either `App\Post` or `App\Comment`, respectively. However, you may wish to decouple your database from your application's internal structure. In that case, you may define a relationship "morph map" to instruct Eloquent to use the table name associated with each model instead of the class name:
-
-    use Illuminate\Database\Eloquent\Relations\Relation;
 
     Relation::morphMap([
         App\Post::class,
@@ -449,14 +435,12 @@ By default, Laravel will use the fully qualified class name to store the type of
 
 Or, you may specify a custom string to associate with each model:
 
-    use Illuminate\Database\Eloquent\Relations\Relation;
-
     Relation::morphMap([
         'posts' => App\Post::class,
-        'comments' => App\Comment::class,
+        'likes' => App\Like::class,
     ]);
 
-You may register the `morphMap` in the `boot` function of your `AppServiceProvider` or create a separate service provider if you wish.
+You may register the `morphMap` in your `AppServiceProvider` or create a separate service provider if you wish.
 
 <a name="many-to-many-polymorphic-relations"></a>
 ### Many To Many Polymorphic Relations
@@ -618,25 +602,6 @@ If you need even more power, you may use the `whereHas` and `orWhereHas` methods
         $query->where('content', 'like', 'foo%');
     })->get();
 
-#### Counting Relationship Results
-
-If you want to count the number of results from a relationship without actually loading them you may use the `withCount` method, which will place a `{relation}_count` column on your resulting models. For example:
-
-    $posts = App\Post::withCount('comments')->get();
-
-    foreach ($posts as $post) {
-        echo $post->comments_count;
-    }
-
-You may retrieve the "counts" for multiple relations as well as add constraints to the queries:
-
-    $posts = Post::withCount(['votes', 'comments' => function ($query) {
-        $query->where('content', 'like', 'foo%');
-    }])->get();
-
-    echo $posts[0]->votes_count;
-    echo $posts[0]->comments_count;
-
 <a name="eager-loading"></a>
 ### Eager Loading
 
@@ -705,7 +670,7 @@ Sometimes you may wish to eager load a relationship, but also specify additional
 
     }])->get();
 
-In this example, Eloquent will only eager load posts where the post's `title` column contains the word `first`. Of course, you may call other [query builder](queries.md) methods to further customize the eager loading operation:
+In this example, Eloquent will only eager load posts that if the post's `title` column contains the word `first`. Of course, you may call other [query builder](queries.md) to further customize the eager loading operation:
 
     $users = App\User::with(['posts' => function ($query) {
         $query->orderBy('created_at', 'desc');
@@ -819,15 +784,7 @@ For convenience, `attach` and `detach` also accept arrays of IDs as input:
 
     $user->roles()->attach([1 => ['expires' => $expires], 2, 3]);
 
-#### Updating A Record On A Pivot Table
-
-If you need to update an existing row in your pivot table, you may use `updateExistingPivot` method:
-
-    $user = App\User::find(1);
-
-	$user->roles()->updateExistingPivot($roleId, $attributes);
-
-#### Syncing Associations
+#### Syncing For Convenience
 
 You may also use the `sync` method to construct many-to-many associations. The `sync` method accepts an array of IDs to place on the intermediate table. Any IDs that are not in the given array will be removed from the intermediate table. So, after this operation is complete, only the IDs in the array will exist in the intermediate table:
 
@@ -836,10 +793,6 @@ You may also use the `sync` method to construct many-to-many associations. The `
 You may also pass additional intermediate table values with the IDs:
 
     $user->roles()->sync([1 => ['expires' => true], 2, 3]);
-
-If you do not want to detach existing IDs, you may use the `syncWithoutDetaching` method:
-
-    $user->roles()->syncWithoutDetaching([1, 2, 3]);
 
 <a name="touching-parent-timestamps"></a>
 ### Touching Parent Timestamps

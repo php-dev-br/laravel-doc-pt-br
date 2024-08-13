@@ -51,11 +51,9 @@ For the remainder of this documentation, we'll discuss each method available on 
 [avg](#method-avg)
 [chunk](#method-chunk)
 [collapse](#method-collapse)
-[combine](#method-combine)
 [contains](#method-contains)
 [count](#method-count)
 [diff](#method-diff)
-[diffKeys](#method-diffkeys)
 [each](#method-each)
 [every](#method-every)
 [except](#method-except)
@@ -77,12 +75,9 @@ For the remainder of this documentation, we'll discuss each method available on 
 [last](#method-last)
 [map](#method-map)
 [max](#method-max)
-[median](#method-median)
 [merge](#method-merge)
 [min](#method-min)
-[mode](#method-mode)
 [only](#method-only)
-[pipe](#method-pipe)
 [pluck](#method-pluck)
 [pop](#method-pop)
 [prepend](#method-prepend)
@@ -106,13 +101,10 @@ For the remainder of this documentation, we'll discuss each method available on 
 [toArray](#method-toarray)
 [toJson](#method-tojson)
 [transform](#method-transform)
-[union](#method-union)
 [unique](#method-unique)
 [values](#method-values)
 [where](#method-where)
 [whereLoose](#method-whereloose)
-[whereIn](#method-wherein)
-[whereInLoose](#method-whereinloose)
 [zip](#method-zip)
 
 </div>
@@ -193,19 +185,6 @@ The `collapse` method collapses a collection of arrays into a single, flat colle
 
     // [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-<a name="method-combine"></a>
-#### `combine()` {#collection-method}
-
-The `combine` method combines the keys of the collection with the values of another array or collection:
-
-    $collection = collect(['name', 'age']);
-
-    $combined = $collection->combine(['George', 29]);
-
-    $combined->all();
-
-    // ['name' => 'George', 'age' => 29]
-
 <a name="method-contains"></a>
 #### `contains()` {#collection-method}
 
@@ -268,30 +247,6 @@ The `diff` method compares the collection against another collection or a plain 
 
     // [1, 3, 5]
 
-<a name="method-diffkeys"></a>
-#### `diffKeys()` {#collection-method}
-
-The `diffKeys` method compares the collection against another collection or a plain PHP `array` based on its keys. This method will return the key / value pairs in the original collection that are not present in the given collection:
-
-    $collection = collect([
-        'one' => 10,
-        'two' => 20,
-        'three' => 30,
-        'four' => 40,
-        'five' => 50,
-    ]);
-
-    $diff = $collection->diffKeys([
-        'two' => 2,
-        'four' => 4,
-        'six' => 6,
-        'eight' => 8,
-    ]);
-
-    $diff->all();
-
-    // ['one' => 10, 'three' => 30, 'five' => 50]
-
 <a name="method-each"></a>
 #### `each()` {#collection-method}
 
@@ -348,7 +303,7 @@ The `filter` method filters the collection using the given callback, keeping onl
 
     $collection = collect([1, 2, 3, 4]);
 
-    $filtered = $collection->filter(function ($value, $key) {
+    $filtered = $collection->filter(function ($value) {
         return $value > 2;
     });
 
@@ -414,30 +369,6 @@ The `flatten` method flattens a multi-dimensional collection into a single dimen
     $flattened->all();
 
     // ['taylor', 'php', 'javascript'];
-
-You may optionally pass the function a "depth" argument:
-
-    $collection = collect([
-        'Apple' => [
-            ['name' => 'iPhone 6S', 'brand' => 'Apple'],
-        ],
-        'Samsung' => [
-            ['name' => 'Galaxy S7', 'brand' => 'Samsung']
-        ],
-    ]);
-
-    $products = $collection->flatten(1);
-
-    $products->values()->all();
-
-    /*
-        [
-            ['name' => 'iPhone 6S', 'brand' => 'Apple'],
-            ['name' => 'Galaxy S7', 'brand' => 'Samsung'],
-        ]
-    */
-
-In this example, calling `flatten` without providing the depth would have also flattened the nested arrays, resulting in `['iPhone 6S', 'Apple', 'Galaxy S7', 'Samsung']`. Providing a depth allows you to restrict the levels of nested arrays that will be flattened.
 
 <a name="method-flip"></a>
 #### `flip()` {#collection-method}
@@ -706,19 +637,6 @@ The `max` method returns the maximum value of a given key:
 
     // 5
 
-<a name="method-median"></a>
-#### `median()` {#collection-method}
-
-The `median` method returns the [median value](https://en.wikipedia.org/wiki/Median) of a given key:
-
-    $median = collect([['foo' => 10], ['foo' => 10], ['foo' => 20], ['foo' => 40]])->median('foo');
-
-    // 15
-
-    $median = collect([1, 1, 2, 4])->median();
-
-    // 1.5
-
 <a name="method-merge"></a>
 #### `merge()` {#collection-method}
 
@@ -755,19 +673,6 @@ The `min` method returns the minimum value of a given key:
 
     // 1
 
-<a name="method-mode"></a>
-#### `mode()` {#collection-method}
-
-The `mode` method returns the [mode value](https://en.wikipedia.org/wiki/Mode_(statistics)) of a given key:
-
-    $mode = collect([['foo' => 10], ['foo' => 10], ['foo' => 20], ['foo' => 40]])->mode('foo');
-
-    // [10]
-
-    $mode = collect([1, 1, 2, 4])->mode();
-
-    // [1]
-
 <a name="method-only"></a>
 #### `only()` {#collection-method}
 
@@ -782,19 +687,6 @@ The `only` method returns the items in the collection with the specified keys:
     // ['product_id' => 1, 'name' => 'Desk']
 
 For the inverse of `only`, see the [except](#method-except) method.
-
-<a name="method-pipe"></a>
-#### `pipe()` {#collection-method}
-
-The `pipe` method passes the collection to the given callback and returns the result:
-
-    $collection = collect([1, 2, 3]);
-
-    $piped = $collection->pipe(function ($collection) {
-        return $collection->sum();
-    });
-
-    // 6
 
 <a name="method-pluck"></a>
 #### `pluck()` {#collection-method}
@@ -946,7 +838,7 @@ The `reject` method filters the collection using the given callback. The callbac
 
     $collection = collect([1, 2, 3, 4]);
 
-    $filtered = $collection->reject(function ($value, $key) {
+    $filtered = $collection->reject(function ($value) {
         return $value > 2;
     });
 
@@ -1043,7 +935,7 @@ If you would like to limit the size of the returned slice, pass the desired size
 
     // [5, 6]
 
-The returned slice will preserve keys by default. If you do not wish to preserve the original keys, you can use the [`values`](#method-values) method to reindex them.
+The returned slice will have new, numerically indexed keys. If you wish to preserve the original keys, pass `true` as the third argument to the method.
 
 <a name="method-sort"></a>
 #### `sort()` {#collection-method}
@@ -1259,19 +1151,6 @@ The `transform` method iterates over the collection and calls the given callback
 
 > **Note:** Unlike most other collection methods, `transform` modifies the collection itself. If you wish to create a new collection instead, use the [`map`](#method-map) method.
 
-<a name="method-union"></a>
-#### `union()` {#collection-method}
-
-The `union` method adds the given array to the collection. If the given array contains keys that are already in the original collection, the original collection's values will be preferred:
-
-    $collection = collect([1 => ['a'], 2 => ['b']]);
-
-    $union = $collection->union([3 => ['c'], 1 => ['b']]);
-
-    $union->all();
-
-    // [1 => ['a'], 2 => ['b'], 3 => ['c']]
-
 <a name="method-unique"></a>
 #### `unique()` {#collection-method}
 
@@ -1375,36 +1254,6 @@ The `where` method uses "strict" comparisons when checking item values, meaning 
 #### `whereLoose()` {#collection-method}
 
 This method has the same signature as the [`where`](#method-where) method; however, all values are compared using "loose" comparisons.
-
-<a name="method-wherein"></a>
-#### `whereIn()` {#collection-method}
-
-The `whereIn` method filters the collection by a given key / value contained within the given array:
-
-    $collection = collect([
-        ['product' => 'Desk', 'price' => 200],
-        ['product' => 'Chair', 'price' => 100],
-        ['product' => 'Bookcase', 'price' => 150],
-        ['product' => 'Door', 'price' => 100],
-    ]);
-
-    $filtered = $collection->whereIn('price', [150, 200]);
-
-    $filtered->all();
-
-    /*
-        [
-            ['product' => 'Bookcase', 'price' => 150],
-            ['product' => 'Desk', 'price' => 200],
-        ]
-    */
-
-The `whereIn` method uses "strict" comparisons when checking item values, meaning a string with an integer value will not be considered equal to an integer of the same value. Use the [`whereInLoose`](#method-whereinloose) method to filter using "loose" comparisons.
-
-<a name="method-whereinloose"></a>
-#### `whereInLoose()` {#collection-method}
-
-This method has the same signature as the [`whereIn`](#method-wherein) method; however, all values are compared using "loose" comparisons.
 
 <a name="method-zip"></a>
 #### `zip()` {#collection-method}

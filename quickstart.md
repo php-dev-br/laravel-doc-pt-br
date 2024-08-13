@@ -24,18 +24,14 @@
 
 This quickstart guide provides a basic introduction to the Laravel framework and includes content on database migrations, the Eloquent ORM, routing, validation, views, and Blade templates. This is a great starting point if you are brand new to the Laravel framework or PHP frameworks in general. If you have already used Laravel or other PHP frameworks, you may wish to consult one of our more advanced quickstarts.
 
-To sample a basic selection of Laravel features, we will build a simple task list we can use to track all of the tasks we want to accomplish. In other words, the typical "to-do" list example. The complete, finished source code for this project is [available on GitHub](https://github.com/laravel/quickstart-basic).
+To sample a basic selection of Laravel features, we will build a simple task list we can use to track all of the tasks we want to accomplish (the typical "to-do list" example). The complete, finished source code for this project is [available on GitHub](http://github.com/laravel/quickstart-basic).
 
 <a name="installation"></a>
 ## Installation
 
-#### Installing Laravel
-
 Of course, first you will need a fresh installation of the Laravel framework. You may use the [Homestead virtual machine](homestead.md) or the local PHP environment of your choice to run the framework. Once your local environment is ready, you may install the Laravel framework using Composer:
 
 	composer create-project laravel/laravel quickstart --prefer-dist
-
-#### Installing The Quickstart (Optional)
 
 You're free to just read along for the remainder of this quickstart; however, if you would like to download the source code for this quickstart and run it on your local machine, you may clone its Git repository and install its dependencies:
 
@@ -138,27 +134,25 @@ For this application, we know we will need at least three routes: a route to dis
 	use Illuminate\Http\Request;
 
 	/**
-	 * Show Task Dashboard
+	 * Display All Tasks
 	 */
 	Route::get('/', function () {
 		//
 	});
 
 	/**
-	 * Add New Task
+	 * Add A New Task
 	 */
 	Route::post('/task', function (Request $request) {
 		//
 	});
 
 	/**
-	 * Delete Task
+	 * Delete An Existing Task
 	 */
-	Route::delete('/task/{task}', function (Task $task) {
+	Route::delete('/task/{id}', function ($id) {
 		//
 	});
-
-> **Note**: If your copy of Laravel has a `RouteServiceProvider` that already includes the default routes file within the `web` middleware group, you do not need to manually add the group to your `routes.php` file.
 
 <a name="displaying-a-view"></a>
 ### Displaying A View
@@ -171,7 +165,7 @@ In Laravel, all HTML templates are stored in the `resources/views` directory, an
 		return view('tasks');
 	});
 
-Passing `tasks` to the `view` function will create a View object instance that corresponds to the template in `resources/views/tasks.blade.php`. Of course, we need to actually define this view, so let's do that now!
+Of course, we need to actually define this view, so let's do that now!
 
 <a name="building-layouts-and-views"></a>
 ## Building Layouts & Views
@@ -185,11 +179,11 @@ This application only has a single view which contains a form for adding new tas
 
 Almost all web applications share the same layout across pages. For example, this application has a top navigation bar that would be typically present on every page (if we had more than one). Laravel makes it easy to share these common features across every page using Blade **layouts**.
 
-As we discussed earlier, all Laravel views are stored in `resources/views`. So, let's define a new layout view in `resources/views/layouts/app.blade.php`. The `.blade.php` extension instructs the framework to use the [Blade templating engine](blade.md) to render the view. Of course, you may use plain PHP templates with Laravel. However, Blade provides convenient short-cuts for writing clean, terse templates.
+As we discussed earlier, all Laravel views are stored in `resources/views`. So, let's define a new layout view in `resources/views/layouts/app.blade.php`. The `.blade.php` extension instructs the framework to use the [Blade templating engine](blade.md) to render the view. Of course, you may use plain PHP templates with Laravel. However, Blade provides convenient short-cuts for writing cleaner, terse templates.
 
 Our `app.blade.php` view should look like the following:
 
-    <!-- resources/views/layouts/app.blade.php -->
+    // resources/views/layouts/app.blade.php
 
 	<!DOCTYPE html>
 	<html lang="en">
@@ -215,11 +209,11 @@ Note the `@yield('content')` portion of the layout. This is a special Blade dire
 <a name="defining-the-child-view"></a>
 ### Defining The Child View
 
-Next, we need to define a view that contains a form to create a new task as well as a table that lists all existing tasks. Let's define this view in `resources/views/tasks.blade.php`.
+Great, our application layout is finished. Next, we need to define a view that contains a form to create a new task as well as a table that lists all existing tasks. Let's define this view in `resources/views/tasks.blade.php`.
 
 We'll skip over some of the Bootstrap CSS boilerplate and only focus on the things that matter. Remember, you can download the full source for this application on [GitHub](https://github.com/laravel/quickstart-basic):
 
-    <!-- resources/views/tasks.blade.php -->
+    // resources/views/tasks.blade.php
 
 	@extends('layouts.app')
 
@@ -232,7 +226,7 @@ We'll skip over some of the Bootstrap CSS boilerplate and only focus on the thin
 			@include('common.errors')
 
 			<!-- New Task Form -->
-			<form action="{{ url('task') }}" method="POST" class="form-horizontal">
+			<form action="/task" method="POST" class="form-horizontal">
 				{{ csrf_field() }}
 
                 <!-- Task Name -->
@@ -260,9 +254,7 @@ We'll skip over some of the Bootstrap CSS boilerplate and only focus on the thin
 
 #### A Few Notes Of Explanation
 
-Before moving on, let's talk about this template a bit. First, the `@extends` directive informs Blade that we are using the layout we defined in `resources/views/layouts/app.blade.php`. All of the content between `@section('content')` and `@endsection` will be injected into the location of the `@yield('content')` directive within the `app.blade.php` layout.
-
-The `@include('common.errors')` directive will load the template located at `resources/views/common/errors.blade.php`. We haven't defined this template, but we will soon!
+Before moving on, let's talk about this template a bit. First, the `@extends` directive informs Blade that we are using the layout we defined at `resources/views/layouts/app.blade.php`. All of the content between `@section('content')` and `@endsection` will be injected into the location of the `@yield('content')` directive within the `app.blade.php` layout.
 
 Now we have defined a basic layout and view for our application. Remember, we are returning this view from our `/` route like so:
 
@@ -272,15 +264,17 @@ Now we have defined a basic layout and view for our application. Remember, we ar
 
 Next, we're ready to add code to our `POST /task` route to handle the incoming form input and add a new task to the database.
 
+> **Note:** The `@include('common.errors')` directive will load the template located at `resources/views/common/errors.blade.php`. We haven't defined this template, but we will soon!
+
 <a name="adding-tasks"></a>
 ## Adding Tasks
 
 <a name="validation"></a>
 ### Validation
 
-Now that we have a form in our view, we need to add code to our `POST /task` route in `app/Http/routes.php` to validate the incoming form input and create a new task. First, let's validate the input.
+Now that we have a form in our view, we need to add code to our `POST /task` route to validate the incoming form input and create a new task. First, let's validate the input.
 
-For this form, we will make the `name` field required and state that it must contain less than `255` characters. If the validation fails, we will redirect the user back to the `/` URL, as well as flash the old input and errors into the [session](session.md). Flashing the input into the session will allow us to maintain the user's input even when there are validation errors:
+For this form, we will make the `name` field required and state that it must contain less than `255` characters. If the validation fails, we will redirect the user back to the `/` URL, as well as flash the old input and errors into the [session](session.md):
 
 	Route::post('/task', function (Request $request) {
 		$validator = Validator::make($request->all(), [
@@ -302,7 +296,7 @@ Let's take a break for a moment to talk about the `->withErrors($validator)` por
 
 Remember that we used the `@include('common.errors')` directive within our view to render the form's validation errors. The `common.errors` will allow us to easily show validation errors in the same format across all of our pages. Let's define the contents of this view now:
 
-    <!-- resources/views/common/errors.blade.php -->
+    // resources/views/common/errors.blade.php
 
     @if (count($errors) > 0)
         <!-- Form Error List -->
@@ -422,13 +416,11 @@ We left a "TODO" note in our code where our delete button is supposed to be. So,
 
         <!-- Delete Button -->
         <td>
-            <form action="{{ url('task/'.$task->id) }}" method="POST">
+            <form action="/task/{{ $task->id }}" method="POST">
                 {{ csrf_field() }}
                 {{ method_field('DELETE') }}
 
-                <button type="submit" class="btn btn-danger">
-                    <i class="fa fa-trash"></i> Delete
-                </button>
+                <button>Delete Task</button>
             </form>
         </td>
     </tr>
@@ -445,12 +437,10 @@ We can spoof a `DELETE` request by outputting the results of the `method_field('
 <a name="deleting-the-task"></a>
 ### Deleting The Task
 
-Finally, let's add logic to our route to actually delete the given task. We can use [implicit model binding](routing.md#route-model-binding) to automatically retrieve the `Task` model that corresponds to the `{task}` route parameter.
+Finally, let's add logic to our route to actually delete the given task. We can use the Eloquent `findOrFail` method to retrieve a model by ID or throw a 404 exception if the model does not exist. Once we retrieve the model, we will use the `delete` method to delete the record. Once the record is deleted, we will redirect the user back to the `/` URL:
 
-In our route callback, we will use the `delete` method to delete the record. Once the record is deleted, we will redirect the user back to the `/` URL:
-
-	Route::delete('/task/{task}', function (Task $task) {
-		$task->delete();
+	Route::delete('/task/{id}', function ($id) {
+		Task::findOrFail($id)->delete();
 
 		return redirect('/');
 	});

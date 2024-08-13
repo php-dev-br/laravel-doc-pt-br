@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.2/documentation.md -->
-<!-- revision: 21f0f4de4c8b48fecdaa0c12e88984895a01ce94 -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.1/documentation.md -->
+<!-- revision: bae0792b4c258f164bee16b56ba1bf324822133c -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -13,13 +13,11 @@
 ## Configuração
 
 - [Instalação](contributions.md)
-- [Configuração](configuration.md)
 - [Homestead](homestead.md)
-- [Valet](valet.md)
 
 ## Tutoriais
 
-- [Basic Task List](quickstart.md)
+- [Beginner Task List](quickstart.md)
 - [Intermediate Task List](quickstart-intermediate.md)
 
 ## O Básico

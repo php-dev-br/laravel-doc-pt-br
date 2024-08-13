@@ -18,6 +18,8 @@
 
 In addition to providing [authentication](authentication.md) services out of the box, Laravel also provides a simple way to organize authorization logic and control access to resources. There are a variety of methods and helpers to assist you in organizing your authorization logic, and we'll cover each of them in this document.
 
+> **Note:** Authorization was added in Laravel 5.1.11, please refer to the [upgrade guide](upgrade.md) before integrating these features into your application.
+
 <a name="defining-abilities"></a>
 ## Defining Abilities
 
@@ -43,7 +45,7 @@ The simplest way to determine if a user may perform a given action is to define 
 	        $this->registerPolicies($gate);
 
 	        $gate->define('update-post', function ($user, $post) {
-	        	return $user->id == $post->user_id;
+	        	return $user->id === $post->user_id;
 	        });
 	    }
 	}
@@ -373,7 +375,7 @@ The global `policy` helper function may be used to retrieve the `Policy` class f
 <a name="controller-authorization"></a>
 ## Controller Authorization
 
-By default, the base `App\Http\Controllers\Controller` class included with Laravel uses the `AuthorizesRequests` trait. This trait provides the `authorize` method, which may be used to quickly authorize a given action and throw a `AuthorizationException` if the action is not authorized.
+By default, the base `App\Http\Controllers\Controller` class included with Laravel uses the `AuthorizesRequests` trait. This trait provides the `authorize` method, which may be used to quickly authorize a given action and throw a `HttpException` if the action is not authorized.
 
 The `authorize` method shares the same signature as the various other authorization methods such as `Gate::allows` and `$user->can()`. So, let's use the `authorize` method to quickly authorize a request to update a `Post`:
 
@@ -402,7 +404,7 @@ The `authorize` method shares the same signature as the various other authorizat
         }
     }
 
-If the action is authorized, the controller will continue executing normally; however, if the `authorize` method determines that the action is not authorized, a `AuthorizationException` will automatically be thrown which generates a HTTP response with a `403 Not Authorized` status code. As you can see, the `authorize` method is a convenient, fast way to authorize an action or throw an exception with a single line of code.
+If the action is authorized, the controller will continue executing normally; however, if the `authorize` method determines that the action is not authorized, a `HttpException` will automatically be thrown which generates a HTTP response with a `403 Not Authorized` status code. As you can see, the `authorize` method is a convenient, fast way to authorize an action or throw an exception with a single line of code.
 
 The `AuthorizesRequests` trait also provides the `authorizeForUser` method to authorize an action on a user that is not the currently authenticated user:
 
