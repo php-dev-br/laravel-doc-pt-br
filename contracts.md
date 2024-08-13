@@ -7,34 +7,71 @@
 - [Contract Reference](#contract-reference)
 
 <a name="introduction"></a>
+
 ## Introduction
 
-Laravel's "contracts" are a set of interfaces that define the core services provided by the framework. For example, an `Illuminate\Contracts\Queue\Queue` contract defines the methods needed for queueing jobs, while the `Illuminate\Contracts\Mail\Mailer` contract defines the methods needed for sending e-mail.
+Laravel's "contracts" are a set of interfaces that define the core services
+provided by the framework. For example, an `Illuminate\Contracts\Queue\Queue`
+contract defines the methods needed for queueing jobs, while
+the `Illuminate\Contracts\Mail\Mailer` contract defines the methods needed for
+sending e-mail.
 
-Each contract has a corresponding implementation provided by the framework. For example, Laravel provides a queue implementation with a variety of drivers, and a mailer implementation that is powered by [Symfony Mailer](https://symfony.com/doc/7.0/mailer.html).
+Each contract has a corresponding implementation provided by the framework. For
+example, Laravel provides a queue implementation with a variety of drivers, and
+a mailer implementation that is powered
+by [Symfony Mailer](https://symfony.com/doc/6.0/mailer.html).
 
-All of the Laravel contracts live in [their own GitHub repository](https://github.com/illuminate/contracts). This provides a quick reference point for all available contracts, as well as a single, decoupled package that may be utilized when building packages that interact with Laravel services.
+All of the Laravel contracts live
+in [their own GitHub repository](https://github.com/illuminate/contracts). This
+provides a quick reference point for all available contracts, as well as a
+single, decoupled package that may be utilized when building packages that
+interact with Laravel services.
 
 <a name="contracts-vs-facades"></a>
+
 ### Contracts vs. Facades
 
-Laravel's [facades](facades.md) and helper functions provide a simple way of utilizing Laravel's services without needing to type-hint and resolve contracts out of the service container. In most cases, each facade has an equivalent contract.
+Laravel's [facades](facades.md) and helper functions provide a
+simple way of utilizing Laravel's services without needing to type-hint and
+resolve contracts out of the service container. In most cases, each facade has
+an equivalent contract.
 
-Unlike facades, which do not require you to require them in your class' constructor, contracts allow you to define explicit dependencies for your classes. Some developers prefer to explicitly define their dependencies in this way and therefore prefer to use contracts, while other developers enjoy the convenience of facades. **In general, most applications can use facades without issue during development.**
+Unlike facades, which do not require you to require them in your class'
+constructor, contracts allow you to define explicit dependencies for your
+classes. Some developers prefer to explicitly define their dependencies in this
+way and therefore prefer to use contracts, while other developers enjoy the
+convenience of facades. **In general, most applications can use facades without
+issue during development.**
 
 <a name="when-to-use-contracts"></a>
+
 ## When to Use Contracts
 
-The decision to use contracts or facades will come down to personal taste and the tastes of your development team. Both contracts and facades can be used to create robust, well-tested Laravel applications. Contracts and facades are not mutually exclusive. Some parts of your applications may use facades while others depend on contracts. As long as you are keeping your class' responsibilities focused, you will notice very few practical differences between using contracts and facades.
+The decision to use contracts or facades will come down to personal taste and
+the tastes of your development team. Both contracts and facades can be used to
+create robust, well-tested Laravel applications. Contracts and facades are not
+mutually exclusive. Some parts of your applications may use facades while others
+depend on contracts. As long as you are keeping your class' responsibilities
+focused, you will notice very few practical differences between using contracts
+and facades.
 
-In general, most applications can use facades without issue during development. If you are building a package that integrates with multiple PHP frameworks you may wish to use the `illuminate/contracts` package to define your integration with Laravel's services without the need to require Laravel's concrete implementations in your package's `composer.json` file.
+In general, most applications can use facades without issue during development.
+If you are building a package that integrates with multiple PHP frameworks you
+may wish to use the `illuminate/contracts` package to define your integration
+with Laravel's services without the need to require Laravel's concrete
+implementations in your package's `composer.json` file.
 
 <a name="how-to-use-contracts"></a>
+
 ## How to Use Contracts
 
 So, how do you get an implementation of a contract? It's actually quite simple.
 
-Many types of classes in Laravel are resolved through the [service container](arquitetura/conteiner.md), including controllers, event listeners, middleware, queued jobs, and even route closures. So, to get an implementation of a contract, you can just "type-hint" the interface in the constructor of the class being resolved.
+Many types of classes in Laravel are resolved through
+the [service container](container.md), including controllers,
+event listeners, middleware, queued jobs, and even route closures. So, to get an
+implementation of a contract, you can just "type-hint" the interface in the
+constructor of the class being resolved.
 
 For example, take a look at this event listener:
 
@@ -64,12 +101,17 @@ For example, take a look at this event listener:
         }
     }
 
-When the event listener is resolved, the service container will read the type-hints on the constructor of the class, and inject the appropriate value. To learn more about registering things in the service container, check out [its documentation](arquitetura/conteiner.md).
+When the event listener is resolved, the service container will read the
+type-hints on the constructor of the class, and inject the appropriate value. To
+learn more about registering things in the service container, check
+out [its documentation](container.md).
 
 <a name="contract-reference"></a>
+
 ## Contract Reference
 
-This table provides a quick reference to all of the Laravel contracts and their equivalent facades:
+This table provides a quick reference to all of the Laravel contracts and their
+equivalent facades:
 
 | Contract                                                                                                                                               | References Facade         |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------|
@@ -119,7 +161,7 @@ This table provides a quick reference to all of the Laravel contracts and their 
 | [Illuminate\Contracts\Pagination\LengthAwarePaginator](https://github.com/illuminate/contracts/blob/{{version}}/Pagination/LengthAwarePaginator.php)   | &nbsp;                    |
 | [Illuminate\Contracts\Pagination\Paginator](https://github.com/illuminate/contracts/blob/{{version}}/Pagination/Paginator.php)                         | &nbsp;                    |
 | [Illuminate\Contracts\Pipeline\Hub](https://github.com/illuminate/contracts/blob/{{version}}/Pipeline/Hub.php)                                         | &nbsp;                    |
-| [Illuminate\Contracts\Pipeline\Pipeline](https://github.com/illuminate/contracts/blob/{{version}}/Pipeline/Pipeline.php)                               | `Pipeline`;                    |
+| [Illuminate\Contracts\Pipeline\Pipeline](https://github.com/illuminate/contracts/blob/{{version}}/Pipeline/Pipeline.php)                               | `Pipeline`;               |
 | [Illuminate\Contracts\Queue\EntityResolver](https://github.com/illuminate/contracts/blob/{{version}}/Queue/EntityResolver.php)                         | &nbsp;                    |
 | [Illuminate\Contracts\Queue\Factory](https://github.com/illuminate/contracts/blob/{{version}}/Queue/Factory.php)                                       | `Queue`                   |
 | [Illuminate\Contracts\Queue\Job](https://github.com/illuminate/contracts/blob/{{version}}/Queue/Job.php)                                               | &nbsp;                    |
