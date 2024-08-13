@@ -4,7 +4,6 @@
 - [Template Inheritance](#template-inheritance)
     - [Defining A Layout](#defining-a-layout)
     - [Extending A Layout](#extending-a-layout)
-- [Components & Slots](#components-and-slots)
 - [Displaying Data](#displaying-data)
     - [Blade & JavaScript Frameworks](#blade-and-javascript-frameworks)
 - [Control Structures](#control-structures)
@@ -76,58 +75,11 @@ When defining a child view, use the Blade `@extends` directive to specify which 
 
 In this example, the `sidebar` section is utilizing the `@@parent` directive to append (rather than overwriting) content to the layout's sidebar. The `@@parent` directive will be replaced by the content of the layout when the view is rendered.
 
-> {tip} Contrary to the previous example, this `sidebar` section ends with `@endsection` instead of `@show`. The `@endsection` directive will only define a section while `@show` will define and **immediately yield** the section.
-
 Blade views may be returned from routes using the global `view` helper:
 
     Route::get('blade', function () {
         return view('child');
     });
-
-<a name="components-and-slots"></a>
-## Components & Slots
-
-Components and slots provide similar benefits to sections and layouts; however, some may find the mental model of components and slots easier to understand. First, let's imagine a reusable "alert" component we would like to reuse throughout our application:
-
-    <!-- /resources/views/alert.blade.php -->
-
-    <div class="alert alert-danger">
-        {{ $slot }}
-    </div>
-
-The `{{ $slot }}` variable will contain the content we wish to inject into the component. Now, to construct this component, we can use the `@component` Blade directive:
-
-    @component('alert')
-        <strong>Whoops!</strong> Something went wrong!
-    @endcomponent
-
-Sometimes it is helpful to define multiple slots for a component. Let's modify our alert component to allow for the injection of a "title". Named slots may be displayed by simply "echoing" the variable that matches their name:
-
-    <!-- /resources/views/alert.blade.php -->
-
-    <div class="alert alert-danger">
-        <div class="alert-title">{{ $title }}</div>
-
-        {{ $slot }}
-    </div>
-
-Now, we can inject content into the named slot using the `@slot` directive. Any content not within a `@slot` directive will be passed to the component in the `$slot` variable:
-
-    @component('alert')
-        @slot('title')
-            Forbidden
-        @endslot
-
-        You are not allowed to access this resource!
-    @endcomponent
-
-#### Passing Additional Data To Components
-
-Sometimes you may need to pass additional data to a component. For this reason, you can pass an array of data as the second argument to the `@component` directive. All of the data will be made available to the component template as variables:
-
-    @component('alert', ['foo' => 'bar'])
-        ...
-    @endcomponent
 
 <a name="displaying-data"></a>
 ## Displaying Data
@@ -146,11 +98,23 @@ Of course, you are not limited to displaying the contents of the variables passe
 
     The current UNIX timestamp is {{ time() }}.
 
-> {note} Blade `{{ }}` statements are automatically sent through PHP's `htmlspecialchars` function to prevent XSS attacks.
+> {note} Blade `{{ }}` statements are automatically sent through PHP's `htmlentities` function to prevent XSS attacks.
+
+#### Echoing Data If It Exists
+
+Sometimes you may wish to echo a variable, but you aren't sure if the variable has been set. We can express this in verbose PHP code like so:
+
+    {{ isset($name) ? $name : 'Default' }}
+
+However, instead of writing a ternary statement, Blade provides you with the following convenient shortcut, which will be compiled to the ternary statement above:
+
+    {{ $name or 'Default' }}
+
+In this example, if the `$name` variable exists, its value will be displayed. However, if it does not exist, the word `Default` will be displayed.
 
 #### Displaying Unescaped Data
 
-By default, Blade `{{ }}` statements are automatically sent through PHP's `htmlspecialchars` function to prevent XSS attacks. If you do not want your data to be escaped, you may use the following syntax:
+By default, Blade `{{ }}` statements are automatically sent through PHP's `htmlentities` function to prevent XSS attacks. If you do not want your data to be escaped, you may use the following syntax:
 
     Hello, {!! $name !!}.
 
@@ -200,16 +164,6 @@ For convenience, Blade also provides an `@unless` directive:
     @unless (Auth::check())
         You are not signed in.
     @endunless
-
-In addition to the conditional directives already discussed, the `@isset` and `@empty` directives may be used as convenient shortcuts for their respective PHP functions:
-
-    @isset($records)
-        // $records is defined and is not null...
-    @endisset
-
-    @empty($records)
-        // $records is "empty"...
-    @endempty
 
 <a name="loops"></a>
 ### Loops
@@ -338,10 +292,6 @@ Even though the included view will inherit all data available in the parent view
 Of course, if you attempt to `@include` a view which does not exist, Laravel will throw an error. If you would like to include a view that may or may not be present, you should use the `@includeIf` directive:
 
     @includeIf('view.name', ['some' => 'data'])
-
-If you would like to `@include` a view depending on a given boolean condition, you may use the `@includeWhen` directive:
-
-    @includeWhen($boolean, 'view.name', ['some' => 'data'])
 
 > {note} You should avoid using the `__DIR__` and `__FILE__` constants in your Blade views, since they will refer to the location of the cached, compiled view.
 

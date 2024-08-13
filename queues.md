@@ -9,7 +9,6 @@
 - [Dispatching Jobs](#dispatching-jobs)
     - [Delayed Dispatching](#delayed-dispatching)
     - [Customizing The Queue & Connection](#customizing-the-queue-and-connection)
-    - [Specifying Max Job Attempts / Timeout Values](#max-job-attempts-and-timeout)
     - [Error Handling](#error-handling)
 - [Running The Queue Worker](#running-the-queue-worker)
     - [Queue Priorities](#queue-priorities)
@@ -107,11 +106,10 @@ Job classes are very simple, normally containing only a `handle` method which is
     use Illuminate\Queue\SerializesModels;
     use Illuminate\Queue\InteractsWithQueue;
     use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Foundation\Bus\Dispatchable;
 
     class ProcessPodcast implements ShouldQueue
     {
-        use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+        use InteractsWithQueue, Queueable, SerializesModels;
 
         protected $podcast;
 
@@ -279,59 +277,10 @@ Of course, you may chain the `onConnection` and `onQueue` methods to specify the
                     ->onConnection('sqs')
                     ->onQueue('processing');
 
-<a name="max-job-attempts-and-timeout"></a>
-### Specifying Max Job Attempts / Timeout Values
-
-#### Max Attempts
-
-One approach to specifying the maximum number of times a job may be attempted is via the `--tries` switch on the Artisan command line:
-
-    php artisan queue:work --tries=3
-
-However, you may take a more granular approach by defining the maximum number of attempts on the job class itself. If the maximum number of attempts is specified on the job, it will take precedence over the value provided on the command line:
-
-    <?php
-
-    namespace App\Jobs;
-
-    class ProcessPodcast implements ShouldQueue
-    {
-        /**
-         * The number of times the job may be attempted.
-         *
-         * @var int
-         */
-        public $tries = 5;
-    }
-
-#### Timeout
-
-> {note} The `timeout` feature is optimized for PHP 7.1+ and the `pcntl` PHP extension.
-
-Likewise, the maximum number of seconds that jobs can run may be specified using the `--timeout` switch on the Artisan command line:
-
-    php artisan queue:work --timeout=30
-
-However, you may also define the maximum number of seconds a job should be allowed to run on the job class itself. If the timeout is specified on the job, it will take precedence over any timeout specified on the command line:
-
-    <?php
-
-    namespace App\Jobs;
-
-    class ProcessPodcast implements ShouldQueue
-    {
-        /**
-         * The number of seconds the job can run before timing out.
-         *
-         * @var int
-         */
-        public $timeout = 120;
-    }
-
 <a name="error-handling"></a>
 ### Error Handling
 
-If an exception is thrown while the job is being processed, the job will automatically be released back onto the queue so it may be attempted again. The job will continue to be released until it has been attempted the maximum number of times allowed by your application. The maximum number of attempts is defined by the `--tries` switch used on the `queue:work` Artisan command. Alternatively, the maximum number of attempts may be defined on the job class itself. More information on running the queue worker [can be found below](#running-the-queue-worker).
+If an exception is thrown while the job is being processed, the job will automatically be released back onto the queue so it may be attempted again. The job will continue to be released until it has been attempted the maximum number of times allowed by your application. The number of maximum attempts is defined by the `--tries` switch used on the `queue:work` Artisan command. More information on running the queue worker [can be found below](#running-the-queue-worker).
 
 <a name="running-the-queue-worker"></a>
 ## Running The Queue Worker
@@ -343,12 +292,6 @@ Laravel includes a queue worker that will process new jobs as they are pushed on
 > {tip} To keep the `queue:work` process running permanently in the background, you should use a process monitor such as [Supervisor](#supervisor-configuration) to ensure that the queue worker does not stop running.
 
 Remember, queue workers are long-lived processes and store the booted application state in memory. As a result, they will not notice changes in your code base after they have been started. So, during your deployment process, be sure to [restart your queue workers](#queue-workers-and-deployment).
-
-#### Processing A Single Job
-
-The `--once` option may be used to instruct the worker to only process a single job from the queue:
-
-    php artisan queue:work --once
 
 #### Specifying The Connection & Queue
 
@@ -384,8 +327,6 @@ Since queue workers are long-lived processes, they will not pick up changes to y
 
 This command will instruct all queue workers to gracefully "die" after they finish processing their current job so that no existing jobs are lost. Since the queue workers will die when the `queue:restart` command is executed, you should be running a process manager such as [Supervisor](#supervisor-configuration) to automatically restart the queue workers.
 
-> {tip} The queue uses the [cache](cache.md) to store restart signals, so you should verify a cache driver is properly configured for your application before using this feature.
-
 <a name="job-expirations-and-timeouts"></a>
 ### Job Expirations & Timeouts
 
@@ -407,7 +348,7 @@ The `retry_after` configuration option and the `--timeout` CLI option are differ
 
 #### Worker Sleep Duration
 
-When jobs are available on the queue, the worker will keep processing jobs with no delay in between them. However, the `sleep` option determines how long the worker will "sleep" if there are no new jobs available. While sleeping, the worker will not process any new jobs - the jobs will be processed after the worker wakes up again.
+When jobs are available on the queue, the worker will keep processing jobs with no delay in between them. However, the `sleep` option determines how long the worker will "sleep" if there are no new jobs available:
 
     php artisan queue:work --sleep=3
 

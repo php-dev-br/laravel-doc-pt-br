@@ -39,7 +39,7 @@ Database tables are often related to one another. For example, a blog post may h
 <a name="defining-relationships"></a>
 ## Defining Relationships
 
-Eloquent relationships are defined as methods on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](queries.md), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
+Eloquent relationships are defined as functions on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](queries.md), defining relationships as functions provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
 
     $user->posts()->where('active', 1)->get();
 
@@ -67,7 +67,7 @@ A one-to-one relationship is a very basic relation. For example, a `User` model 
         }
     }
 
-The first argument passed to the `hasOne` method is the name of the related model. Once the relationship is defined, we may retrieve the related record using Eloquent's dynamic properties. Dynamic properties allow you to access relationship methods as if they were properties defined on the model:
+The first argument passed to the `hasOne` method is the name of the related model. Once the relationship is defined, we may retrieve the related record using Eloquent's dynamic properties. Dynamic properties allow you to access relationship functions as if they were properties defined on the model:
 
     $phone = User::find(1)->phone;
 
@@ -120,41 +120,6 @@ If your parent model does not use `id` as its primary key, or you wish to join t
         return $this->belongsTo('App\User', 'foreign_key', 'other_key');
     }
 
-<a name="default-models"></a>
-#### Default Models
-
-The `belongsTo` relationship allows you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `App\User` model if no `user` is attached to the post:
-
-    /**
-     * Get the author of the post.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User')->withDefault();
-    }
-
-To populate the default model with attributes, you may pass an array or Closure to the `withDefault` method:
-
-    /**
-     * Get the author of the post.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User')->withDefault([
-            'name' => 'Guest Author',
-        ]);
-    }
-
-    /**
-     * Get the author of the post.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User')->withDefault(function ($user) {
-            $user->name = 'Guest Author';
-        });
-    }
-
 <a name="one-to-many"></a>
 ### One To Many
 
@@ -179,7 +144,7 @@ A "one-to-many" relationship is used to define relationships where a single mode
 
 Remember, Eloquent will automatically determine the proper foreign key column on the `Comment` model. By convention, Eloquent will take the "snake case" name of the owning model and suffix it with `_id`. So, for this example, Eloquent will assume the foreign key on the `Comment` model is `post_id`.
 
-Once the relationship has been defined, we can access the collection of comments by accessing the `comments` property. Remember, since Eloquent provides "dynamic properties", we can access relationship methods as if they were defined as properties on the model:
+Once the relationship has been defined, we can access the collection of comments by accessing the `comments` property. Remember, since Eloquent provides "dynamic properties", we can access relationship functions as if they were defined as properties on the model:
 
     $comments = App\Post::find(1)->comments;
 
@@ -339,40 +304,6 @@ You can also filter the results returned by `belongsToMany` using the `wherePivo
     return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
 
     return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
-
-#### Defining Custom Intermediate Table Models
-
-If you would like to define a custom model to represent the intermediate table of your relationship, you may call the `using` method when defining the relationship. All custom models used to represent intermediate tables of relationships must extend the `Illuminate\Database\Eloquent\Relations\Pivot` class. For example, we may define a `Role` which uses a custom `UserRole` pivot model:
-
-    <?php
-
-    namespace App;
-
-    use Illuminate\Database\Eloquent\Model;
-
-    class Role extends Model
-    {
-        /**
-         * The users that belong to the role.
-         */
-        public function users()
-        {
-            return $this->belongsToMany('App\User')->using('App\UserRole');
-        }
-    }
-
-When defining the `UserRole` model, we will extend the `Pivot` class:
-
-    <?php
-
-    namespace App;
-
-    use Illuminate\Database\Eloquent\Relations\Pivot;
-
-    class UserRole extends Pivot
-    {
-        //
-    }
 
 <a name="has-many-through"></a>
 ### Has Many Through
@@ -623,7 +554,7 @@ You may also retrieve the owner of a polymorphic relation from the polymorphic m
 <a name="querying-relations"></a>
 ## Querying Relations
 
-Since all types of Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing the relationship queries. In addition, all types of Eloquent relationships also serve as [query builders](queries.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL against your database.
+Since all types of Eloquent relationships are defined via functions, you may call those functions to obtain an instance of the relationship without actually executing the relationship queries. In addition, all types of Eloquent relationships also serve as [query builders](queries.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL against your database.
 
 For example, imagine a blog system in which a `User` model has many associated `Post` models:
 
@@ -723,19 +654,6 @@ You may add the "counts" for multiple relations as well as add constraints to th
     echo $posts[0]->votes_count;
     echo $posts[0]->comments_count;
 
-You may also alias the relationship count result, allowing multiple counts on the same relationship:
-
-    $posts = Post::withCount([
-        'comments',
-        'comments AS pending_comments' => function ($query) {
-            $query->where('approved', false);
-        }
-    ])->get();
-
-    echo $posts[0]->comments_count;
-
-    echo $posts[0]->pending_comments_count;
-
 <a name="eager-loading"></a>
 ## Eager Loading
 
@@ -786,7 +704,7 @@ For this operation, only two queries will be executed:
 
 Sometimes you may need to eager load several different relationships in a single operation. To do so, just pass additional arguments to the `with` method:
 
-    $books = App\Book::with(['author', 'publisher'])->get();
+    $books = App\Book::with('author', 'publisher')->get();
 
 #### Nested Eager Loading
 
@@ -862,20 +780,7 @@ In addition to the `save` and `saveMany` methods, you may also use the `create` 
         'message' => 'A new comment.',
     ]);
 
-> {tip} Before using the `create` method, be sure to review the documentation on attribute [mass assignment](eloquent.md#mass-assignment).
-
-You may use the `createMany` method to create multiple related models:
-
-    $post = App\Post::find(1);
-
-    $post->comments()->createMany([
-        [
-            'message' => 'A new comment.',
-        ],
-        [
-            'message' => 'Another new comment.',
-        ],
-    ]);
+Before using the `create` method, be sure to review the documentation on attribute [mass assignment](eloquent.md#mass-assignment).
 
 <a name="updating-belongs-to-relationships"></a>
 ### Belongs To Relationships
@@ -923,10 +828,7 @@ For convenience, `attach` and `detach` also accept arrays of IDs as input:
 
     $user->roles()->detach([1, 2, 3]);
 
-    $user->roles()->attach([
-        1 => ['expires' => $expires],
-        2 => ['expires' => $expires]
-    ]);
+    $user->roles()->attach([1 => ['expires' => $expires], 2, 3]);
 
 #### Syncing Associations
 

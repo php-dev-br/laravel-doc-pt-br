@@ -10,7 +10,6 @@
     - [Partial Resource Routes](#restful-partial-resource-routes)
     - [Naming Resource Routes](#restful-naming-resource-routes)
     - [Naming Resource Route Parameters](#restful-naming-resource-route-parameters)
-    - [Localizing Resource URIs](#restful-localizing-resource-uris)
     - [Supplementing Resource Controllers](#restful-supplementing-resource-controllers)
 - [Dependency Injection & Controllers](#dependency-injection-and-controllers)
 - [Route Caching](#route-caching)
@@ -159,12 +158,6 @@ GET       | `/photos/{photo}/edit` | edit         | photos.edit
 PUT/PATCH | `/photos/{photo}`      | update       | photos.update
 DELETE    | `/photos/{photo}`      | destroy      | photos.destroy
 
-#### Specifying The Resource Model
-
-If you are using route model binding and would like the resource controller's methods to type-hint a model instance, you may use the `--model` option when generating the controller:
-
-    php artisan make:controller PhotoController --resource --model=Photo
-
 #### Spoofing Form Methods
 
 Since HTML forms can't make `PUT`, `PATCH`, or `DELETE` requests, you will need to add a hidden `_method` field to spoof these HTTP verbs. The `method_field` helper can create this field for you:
@@ -205,32 +198,6 @@ By default, `Route::resource` will create the route parameters for your resource
  The example above generates the following URIs for the resource's `show` route:
 
     /user/{admin_user}
-
-<a name="restful-localizing-resource-uris"></a>
-### Localizing Resource URIs
-
-By default, `Route::resource` will create resource URIs using English verbs. If you need to localize the `create` and `edit` action verbs, you may use the `Route::resourceVerbs` method. This may be done in the `boot` method of your `AppServiceProvider`:
-
-    use Illuminate\Support\Facades\Route;
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        Route::resourceVerbs([
-            'create' => 'crear',
-            'edit' => 'editar',
-        ]);
-    }
-
-Once the verbs have been customized, a resource route registration such as `Route::resource('fotos', 'PhotoController')` will produce the following URIs:
-
-    /fotos/crear
-
-    /fotos/{foto}/editar
 
 <a name="restful-supplementing-resource-controllers"></a>
 ### Supplementing Resource Controllers

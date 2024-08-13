@@ -10,8 +10,6 @@
 <a name="installation"></a>
 ## Installation
 
-> {video} Are you a visual learner? Laracasts provides a [free, thorough introduction to Laravel](https://laracasts.com/series/laravel-from-scratch-2017) for newcomers to the framework. It's a great place to start your journey.
-
 <a name="server-requirements"></a>
 ### Server Requirements
 
@@ -21,7 +19,7 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 <div class="content-list" markdown="1">
 
-- PHP >= 5.6.4
+- PHP between 5.6.4 & 7.1.*
 - OpenSSL PHP Extension
 - PDO PHP Extension
 - Mbstring PHP Extension
@@ -51,7 +49,7 @@ Once installed, the `laravel new` command will create a fresh Laravel installati
 
 Alternatively, you may also install Laravel by issuing the Composer `create-project` command in your terminal:
 
-    composer create-project --prefer-dist laravel/laravel blog "5.4.*"
+    composer create-project --prefer-dist laravel/laravel blog "5.3.*"
 
 #### Local Development Server
 

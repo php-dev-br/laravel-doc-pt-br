@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.4/documentation.md -->
-<!-- revision: adbfcb7ec763352066e7e76ed061972741aec8c5 -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.3/documentation.md -->
+<!-- revision: 58c238584fafe2013582cafe3987ab1c1514705a -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -15,19 +15,21 @@
 - [Instalação](contributions.md)
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
-- [_Front-end_](frontend.md)
+- [Ciclo de Vida da Requisição](lifecycle.md)
+
+## Ambientes de Desenvolvimento
+
 - [Homestead](homestead.md)
 - [Valet](valet.md)
 
-## Conceitos de Arquitetura
+## Conceitos Essenciais
 
-- [Ciclo de Vida da Requisição](lifecycle.md)
 - [Contêiner de Serviços](container.md)
 - [Provedores de Serviços](providers.md)
 - [Fachadas](facades.md)
 - [Contratos](contracts.md)
 
-## O Básico
+## A Camada HTTP
 
 - [Roteamento](routing.md)
 - [Middleware](middleware.md)
@@ -35,41 +37,39 @@
 - [Controladores](controllers.md)
 - [Requisições](requests.md)
 - [Respostas](responses.md)
-- [Visualizações](views.md)
 - [Sessão](session.md)
 - [Validação](validation.md)
-- [Tratamento de erros e Logging](errors.md)
 
-## Frontend
+## Visualizações e Modelos
 
+- [Visualizações](views.md)
 - [Blade Templates](blade.md)
 - [Localization](localization.md)
-- [Frontend Scaffolding](frontend.md)
-- [Compiling Assets](mix.md)
+
+## JavaScript e CSS
+
+- [Começando](frontend.md)
+- [Compiling Assets](elixir.md)
 
 ## Security
 
 - [Authentication](authentication.md)
-- [API Authentication](passport.md)
 - [Authorization](authorization.md)
+- [Password Reset](passwords.md)
+- [API Authentication](passport.md)
 - [Encryption](encryption.md)
 - [Hashing](hashing.md)
-- [Password Reset](passwords.md)
 
-## Indo mais fundo
+## Tópicos Gerais
 
-- [Console Artisan](artisan.md)
 - [Transmissão](broadcasting.md)
 - [Cache](cache.md)
-- [Coleções](collections.md)
+- [Tratamento de erros e Logging](errors.md)
 - [Eventos](events.md)
 - [Armazenamento de arquivos](filesystem.md)
-- [Auxiliares](helpers.md)
 - [E-mail](mail.md)
 - [Notificações](notifications.md)
-- [Desenvolvimento de pacotes](packages.md)
 - [Filas](queues.md)
-- [Agendamento de tarefas](scheduling.md)
 
 ## Banco de dados
 
@@ -88,11 +88,15 @@
 - [Modificadores](eloquent-mutators.md)
 - [Serialização](eloquent-serialization.md)
 
+## Artisan Console
+
+- [Comandos](artisan.md)
+- [Agendamento de Tarefas](scheduling.md)
+
 ## Testes
 
 - [Começando](testing.md)
-- [Testes HTTP](http-tests.md)
-- [Testes de navegador](dusk.md)
+- [Teste de Aplicação](application-testing.md)
 - [Banco de dados](database-testing.md)
 - [Simulação](mocking.md)
 
@@ -102,4 +106,10 @@
 - [Envoy](envoy.md)
 - [Passport](passport.md)
 - [Scout](scout.md)
-- [Socialite](socialite.md)
+- [Socialite](https://github.com/laravel/socialite)
+
+## Apêndice
+
+- [Coleções](collections.md)
+- [Auxiliares](helpers.md)
+- [Desenvolvimento de pacotes](packages.md)

@@ -16,16 +16,16 @@ nav:
       - Instalação: contributions.md
       - Configuração: configuration.md
       - Estrutura de Diretório: structure.md
-      - Front-end: frontend.md
+      - Ciclo de Vida da Requisição: lifecycle.md
+  - Ambientes de Desenvolvimento:
       - Homestead: homestead.md
       - Valet: valet.md
-  - Conceitos de Arquitetura:
-      - Ciclo de Vida da Requisição: lifecycle.md
+  - Conceitos Essenciais:
       - Contêiner de Serviços: container.md
       - Provedores de Serviços: providers.md
       - Fachadas: facades.md
       - Contratos: contracts.md
-  - O Básico:
+  - A Camada HTTP:
       - Roteamento: routing.md
       - Redirecionamentos: redirects.md
       - Middleware: middleware.md
@@ -33,36 +33,32 @@ nav:
       - Controladores: controllers.md
       - Requisições: requests.md
       - Respostas: responses.md
-      - Visualizações: views.md
       - Sessão: session.md
       - Validação: validation.md
-      - Tratamento de erros e Logging: errors.md
-  - Frontend:
+  - Visualizações e Modelos:
+      - Visualizações: views.md
       - Blade Templates: blade.md
       - Localization: localization.md
-      - Frontend Scaffolding: frontend.md
-      - Compiling Assets: mix.md
+  - JavaScript e CSS:
+      - Começando: frontend.md
+      - Compiling Assets: elixir.md
   - Security:
       - Authentication: authentication.md
+      - Password Reset: passwords.md
       - API Authentication: passport.md
       - Authorization: authorization.md
       - Encryption: encryption.md
       - Hashing: hashing.md
-      - Password Reset: passwords.md
-  - Indo mais fundo:
-      - Console Artisan: artisan.md
+  - Tópicos Gerais:
       - Transmissão: broadcasting.md
       - Cache: cache.md
-      - Coleções: collections.md
       - Contexto: context.md
+      - Tratamento de erros e Logging: errors.md
       - Eventos: events.md
       - Armazenamento de arquivos: filesystem.md
-      - Auxiliares: helpers.md
       - E-mail: mail.md
       - Notificações: notifications.md
-      - Desenvolvimento de pacotes: packages.md
       - Filas: queues.md
-      - Agendamento de tarefas: scheduling.md
   - Banco de dados:
       - Começando: database.md
       - Construtor de consultas: queries.md
@@ -76,10 +72,12 @@ nav:
       - Coleções: eloquent-collections.md
       - Modificadores: eloquent-mutators.md
       - Serialização: eloquent-serialization.md
+  - Artisan Console:
+      - Comandos: artisan.md
+      - Agendamento de Tarefas: scheduling.md
   - Testes:
       - Começando: testing.md
-      - Testes HTTP: http-tests.md
-      - Testes de navegador: dusk.md
+      - Teste de Aplicação: application-testing.md
       - Banco de dados: database-testing.md
       - Simulação: mocking.md
   - Pacotes Oficiais:
@@ -87,4 +85,8 @@ nav:
       - Envoy: envoy.md
       - Passport: passport.md
       - Scout: scout.md
-      - Socialite: socialite.md
+      - Socialite: https://github.com/laravel/socialite
+  - Apêndice:
+      - Coleções: collections.md
+      - Auxiliares: helpers.md
+      - Desenvolvimento de pacotes: packages.md

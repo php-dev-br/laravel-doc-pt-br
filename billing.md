@@ -32,7 +32,7 @@
 
 Laravel Cashier provides an expressive, fluent interface to [Stripe's](https://stripe.com) and [Braintree's](https://www.braintreepayments.com) subscription billing services. It handles almost all of the boilerplate subscription billing code you are dreading writing. In addition to basic subscription management, Cashier can handle coupons, swapping subscription, subscription "quantities", cancellation grace periods, and even generate invoice PDFs.
 
-> {note} If you're only performing "one-off" charges and do not offer subscriptions, you should not use Cashier. Instead, use the Stripe and Braintree SDKs directly.
+> {note} If you're only performing "one-off" charges and do not offer subscriptions. You should not use Cashier. You should use the Stripe and Braintree SDKs directly.
 
 <a name="configuration"></a>
 ## Configuration
@@ -42,9 +42,9 @@ Laravel Cashier provides an expressive, fluent interface to [Stripe's](https://s
 
 #### Composer
 
-First, add the Cashier package for Stripe to your dependencies:
+First, add the Cashier package for Stripe to your `composer.json` file and run the `composer update` command:
 
-    composer require "laravel/cashier":"~7.0"
+    "laravel/cashier": "~7.0"
 
 #### Service Provider
 
@@ -92,7 +92,6 @@ Finally, you should configure your Stripe key in your `services.php` configurati
 
     'stripe' => [
         'model'  => App\User::class,
-        'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
 
@@ -111,15 +110,13 @@ For many operations, the Stripe and Braintree implementations of Cashier functio
 
 #### Composer
 
-First, add the Cashier package for Braintree to your dependencies:
+First, add the Cashier package for Braintree to your `composer.json` file and run the `composer update` command:
 
-    composer require "laravel/cashier-braintree":"~2.0"
+    "laravel/cashier-braintree": "~2.0"
 
 #### Service Provider
 
-Next, register the `Laravel\Cashier\CashierServiceProvider` [service provider](providers.md) in your `config/app.php` configuration file:
-
-    Laravel\Cashier\CashierServiceProvider::class
+Next, register the `Laravel\Cashier\CashierServiceProvider` [service provider](providers.md) in your `config/app.php` configuration file.
 
 #### Plan Credit Coupon
 
@@ -202,7 +199,7 @@ To create a subscription, first retrieve an instance of your billable model, whi
 
     $user = User::find(1);
 
-    $user->newSubscription('main', 'premium')->create($stripeToken);
+    $user->newSubscription('main', 'monthly')->create($creditCardToken);
 
 The first argument passed to the `newSubscription` method should be the name of the subscription. If your application only offers a single subscription, you might call this `main` or `primary`. The second argument is the specific Stripe / Braintree plan the user is subscribing to. This value should correspond to the plan's identifier in Stripe or Braintree.
 
@@ -212,7 +209,7 @@ The `create` method will begin the subscription as well as update your database 
 
 If you would like to specify additional customer details, you may do so by passing them as the second argument to the `create` method:
 
-    $user->newSubscription('main', 'monthly')->create($stripeToken, [
+    $user->newSubscription('main', 'monthly')->create($creditCardToken, [
         'email' => $email,
     ]);
 
@@ -224,7 +221,7 @@ If you would like to apply a coupon when creating the subscription, you may use 
 
     $user->newSubscription('main', 'monthly')
          ->withCoupon('code')
-         ->create($stripeToken);
+         ->create($creditCardToken);
 
 <a name="checking-subscription-status"></a>
 ### Checking Subscription Status
@@ -313,7 +310,7 @@ Alternatively, you may set a specific quantity using the `updateQuantity` method
 
     $user->subscription('main')->updateQuantity(10);
 
-For more information on subscription quantities, consult the [Stripe documentation](https://stripe.com/docs/subscriptions/quantities).
+For more information on subscription quantities, consult the [Stripe documentation](https://stripe.com/docs/guides/subscriptions#setting-quantities).
 
 <a name="subscription-taxes"></a>
 ### Subscription Taxes
@@ -361,7 +358,7 @@ If the user cancels a subscription and then resumes that subscription before the
 
 The `updateCard` method may be used to update a customer's credit card information. This method accepts a Stripe token and will assign the new credit card as the default billing source:
 
-    $user->updateCard($stripeToken);
+    $user->updateCard($creditCardToken);
 
 <a name="subscription-trials"></a>
 ## Subscription Trials
@@ -375,7 +372,7 @@ If you would like to offer trial periods to your customers while still collectin
 
     $user->newSubscription('main', 'monthly')
                 ->trialDays(10)
-                ->create($stripeToken);
+                ->create($creditCardToken);
 
 This method will set the trial period ending date on the subscription record within the database, as well as instruct Stripe / Braintree to not begin billing the customer until after this date.
 
@@ -419,7 +416,7 @@ Once you are ready to create an actual subscription for the user, you may use th
 
     $user = User::find(1);
 
-    $user->newSubscription('main', 'monthly')->create($stripeToken);
+    $user->newSubscription('main', 'monthly')->create($creditCardToken);
 
 <a name="handling-stripe-webhooks"></a>
 ## Handling Stripe Webhooks
@@ -612,7 +609,11 @@ When listing the invoices for the customer, you may use the invoice's helper met
 <a name="generating-invoice-pdfs"></a>
 ### Generating Invoice PDFs
 
-From within a route or controller, use the `downloadInvoice` method to generate a PDF download of the invoice. This method will automatically generate the proper HTTP response to send the download to the browser:
+Before generating invoice PDFs, you need to install the `dompdf` PHP library:
+
+    composer require dompdf/dompdf
+
+Then, from within a route or controller, use the `downloadInvoice` method to generate a PDF download of the invoice. This method will automatically generate the proper HTTP response to send the download to the browser:
 
     use Illuminate\Http\Request;
 

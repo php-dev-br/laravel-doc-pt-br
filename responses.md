@@ -214,8 +214,6 @@ The `download` method may be used to generate a response that forces the user's 
 
     return response()->download($pathToFile, $name, $headers);
 
-    return response()->download($pathToFile)->deleteFileAfterSend(true);
-
 > {note} Symfony HttpFoundation, which manages file downloads, requires the file being downloaded to have an ASCII file name.
 
 <a name="file-responses"></a>

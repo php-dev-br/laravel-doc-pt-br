@@ -10,7 +10,6 @@
     - [Securing Sites With TLS](#securing-sites)
 - [Sharing Sites](#sharing-sites)
 - [Custom Valet Drivers](#custom-valet-drivers)
-    - [Local Drivers](#local-drivers)
 - [Other Valet Commands](#other-valet-commands)
 
 <a name="introduction"></a>
@@ -27,24 +26,15 @@ Out of the box, Valet support includes, but is not limited to:
 <div class="content-list" markdown="1">
 - [Laravel](https://laravel.com)
 - [Lumen](https://lumen.laravel.com)
-- [Bedrock](https://roots.io/bedrock/)
-- [CakePHP 3](https://cakephp.org)
-- [Concrete5](http://www.concrete5.org/)
-- [Contao](https://contao.org/en/)
-- [Craft](https://craftcms.com)
-- [Drupal](https://www.drupal.org/)
-- [Jigsaw](http://jigsaw.tighten.co)
-- [Joomla](https://www.joomla.org/)
-- [Katana](https://github.com/themsaid/katana)
-- [Kirby](https://getkirby.com/)
-- [Magento](https://magento.com/)
-- [Sculpin](https://sculpin.io/)
-- [Slim](https://www.slimframework.com)
-- [Statamic](https://statamic.com)
-- Static HTML
 - [Symfony](https://symfony.com)
-- [WordPress](https://wordpress.org)
 - [Zend](https://framework.zend.com)
+- [CakePHP 3](https://cakephp.org)
+- [WordPress](https://wordpress.org)
+- [Bedrock](https://roots.io/bedrock/)
+- [Craft](https://craftcms.com)
+- [Statamic](https://statamic.com)
+- [Jigsaw](http://jigsaw.tighten.co)
+- Static HTML
 </div>
 
 However, you may extend Valet with your own [custom drivers](#custom-valet-drivers).
@@ -54,7 +44,7 @@ However, you may extend Valet with your own [custom drivers](#custom-valet-drive
 
 As you may know, Laravel offers [Homestead](homestead.md), another local Laravel development environment. Homestead and Valet differ in regards to their intended audience and their approach to local development. Homestead offers an entire Ubuntu virtual machine with automated Nginx configuration. Homestead is a wonderful choice if you want a fully virtualized Linux development environment or are on Windows / Linux.
 
-Valet only supports Mac, and requires you to install PHP and a database server directly onto your local machine. This is easily achieved by using [Homebrew](http://brew.sh/) with commands like `brew install php71` and `brew install mysql`. Valet provides a blazing fast local development environment with minimal resource consumption, so it's great for developers who only require PHP / MySQL and do not need a fully virtualized development environment.
+Valet only supports Mac, and requires you to install PHP and a database server directly onto your local machine. This is easily achieved by using [Homebrew](http://brew.sh/) with commands like `brew install php71` and `brew install mariadb`. Valet provides a blazing fast local development environment with minimal resource consumption, so it's great for developers who only require PHP / MySQL and do not need a fully virtualized development environment.
 
 Both Valet and Homestead are great choices for configuring your Laravel development environment. Which one you choose will depend on your personal taste and your team's needs.
 
@@ -82,7 +72,7 @@ For example, if you'd like to use `.app` instead of `.dev`, run `valet domain ap
 
 #### Database
 
-If you need a database, try MySQL by running `brew install mysql` on your command line. Once MySQL has been installed, you may start it using the `brew services start mysql` command. You can then connect to the database at `127.0.0.1` using the `root` username and an empty string for the password.
+If you need a database, try MariaDB by running `brew install mariadb` on your command line. Once MariaDB has been installed, you may start it using the `brew services start mariadb` command. You can then connect to the database at `127.0.0.1` using the `root` username and an empty string for the password.
 
 <a name="upgrading"></a>
 ### Upgrading
@@ -227,40 +217,6 @@ The `frontControllerPath` method should return the fully qualified path to your 
     public function frontControllerPath($sitePath, $siteName, $uri)
     {
         return $sitePath.'/public/index.php';
-    }
-
-<a name="local-drivers"></a>
-### Local Drivers
-
-If you would like to define a custom Valet driver for a single application, create a `LocalValetDriver.php` in the application's root directory. Your custom driver may extend the base `ValetDriver` class or extend an existing application specific driver such as the `LaravelValetDriver`:
-
-    class LocalValetDriver extends LaravelValetDriver
-    {
-        /**
-         * Determine if the driver serves the request.
-         *
-         * @param  string  $sitePath
-         * @param  string  $siteName
-         * @param  string  $uri
-         * @return bool
-         */
-        public function serves($sitePath, $siteName, $uri)
-        {
-            return true;
-        }
-
-        /**
-         * Get the fully resolved path to the application's front controller.
-         *
-         * @param  string  $sitePath
-         * @param  string  $siteName
-         * @param  string  $uri
-         * @return string
-         */
-        public function frontControllerPath($sitePath, $siteName, $uri)
-        {
-            return $sitePath.'/public_html/index.php';
-        }
     }
 
 <a name="other-valet-commands"></a>

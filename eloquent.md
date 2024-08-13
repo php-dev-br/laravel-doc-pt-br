@@ -220,7 +220,7 @@ The `cursor` method allows you to iterate through your database records using a 
 <a name="retrieving-single-models"></a>
 ## Retrieving Single Models / Aggregates
 
-Of course, in addition to retrieving all of the records for a given table, you may also retrieve single records using `find` or `first`. Instead of returning a collection of models, these methods return a single model instance:
+Of course, in addition to retrieving all of the records for a given table, you may also retrieve single records using `find` and `first`. Instead of returning a collection of models, these methods return a single model instance:
 
     // Retrieve a model by its primary key...
     $flight = App\Flight::find(1);
@@ -387,21 +387,11 @@ There are two other methods you may use to create models by mass assigning attri
 
 The `firstOrNew` method, like `firstOrCreate` will attempt to locate a record in the database matching the given attributes. However, if a model is not found, a new model instance will be returned. Note that the model returned by `firstOrNew` has not yet been persisted to the database. You will need to call `save` manually to persist it:
 
-    // Retrieve flight by name, or create it if it doesn't exist...
+    // Retrieve the flight by the attributes, or create it if it doesn't exist...
     $flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
 
-    // Retrieve flight by name, or create it with the name and delayed attributes...
-    $flight = App\Flight::firstOrCreate(
-        ['name' => 'Flight 10'], ['delayed' => 1]
-    );
-
-    // Retrieve by name, or instantiate...
+    // Retrieve the flight by the attributes, or instantiate a new instance...
     $flight = App\Flight::firstOrNew(['name' => 'Flight 10']);
-
-    // Retrieve by name, or instantiate with the name and delayed attributes...
-    $flight = App\Flight::firstOrNew(
-        ['name' => 'Flight 10'], ['delayed' => 1]
-    );
 
 #### `updateOrCreate`
 
@@ -563,7 +553,7 @@ Writing a global scope is simple. Define a class that implements the `Illuminate
         }
     }
 
-> {tip} If your global scope is adding columns to the select clause of the query, you should use the `addSelect` method instead of `select`. This will prevent the unintentional replacement of the query's existing select clause.
+> {tip} There is not a predefined folder for scopes in a default Laravel application, so feel free to make your own `Scopes` folder within your Laravel application's `app` directory.
 
 #### Applying Global Scopes
 
@@ -715,34 +705,42 @@ Now, you may pass the parameters when calling the scope:
 <a name="events"></a>
 ## Events
 
-Eloquent models fire several events, allowing you to hook into the following points in a model's lifecycle: `creating`, `created`, `updating`, `updated`, `saving`, `saved`, `deleting`, `deleted`, `restoring`, `restored`. Events allow you to easily execute code each time a specific model class is saved or updated in the database.
+Eloquent models fire several events, allowing you to hook into various points in the model's lifecycle using the following methods: `creating`, `created`, `updating`, `updated`, `saving`, `saved`, `deleting`, `deleted`, `restoring`, `restored`. Events allow you to easily execute code each time a specific model class is saved or updated in the database.
 
 Whenever a new model is saved for the first time, the `creating` and `created` events will fire. If a model already existed in the database and the `save` method is called, the `updating` / `updated` events will fire. However, in both cases, the `saving` / `saved` events will fire.
 
-To get started, define an `$events` property on your Eloquent model that maps various points of the Eloquent model's lifecycle to your own [event classes](events.md):
+For example, let's define an Eloquent event listener in a [service provider](providers.md). Within our event listener, we will call the `isValid` method on the given model, and return `false` if the model is not valid. Returning `false` from an Eloquent event listener will cancel the `save` / `update` operation:
 
     <?php
 
-    namespace App;
+    namespace App\Providers;
 
-    use App\Events\UserSaved;
-    use App\Events\UserDeleted;
-    use Illuminate\Notifications\Notifiable;
-    use Illuminate\Foundation\Auth\User as Authenticatable;
+    use App\User;
+    use Illuminate\Support\ServiceProvider;
 
-    class User extends Authenticatable
+    class AppServiceProvider extends ServiceProvider
     {
-        use Notifiable;
+        /**
+         * Bootstrap any application services.
+         *
+         * @return void
+         */
+        public function boot()
+        {
+            User::creating(function ($user) {
+                return $user->isValid();
+            });
+        }
 
         /**
-         * The event map for the model.
+         * Register the service provider.
          *
-         * @var array
+         * @return void
          */
-        protected $events = [
-            'saved' => UserSaved::class,
-            'deleted' => UserDeleted::class,
-        ];
+        public function register()
+        {
+            //
+        }
     }
 
 <a name="observers"></a>

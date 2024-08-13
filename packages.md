@@ -3,10 +3,10 @@
 - [Introduction](#introduction)
     - [A Note On Facades](#a-note-on-facades)
 - [Service Providers](#service-providers)
+- [Routing](#routing)
 - [Resources](#resources)
     - [Configuration](#configuration)
     - [Migrations](#migrations)
-    - [Routes](#routes)
     - [Translations](#translations)
     - [Views](#views)
 - [Commands](#commands)
@@ -33,6 +33,21 @@ When writing a Laravel application, it generally does not matter if you use cont
 [Service providers](providers.md) are the connection points between your package and Laravel. A service provider is responsible for binding things into Laravel's [service container](container.md) and informing Laravel where to load package resources such as views, configuration, and localization files.
 
 A service provider extends the `Illuminate\Support\ServiceProvider` class and contains two methods: `register` and `boot`. The base `ServiceProvider` class is located in the `illuminate/support` Composer package, which you should add to your own package's dependencies. To learn more about the structure and purpose of service providers, check out [their documentation](providers.md).
+
+<a name="routing"></a>
+## Routing
+
+To define routes for your package, pass the routes file path to the `loadRoutesFrom` method from within your package service provider's `boot` method. From within your routes file, you may use the `Illuminate\Support\Facades\Route` facade to [register routes](routing.md) just as you would within a typical Laravel application:
+
+    /**
+     * Perform post-registration booting of services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->loadRoutesFrom(__DIR__.'/path/to/routes.php');
+    }
 
 <a name="resources"></a>
 ## Resources
@@ -77,21 +92,6 @@ You may also merge your own package configuration file with the application's pu
     }
 
 > {note} This method only merges the first level of the configuration array. If your users partially define a multi-dimensional configuration array, the missing options will not be merged.
-
-<a name="routes"></a>
-### Routes
-
-If your package contains routes, you may load them using the `loadRoutesFrom` method. This method will automatically determine if the application's routes are cached and will not load your routes file if the routes have already been cached:
-
-    /**
-     * Perform post-registration booting of services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->loadRoutesFrom(__DIR__.'/routes.php');
-    }
 
 <a name="migrations"></a>
 ### Migrations
