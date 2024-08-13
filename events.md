@@ -51,7 +51,7 @@ So, you know how to register events, but you may be wondering _where_ to registe
 
 If your `start` files are getting too crowded, you could create a separate `app/events.php` file that is included from a `start` file. This is a simple solution that keeps your event registration cleanly separated from the rest of your bootstrapping.
 
-If you prefer a class based approach, you may register your events in a [service provider](/docs/4.2/ioc#service-providers). Since none of these approaches is inherently "correct", choose an approach you feel comfortable with based on the size of your application.
+If you prefer a class based approach, you may register your events in a [service provider](ioc.md#service-providers). Since none of these approaches is inherently "correct", choose an approach you feel comfortable with based on the size of your application.
 
 <a name="wildcard-listeners"></a>
 ## Wildcard Listeners
@@ -80,7 +80,7 @@ You may use the `Event::firing` method to determine exactly which event was fire
 <a name="using-classes-as-listeners"></a>
 ## Using Classes As Listeners
 
-In some cases, you may wish to use a class to handle an event rather than a Closure. Class event listeners will be resolved out of the [Laravel IoC container](/docs/4.2/ioc), providing you the full power of dependency injection on your listeners.
+In some cases, you may wish to use a class to handle an event rather than a Closure. Class event listeners will be resolved out of the [Laravel IoC container](ioc.md), providing you the full power of dependency injection on your listeners.
 
 #### Registering A Class Listener
 
@@ -166,7 +166,7 @@ Once the subscriber has been defined, it may be registered with the `Event` clas
 
 	Event::subscribe($subscriber);
 
-You may also use the [Laravel IoC container](/docs/4.2/ioc) to resolve your subscriber. To do so, simply pass the name of your subscriber to the `subscribe` method:
+You may also use the [Laravel IoC container](ioc.md) to resolve your subscriber. To do so, simply pass the name of your subscriber to the `subscribe` method:
 
 	Event::subscribe('UserEventHandler');
 
