@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.7/documentation.md -->
-<!-- revision: f2cc3533881602bfc491b8c5023bb100ba137ef9 -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.6/documentation.md -->
+<!-- revision: 1efdd3af78c3b8fb9a68846e2c148f172826cc7f -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -9,7 +9,7 @@
 - [Notas de Versão](releases.md)
 - [Guia de Atualização](upgrade.md)
 - [Guia de Contribuição](contributions.md)
-- [Documentação da API](https://laravel.com/api/5.7)
+- [Documentação da API](https://laravel.com/api/5.6)
 
 ## Começando
 
@@ -56,7 +56,6 @@
 - [Authentication](authentication.md)
 - [API Authentication](passport.md)
 - [Authorization](authorization.md)
-- [Email Verification](verification.md)
 - [Encryption](encryption.md)
 - [Hashing](hashing.md)
 - [Password Reset](passwords.md)
@@ -98,7 +97,6 @@
 
 - [Começando](testing.md)
 - [Testes HTTP](http-tests.md)
-- [Testes de console](console-tests.md)
 - [Testes de navegador](dusk.md)
 - [Banco de dados](database-testing.md)
 - [Simulação](mocking.md)
@@ -106,10 +104,8 @@
 ## Pacotes Oficiais
 
 - [Cashier](billing.md)
-- [Dusk](dusk.md)
 - [Envoy](envoy.md)
 - [Horizon](horizon.md)
 - [Passport](passport.md)
 - [Scout](scout.md)
 - [Socialite](socialite.md)
-- [Telescope](telescope.md)

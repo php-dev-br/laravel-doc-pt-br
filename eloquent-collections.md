@@ -5,18 +5,11 @@
 - [Custom Collections](#custom-collections)
 
 <a name="introduction"></a>
-
 ## Introduction
 
-All multi-result sets returned by Eloquent are instances of
-the `Illuminate\Database\Eloquent\Collection` object, including results
-retrieved via the `get` method or accessed via a relationship. The Eloquent
-collection object extends the Laravel [base collection](collections.md), so it
-naturally inherits dozens of methods used to fluently work with the underlying
-array of Eloquent models.
+All multi-result sets returned by Eloquent are instances of the `Illuminate\Database\Eloquent\Collection` object, including results retrieved via the `get` method or accessed via a relationship. The Eloquent collection object extends the Laravel [base collection](collections.md), so it naturally inherits dozens of methods used to fluently work with the underlying array of Eloquent models.
 
-All collections also serve as iterators, allowing you to loop over them as if
-they were simple PHP arrays:
+Of course, all collections also serve as iterators, allowing you to loop over them as if they were simple PHP arrays:
 
     $users = App\User::where('active', 1)->get();
 
@@ -24,10 +17,7 @@ they were simple PHP arrays:
         echo $user->name;
     }
 
-However, collections are much more powerful than arrays and expose a variety of
-map / reduce operations that may be chained using an intuitive interface. For
-example, let's remove all inactive models and gather the first name for each
-remaining user:
+However, collections are much more powerful than arrays and expose a variety of map / reduce operations that may be chained using an intuitive interface. For example, let's remove all inactive models and gather the first name for each remaining user:
 
     $users = App\User::all();
 
@@ -38,21 +28,14 @@ remaining user:
         return $user->name;
     });
 
-> {note} While most Eloquent collection methods return a new instance of an
-> Eloquent collection, the `pluck`, `keys`, `zip`, `collapse`, `flatten`
-> and `flip` methods return a [base collection](collections.md) instance.
-> Likewise, if a `map` operation returns a collection that does not contain any
-> Eloquent models, it will be automatically cast to a base collection.
+> {note} While most Eloquent collection methods return a new instance of an Eloquent collection, the `pluck`, `keys`, `zip`, `collapse`, `flatten` and `flip` methods return a [base collection](collections.md) instance. Likewise, if a `map` operation returns a collection that does not contain any Eloquent models, it will be automatically cast to a base collection.
 
 <a name="available-methods"></a>
-
 ## Available Methods
 
 ### The Base Collection
 
-All Eloquent collections extend the base [Laravel collection](collections.md)
-object; therefore, they inherit all of the powerful methods provided by the base
-collection class:
+All Eloquent collections extend the base [Laravel collection](collections.md) object; therefore, they inherit all of the powerful methods provided by the base collection class:
 
 <style>
     #collection-method-list > p {
@@ -132,7 +115,6 @@ collection class:
 [shift](collections.md#method-shift)
 [shuffle](collections.md#method-shuffle)
 [slice](collections.md#method-slice)
-[some](collections.md#method-some)
 [sort](collections.md#method-sort)
 [sortBy](collections.md#method-sortby)
 [sortByDesc](collections.md#method-sortbydesc)
@@ -161,11 +143,9 @@ collection class:
 </div>
 
 <a name="custom-collections"></a>
-
 ## Custom Collections
 
-If you need to use a custom `Collection` object with your own extension methods,
-you may override the `newCollection` method on your model:
+If you need to use a custom `Collection` object with your own extension methods, you may override the `newCollection` method on your model:
 
     <?php
 
@@ -188,8 +168,4 @@ you may override the `newCollection` method on your model:
         }
     }
 
-Once you have defined a `newCollection` method, you will receive an instance of
-your custom collection anytime Eloquent returns a `Collection` instance of that
-model. If you would like to use a custom collection for every model in your
-application, you should override the `newCollection` method on a base model
-class that is extended by all of your models.
+Once you have defined a `newCollection` method, you will receive an instance of your custom collection anytime Eloquent returns a `Collection` instance of that model. If you would like to use a custom collection for every model in your application, you should override the `newCollection` method on a base model class that is extended by all of your models.

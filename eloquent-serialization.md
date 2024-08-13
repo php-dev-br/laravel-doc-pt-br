@@ -9,46 +9,32 @@
 - [Date Serialization](#date-serialization)
 
 <a name="introduction"></a>
-
 ## Introduction
 
-When building JSON APIs, you will often need to convert your models and
-relationships to arrays or JSON. Eloquent includes convenient methods for making
-these conversions, as well as controlling which attributes are included in your
-serializations.
+When building JSON APIs, you will often need to convert your models and relationships to arrays or JSON. Eloquent includes convenient methods for making these conversions, as well as controlling which attributes are included in your serializations.
 
 <a name="serializing-models-and-collections"></a>
-
 ## Serializing Models & Collections
 
 <a name="serializing-to-arrays"></a>
-
 ### Serializing To Arrays
 
-To convert a model and its loaded [relationships](eloquent-relationships.md) to
-an array, you should use the `toArray` method. This method is recursive, so all
-attributes and all relations (including the relations of relations) will be
-converted to arrays:
+To convert a model and its loaded [relationships](eloquent-relationships.md) to an array, you should use the `toArray` method. This method is recursive, so all attributes and all relations (including the relations of relations) will be converted to arrays:
 
     $user = App\User::with('roles')->first();
 
     return $user->toArray();
 
-You may also convert entire [collections](eloquent-collections.md) of models to
-arrays:
+You may also convert entire [collections](eloquent-collections.md) of models to arrays:
 
     $users = App\User::all();
 
     return $users->toArray();
 
 <a name="serializing-to-json"></a>
-
 ### Serializing To JSON
 
-To convert a model to JSON, you should use the `toJson` method. Like `toArray`,
-the `toJson` method is recursive, so all attributes and relations will be
-converted to JSON. You may also specify JSON encoding
-options [supported by PHP](https://secure.php.net/manual/en/function.json-encode.php):
+To convert a model to JSON, you should use the `toJson` method. Like `toArray`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify JSON encoding options [supported by PHP](http://php.net/manual/en/function.json-encode.php):
 
     $user = App\User::find(1);
 
@@ -56,28 +42,22 @@ options [supported by PHP](https://secure.php.net/manual/en/function.json-encode
 
     return $user->toJson(JSON_PRETTY_PRINT);
 
-Alternatively, you may cast a model or collection to a string, which will
-automatically call the `toJson` method on the model or collection:
+Alternatively, you may cast a model or collection to a string, which will automatically call the `toJson` method on the model or collection:
 
     $user = App\User::find(1);
 
     return (string) $user;
 
-Since models and collections are converted to JSON when cast to a string, you
-can return Eloquent objects directly from your application's routes or
-controllers:
+Since models and collections are converted to JSON when cast to a string, you can return Eloquent objects directly from your application's routes or controllers:
 
     Route::get('users', function () {
         return App\User::all();
     });
 
 <a name="hiding-attributes-from-json"></a>
-
 ## Hiding Attributes From JSON
 
-Sometimes you may wish to limit the attributes, such as passwords, that are
-included in your model's array or JSON representation. To do so, add a `$hidden`
-property to your model:
+Sometimes you may wish to limit the attributes, such as passwords, that are included in your model's array or JSON representation. To do so, add a `$hidden` property to your model:
 
     <?php
 
@@ -97,10 +77,7 @@ property to your model:
 
 > {note} When hiding relationships, use the relationship's method name.
 
-Alternatively, you may use the `visible` property to define a white-list of
-attributes that should be included in your model's array and JSON
-representation. All other attributes will be hidden when the model is converted
-to an array or JSON:
+Alternatively, you may use the `visible` property to define a white-list of attributes that should be included in your model's array and JSON representation. All other attributes will be hidden when the model is converted to an array or JSON:
 
     <?php
 
@@ -120,24 +97,18 @@ to an array or JSON:
 
 #### Temporarily Modifying Attribute Visibility
 
-If you would like to make some typically hidden attributes visible on a given
-model instance, you may use the `makeVisible` method. The `makeVisible` method
-returns the model instance for convenient method chaining:
+If you would like to make some typically hidden attributes visible on a given model instance, you may use the `makeVisible` method. The `makeVisible` method returns the model instance for convenient method chaining:
 
     return $user->makeVisible('attribute')->toArray();
 
-Likewise, if you would like to make some typically visible attributes hidden on
-a given model instance, you may use the `makeHidden` method.
+Likewise, if you would like to make some typically visible attributes hidden on a given model instance, you may use the `makeHidden` method.
 
     return $user->makeHidden('attribute')->toArray();
 
 <a name="appending-values-to-json"></a>
-
 ## Appending Values To JSON
 
-Occasionally, when casting models to an array or JSON, you may wish to add
-attributes that do not have a corresponding column in your database. To do so,
-first define an [accessor](eloquent-mutators.md) for the value:
+Occasionally, when casting models to an array or JSON, you may wish to add attributes that do not have a corresponding column in your database. To do so, first define an [accessor](eloquent-mutators.md) for the value:
 
     <?php
 
@@ -158,9 +129,7 @@ first define an [accessor](eloquent-mutators.md) for the value:
         }
     }
 
-After creating the accessor, add the attribute name to the `appends` property on
-the model. Note that attribute names are typically referenced in "snake case",
-even though the accessor is defined using "camel case":
+After creating the accessor, add the attribute name to the `appends` property on the model. Note that attribute names are typically referenced in "snake case", even though the accessor is defined using "camel case":
 
     <?php
 
@@ -178,30 +147,22 @@ even though the accessor is defined using "camel case":
         protected $appends = ['is_admin'];
     }
 
-Once the attribute has been added to the `appends` list, it will be included in
-both the model's array and JSON representations. Attributes in the `appends`
-array will also respect the `visible` and `hidden` settings configured on the
-model.
+Once the attribute has been added to the `appends` list, it will be included in both the model's array and JSON representations. Attributes in the `appends` array will also respect the `visible` and `hidden` settings configured on the model.
 
 #### Appending At Run Time
 
-You may instruct a single model instance to append attributes using the `append`
-method. Or, you may use the `setAppends` method to override the entire array of
-appended properties for a given model instance:
+You may instruct a single model instance to append attributes using the `append` method. Or, you may use the `setAppends` method to override the entire array of appended properties for a given model instance:
 
     return $user->append('is_admin')->toArray();
 
     return $user->setAppends(['is_admin'])->toArray();
 
 <a name="date-serialization"></a>
-
 ## Date Serialization
 
 #### Customizing The Date Format Per Attribute
 
-You may customize the serialization format of individual Eloquent date
-attributes by specifying the date format in
-the [cast declaration](eloquent-mutators.md#attribute-casting):
+You may customize the serialization format of individual Eloquent date attributes by specifying the date format in the [cast declaration](eloquent-mutators.md#attribute-casting):
 
     protected $casts = [
         'birthday' => 'date:Y-m-d',
@@ -210,12 +171,7 @@ the [cast declaration](eloquent-mutators.md#attribute-casting):
 
 #### Global Customization Via Carbon
 
-Laravel extends the [Carbon](https://github.com/briannesbitt/Carbon) date
-library in order to provide convenient customization of Carbon's JSON
-serialization format. To customize how all Carbon dates throughout your
-application are serialized, use the `Carbon::serializeUsing` method.
-The `serializeUsing` method accepts a Closure which returns a string
-representation of the date for JSON serialization:
+Laravel extends the [Carbon](https://github.com/briannesbitt/Carbon) date library in order to provide convenient customization of Carbon's JSON serialization format. To customize how all Carbon dates throughout your application are serialized, use the `Carbon::serializeUsing` method. The `serializeUsing` method accepts a Closure which returns a string representation of the date for JSON serialization:
 
     <?php
 

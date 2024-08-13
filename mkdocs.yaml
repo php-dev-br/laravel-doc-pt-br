@@ -12,7 +12,7 @@ nav:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
-      - Documentação da API: https://laravel.com/api/5.7
+      - Documentação da API: https://laravel.com/api/5.6
   - Começando:
       - Instalação: contributions.md
       - Configuração: configuration.md
@@ -50,7 +50,6 @@ nav:
       - Authentication: authentication.md
       - API Authentication: passport.md
       - Authorization: authorization.md
-      - Email Verification: verification.md
       - Encryption: encryption.md
       - Hashing: hashing.md
       - Password Reset: passwords.md
@@ -85,16 +84,13 @@ nav:
   - Testes:
       - Começando: testing.md
       - Testes HTTP: http-tests.md
-      - Testes de console: console-tests.md
       - Testes de navegador: dusk.md
       - Banco de dados: database-testing.md
       - Simulação: mocking.md
   - Pacotes Oficiais:
       - Cashier: billing.md
-      - Dusk: dusk.md
       - Envoy: envoy.md
       - Horizon: horizon.md
       - Passport: passport.md
       - Scout: scout.md
       - Socialite: socialite.md
-      - Telescope: telescope.md
