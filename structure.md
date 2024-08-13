@@ -23,7 +23,6 @@
     - [The `Notifications` Directory](#the-notifications-directory)
     - [The `Policies` Directory](#the-policies-directory)
     - [The `Providers` Directory](#the-providers-directory)
-    - [The `Rules` Directory](#the-rules-directory)
 
 <a name="introduction"></a>
 ## Introduction
@@ -47,7 +46,7 @@ The `app` directory, as you might expect, contains the core code of your applica
 <a name="the-bootstrap-directory"></a>
 #### The Bootstrap Directory
 
-The `bootstrap` directory contains the `app.php` file which bootstraps the framework. This directory also houses a `cache` directory which contains framework generated files for performance optimization such as the route and services cache files.
+The `bootstrap` directory contains files that bootstrap the framework and configure autoloading. This directory also houses a `cache` directory which contains framework generated files for performance optimization such as the route and services cache files.
 
 <a name="the-config-directory"></a>
 #### The Config Directory
@@ -57,12 +56,12 @@ The `config` directory, as the name implies, contains all of your application's 
 <a name="the-database-directory"></a>
 #### The Database Directory
 
-The `database` directory contains your database migrations, model factories, and seeds. If you wish, you may also use this directory to hold an SQLite database.
+The `database` directory contains your database migration and seeds. If you wish, you may also use this directory to hold an SQLite database.
 
 <a name="the-public-directory"></a>
 #### The Public Directory
 
-The `public` directory contains the `index.php` file, which is the entry point for all requests entering your application and configures autoloading. This directory also houses your assets such as images, JavaScript, and CSS.
+The `public` directory contains the `index.php` file, which is the entry point for all requests entering your application. This directory also houses your assets such as images, JavaScript, and CSS.
 
 <a name="the-resources-directory"></a>
 #### The Resources Directory
@@ -104,7 +103,7 @@ The `vendor` directory contains your [Composer](https://getcomposer.org) depende
 
 The majority of your application is housed in the `app` directory. By default, this directory is namespaced under `App` and is autoloaded by Composer using the [PSR-4 autoloading standard](http://www.php-fig.org/psr/psr-4/).
 
-The `app` directory contains a variety of additional directories such as `Console`, `Http`, and `Providers`. Think of the `Console` and `Http` directories as providing an API into the core of your application. The HTTP protocol and CLI are both mechanisms to interact with your application, but do not actually contain application logic. In other words, they are two ways of issuing commands to your application. The `Console` directory contains all of your Artisan commands, while the `Http` directory contains your controllers, middleware, and requests.
+The `app` directory contains a variety of additional directories such as `Console`, `Http`, and `Providers`. Think of the `Console` and `Http` directories as providing an API into the core of your application. The HTTP protocol and CLI are both mechanisms to interact with your application, but do not actually contain application logic. In other words, they are simply two ways of issuing commands to your application. The `Console` directory contains all of your Artisan commands, while the `Http` directory contains your controllers, middleware, and requests.
 
 A variety of other directories will be generated inside the `app` directory as you use the `make` Artisan commands to generate classes. So, for example, the `app/Jobs` directory will not exist until you execute the `make:job` Artisan command to generate a job class.
 
@@ -161,8 +160,3 @@ This directory does not exist by default, but will be created for you if you exe
 The `Providers` directory contains all of the [service providers](providers.md) for your application. Service providers bootstrap your application by binding services in the service container, registering events, or performing any other tasks to prepare your application for incoming requests.
 
 In a fresh Laravel application, this directory will already contain several providers. You are free to add your own providers to this directory as needed.
-
-<a name="the-rules-directory"></a>
-#### The Rules Directory
-
-This directory does not exist by default, but will be created for you if you execute the `make:rule` Artisan command. The `Rules` directory contains the custom validation rule objects for your application. Rules are used to encapsulate complicated validation logic in a simple object. For more information, check out the [validation documentation](validation.md).

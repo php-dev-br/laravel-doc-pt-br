@@ -23,6 +23,18 @@ To get started with Socialite, use Composer to add the package to your project's
 
     composer require laravel/socialite
 
+Next, register the `Laravel\Socialite\SocialiteServiceProvider` in your `config/app.php` configuration file:
+
+    'providers' => [
+        // Other service providers...
+
+        Laravel\Socialite\SocialiteServiceProvider::class,
+    ],
+
+Also, add the `Socialite` facade to the `aliases` array in your `app` configuration file:
+
+    'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+
 <a name="configuration"></a>
 ## Configuration
 
@@ -135,14 +147,8 @@ Once you have a user instance, you can grab a few more details about the user:
     $user->getEmail();
     $user->getAvatar();
 
-#### Retrieving User Details From A Token (OAuth2)
+#### Retrieving User Details From A Token
 
 If you already have a valid access token for a user, you can retrieve their details using the `userFromToken` method:
 
     $user = Socialite::driver('github')->userFromToken($token);
-    
-#### Retrieving User Details From A Token And Secret (OAuth1)
-
-If you already have a valid pair of token / secret for a user, you can retrieve their details using the `userFromTokenAndSecret` method:
-
-    $user = Socialite::driver('twitter')->userFromTokenAndSecret($token, $secret);

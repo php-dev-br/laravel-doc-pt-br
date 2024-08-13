@@ -28,8 +28,9 @@ As an alternative to mocking, you may use the `Bus` facade's `fake` method to pr
     use Tests\TestCase;
     use App\Jobs\ShipOrder;
     use Illuminate\Support\Facades\Bus;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class ExampleTest extends TestCase
     {
@@ -61,8 +62,9 @@ As an alternative to mocking, you may use the `Event` facade's `fake` method to 
     use App\Events\OrderShipped;
     use App\Events\OrderFailedToShip;
     use Illuminate\Support\Facades\Event;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class ExampleTest extends TestCase
     {
@@ -95,8 +97,9 @@ You may use the `Mail` facade's `fake` method to prevent mail from being sent. Y
     use Tests\TestCase;
     use App\Mail\OrderShipped;
     use Illuminate\Support\Facades\Mail;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class ExampleTest extends TestCase
     {
@@ -117,18 +120,10 @@ You may use the `Mail` facade's `fake` method to prevent mail from being sent. Y
                        $mail->hasBcc('...');
             });
 
-            // Assert a mailable was sent twice...
-            Mail::assertSent(OrderShipped::class, 2);
-
             // Assert a mailable was not sent...
             Mail::assertNotSent(AnotherMailable::class);
         }
     }
-
-If you are queueing mailables for delivery in the background, you should use the `assertQueued` method instead of `assertSent`:
-
-    Mail::assertQueued(...);
-    Mail::assertNotQueued(...);
 
 <a name="notification-fake"></a>
 ## Notification Fake
@@ -142,8 +137,9 @@ You may use the `Notification` facade's `fake` method to prevent notifications f
     use Tests\TestCase;
     use App\Notifications\OrderShipped;
     use Illuminate\Support\Facades\Notification;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class ExampleTest extends TestCase
     {
@@ -185,8 +181,9 @@ As an alternative to mocking, you may use the `Queue` facade's `fake` method to 
     use Tests\TestCase;
     use App\Jobs\ShipOrder;
     use Illuminate\Support\Facades\Queue;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class ExampleTest extends TestCase
     {
@@ -202,9 +199,6 @@ As an alternative to mocking, you may use the `Queue` facade's `fake` method to 
 
             // Assert a job was pushed to a given queue...
             Queue::assertPushedOn('queue-name', ShipOrder::class);
-
-            // Assert a job was pushed twice...
-            Queue::assertPushed(ShipOrder::class, 2);
 
             // Assert a job was not pushed...
             Queue::assertNotPushed(AnotherJob::class);
@@ -223,8 +217,9 @@ The `Storage` facade's `fake` method allows you to easily generate a fake disk t
     use Tests\TestCase;
     use Illuminate\Http\UploadedFile;
     use Illuminate\Support\Facades\Storage;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class ExampleTest extends TestCase
     {
@@ -280,8 +275,9 @@ We can mock the call to the `Cache` facade by using the `shouldReceive` method, 
 
     use Tests\TestCase;
     use Illuminate\Support\Facades\Cache;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Illuminate\Foundation\Testing\DatabaseMigrations;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
 
     class UserControllerTest extends TestCase
     {
@@ -298,4 +294,4 @@ We can mock the call to the `Cache` facade by using the `shouldReceive` method, 
         }
     }
 
-> {note} You should not mock the `Request` facade. Instead, pass the input you desire into the HTTP helper methods such as `get` and `post` when running your test. Likewise, instead of mocking the `Config` facade, call the `Config::set` method in your tests.
+> {note} You should not mock the `Request` facade. Instead, pass the input you desire into the HTTP helper methods such as `get` and `post` when running your test. Likewise, instead of mocking the `Config` facade, simply call the `Config::set` method in your tests.

@@ -47,7 +47,7 @@ Before broadcasting any events, you will first need to register the `App\Provide
 
 #### CSRF Token
 
-[Laravel Echo](#installing-laravel-echo) will need access to the current session's CSRF token. You should verify that your application's `head` HTML element defines a `meta` tag containing the CSRF token:
+[Laravel Echo](#installing-laravel-echo) will need access to the current session's CSRF token. If available, Echo will pull the token from the `Laravel.csrfToken` JavaScript object. This object is defined in the `resources/views/layouts/app.blade.php` layout that is created if you run the `make:auth` Artisan command. If you are not using this layout, you may define a `meta` tag in your application's `head` HTML element:
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -58,7 +58,7 @@ Before broadcasting any events, you will first need to register the `App\Provide
 
 If you are broadcasting your events over [Pusher Channels](https://pusher.com/channels), you should install the Pusher Channels PHP SDK using the Composer package manager:
 
-    composer require pusher/pusher-php-server "~3.0"
+    composer require pusher/pusher-php-server "~2.6"
 
 Next, you should configure your Channels credentials in the `config/broadcasting.php` configuration file. An example Channels configuration is already included in this file, allowing you to quickly specify your Channels key, secret, and application ID. The `config/broadcasting.php` file's `pusher` configuration also allows you to specify additional `options` that are supported by Channels, such as the cluster:
 
@@ -250,6 +250,7 @@ If you customize the broadcast name using the `broadcastAs` method, you should m
     .listen('.server.created', function (e) {
         ....
     });
+
 
 <a name="broadcast-data"></a>
 ### Broadcast Data
@@ -464,7 +465,7 @@ Alternatively, you may prefix event classes with a `.` when subscribing to them 
 
 Presence channels build on the security of private channels while exposing the additional feature of awareness of who is subscribed to the channel. This makes it easy to build powerful, collaborative application features such as notifying users when another user is viewing the same page.
 
-<a name="authorizing-presence-channels"></a>
+<a name="joining-a-presence-channel"></a>
 ### Authorizing Presence Channels
 
 All presence channels are also private channels; therefore, users must be [authorized to access them](#authorizing-channels). However, when defining authorization callbacks for presence channels, you will not return `true` if the user is authorized to join the channel. Instead, you should return an array of data about the user.
@@ -531,14 +532,14 @@ You may listen for the join event via Echo's `listen` method:
 
 Sometimes you may wish to broadcast an event to other connected clients without hitting your Laravel application at all. This can be particularly useful for things like "typing" notifications, where you want to alert users of your application that another user is typing a message on a given screen. To broadcast client events, you may use Echo's `whisper` method:
 
-    Echo.private('chat')
+    Echo.channel('chat')
         .whisper('typing', {
             name: this.user.name
         });
 
 To listen for client events, you may use the `listenForWhisper` method:
 
-    Echo.private('chat')
+    Echo.channel('chat')
         .listenForWhisper('typing', (e) => {
             console.log(e.name);
         });

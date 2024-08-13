@@ -1,8 +1,6 @@
 # Routing
 
 - [Basic Routing](#basic-routing)
-    - [Redirect Routes](#redirect-routes)
-    - [View Routes](#view-routes)
 - [Route Parameters](#route-parameters)
     - [Required Parameters](#required-parameters)
     - [Optional Parameters](#parameters-optional-parameters)
@@ -13,7 +11,6 @@
     - [Namespaces](#route-group-namespaces)
     - [Sub-Domain Routing](#route-group-sub-domain-routing)
     - [Route Prefixes](#route-group-prefixes)
-    - [Route Name Prefixes](#route-group-name-prefixes)
 - [Route Model Binding](#route-model-binding)
     - [Implicit Binding](#implicit-binding)
     - [Explicit Binding](#explicit-binding)
@@ -23,7 +20,7 @@
 <a name="basic-routing"></a>
 ## Basic Routing
 
-The most basic Laravel routes accept a URI and a `Closure`, providing a very simple and expressive method of defining routes:
+The most basic Laravel routes simply accept a URI and a `Closure`, providing a very simple and expressive method of defining routes:
 
     Route::get('foo', function () {
         return 'Hello World';
@@ -33,11 +30,7 @@ The most basic Laravel routes accept a URI and a `Closure`, providing a very sim
 
 All Laravel routes are defined in your route files, which are located in the `routes` directory. These files are automatically loaded by the framework. The `routes/web.php` file defines routes that are for your web interface. These routes are assigned the `web` middleware group, which provides features like session state and CSRF protection. The routes in `routes/api.php` are stateless and are assigned the `api` middleware group.
 
-For most applications, you will begin by defining routes in your `routes/web.php` file. The routes defined in `routes/web.php` may be accessed by entering the defined route's URL in your browser. For example, you may access the following route by navigating to `http://your-app.dev/user` in your browser:
-
-    Route::get('/user', 'UserController@index');
-
-Routes defined in the `routes/api.php` file are nested within a route group by the `RouteServiceProvider`. Within this group, the `/api` URI prefix is automatically applied so you do not need to manually apply it to every route in the file. You may modify the prefix and other route group options by modifying your `RouteServiceProvider` class.
+For most applications, you will begin by defining routes in your `routes/web.php` file.
 
 #### Available Router Methods
 
@@ -69,22 +62,6 @@ Any HTML forms pointing to `POST`, `PUT`, or `DELETE` routes that are defined in
         ...
     </form>
 
-<a name="redirect-routes"></a>
-### Redirect Routes
-
-If you are defining a route that redirects to another URI, you may use the `Route::redirect` method. This method provides a convenient shortcut so that you do not have to define a full route or controller for performing a simple redirect:
-
-    Route::redirect('/here', '/there', 301);
-
-<a name="view-routes"></a>
-### View Routes
-
-If your route only needs to return a view, you may use the `Route::view` method. Like the `redirect` method, this method provides a simple shortcut so that you do not have to define a full route or controller. The `view` method accepts a URI as its first argument and a view name as its second argument. In addition, you may provide an array of data to pass to the view as an optional third argument:
-
-    Route::view('/welcome', 'welcome');
-
-    Route::view('/welcome', 'welcome', ['name' => 'Taylor']);
-
 <a name="route-parameters"></a>
 ## Route Parameters
 
@@ -103,7 +80,7 @@ You may define as many route parameters as required by your route:
         //
     });
 
-Route parameters are always encased within `{}` braces and should consist of alphabetic characters, and may not contain a `-` character. Instead of using the `-` character, use an underscore (`_`). Route parameters are injected into route callbacks / controllers based on their order - the names of the callback / controller arguments do not matter.
+Route parameters are always encased within `{}` braces and should consist of alphabetic characters, and may not contain a `-` character. Instead of using the `-` character, use an underscore (`_`) instead. Route parameters are injected into route callbacks / controllers based on their order - the names of the callback / controller arguments do not matter.
 
 <a name="parameters-optional-parameters"></a>
 ### Optional Parameters
@@ -189,26 +166,6 @@ If the named route defines parameters, you may pass the parameters as the second
 
     $url = route('profile', ['id' => 1]);
 
-#### Inspecting The Current Route
-
-If you would like to determine if the current request was routed to a given named route, you may use the `named` method on a Route instance. For example, you may check the current route name from a route middleware:
-
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next)
-    {
-        if ($request->route()->named('profile')) {
-            //
-        }
-
-        return $next($request);
-    }
-
 <a name="route-groups"></a>
 ## Route Groups
 
@@ -243,7 +200,7 @@ Remember, by default, the `RouteServiceProvider` includes your route files withi
 <a name="route-group-sub-domain-routing"></a>
 ### Sub-Domain Routing
 
-Route groups may also be used to handle sub-domain routing. Sub-domains may be assigned route parameters just like route URIs, allowing you to capture a portion of the sub-domain for usage in your route or controller. The sub-domain may be specified by calling the `domain` method before defining the group:
+Route groups may also be used to handle sub-domain routing. Sub-domains may be assigned route parameters just like route URIs, allowing you to capture a portion of the sub-domain for usage in your route or controller. The sub-domain may be specified by calling the the `domain` method before defining the group:
 
     Route::domain('{account}.myapp.com')->group(function () {
         Route::get('user/{id}', function ($account, $id) {
@@ -260,17 +217,6 @@ The `prefix` method may be used to prefix each route in the group with a given U
         Route::get('users', function () {
             // Matches The "/admin/users" URL
         });
-    });
-
-<a name="route-group-name-prefixes"></a>
-### Route Name Prefixes
-
-The `name` method may be used to prefix each route name in the group with a given string. For example, you may want to prefix all of the grouped route's names with `admin`. The given string is prefixed to the route name exactly as it is specified, so we will be sure to provide the trailing `.` character in the prefix:
-
-    Route::name('admin.')->group(function () {
-        Route::get('users', function () {
-            // Route assigned name "admin.users"...
-        })->name('users');
     });
 
 <a name="route-model-binding"></a>
@@ -317,7 +263,7 @@ To register an explicit binding, use the router's `model` method to specify the 
 
 Next, define a route that contains a `{user}` parameter:
 
-    Route::get('profile/{user}', function ($user) {
+    Route::get('profile/{user}', function (App\User $user) {
         //
     });
 
@@ -334,7 +280,7 @@ If you wish to use your own resolution logic, you may use the `Route::bind` meth
         parent::boot();
 
         Route::bind('user', function ($value) {
-            return App\User::where('name', $value)->first() ?? abort(404);
+            return App\User::where('name', $value)->first();
         });
     }
 

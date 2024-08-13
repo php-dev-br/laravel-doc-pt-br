@@ -28,11 +28,15 @@ Currently, Scout ships with an [Algolia](https://www.algolia.com/) driver; howev
 <a name="installation"></a>
 ## Installation
 
-First, install Scout via the Composer package manager:
+First, install the Scout via the Composer package manager:
 
     composer require laravel/scout
 
-After installing Scout, you should publish the Scout configuration using the `vendor:publish` Artisan command. This command will publish the `scout.php` configuration file to your `config` directory:
+Next, you should add the `ScoutServiceProvider` to the `providers` array of your `config/app.php` configuration file:
+
+    Laravel\Scout\ScoutServiceProvider::class,
+
+After registering the Scout service provider, you should publish the Scout configuration using the `vendor:publish` Artisan command. This command will publish the `scout.php` configuration file to your `config` directory:
 
     php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"
 
@@ -190,7 +194,7 @@ You may also use the `searchable` method on an Eloquent query to update a collec
 <a name="removing-records"></a>
 ### Removing Records
 
-To remove a record from your index, `delete` the model from the database. This form of removal is even compatible with [soft deleted](eloquent.md#soft-deleting) models:
+To remove a record from your index, simply `delete` the model from the database. This form of removal is even compatible with [soft deleted](eloquent.md#soft-deleting) models:
 
     $order = App\Order::find(1);
 
@@ -274,7 +278,7 @@ Once you have retrieved the results, you may display the results and render the 
 
 #### Writing The Engine
 
-If one of the built-in Scout search engines doesn't fit your needs, you may write your own custom engine and register it with Scout. Your engine should extend the `Laravel\Scout\Engines\Engine` abstract class. This abstract class contains seven methods your custom engine must implement:
+If one of the built-in Scout search engines doesn't fit your needs, you may write your own custom engine and register it with Scout. Your engine should extend the `Laravel\Scout\Engines\Engine` abstract class. This abstract class contains five methods your custom engine must implement:
 
     use Laravel\Scout\Builder;
 
@@ -282,9 +286,7 @@ If one of the built-in Scout search engines doesn't fit your needs, you may writ
     abstract public function delete($models);
     abstract public function search(Builder $builder);
     abstract public function paginate(Builder $builder, $perPage, $page);
-    abstract public function mapIds($results);
     abstract public function map($results, $model);
-    abstract public function getTotalCount($results);
 
 You may find it helpful to review the implementations of these methods on the `Laravel\Scout\Engines\AlgoliaEngine` class. This class will provide you with a good starting point for learning how to implement each of these methods in your own engine.
 

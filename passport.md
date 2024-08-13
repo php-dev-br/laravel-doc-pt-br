@@ -44,6 +44,10 @@ To get started, install Passport via the Composer package manager:
 
     composer require laravel/passport=~4.0
 
+Next, register the Passport service provider in the `providers` array of your `config/app.php` configuration file:
+
+    Laravel\Passport\PassportServiceProvider::class,
+
 The Passport service provider registers its own database migration directory with the framework, so you should migrate your database after registering the provider. The Passport migrations will create the tables your application needs to store clients and access tokens:
 
     php artisan migrate
@@ -166,6 +170,8 @@ When deploying Passport to your production servers for the first time, you will 
 
 By default, Passport issues long-lived access tokens that never need to be refreshed. If you would like to configure a shorter token lifetime, you may use the `tokensExpireIn` and `refreshTokensExpireIn` methods. These methods should be called from the `boot` method of your `AuthServiceProvider`:
 
+    use Carbon\Carbon;
+
     /**
      * Register any authentication / authorization services.
      *
@@ -177,9 +183,9 @@ By default, Passport issues long-lived access tokens that never need to be refre
 
         Passport::routes();
 
-        Passport::tokensExpireIn(now()->addDays(15));
+        Passport::tokensExpireIn(Carbon::now()->addDays(15));
 
-        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));
     }
 
 <a name="issuing-access-tokens"></a>
@@ -447,7 +453,7 @@ To retrieve a token, make a request to the `oauth/token` endpoint:
         ],
     ]);
 
-    return json_decode((string) $response->getBody(), true)['access_token'];
+    echo json_decode((string) $response->getBody(), true);
 
 <a name="personal-access-tokens"></a>
 ## Personal Access Tokens
@@ -550,6 +556,7 @@ When calling routes that are protected by Passport, your application's API consu
 <a name="token-scopes"></a>
 ## Token Scopes
 
+
 <a name="defining-scopes"></a>
 ### Defining Scopes
 
@@ -643,13 +650,14 @@ This Passport middleware will attach a `laravel_token` cookie to your outgoing r
             console.log(response.data);
         });
 
-When using this method of authentication, the default Laravel JavaScript scaffolding instructs Axios to always send the `X-CSRF-TOKEN` and `X-Requested-With` headers. However, you should be sure to include your CSRF token in a [HTML meta tag](csrf.md#csrf-x-csrf-token):
+When using this method of authentication, Axios will automatically send the `X-CSRF-TOKEN` header. In addition, the default Laravel JavaScript scaffolding instructs Axios to send the `X-Requested-With` header:
 
     window.axios.defaults.headers.common = {
         'X-Requested-With': 'XMLHttpRequest',
     };
 
 > {note} If you are using a different JavaScript framework, you should make sure it is configured to send the `X-CSRF-TOKEN` and `X-Requested-With` headers with every outgoing request.
+
 
 <a name="events"></a>
 ## Events

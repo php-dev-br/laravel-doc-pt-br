@@ -8,10 +8,8 @@
     - [Class Structure](#class-structure)
 - [Dispatching Jobs](#dispatching-jobs)
     - [Delayed Dispatching](#delayed-dispatching)
-    - [Job Chaining](#job-chaining)
     - [Customizing The Queue & Connection](#customizing-the-queue-and-connection)
     - [Specifying Max Job Attempts / Timeout Values](#max-job-attempts-and-timeout)
-    - [Rate Limiting](#rate-limiting)
     - [Error Handling](#error-handling)
 - [Running The Queue Worker](#running-the-queue-worker)
     - [Queue Priorities](#queue-priorities)
@@ -27,11 +25,9 @@
 <a name="introduction"></a>
 ## Introduction
 
-> {tip} Laravel now offers Horizon, a beautiful dashboard and configuration system for your Redis powered queues. Check out the full [Horizon documentation](horizon.md) for more information.
-
 Laravel queues provide a unified API across a variety of different queue backends, such as Beanstalk, Amazon SQS, Redis, or even a relational database. Queues allow you to defer the processing of a time consuming task, such as sending an email, until a later time. Deferring these time consuming tasks drastically speeds up web requests to your application.
 
-The queue configuration file is stored in `config/queue.php`. In this file you will find connection configurations for each of the queue drivers that are included with the framework, which includes a database, [Beanstalkd](https://kr.github.io/beanstalkd/), [Amazon SQS](https://aws.amazon.com/sqs/), [Redis](https://redis.io),  and a synchronous driver that will execute jobs immediately (for local use). A `null` queue driver is also included which discards queued jobs.
+The queue configuration file is stored in `config/queue.php`. In this file you will find connection configurations for each of the queue drivers that are included with the framework, which includes a database, [Beanstalkd](https://kr.github.io/beanstalkd/), [Amazon SQS](https://aws.amazon.com/sqs/), [Redis](http://redis.io),  and a synchronous driver that will execute jobs immediately (for local use). A `null` queue driver is also included which simply discards queued jobs.
 
 <a name="connections-vs-queues"></a>
 ### Connections Vs. Queues
@@ -41,10 +37,10 @@ Before getting started with Laravel queues, it is important to understand the di
 Note that each connection configuration example in the `queue` configuration file contains a `queue` attribute. This is the default queue that jobs will be dispatched to when they are sent to a given connection. In other words, if you dispatch a job without explicitly defining which queue it should be dispatched to, the job will be placed on the queue that is defined in the `queue` attribute of the connection configuration:
 
     // This job is sent to the default queue...
-    Job::dispatch();
+    dispatch(new Job);
 
     // This job is sent to the "emails" queue...
-    Job::dispatch()->onQueue('emails');
+    dispatch((new Job)->onQueue('emails'));
 
 Some applications may not need to ever push jobs onto multiple queues, instead preferring to have one simple queue. However, pushing jobs to multiple queues can be especially useful for applications that wish to prioritize or segment how jobs are processed, since the Laravel queue worker allows you to specify which queues it should process by priority. For example, if you push jobs to a `high` queue, you may run a worker that gives them higher processing priority:
 
@@ -92,7 +88,7 @@ The following dependencies are needed for the listed queue drivers:
 
 By default, all of the queueable jobs for your application are stored in the `app/Jobs` directory. If the `app/Jobs` directory doesn't exist, it will be created when you run the `make:job` Artisan command. You may generate a new queued job using the Artisan CLI:
 
-    php artisan make:job ProcessPodcast
+    php artisan make:job SendReminderEmail
 
 The generated class will implement the `Illuminate\Contracts\Queue\ShouldQueue` interface, indicating to Laravel that the job should be pushed onto the queue to run asynchronously.
 
@@ -151,7 +147,7 @@ The `handle` method is called when the job is processed by the queue. Note that 
 <a name="dispatching-jobs"></a>
 ## Dispatching Jobs
 
-Once you have written your job class, you may dispatch it using the `dispatch` method on the job itself. The arguments passed to the `dispatch` method will be given to the job's constructor:
+Once you have written your job class, you may dispatch it using the `dispatch` helper. The only argument you need to pass to the `dispatch` helper is an instance of the job:
 
     <?php
 
@@ -173,19 +169,22 @@ Once you have written your job class, you may dispatch it using the `dispatch` m
         {
             // Create podcast...
 
-            ProcessPodcast::dispatch($podcast);
+            dispatch(new ProcessPodcast($podcast));
         }
     }
+
+> {tip} The `dispatch` helper provides the convenience of a short, globally available function, while also being extremely easy to test. Check out the Laravel [testing documentation](testing.md) to learn more.
 
 <a name="delayed-dispatching"></a>
 ### Delayed Dispatching
 
-If you would like to delay the execution of a queued job, you may use the `delay` method when dispatching a job. For example, let's specify that a job should not be available for processing until 10 minutes after it has been dispatched:
+If you would like to delay the execution of a queued job, you may use the `delay` method on your job instance. The `delay` method is provided by the `Illuminate\Bus\Queueable` trait, which is included by default on all generated job classes. For example, let's specify that a job should not be available for processing until 10 minutes after it has been dispatched:
 
     <?php
 
     namespace App\Http\Controllers;
 
+    use Carbon\Carbon;
     use App\Jobs\ProcessPodcast;
     use Illuminate\Http\Request;
     use App\Http\Controllers\Controller;
@@ -202,29 +201,21 @@ If you would like to delay the execution of a queued job, you may use the `delay
         {
             // Create podcast...
 
-            ProcessPodcast::dispatch($podcast)
-                    ->delay(now()->addMinutes(10));
+            $job = (new ProcessPodcast($podcast))
+                        ->delay(Carbon::now()->addMinutes(10));
+
+            dispatch($job);
         }
     }
 
 > {note} The Amazon SQS queue service has a maximum delay time of 15 minutes.
-
-<a name="job-chaining"></a>
-### Job Chaining
-
-Job chaining allows you to specify a list of queued jobs that should be run in sequence. If one job in the sequence fails, the rest of the jobs will not be run. To execute a queued job chain, you may use the `withChain` method on any of your dispatchable jobs:
-
-    ProcessPodcast::withChain([
-        new OptimizePodcast,
-        new ReleasePodcast
-    ])->dispatch();
 
 <a name="customizing-the-queue-and-connection"></a>
 ### Customizing The Queue & Connection
 
 #### Dispatching To A Particular Queue
 
-By pushing jobs to different queues, you may "categorize" your queued jobs and even prioritize how many workers you assign to various queues. Keep in mind, this does not push jobs to different queue "connections" as defined by your queue configuration file, but only to specific queues within a single connection. To specify the queue, use the `onQueue` method when dispatching the job:
+By pushing jobs to different queues, you may "categorize" your queued jobs and even prioritize how many workers you assign to various queues. Keep in mind, this does not push jobs to different queue "connections" as defined by your queue configuration file, but only to specific queues within a single connection. To specify the queue, use the `onQueue` method on the job instance:
 
     <?php
 
@@ -246,13 +237,15 @@ By pushing jobs to different queues, you may "categorize" your queued jobs and e
         {
             // Create podcast...
 
-            ProcessPodcast::dispatch($podcast)->onQueue('processing');
+            $job = (new ProcessPodcast($podcast))->onQueue('processing');
+
+            dispatch($job);
         }
     }
 
 #### Dispatching To A Particular Connection
 
-If you are working with multiple queue connections, you may specify which connection to push a job to. To specify the connection, use the `onConnection` method when dispatching the job:
+If you are working with multiple queue connections, you may specify which connection to push a job to. To specify the connection, use the `onConnection` method on the job instance:
 
     <?php
 
@@ -274,15 +267,17 @@ If you are working with multiple queue connections, you may specify which connec
         {
             // Create podcast...
 
-            ProcessPodcast::dispatch($podcast)->onConnection('sqs');
+            $job = (new ProcessPodcast($podcast))->onConnection('sqs');
+
+            dispatch($job);
         }
     }
 
 Of course, you may chain the `onConnection` and `onQueue` methods to specify the connection and the queue for a job:
 
-    ProcessPodcast::dispatch($podcast)
-                  ->onConnection('sqs')
-                  ->onQueue('processing');
+    $job = (new ProcessPodcast($podcast))
+                    ->onConnection('sqs')
+                    ->onQueue('processing');
 
 <a name="max-job-attempts-and-timeout"></a>
 ### Specifying Max Job Attempts / Timeout Values
@@ -309,23 +304,6 @@ However, you may take a more granular approach by defining the maximum number of
         public $tries = 5;
     }
 
-<a name="time-based-attempts"></a>
-#### Time Based Attempts
-
-As an alternative to defining how many times a job may be attempted before it fails, you may define a time at which the job should timeout. This allows a job to be attempted any number of times within a given time frame. To define the time at which a job should timeout, add a `retryUntil` method to your job class:
-
-    /**
-     * Determine the time at which the job should timeout.
-     *
-     * @return \DateTime
-     */
-    public function retryUntil()
-    {
-        return now()->addSeconds(5);
-    }
-
-> {tip} You may also define a `retryUntil` method on your queued event listeners.
-
 #### Timeout
 
 > {note} The `timeout` feature is optimized for PHP 7.1+ and the `pcntl` PHP extension.
@@ -349,35 +327,6 @@ However, you may also define the maximum number of seconds a job should be allow
          */
         public $timeout = 120;
     }
-
-<a name="rate-limiting"></a>
-### Rate Limiting
-
-> {note} This feature requires that your application can interact with a [Redis server](redis.md).
-
-If your application interacts with Redis, you may throttle your queued jobs by time or concurrency. This feature can be of assistance when your queued jobs are interacting with APIs that are also rate limited. For example, using the `throttle` method, you may throttle a given type of job to only run 10 times every 60 seconds. If a lock can not be obtained, you should typically release the job back onto the queue so it can be retried later:
-
-    Redis::throttle('key')->allow(10)->every(60)->then(function () {
-        // Job logic...
-    }, function () {
-        // Could not obtain lock...
-
-        return $this->release(10);
-    });
-
-> {tip} In the example above, the `key` may be any string that uniquely identifies the type of job you would like to rate limit. For example, you may wish to construct the key based on the class name of the job and the IDs of the Eloquent models it operates on.
-
-Alternatively, you may specify the maximum number of workers that may simultaneously process a given job. This can be helpful when a queued job is modifying a resource that should only be modified by one job at a time. For example, using the `funnel` method, you may limit jobs of a given type to only be processed by one worker at a time:
-
-    Redis::funnel('key')->limit(1)->then(function () {
-        // Job logic...
-    }, function () {
-        // Could not obtain lock...
-
-        return $this->release(10);
-    });
-
-> {tip} When using rate limiting, the number of attempts your job will need to run successfully can be hard to determine. Therefore, it is useful to combine rate limiting with [time based attempts](#time-based-attempts).
 
 <a name="error-handling"></a>
 ### Error Handling

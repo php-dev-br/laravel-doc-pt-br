@@ -7,7 +7,6 @@
 - [Redirects](#redirects)
     - [Redirecting To Named Routes](#redirecting-named-routes)
     - [Redirecting To Controller Actions](#redirecting-controller-actions)
-    - [Redirecting To External Domains](#redirecting-external-domains)
     - [Redirecting With Flashed Session Data](#redirecting-with-flashed-session-data)
 - [Other Response Types](#other-response-types)
     - [View Responses](#view-responses)
@@ -21,7 +20,7 @@
 
 #### Strings & Arrays
 
-All routes and controllers should return a response to be sent back to the user's browser. Laravel provides several different ways to return responses. The most basic response is returning a string from a route or controller. The framework will automatically convert the string into a full HTTP response:
+All routes and controllers should return a response to be sent back to the user's browser. Laravel provides several different ways to return responses. The most basic response is simply returning a string from a route or controller. The framework will automatically convert the string into a full HTTP response:
 
     Route::get('/', function () {
         return 'Hello World';
@@ -78,12 +77,6 @@ The `cookie` method also accepts a few more arguments which are used less freque
 
     ->cookie($name, $value, $minutes, $path, $domain, $secure, $httpOnly)
 
-Alternatively, you can use the `Cookie` facade to "queue" cookies for attachment to the outgoing response from your application. The `queue` method accepts a `Cookie` instance or the arguments needed to create a `Cookie` instance. These cookies will be attached to the outgoing response before it is sent to the browser:
-
-    Cookie::queue(Cookie::make('name', 'value', $minutes));
-
-    Cookie::queue('name', 'value', $minutes);
-
 <a name="cookies-and-encryption"></a>
 #### Cookies & Encryption
 
@@ -130,7 +123,7 @@ If your route has parameters, you may pass them as the second argument to the `r
 
 #### Populating Parameters Via Eloquent Models
 
-If you are redirecting to a route with an "ID" parameter that is being populated from an Eloquent model, you may pass the model itself. The ID will be extracted automatically:
+If you are redirecting to a route with an "ID" parameter that is being populated from an Eloquent model, you may simply pass the model itself. The ID will be extracted automatically:
 
     // For a route with the following URI: profile/{id}
 
@@ -160,13 +153,6 @@ If your controller route requires parameters, you may pass them as the second ar
     return redirect()->action(
         'UserController@profile', ['id' => 1]
     );
-
-<a name="redirecting-external-domains"></a>
-### Redirecting To External Domains
-
-Sometimes you may need to redirect to a domain outside of your application. You may do so by calling the `away` method, which creates a `RedirectResponse` without any additional URL encoding, validation, or verification:
-
-    return redirect()->away('https://www.google.com');
 
 <a name="redirecting-with-flashed-session-data"></a>
 ### Redirecting With Flashed Session Data

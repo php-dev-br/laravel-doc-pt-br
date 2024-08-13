@@ -2,9 +2,6 @@
 
 - [Introduction](#introduction)
 - [Defining Schedules](#defining-schedules)
-    - [Scheduling Artisan Commands](#scheduling-artisan-commands)
-    - [Scheduling Queued Jobs](#scheduling-queued-jobs)
-    - [Scheduling Shell Commands](#scheduling-shell-commands)
     - [Schedule Frequency Options](#schedule-frequency-options)
     - [Preventing Task Overlaps](#preventing-task-overlaps)
     - [Maintenance Mode](#maintenance-mode)
@@ -47,7 +44,7 @@ You may define all of your scheduled tasks in the `schedule` method of the `App\
          * @var array
          */
         protected $commands = [
-            //
+            \App\Console\Commands\Inspire::class,
         ];
 
         /**
@@ -64,26 +61,13 @@ You may define all of your scheduled tasks in the `schedule` method of the `App\
         }
     }
 
-<a name="scheduling-artisan-commands"></a>
-### Scheduling Artisan Commands
-
-In addition to scheduling Closure calls, you may also schedule [Artisan commands](artisan.md) and operating system commands. For example, you may use the `command` method to schedule an Artisan command using either the command's name or class:
+In addition to scheduling `Closure` calls, you may also schedule [Artisan commands](artisan.md) and operating system commands. For example, you may use the `command` method to schedule an Artisan command using either the command's name or class:
 
     $schedule->command('emails:send --force')->daily();
 
     $schedule->command(EmailsCommand::class, ['--force'])->daily();
 
-<a name="scheduling-queued-jobs"></a>
-### Scheduling Queued Jobs
-
-The `job` method may be used to schedule a [queued job](queues.md). This method provides a convenient way to schedule jobs without using the `call` method to manually create Closures to queue the job:
-
-    $schedule->job(new Heartbeat)->everyFiveMinutes();
-
-<a name="scheduling-shell-commands"></a>
-### Scheduling Shell Commands
-
-The `exec` method may be used to issue a command to the operating system:
+The `exec` command may be used to issue a command to the operating system:
 
     $schedule->exec('node /home/forge/script.js')->daily();
 
@@ -98,7 +82,6 @@ Method  | Description
 `->everyMinute();`  |  Run the task every minute
 `->everyFiveMinutes();`  |  Run the task every five minutes
 `->everyTenMinutes();`  |  Run the task every ten minutes
-`->everyFifteenMinutes();`  |  Run the task every fifteen minutes
 `->everyThirtyMinutes();`  |  Run the task every thirty minutes
 `->hourly();`  |  Run the task every hour
 `->hourlyAt(17);`  |  Run the task every hour at 17 mins past the hour
@@ -179,10 +162,6 @@ By default, scheduled tasks will be run even if the previous instance of the tas
     $schedule->command('emails:send')->withoutOverlapping();
 
 In this example, the `emails:send` [Artisan command](artisan.md) will be run every minute if it is not already running. The `withoutOverlapping` method is especially useful if you have tasks that vary drastically in their execution time, preventing you from predicting exactly how long a given task will take.
-
-If needed, you may specify how many minutes must pass before the "without overlapping" lock expires. By default, the lock will expire after 24 hours:
-
-    $schedule->command('emails:send')->withoutOverlapping(10);
 
 <a name="maintenance-mode"></a>
 ### Maintenance Mode

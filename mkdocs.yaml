@@ -12,7 +12,6 @@ nav:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
-      - Documentação da API: https://laravel.com/api/5.5
   - Começando:
       - Instalação: contributions.md
       - Configuração: configuration.md
@@ -20,7 +19,6 @@ nav:
       - Front-end: frontend.md
       - Homestead: homestead.md
       - Valet: valet.md
-      - Implantação: deployment.md
   - Conceitos de Arquitetura:
       - Ciclo de Vida da Requisição: lifecycle.md
       - Contêiner de Serviços: container.md
@@ -36,7 +34,6 @@ nav:
       - Requisições: requests.md
       - Respostas: responses.md
       - Visualizações: views.md
-      - Geração de URL: urls.md
       - Sessão: session.md
       - Validação: validation.md
       - Tratamento de erros e Logging: errors.md
@@ -78,7 +75,6 @@ nav:
       - Relacionamentos: eloquent-relationships.md
       - Coleções: eloquent-collections.md
       - Modificadores: eloquent-mutators.md
-      - Recursos de API: eloquent-resources.md
       - Serialização: eloquent-serialization.md
   - Testes:
       - Começando: testing.md
@@ -89,7 +85,6 @@ nav:
   - Pacotes Oficiais:
       - Cashier: billing.md
       - Envoy: envoy.md
-      - Horizon: horizon.md
       - Passport: passport.md
       - Scout: scout.md
       - Socialite: socialite.md

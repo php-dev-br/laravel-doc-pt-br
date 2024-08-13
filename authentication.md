@@ -67,7 +67,7 @@ The `make:auth` command will also create a `resources/views/layouts` directory c
 <a name="included-authenticating"></a>
 ### Authenticating
 
-Now that you have routes and views setup for the included authentication controllers, you are ready to register and authenticate new users for your application! You may access your application in a browser since the authentication controllers already contain the logic (via their traits) to authenticate existing users and store new users in the database.
+Now that you have routes and views setup for the included authentication controllers, you are ready to register and authenticate new users for your application! You may simply access your application in a browser since the authentication controllers already contain the logic (via their traits) to authenticate existing users and store new users in the database.
 
 #### Path Customization
 
@@ -218,7 +218,7 @@ We will access Laravel's authentication services via the `Auth` [facade](facades
         }
     }
 
-The `attempt` method accepts an array of key / value pairs as its first argument. The values in the array will be used to find the user in your database table. So, in the example above, the user will be retrieved by the value of the `email` column. If the user is found, the hashed password stored in the database will be compared with the `password` value passed to the method via the array. You should not hash the password specified as the `password` value, since the framework will automatically hash the value before comparing it to the hashed password in the database. If the two hashed passwords match an authenticated session will be started for the user.
+The `attempt` method accepts an array of key / value pairs as its first argument. The values in the array will be used to find the user in your database table. So, in the example above, the user will be retrieved by the value of the `email` column. If the user is found, the hashed password stored in the database will be compared with the hashed `password` value passed to the method via the array. If the two hashed passwords match an authenticated session will be started for the user.
 
 The `attempt` method will return `true` if authentication was successful. Otherwise, `false` will be returned.
 
@@ -285,7 +285,7 @@ Of course, you may specify the guard instance you would like to use:
 
 #### Authenticate A User By ID
 
-To log a user into the application by their ID, you may use the `loginUsingId` method. This method accepts the primary key of the user you wish to authenticate:
+To log a user into the application by their ID, you may use the `loginUsingId` method. This method simply accepts the primary key of the user you wish to authenticate:
 
     Auth::loginUsingId(1);
 
@@ -321,11 +321,11 @@ If you are using PHP FastCGI, HTTP Basic authentication may not work correctly o
 <a name="stateless-http-basic-authentication"></a>
 ### Stateless HTTP Basic Authentication
 
-You may also use HTTP Basic Authentication without setting a user identifier cookie in the session, which is particularly useful for API authentication. To do so, [define a middleware](middleware.md) that calls the `onceBasic` method. If no exception is thrown by the `onceBasic` method, the request may be passed further into the application:
+You may also use HTTP Basic Authentication without setting a user identifier cookie in the session, which is particularly useful for API authentication. To do so, [define a middleware](middleware.md) that calls the `onceBasic` method. If no response is returned by the `onceBasic` method, the request may be passed further into the application:
 
     <?php
 
-    namespace App\Http\Middleware;
+    namespace Illuminate\Auth\Middleware;
 
     use Illuminate\Support\Facades\Auth;
 
@@ -340,8 +340,7 @@ You may also use HTTP Basic Authentication without setting a user identifier coo
          */
         public function handle($request, $next)
         {
-            Auth::onceBasic();
-            return $next($request);
+            return Auth::onceBasic() ?: $next($request);
         }
 
     }
@@ -355,7 +354,7 @@ Next, [register the route middleware](middleware.md#registering-middleware) and 
 <a name="adding-custom-guards"></a>
 ## Adding Custom Guards
 
-You may define your own authentication guards using the `extend` method on the `Auth` facade. You should place this call to `extend` within a [service provider](providers.md). Since Laravel already ships with an `AuthServiceProvider`, we can place the code in that provider:
+You may define your own authentication guards using the `extend` method on the `Auth` facade. You should place this call to `provider` within a [service provider](providers.md). Since Laravel already ships with an `AuthServiceProvider`, we can place the code in that provider:
 
     <?php
 
@@ -532,9 +531,5 @@ Laravel raises a variety of [events](events.md) during the authentication proces
 
         'Illuminate\Auth\Events\Lockout' => [
             'App\Listeners\LogLockout',
-        ],
-
-        'Illuminate\Auth\Events\PasswordReset' => [
-            'App\Listeners\LogPasswordReset',
         ],
     ];

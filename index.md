@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.5/documentation.md -->
-<!-- revision: f8a4ae04bc3986c37216fc5808080ca494cb0d5b -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.4/documentation.md -->
+<!-- revision: adbfcb7ec763352066e7e76ed061972741aec8c5 -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -9,7 +9,6 @@
 - [Notas de Versão](releases.md)
 - [Guia de Atualização](upgrade.md)
 - [Guia de Contribuição](contributions.md)
-- [Documentação da API](https://laravel.com/api/5.5)
 
 ## Começando
 
@@ -19,7 +18,6 @@
 - [_Front-end_](frontend.md)
 - [Homestead](homestead.md)
 - [Valet](valet.md)
-- [Implantação](deployment.md)
 
 ## Conceitos de Arquitetura
 
@@ -38,7 +36,6 @@
 - [Requisições](requests.md)
 - [Respostas](responses.md)
 - [Visualizações](views.md)
-- [Geração de URL](urls.md)
 - [Sessão](session.md)
 - [Validação](validation.md)
 - [Tratamento de erros e Logging](errors.md)
@@ -89,7 +86,6 @@
 - [Relacionamentos](eloquent-relationships.md)
 - [Coleções](eloquent-collections.md)
 - [Modificadores](eloquent-mutators.md)
-- [Recursos de API](eloquent-resources.md)
 - [Serialização](eloquent-serialization.md)
 
 ## Testes
@@ -104,7 +100,6 @@
 
 - [Cashier](billing.md)
 - [Envoy](envoy.md)
-- [Horizon](horizon.md)
 - [Passport](passport.md)
 - [Scout](scout.md)
 - [Socialite](socialite.md)

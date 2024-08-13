@@ -19,7 +19,7 @@ Of course, all collections also serve as iterators, allowing you to loop over th
 
 However, collections are much more powerful than arrays and expose a variety of map / reduce operations that may be chained using an intuitive interface. For example, let's remove all inactive models and gather the first name for each remaining user:
 
-    $users = App\User::all();
+    $users = App\User::where('active', 1)->get();
 
     $names = $users->reject(function ($user) {
         return $user->active === false;
@@ -56,17 +56,12 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [chunk](collections.md#method-chunk)
 [collapse](collections.md#method-collapse)
 [combine](collections.md#method-combine)
-[concat](collections.md#method-concat)
 [contains](collections.md#method-contains)
 [containsStrict](collections.md#method-containsstrict)
 [count](collections.md#method-count)
-[crossJoin](collections.md#method-crossjoin)
-[dd](collections.md#method-dd)
 [diff](collections.md#method-diff)
 [diffKeys](collections.md#method-diffkeys)
-[dump](collections.md#method-dump)
 [each](collections.md#method-each)
-[eachSpread](collections.md#method-eachspread)
 [every](collections.md#method-every)
 [except](collections.md#method-except)
 [filter](collections.md#method-filter)
@@ -87,9 +82,6 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [keys](collections.md#method-keys)
 [last](collections.md#method-last)
 [map](collections.md#method-map)
-[mapInto](collections.md#method-mapinto)
-[mapSpread](collections.md#method-mapspread)
-[mapToGroups](collections.md#method-maptogroups)
 [mapWithKeys](collections.md#method-mapwithkeys)
 [max](collections.md#method-max)
 [median](collections.md#method-median)
@@ -98,7 +90,6 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [mode](collections.md#method-mode)
 [nth](collections.md#method-nth)
 [only](collections.md#method-only)
-[pad](collections.md#method-pad)
 [partition](collections.md#method-partition)
 [pipe](collections.md#method-pipe)
 [pluck](collections.md#method-pluck)
@@ -129,7 +120,6 @@ All Eloquent collections extend the base [Laravel collection](collections.md) ob
 [union](collections.md#method-union)
 [unique](collections.md#method-unique)
 [uniqueStrict](collections.md#method-uniquestrict)
-[unless](collections.md#method-unless)
 [values](collections.md#method-values)
 [when](collections.md#method-when)
 [where](collections.md#method-where)

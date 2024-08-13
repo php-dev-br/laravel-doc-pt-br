@@ -9,7 +9,6 @@
     - [Blade & JavaScript Frameworks](#blade-and-javascript-frameworks)
 - [Control Structures](#control-structures)
     - [If Statements](#if-statements)
-    - [Switch Statements](#switch-statements)
     - [Loops](#loops)
     - [The Loop Variable](#the-loop-variable)
     - [Comments](#comments)
@@ -19,7 +18,6 @@
 - [Stacks](#stacks)
 - [Service Injection](#service-injection)
 - [Extending Blade](#extending-blade)
-    - [Custom If Statements](#custom-if-statements)
 
 <a name="introduction"></a>
 ## Introduction
@@ -103,7 +101,7 @@ The `{{ $slot }}` variable will contain the content we wish to inject into the c
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
 
-Sometimes it is helpful to define multiple slots for a component. Let's modify our alert component to allow for the injection of a "title". Named slots may be displayed by "echoing" the variable that matches their name:
+Sometimes it is helpful to define multiple slots for a component. Let's modify our alert component to allow for the injection of a "title". Named slots may be displayed by simply "echoing" the variable that matches their name:
 
     <!-- /resources/views/alert.blade.php -->
 
@@ -148,7 +146,7 @@ Of course, you are not limited to displaying the contents of the variables passe
 
     The current UNIX timestamp is {{ time() }}.
 
-> {tip} Blade `{{ }}` statements are automatically sent through PHP's `htmlspecialchars` function to prevent XSS attacks.
+> {note} Blade `{{ }}` statements are automatically sent through PHP's `htmlspecialchars` function to prevent XSS attacks.
 
 #### Displaying Unescaped Data
 
@@ -157,20 +155,6 @@ By default, Blade `{{ }}` statements are automatically sent through PHP's `htmls
     Hello, {!! $name !!}.
 
 > {note} Be very careful when echoing content that is supplied by users of your application. Always use the escaped, double curly brace syntax to prevent XSS attacks when displaying user supplied data.
-
-#### Rendering JSON
-
-Sometimes you may pass an array to your view with the intention of rendering it as JSON in order to initialize a JavaScript variable. For example:
-
-    <script>
-        var app = <?php echo json_encode($array); ?>;
-    </script>
-
-However, instead of manually calling `json_encode`, you may use the `@json` Blade directive:
-
-    <script>
-        var app = @json($array);
-    </script>
 
 <a name="blade-and-javascript-frameworks"></a>
 ### Blade & JavaScript Frameworks
@@ -226,58 +210,6 @@ In addition to the conditional directives already discussed, the `@isset` and `@
     @empty($records)
         // $records is "empty"...
     @endempty
-
-#### Authentication Directives
-
-The `@auth` and `@guest` directives may be used to quickly determine if the current user is authenticated or is a guest:
-
-    @auth
-        // The user is authenticated...
-    @endauth
-
-    @guest
-        // The user is not authenticated...
-    @endguest
-
-If needed, you may specify the [authentication guard](authentication.md) that should be checked when using the `@auth` and `@guest` directives:
-
-    @auth('admin')
-        // The user is authenticated...
-    @endauth
-
-    @guest('admin')
-        // The user is not authenticated...
-    @endguest
-
-#### Section Directives
-
-You may check if a section has content using the `@hasSection` directive:
-
-    @hasSection('navigation')
-        <div class="pull-right">
-            @yield('navigation')
-        </div>
-
-        <div class="clearfix"></div>
-    @endif
-
-<a name="switch-statements"></a>
-### Switch Statements
-
-Switch statements can be constructed using the `@switch`, `@case`, `@break`, `@default` and `@endswitch` directives:
-
-    @switch($i)
-        @case(1)
-            First case...
-            @break
-
-        @case(2)
-            Second case...
-            @break
-
-        @default
-            Default case...
-    @endswitch
 
 <a name="loops"></a>
 ### Loops
@@ -411,10 +343,6 @@ If you would like to `@include` a view depending on a given boolean condition, y
 
     @includeWhen($boolean, 'view.name', ['some' => 'data'])
 
-To include the first view that exists from a given array of views, you may use the `includeFirst` directive:
-
-    @includeFirst(['custom.admin', 'admin'], ['some' => 'data'])
-
 > {note} You should avoid using the `__DIR__` and `__FILE__` constants in your Blade views, since they will refer to the location of the cached, compiled view.
 
 <a name="rendering-views-for-collections"></a>
@@ -429,8 +357,6 @@ The first argument is the view partial to render for each element in the array o
 You may also pass a fourth argument to the `@each` directive. This argument determines the view that will be rendered if the given array is empty.
 
     @each('view.name', $jobs, 'job', 'view.empty')
-
-> {note} Views rendered via `@each` do not inherit the variables from the parent view. If the child view requires these variables, you should use `@foreach` and `@include` instead.
 
 <a name="stacks"></a>
 ## Stacks
@@ -504,32 +430,3 @@ As you can see, we will chain the `format` method onto whatever expression is pa
     <?php echo ($var)->format('m/d/Y H:i'); ?>
 
 > {note} After updating the logic of a Blade directive, you will need to delete all of the cached Blade views. The cached Blade views may be removed using the `view:clear` Artisan command.
-
-<a name="custom-if-statements"></a>
-### Custom If Statements
-
-Programming a custom directive is sometimes more complex than necessary when defining simple, custom conditional statements. For that reason, Blade provides a `Blade::if` method which allows you to quickly define custom conditional directives using Closures. For example, let's define a custom conditional that checks the current application environment. We may do this in the `boot` method of our `AppServiceProvider`:
-
-    use Illuminate\Support\Facades\Blade;
-
-    /**
-     * Perform post-registration booting of services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        Blade::if('env', function ($environment) {
-            return app()->environment($environment);
-        });
-    }
-
-Once the custom conditional has been defined, we can easily use it on our templates:
-
-    @env('local')
-        // The application is in the local environment...
-    @elseenv('testing')
-        // The application is in the testing environment...
-    @else
-        // The application is not in the local or testing environment...
-    @endenv

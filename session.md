@@ -16,7 +16,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Since HTTP driven applications are stateless, sessions provide a way to store information about the user across multiple requests. Laravel ships with a variety of session backends that are accessed through an expressive, unified API. Support for popular backends such as [Memcached](https://memcached.org), [Redis](https://redis.io), and databases is included out of the box.
+Since HTTP driven applications are stateless, sessions provide a way to store information about the user across multiple requests. Laravel ships with a variety of session backends that are accessed through an expressive, unified API. Support for popular backends such as [Memcached](https://memcached.org), [Redis](http://redis.io), and databases is included out of the box.
 
 <a name="configuration"></a>
 ### Configuration
@@ -204,7 +204,7 @@ Your custom session driver should implement the `SessionHandlerInterface`. This 
 
     namespace App\Extensions;
 
-    class MongoSessionHandler implements \SessionHandlerInterface
+    class MongoHandler implements SessionHandlerInterface
     {
         public function open($savePath, $sessionName) {}
         public function close() {}
@@ -214,12 +214,12 @@ Your custom session driver should implement the `SessionHandlerInterface`. This 
         public function gc($lifetime) {}
     }
 
-> {tip} Laravel does not ship with a directory to contain your extensions. You are free to place them anywhere you like. In this example, we have created an `Extensions` directory to house the `MongoSessionHandler`.
+> {tip} Laravel does not ship with a directory to contain your extensions. You are free to place them anywhere you like. In this example, we have created an `Extensions` directory to house the `MongoHandler`.
 
 Since the purpose of these methods is not readily understandable, let's quickly cover what each of the methods do:
 
 <div class="content-list" markdown="1">
-- The `open` method would typically be used in file based session store systems. Since Laravel ships with a `file` session driver, you will almost never need to put anything in this method. You can leave it as an empty stub. It is a fact of poor interface design (which we'll discuss later) that PHP requires us to implement this method.
+- The `open` method would typically be used in file based session store systems. Since Laravel ships with a `file` session driver, you will almost never need to put anything in this method. You can leave it as an empty stub. It is simply a fact of poor interface design (which we'll discuss later) that PHP requires us to implement this method.
 - The `close` method, like the `open` method, can also usually be disregarded. For most drivers, it is not needed.
 - The `read` method should return the string version of the session data associated with the given `$sessionId`. There is no need to do any serialization or other encoding when retrieving or storing session data in your driver, as Laravel will perform the serialization for you.
 - The `write` method should write the given `$data` string associated with the `$sessionId` to some persistent storage system, such as MongoDB, Dynamo, etc.  Again, you should not perform any serialization - Laravel will have already handled that for you.
@@ -236,7 +236,7 @@ Once your driver has been implemented, you are ready to register it with the fra
 
     namespace App\Providers;
 
-    use App\Extensions\MongoSessionHandler;
+    use App\Extensions\MongoSessionStore;
     use Illuminate\Support\Facades\Session;
     use Illuminate\Support\ServiceProvider;
 
@@ -251,7 +251,7 @@ Once your driver has been implemented, you are ready to register it with the fra
         {
             Session::extend('mongo', function ($app) {
                 // Return implementation of SessionHandlerInterface...
-                return new MongoSessionHandler;
+                return new MongoSessionStore;
             });
         }
 

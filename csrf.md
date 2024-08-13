@@ -36,9 +36,9 @@ Typically, you should place these kinds of routes outside of the `web` middlewar
 
     namespace App\Http\Middleware;
 
-    use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+    use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as BaseVerifier;
 
-    class VerifyCsrfToken extends Middleware
+    class VerifyCsrfToken extends BaseVerifier
     {
         /**
          * The URIs that should be excluded from CSRF verification.
@@ -47,8 +47,6 @@ Typically, you should place these kinds of routes outside of the `web` middlewar
          */
         protected $except = [
             'stripe/*',
-            'http://example.com/foo/bar',
-            'http://example.com/foo/*',
         ];
     }
 

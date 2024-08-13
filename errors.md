@@ -9,7 +9,6 @@
 - [The Exception Handler](#the-exception-handler)
     - [Report Method](#report-method)
     - [Render Method](#render-method)
-    - [Reportable & Renderable Exceptions](#renderable-exceptions)
 - [HTTP Exceptions](#http-exceptions)
     - [Custom HTTP Error Pages](#custom-http-error-pages)
 - [Logging](#logging)
@@ -66,19 +65,13 @@ If you would like to have complete control over how Monolog is configured for yo
 
     return $app;
 
-#### Customizing The Channel Name
-
-By default, Monolog is instantiated with name that matches the current environment, such as `production` or `local`. To change this value, add the `log_channel` option to your `app.php` configuration file:
-
-    'log_channel' => env('APP_LOG_CHANNEL', 'my-app-name'),
-
 <a name="the-exception-handler"></a>
 ## The Exception Handler
 
 <a name="report-method"></a>
 ### The Report Method
 
-All exceptions are handled by the `App\Exceptions\Handler` class. This class contains two methods: `report` and `render`. We'll examine each of these methods in detail. The `report` method is used to log exceptions or send them to an external service like [Bugsnag](https://bugsnag.com) or [Sentry](https://github.com/getsentry/sentry-laravel). By default, the `report` method passes the exception to the base class where the exception is logged. However, you are free to log exceptions however you wish.
+All exceptions are handled by the `App\Exceptions\Handler` class. This class contains two methods: `report` and `render`. We'll examine each of these methods in detail. The `report` method is used to log exceptions or send them to an external service like [Bugsnag](https://bugsnag.com) or [Sentry](https://github.com/getsentry/sentry-laravel). By default, the `report` method simply passes the exception to the base class where the exception is logged. However, you are free to log exceptions however you wish.
 
 For example, if you need to report different types of exceptions in different ways, you may use the PHP `instanceof` comparison operator:
 
@@ -97,21 +90,6 @@ For example, if you need to report different types of exceptions in different wa
         }
 
         return parent::report($exception);
-    }
-
-#### The `report` Helper
-
-Sometimes you may need to report an exception but continue handling the current request. The `report` helper function allows you to quickly report an exception using your exception handler's `report` method without rendering an error page:
-
-    public function isValid($value)
-    {
-        try {
-            // Validate the value...
-        } catch (Exception $e) {
-            report($e);
-
-            return false;
-        }
     }
 
 #### Ignoring Exceptions By Type
@@ -150,41 +128,6 @@ The `render` method is responsible for converting a given exception into an HTTP
         }
 
         return parent::render($request, $exception);
-    }
-
-<a name="renderable-exceptions"></a>
-### Reportable & Renderable Exceptions
-
-Instead of type-checking exceptions in the exception handler's `report` and `render` methods, you may define `report` and `render` methods directly on your custom exception. When these methods exist, they will be called automatically by the framework:
-
-    <?php
-
-    namespace App\Exceptions;
-
-    use Exception;
-
-    class RenderException extends Exception
-    {
-        /**
-         * Report the exception.
-         *
-         * @return void
-         */
-        public function report()
-        {
-            //
-        }
-
-        /**
-         * Render the exception into an HTTP response.
-         *
-         * @param  \Illuminate\Http\Request
-         * @return \Illuminate\Http\Response
-         */
-        public function render($request)
-        {
-            return response(...);
-        }
     }
 
 <a name="http-exceptions"></a>

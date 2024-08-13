@@ -20,7 +20,7 @@
 <a name="configuration"></a>
 ## Configuration
 
-Laravel provides an expressive, unified API for various caching backends. The cache configuration is located at `config/cache.php`. In this file you may specify which cache driver you would like to be used by default throughout your application. Laravel supports popular caching backends like [Memcached](https://memcached.org) and [Redis](https://redis.io) out of the box.
+Laravel provides an expressive, unified API for various caching backends. The cache configuration is located at `config/cache.php`. In this file you may specify which cache driver you would like used by default throughout your application. Laravel supports popular caching backends like [Memcached](https://memcached.org) and [Redis](http://redis.io) out of the box.
 
 The cache configuration file also contains various other options, which are documented within the file, so make sure to read over these options. By default, Laravel is configured to use the `file` cache driver, which stores the serialized, cached objects in the filesystem. For larger applications, it is recommended that you use a more robust driver such as Memcached or Redis. You may even configure multiple cache configurations for the same driver.
 
@@ -169,7 +169,7 @@ You may use the `put` method on the `Cache` facade to store items in the cache. 
 
 Instead of passing the number of minutes as an integer, you may also pass a `DateTime` instance representing the expiration time of the cached item:
 
-    $expiresAt = now()->addMinutes(10);
+    $expiresAt = Carbon::now()->addMinutes(10);
 
     Cache::put('key', 'value', $expiresAt);
 
@@ -211,7 +211,7 @@ If you provide an array of key / value pairs and an expiration time to the funct
 
     cache(['key' => 'value'], $minutes);
 
-    cache(['key' => 'value'], now()->addSeconds(10));
+    cache(['key' => 'value'], Carbon::now()->addSeconds(10));
 
 > {tip} When testing call to the global `cache` function, you may use the `Cache::shouldReceive` method just as if you were [testing a facade](mocking.md#mocking-facades).
 
@@ -255,7 +255,7 @@ In contrast, this statement would remove only caches tagged with `authors`, so `
 <a name="writing-the-driver"></a>
 ### Writing The Driver
 
-To create our custom cache driver, we first need to implement the `Illuminate\Contracts\Cache\Store` [contract](contracts.md). So, a MongoDB cache implementation would look something like this:
+To create our custom cache driver, we first need to implement the `Illuminate\Contracts\Cache\Store` [contract](contracts.md) contract. So, a MongoDB cache implementation would look something like this:
 
     <?php
 
@@ -325,7 +325,7 @@ To register the custom cache driver with Laravel, we will use the `extend` metho
 
 The first argument passed to the `extend` method is the name of the driver. This will correspond to your `driver` option in the `config/cache.php` configuration file. The second argument is a Closure that should return an `Illuminate\Cache\Repository` instance. The Closure will be passed an `$app` instance, which is an instance of the [service container](container.md).
 
-Once your extension is registered, update your `config/cache.php` configuration file's `driver` option to the name of your extension.
+Once your extension is registered, simply update your `config/cache.php` configuration file's `driver` option to the name of your extension.
 
 <a name="events"></a>
 ## Events
