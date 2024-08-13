@@ -19,7 +19,7 @@ Sua aplicação, bem como todos os principais serviços do Laravel, são
 inicializados por meio de provedores de serviços.
 
 Mas, o que queremos dizer com “inicializados”? Em geral, queremos dizer **ao
-registrar** coisas, incluindo registrar ligações de contêineres de serviço,
+registrar** coisas, incluindo registrar ligações de contêineres de serviços,
 ouvintes de eventos, _middleware_ e até rotas.
 Os provedores de serviços são o local central para configurar sua aplicação.
 
@@ -65,10 +65,10 @@ coisas ao [contêiner de serviços](conteiner.md).
 Você nunca deve tentar registrar quaisquer ouvintes de eventos, rotas ou
 qualquer outra funcionalidade no método `register`.
 Caso contrário, você poderá usar acidentalmente um serviço fornecido por um
-provedor de serviço que ainda não foi carregado.
+provedor de serviços que ainda não foi carregado.
 
-Vamos dar uma olhada em um provedor de serviço básico.
-Dentro de qualquer um dos métodos do seu provedor de serviço, você sempre tem
+Vamos dar uma olhada em um provedor de serviços básico.
+Dentro de qualquer um dos métodos do seu provedor de serviços, você sempre tem
 acesso à propriedade `$app` que fornece acesso ao contêiner de serviços:
 
 ```php
@@ -94,7 +94,7 @@ class RiakServiceProvider extends ServiceProvider
 }
 ```
 
-Este provedor de serviço define apenas um método `register` e usa esse método
+Este provedor de serviços define apenas um método `register` e usa esse método
 para definir uma implementação de `App\Services\Riak\Connection` no contêiner de
 serviços.
 Se você ainda não se familiarizou com o contêiner de serviços do Laravel,
@@ -102,10 +102,10 @@ confira [sua documentação](conteiner.md).
 
 #### As Propriedades `bindings` e `singletons`
 
-Se o seu provedor de serviço registrar muitas ligações simples, você poderá usar
+Se o seu provedor de serviços registrar muitas ligações simples, você poderá usar
 as propriedades `bindings` e `singletons` em vez de registrar manualmente cada
 ligação de contêiner.
-Quando o provedor de serviço for carregado pelo _framework_, ele verificará
+Quando o provedor de serviços for carregado pelo _framework_, ele verificará
 automaticamente essas propriedades e registrará suas ligações:
 
 ```php
