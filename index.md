@@ -36,7 +36,6 @@
 - [Respostas](responses.md)
 - [Visualizações](views.md)
 - [Modelos Blade](blade.md)
-- [Empacotamento de recursos](vite.md)
 - [Geração de URL](urls.md)
 - [Sessão](session.md)
 - [Validação](validation.md)
@@ -49,6 +48,7 @@
 - [Transmissão](broadcasting.md)
 - [Cache](cache.md)
 - [Coleções](collections.md)
+- [Compiling Assets](mix.md)
 - [Contratos](contracts.md)
 - [Eventos](events.md)
 - [Armazenamento de arquivos](filesystem.md)
@@ -88,7 +88,6 @@
 - [Modificadores / Moldadores](eloquent-mutators.md)
 - [Recursos de API](eloquent-resources.md)
 - [Serialização](eloquent-serialization.md)
-- [Fábricas](eloquent-factories.md)
 
 ## Testes
 
@@ -110,10 +109,8 @@
 - [Homestead](homestead.md)
 - [Horizon](horizon.md)
 - [Jetstream](https://jetstream.laravel.com)
-- [Mix](mix.md)
 - [Octane](octane.md)
 - [Passport](passport.md)
-- [Pint](pint.md)
 - [Sail](sail.md)
 - [Sanctum](sanctum.md)
 - [Scout](scout.md)
@@ -123,4 +120,4 @@
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/9.x/index.html)
+- [Documentação da API](https://laravel.com/api/8.x/index.html)
