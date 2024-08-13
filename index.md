@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.8/documentation.md -->
-<!-- revision: 990c96b63b55650663403b72483b31c4d24ecebc -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.7/documentation.md -->
+<!-- revision: f2cc3533881602bfc491b8c5023bb100ba137ef9 -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -9,7 +9,7 @@
 - [Notas de Versão](releases.md)
 - [Guia de Atualização](upgrade.md)
 - [Guia de Contribuição](contributions.md)
-- [Documentação da API](https://laravel.com/api/5.8)
+- [Documentação da API](https://laravel.com/api/5.7)
 
 ## Começando
 
