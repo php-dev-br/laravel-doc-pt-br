@@ -1,9 +1,6 @@
 # Release Notes
 
 - [Support Policy](#support-policy)
-- [Laravel 5.1.11](#laravel-5.1.11)
-- [Laravel 5.1.4](#laravel-5.1.4)
-- [Laravel 5.1](#laravel-5.1)
 - [Laravel 5.0](#laravel-5.0)
 - [Laravel 4.2](#laravel-4.2)
 - [Laravel 4.1](#laravel-4.1)
@@ -11,145 +8,14 @@
 <a name="support-policy"></a>
 ## Support Policy
 
-For LTS releases, such as Laravel 5.1, bug fixes are provided for 2 years and security fixes are provided for 3 years. These releases provide the longest window of support and maintenance.
+Security fixes are **always** applied to the previous major version of Laravel. Currently, **all** security fixes and patches will be applied to both Laravel 5.x **and** Laravel 4.x.
 
-For general releases, bug fixes are provided for 6 months and security fixes are provided for 1 year.
-
-<a name="laravel-5.1.11"></a>
-## Laravel 5.1.11
-
-Laravel 5.1.11 introduces [authorization](authorization.md) support out of the box! Conveniently organize your application's authorization logic using simple callbacks or policy classes, and authorize actions using simple, expressive methods.
-
-For more information, please refer to the [authorization documentation](authorization.md).
-
-<a name="laravel-5.1.4"></a>
-## Laravel 5.1.4
-
-Laravel 5.1.4 introduces simple login throttling to the framework. Consult the [authentication documentation](authentication.md#authentication-throttling) for more information.
-
-<a name="laravel-5.1"></a>
-## Laravel 5.1
-
-Laravel 5.1 continues the improvements made in Laravel 5.0 by adopting PSR-2 and adding event broadcasting, middleware parameters, Artisan improvements, and more.
-
-### PHP 5.5.9+
-
-Since PHP 5.4 will enter "end of life" in September and will no longer receive security updates from the PHP development team, Laravel 5.1 requires PHP 5.5.9 or greater. PHP 5.5.9 allows compatibility with the latest versions of popular PHP libraries such as Guzzle and the AWS SDK.
-
-### LTS
-
- Laravel 5.1 is the first release of Laravel to receive **long term support**. Laravel 5.1 will receive bug fixes for 2 years and security fixes for 3 years. This support window is the largest ever provided for Laravel and provides stability and peace of mind for larger, enterprise clients and customers.
-
-### PSR-2
-
-The [PSR-2 coding style guide](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) has been adopted as the default style guide for the Laravel framework. Additionally, all generators have been updated to generate PSR-2 compatible syntax.
-
-### Documentation
-
-Every page of the Laravel documentation has been meticulously reviewed and dramatically improved. All code examples have also been reviewed and expanded to provide more relevance and context.
-
-### Event Broadcasting
-
-In many modern web applications, web sockets are used to implement real-time, live-updating user interfaces. When some data is updated on the server, a message is typically sent over a websocket connection to be handled by the client.
-
-To assist you in building these types of applications, Laravel makes it easy to "broadcast" your events over a websocket connection. Broadcasting your Laravel events allows you to share the same event names between your server-side code and your client-side JavaScript framework.
-
-To learn more about event broadcasting, check out the [event documentation](events.md#broadcasting-events).
-
-### Middleware Parameters
-
-Middleware can now receive additional custom parameters. For example, if your application needs to verify that the authenticated user has a given "role" before performing a given action, you could create a `RoleMiddleware` that receives a role name as an additional argument:
-
-    <?php
-
-    namespace App\Http\Middleware;
-
-    use Closure;
-
-    class RoleMiddleware
-    {
-        /**
-         * Run the request filter.
-         *
-         * @param  \Illuminate\Http\Request  $request
-         * @param  \Closure  $next
-         * @param  string  $role
-         * @return mixed
-         */
-        public function handle($request, Closure $next, $role)
-        {
-            if (! $request->user()->hasRole($role)) {
-                // Redirect...
-            }
-
-            return $next($request);
-        }
-
-    }
-
-Middleware parameters may be specified when defining the route by separating the middleware name and parameters with a `:`. Multiple parameters should be delimited by commas:
-
-    Route::put('post/{id}', ['middleware' => 'role:editor', function ($id) {
-        //
-    }]);
-
-For more information on middleware, check out the [middleware documentation](middleware.md).
-
-### Testing Overhaul
-
-The built-in testing capabilities of Laravel have been dramatically improved. A variety of new methods provide a fluent, expressive interface for interacting with your application and examining its responses. For example, check out the following test:
-
-    public function testNewUserRegistration()
-    {
-        $this->visit('/register')
-             ->type('Taylor', 'name')
-             ->check('terms')
-             ->press('Register')
-             ->seePageIs('/dashboard');
-    }
-
-For more information on testing, check out the [testing documentation](testing.md).
-
-### Model Factories
-
-Laravel now ships with an easy way to create stub Eloquent models using [model factories](testing.md#model-factories). Model factories allow you to easily define a set of "default" attributes for your Eloquent model, and then generate test model instances for your tests or database seeds. Model factories also take advantage of the powerful [Faker](https://github.com/fzaninotto/Faker) PHP library for generating random attribute data:
-
-    $factory->define(App\User::class, function ($faker) {
-        return [
-            'name' => $faker->name,
-            'email' => $faker->email,
-            'password' => str_random(10),
-            'remember_token' => str_random(10),
-        ];
-    });
-
-For more information on model factories, check out [the documentation](testing.md#model-factories).
-
-### Artisan Improvements
-
-Artisan commands may now be defined using a simple, route-like "signature", which provides an extremely simple interface for defining command line arguments and options. For example, you may define a simple command and its options like so:
-
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'email:send {user} {--force}';
-
-For more information on defining Artisan commands, consult the [Artisan documentation](artisan.md).
-
-### Folder Structure
-
-To better express intent, the `app/Commands` directory has been renamed to `app/Jobs`. Additionally, the `app/Handlers` directory has been consolidated into a single `app/Listeners` directory which simply contains event listeners. However, this is not a breaking change and you are not required to update to the new folder structure to use Laravel 5.1.
-
-### Encryption
-
-In previous versions of Laravel, encryption was handled by the `mcrypt` PHP extension. However, beginning in Laravel 5.1, encryption is handled by the `openssl` extension, which is more actively maintained.
+When feasible, security fixes will also be applied to even older releases of the framework, such as Laravel 3.x.
 
 <a name="laravel-5.0"></a>
 ## Laravel 5.0
 
-Laravel 5.0 introduces a fresh application structure to the default Laravel project. This new structure serves as a better foundation for building a robust application in Laravel, as well as embraces new auto-loading standards (PSR-4) throughout the application. First, let's examine some of the major changes:
+Laravel 5.0 introduces a fresh application structure to the default Laravel project. This new structure serves as a better foundation for building robust application in Laravel, as well as embraces new auto-loading standards (PSR-4) throughout the application. First, let's examine some of the major changes:
 
 ### New Folder Structure
 
@@ -181,10 +47,10 @@ For more information on middleware, check out [the documentation](middleware.md)
 
 In addition to the existing constructor injection, you may now type-hint dependencies on controller methods. The [service container](container.md) will automatically inject the dependencies, even if the route contains other parameters:
 
-    public function createPost(Request $request, PostRepository $posts)
-    {
-        //
-    }
+	public function createPost(Request $request, PostRepository $posts)
+	{
+		//
+	}
 
 ### Authentication Scaffolding
 
@@ -194,33 +60,31 @@ User registration, authentication, and password reset controllers are now includ
 
 You may now define events as objects instead of simply using strings. For example, check out the following event:
 
-    <?php
+	class PodcastWasPurchased {
 
-    class PodcastWasPurchased
-    {
-        public $podcast;
+		public $podcast;
 
-        public function __construct(Podcast $podcast)
-        {
-            $this->podcast = $podcast;
-        }
-    }
+		public function __construct(Podcast $podcast)
+		{
+			$this->podcast = $podcast;
+		}
+
+	}
 
 The event may be dispatched like normal:
 
-    Event::fire(new PodcastWasPurchased($podcast));
+	Event::fire(new PodcastWasPurchased($podcast));
 
 Of course, your event handler will receive the event object instead of a list of data:
 
-    <?php
+	class ReportPodcastPurchase {
 
-    class ReportPodcastPurchase
-    {
-        public function handle(PodcastWasPurchased $event)
-        {
-            //
-        }
-    }
+		public function handle(PodcastWasPurchased $event)
+		{
+			//
+		}
+
+	}
 
 For more information on working with events, check out the [full documentation](events.md).
 
@@ -228,43 +92,42 @@ For more information on working with events, check out the [full documentation](
 
 In addition to the queue job format supported in Laravel 4, Laravel 5 allows you to represent your queued jobs as simple command objects. These commands live in the `app/Commands` directory. Here's a sample command:
 
-    <?php
+	class PurchasePodcast extends Command implements SelfHandling, ShouldBeQueued {
 
-    class PurchasePodcast extends Command implements SelfHandling, ShouldBeQueued
-    {
-        use SerializesModels;
+		use SerializesModels;
 
-        protected $user, $podcast;
+		protected $user, $podcast;
 
-        /**
-         * Create a new command instance.
-         *
-         * @return void
-         */
-        public function __construct(User $user, Podcast $podcast)
-        {
-            $this->user = $user;
-            $this->podcast = $podcast;
-        }
+		/**
+		 * Create a new command instance.
+		 *
+		 * @return void
+		 */
+		public function __construct(User $user, Podcast $podcast)
+		{
+			$this->user = $user;
+			$this->podcast = $podcast;
+		}
 
-        /**
-         * Execute the command.
-         *
-         * @return void
-         */
-        public function handle()
-        {
-            // Handle the logic to purchase the podcast...
+		/**
+		 * Execute the command.
+		 *
+		 * @return void
+		 */
+		public function handle()
+		{
+			// Handle the logic to purchase the podcast...
 
-            event(new PodcastWasPurchased($this->user, $this->podcast));
-        }
-    }
+			event(new PodcastWasPurchased($this->user, $this->podcast));
+		}
+
+	}
 
 The base Laravel controller utilizes the new `DispatchesCommands` trait, allowing you to easily dispatch your commands for execution:
 
-    $this->dispatch(new PurchasePodcastCommand($user, $podcast));
+	$this->dispatch(new PurchasePodcastCommand($user, $podcast));
 
-Of course, you may also use commands for tasks that are executed synchronously (are not queued). In fact, using commands is a great way to encapsulate complex tasks your application needs to perform. For more information, check out the [command bus](/docs/5.0/bus) documentation.
+Of course, you may also use commands for tasks that are executed synchronously (are not queued). In fact, using commands is a great way to encapsulate complex tasks your application needs to perform. For more information, check out the [command bus](bus.md) documentation.
 
 ### Database Queue
 
@@ -276,19 +139,19 @@ In the past, developers have generated a Cron entry for each console command the
 
 It looks like this:
 
-    $schedule->command('artisan:command')->dailyAt('15:00');
+	$schedule->command('artisan:command')->dailyAt('15:00');
 
-Of course, check out the [full documentation](scheduling.md) to learn all about the scheduler!
+Of course, check out the [full documentation](artisan.md#scheduling-artisan-commands) to learn all about the scheduler!
 
 ### Tinker / Psysh
 
 The `php artisan tinker` command now utilizes [Psysh](https://github.com/bobthecow/psysh) by Justin Hileman, a more robust REPL for PHP. If you liked Boris in Laravel 4, you're going to love Psysh. Even better, it works on Windows! To get started, just try:
 
-    php artisan tinker
+	php artisan tinker
 
 ### DotEnv
 
-Instead of a variety of confusing, nested environment configuration directories, Laravel 5 now utilizes [DotEnv](https://github.com/vlucas/phpdotenv) by Vance Lucas. This library provides a super simple way to manage your environment configuration, and makes environment detection in Laravel 5 a breeze. For more details, check out the full [configuration documentation](installation.md#environment-configuration).
+Instead of a variety of confusing, nested environment configuration directories, Laravel 5 now utilizes [DotEnv](https://github.com/vlucas/phpdotenv) by Vance Lucas. This library provides a super simple way to manage your environment configuration, and makes environment detection in Laravel 5 a breeze. For more details, check out the full [configuration documentation](configuration.md#environment-configuration).
 
 ### Laravel Elixir
 
@@ -300,15 +163,15 @@ For more information on Elixir, check out the [full documentation](elixir.md).
 
 Laravel Socialite is an optional, Laravel 5.0+ compatible package that provides totally painless authentication with OAuth providers. Currently, Socialite supports Facebook, Twitter, Google, and GitHub. Here's what it looks like:
 
-    public function redirectForAuth()
-    {
-        return Socialize::with('twitter')->redirect();
-    }
+	public function redirectForAuth()
+	{
+		return Socialize::with('twitter')->redirect();
+	}
 
-    public function getUserFromProvider()
-    {
-        $user = Socialize::with('twitter')->user();
-    }
+	public function getUserFromProvider()
+	{
+		$user = Socialize::with('twitter')->user();
+	}
 
 No more spending hours writing OAuth authentication flows. Get started in minutes! The [full documentation](authentication.md#social-authentication) has all the details.
 
@@ -316,7 +179,7 @@ No more spending hours writing OAuth authentication flows. Get started in minute
 
 Laravel now includes the powerful [Flysystem](https://github.com/thephpleague/flysystem) filesystem abstraction library, providing pain free integration with local, Amazon S3, and Rackspace cloud storage - all with one, unified and elegant API! Storing a file in Amazon S3 is now as simple as:
 
-    Storage::put('file.txt', 'contents');
+	Storage::put('file.txt', 'contents');
 
 For more information on the Laravel Flysystem integration, consult the [full documentation](filesystem.md).
 
@@ -324,32 +187,31 @@ For more information on the Laravel Flysystem integration, consult the [full doc
 
 Laravel 5.0 introduces **form requests**, which extend the `Illuminate\Foundation\Http\FormRequest` class. These request objects can be combined with controller method injection to provide a boiler-plate free method of validating user input. Let's dig in and look at a sample `FormRequest`:
 
-    <?php
+	<?php namespace App\Http\Requests;
 
-    namespace App\Http\Requests;
+	class RegisterRequest extends FormRequest {
 
-    class RegisterRequest extends FormRequest
-    {
-        public function rules()
-        {
-            return [
-                'email' => 'required|email|unique:users',
-                'password' => 'required|confirmed|min:8',
-            ];
-        }
+		public function rules()
+		{
+			return [
+				'email' => 'required|email|unique:users',
+				'password' => 'required|confirmed|min:8',
+			];
+		}
 
-        public function authorize()
-        {
-            return true;
-        }
-    }
+		public function authorize()
+		{
+			return true;
+		}
+
+	}
 
 Once the class has been defined, we can type-hint it on our controller action:
 
-    public function register(RegisterRequest $request)
-    {
-        var_dump($request->input());
-    }
+	public function register(RegisterRequest $request)
+	{
+		var_dump($request->input());
+	}
 
 When the Laravel service container identifies that the class it is injecting is a `FormRequest` instance, the request will **automatically be validated**. This means that if your controller action is called, you can safely assume the HTTP request input has been validated according to the rules you specified in your form request class. Even more, if the request is invalid, an HTTP redirect, which you may customize, will automatically be issued, and the error messages will be either flashed to the session or converted to JSON. **Form validation has never been more simple.** For more information on `FormRequest` validation, check out the [documentation](validation.md#form-request-validation).
 
@@ -357,17 +219,17 @@ When the Laravel service container identifies that the class it is injecting is 
 
 The Laravel 5 base controller now includes a `ValidatesRequests` trait. This trait provides a simple `validate` method to validate incoming requests. If `FormRequests` are a little too much for your application, check this out:
 
-    public function createPost(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required|max:255',
-            'body' => 'required',
-        ]);
-    }
+	public function createPost(Request $request)
+	{
+		$this->validate($request, [
+			'title' => 'required|max:255',
+			'body' => 'required',
+		]);
+	}
 
 If the validation fails, an exception will be thrown and the proper HTTP response will automatically be sent back to the browser. The validation errors will even be flashed to the session! If the request was an AJAX request, Laravel even takes care of sending a JSON representation of the validation errors back to you.
 
-For more information on this new method, check out [the documentation](validation.md#validation-quickstart).
+For more information on this new method, check out [the documentation](validation.md#controller-validation).
 
 ### New Generators
 
@@ -381,7 +243,7 @@ You may now cache all of your configuration in a single file using the `config:c
 
 The popular `dd` helper function, which dumps variable debug information, has been upgraded to use the amazing Symfony VarDumper. This provides color-coded output and even collapsing of arrays. Just try the following in your project:
 
-    dd([1, 2, 3]);
+	dd([1, 2, 3]);
 
 <a name="laravel-4.2"></a>
 ## Laravel 4.2

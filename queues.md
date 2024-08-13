@@ -1,545 +1,277 @@
 # Queues
 
-- [Introduction](#introduction)
-- [Writing Job Classes](#writing-job-classes)
-    - [Generating Job Classes](#generating-job-classes)
-    - [Job Class Structure](#job-class-structure)
-- [Pushing Jobs Onto The Queue](#pushing-jobs-onto-the-queue)
-    - [Delayed Jobs](#delayed-jobs)
-    - [Dispatching Jobs From Requests](#dispatching-jobs-from-requests)
-    - [Job Events](#job-events)
+- [Configuration](#configuration)
+- [Basic Usage](#basic-usage)
+- [Queueing Closures](#queueing-closures)
 - [Running The Queue Listener](#running-the-queue-listener)
-    - [Supervisor Configuration](#supervisor-configuration)
-    - [Daemon Queue Listener](#daemon-queue-listener)
-    - [Deploying With Daemon Queue Listeners](#deploying-with-daemon-queue-listeners)
-- [Dealing With Failed Jobs](#dealing-with-failed-jobs)
-    - [Failed Job Events](#failed-job-events)
-    - [Retrying Failed Jobs](#retrying-failed-jobs)
-
-<a name="introduction"></a>
-## Introduction
-
-The Laravel queue service provides a unified API across a variety of different queue back-ends. Queues allow you to defer the processing of a time consuming task, such as sending an e-mail, until a later time which drastically speeds up web requests to your application.
+- [Daemon Queue Worker](#daemon-queue-worker)
+- [Push Queues](#push-queues)
+- [Failed Jobs](#failed-jobs)
 
 <a name="configuration"></a>
-### Configuration
+## Configuration
 
-The queue configuration file is stored in `config/queue.php`. In this file you will find connection configurations for each of the queue drivers that are included with the framework, which includes a database, [Beanstalkd](http://kr.github.com/beanstalkd), [IronMQ](http://iron.io), [Amazon SQS](http://aws.amazon.com/sqs), [Redis](http://redis.io),  and synchronous (for local use) driver.
+The Laravel Queue component provides a unified API across a variety of different queue services. Queues allow you to defer the processing of a time consuming task, such as sending an e-mail, until a later time, thus drastically speeding up the web requests to your application.
 
-A `null` queue driver is also included which simply discards queued jobs.
+The queue configuration file is stored in `config/queue.php`. In this file you will find connection configurations for each of the queue drivers that are included with the framework, which includes a database, [Beanstalkd](http://kr.github.com/beanstalkd), [IronMQ](http://iron.io), [Amazon SQS](http://aws.amazon.com/sqs), [Redis](http://redis.io), null, and synchronous (for local use) driver. The `null` queue driver simply discards queued jobs so they are never run.
 
-### Driver Prerequisites
+### Queue Database Table
 
-#### Database
+In order to use the `database` queue driver, you will need a database table to hold the jobs. To generate a migration to create this table, run the `queue:table` Artisan command:
 
-In order to use the `database` queue driver, you will need a database table to hold the jobs. To generate a migration that creates this table, run the `queue:table` Artisan command. Once the migration is created, you may migrate your database using the `migrate` command:
+	php artisan queue:table
 
-    php artisan queue:table
-
-    php artisan migrate
-
-#### Other Queue Dependencies
+### Other Queue Dependencies
 
 The following dependencies are needed for the listed queue drivers:
 
-- Amazon SQS: `aws/aws-sdk-php ~3.0`
+- Amazon SQS: `aws/aws-sdk-php`
 - Beanstalkd: `pda/pheanstalk ~3.0`
-- IronMQ: `iron-io/iron_mq ~2.0|~4.0`
+- IronMQ: `iron-io/iron_mq ~1.5`
 - Redis: `predis/predis ~1.0`
 
-<a name="writing-job-classes"></a>
-## Writing Job Classes
+<a name="basic-usage"></a>
+## Basic Usage
 
-<a name="generating-job-classes"></a>
-### Generating Job Classes
+#### Pushing A Job Onto The Queue
 
-By default, all of the queueable jobs for your application are stored in the `app/Jobs` directory. You may generate a new queued job using the Artisan CLI:
+All of the queueable jobs for your application are stored in the `App\Commands` directory. You may generate a new queued command using the Artisan CLI:
 
-    php artisan make:job SendReminderEmail --queued
+	php artisan make:command SendEmail --queued
 
-This command will generate a new class in the `app/Jobs` directory, and the class will implement the `Illuminate\Contracts\Queue\ShouldQueue` interface, indicating to Laravel that the job should be pushed onto the queue instead of run synchronously.
+To push a new job onto the queue, use the `Queue::push` method:
 
-<a name="job-class-structure"></a>
-### Job Class Structure
+	Queue::push(new SendEmail($message));
 
-Job classes are very simple, normally containing only a `handle` method which is called when the job is processed by the queue. To get started, let's take a look at an example job class:
+> **Note:** In this example, we are using the `Queue` facade directly; however, typically you would dispatch queued command via the [Command Bus](bus.md). We will continue to use the `Queue` facade throughout this page; however, familiarize with the command bus as well, since it is used to dispatch both queued and synchronous commands for your application.
 
-    <?php
+By default, the `make:command` Artisan command generates a "self-handling" command, meaning a `handle` method is added to the command itself. This method will be called when the job is executed by the queue. You may type-hint any dependencies you need on the `handle` method and the [service container](container.md) will automatically inject them:
 
-    namespace App\Jobs;
+	public function handle(UserRepository $users)
+	{
+		//
+	}
 
-    use App\User;
-    use App\Jobs\Job;
-    use Illuminate\Contracts\Mail\Mailer;
-    use Illuminate\Queue\SerializesModels;
-    use Illuminate\Queue\InteractsWithQueue;
-    use Illuminate\Contracts\Bus\SelfHandling;
-    use Illuminate\Contracts\Queue\ShouldQueue;
+If you would like your command to have a separate handler class, you should add the `--handler` flag to the `make:command` command:
 
-    class SendReminderEmail extends Job implements SelfHandling, ShouldQueue
-    {
-        use InteractsWithQueue, SerializesModels;
+	php artisan make:command SendEmail --queued --handler
 
-        protected $user;
+The generated handler will be placed in `App\Handlers\Commands` and will be resolved out of the IoC container.
 
-        /**
-         * Create a new job instance.
-         *
-         * @param  User  $user
-         * @return void
-         */
-        public function __construct(User $user)
-        {
-            $this->user = $user;
-        }
+#### Specifying The Queue / Tube For A Job
 
-        /**
-         * Execute the job.
-         *
-         * @param  Mailer  $mailer
-         * @return void
-         */
-        public function handle(Mailer $mailer)
-        {
-            $mailer->send('emails.reminder', ['user' => $this->user], function ($m) {
-                //
-            });
+You may also specify the queue / tube a job should be sent to:
 
-            $this->user->reminders()->create(...);
-        }
-    }
+	Queue::pushOn('emails', new SendEmail($message));
 
-In this example, note that we were able to pass an [Eloquent model](eloquent.md) directly into the queued job's constructor. Because of the `SerializesModels` trait that the job is using, Eloquent models will be gracefully serialized and unserialized when the job is processing. If your queued job accepts an Eloquent model in its constructor, only the identifier for the model will be serialized onto the queue. When the job is actually handled, the queue system will automatically re-retrieve the full model instance from the database. It's all totally transparent to your application and prevents issues that can arise from serializing full Eloquent model instances.
+#### Passing The Same Payload To Multiple Jobs
 
-The `handle` method is called when the job is processed by the queue. Note that we are able to type-hint dependencies on the `handle` method of the job. The Laravel [service container](container.md) automatically injects these dependencies.
+If you need to pass the same data to several queue jobs, you may use the `Queue::bulk` method:
 
-#### When Things Go Wrong
+	Queue::bulk([new SendEmail($message), new AnotherCommand]);
 
-If an exception is thrown while the job is being processed, it will automatically be released back onto the queue so it may be attempted again. The job will continue to be released until it has been attempted the maximum number of times allowed by your application. The number of maximum attempts is defined by the `--tries` switch used on the `queue:listen` or `queue:work` Artisan jobs. More information on running the queue listener [can be found below](#running-the-queue-listener).
+#### Delaying The Execution Of A Job
 
-#### Manually Releasing Jobs
+Sometimes you may wish to delay the execution of a queued job. For instance, you may wish to queue a job that sends a customer an e-mail 15 minutes after sign-up. You can accomplish this using the `Queue::later` method:
 
-If you would like to `release` the job manually, the `InteractsWithQueue` trait, which is already included in your generated job class, provides access to the queue job `release` method. The `release` method accepts one argument: the number of seconds you wish to wait until the job is made available again:
+	$date = Carbon::now()->addMinutes(15);
 
-    public function handle(Mailer $mailer)
-    {
-        if (condition) {
-            $this->release(10);
-        }
-    }
+	Queue::later($date, new SendEmail($message));
+
+In this example, we're using the [Carbon](https://github.com/briannesbitt/Carbon) date library to specify the delay we wish to assign to the job. Alternatively, you may pass the number of seconds you wish to delay as an integer.
+
+> **Note:** The Amazon SQS service has a delay limit of 900 seconds (15 minutes).
+
+#### Queues And Eloquent Models
+
+If your queued job accepts an Eloquent model in its constructor, only the identifier for the model will be serialized onto the queue. When the job is actually handled, the queue system will automatically re-retrieve the full model instance from the database. It's all totally transparent to your application and prevents issues that can arise from serializing full Eloquent model instances.
+
+#### Deleting A Processed Job
+
+Once you have processed a job, it must be deleted from the queue. If no exception is thrown during the execution of your job, this will be done automatically.
+
+If you would like to `delete` or `release` the job manually, the `Illuminate\Queue\InteractsWithQueue` trait provides access to the queue job `release` and `delete` methods. The `release` method accepts a single value: the number of seconds you wish to wait until the job is made available again.
+
+	public function handle(SendEmail $command)
+	{
+		if (true)
+		{
+			$this->release(30);
+		}
+	}
+
+#### Releasing A Job Back Onto The Queue
+
+IF an exception is thrown while the job is being processed, it will automatically be released back onto the queue so it may be attempted again. The job will continue to be released until it has been attempted the maximum number of times allowed by your application. The number of maximum attempts is defined by the `--tries` switch used on the `queue:listen` or `queue:work` Artisan commands.
 
 #### Checking The Number Of Run Attempts
 
-As noted above, if an exception occurs while the job is being processed, it will automatically be released back onto the queue. You may check the number of attempts that have been made to run the job using the `attempts` method:
+If an exception occurs while the job is being processed, it will automatically be released back onto the queue. You may check the number of attempts that have been made to run the job using the `attempts` method:
 
-    public function handle(Mailer $mailer)
-    {
-        if ($this->attempts() > 3) {
-            //
-        }
-    }
+	if ($this->attempts() > 3)
+	{
+		//
+	}
 
-<a name="pushing-jobs-onto-the-queue"></a>
-## Pushing Jobs Onto The Queue
+> **Note:** Your command / handler must use the `Illuminate\Queue\InteractsWithQueue` trait in order to call this method.
 
-The default Laravel controller located in `app/Http/Controllers/Controller.php` uses a `DispatchesJobs` trait. This trait provides several methods allowing you to conveniently push jobs onto the queue, such as the `dispatch` method:
+<a name="queueing-closures"></a>
+## Queueing Closures
 
-    <?php
+You may also push a Closure onto the queue. This is very convenient for quick, simple tasks that need to be queued:
 
-    namespace App\Http\Controllers;
+#### Pushing A Closure Onto The Queue
 
-    use App\User;
-    use Illuminate\Http\Request;
-    use App\Jobs\SendReminderEmail;
-    use App\Http\Controllers\Controller;
+	Queue::push(function($job) use ($id)
+	{
+		Account::delete($id);
 
-    class UserController extends Controller
-    {
-        /**
-         * Send a reminder e-mail to a given user.
-         *
-         * @param  Request  $request
-         * @param  int  $id
-         * @return Response
-         */
-        public function sendReminderEmail(Request $request, $id)
-        {
-            $user = User::findOrFail($id);
+		$job->delete();
+	});
 
-            $this->dispatch(new SendReminderEmail($user));
-        }
-    }
+> **Note:** Instead of making objects available to queued Closures via the `use` directive, consider passing primary keys and re-pulling the associated models from within your queue job. This often avoids unexpected serialization behavior.
 
-Of course, sometimes you may wish to dispatch a job from somewhere in your application besides a route or controller. For that reason, you can include the `DispatchesJobs` trait on any of the classes in your application to gain access to its various dispatch methods. For example, here is a sample class that uses the trait:
-
-    <?php
-
-    namespace App;
-
-    use Illuminate\Foundation\Bus\DispatchesJobs;
-
-    class ExampleClass
-    {
-        use DispatchesJobs;
-    }
-
-#### Specifying The Queue For A Job
-
-You may also specify the queue a job should be sent to.
-
-By pushing jobs to different queues, you may "categorize" your queued jobs, and even prioritize how many workers you assign to various queues. This does not push jobs to different queue "connections" as defined by your queue configuration file, but only to specific queues within a single connection. To specify the queue, use the `onQueue` method on the job instance. The `onQueue` method is provided by the `Illuminate\Bus\Queueable` trait, which is already included on the `App\Jobs\Job` base class:
-
-    <?php
-
-    namespace App\Http\Controllers;
-
-    use App\User;
-    use Illuminate\Http\Request;
-    use App\Jobs\SendReminderEmail;
-    use App\Http\Controllers\Controller;
-
-    class UserController extends Controller
-    {
-        /**
-         * Send a reminder e-mail to a given user.
-         *
-         * @param  Request  $request
-         * @param  int  $id
-         * @return Response
-         */
-        public function sendReminderEmail(Request $request, $id)
-        {
-            $user = User::findOrFail($id);
-
-            $job = (new SendReminderEmail($user))->onQueue('emails');
-
-            $this->dispatch($job);
-        }
-    }
-
-<a name="delayed-jobs"></a>
-### Delayed Jobs
-
-Sometimes you may wish to delay the execution of a queued job. For instance, you may wish to queue a job that sends a customer a reminder e-mail 15 minutes after sign-up. You may accomplish this using the `delay` method on your job class, which is provided by the `Illuminate\Bus\Queueable` trait:
-
-    <?php
-
-    namespace App\Http\Controllers;
-
-    use App\User;
-    use Illuminate\Http\Request;
-    use App\Jobs\SendReminderEmail;
-    use App\Http\Controllers\Controller;
-
-    class UserController extends Controller
-    {
-        /**
-         * Send a reminder e-mail to a given user.
-         *
-         * @param  Request  $request
-         * @param  int  $id
-         * @return Response
-         */
-        public function sendReminderEmail(Request $request, $id)
-        {
-            $user = User::findOrFail($id);
-
-            $job = (new SendReminderEmail($user))->delay(60);
-
-            $this->dispatch($job);
-        }
-    }
-
-In this example, we're specifying that the job should be delayed in the queue for 60 seconds before being made available to workers.
-
-> **Note:** The Amazon SQS service has a maximum delay time of 15 minutes.
-
-<a name="dispatching-jobs-from-requests"></a>
-### Dispatching Jobs From Requests
-
-It is very common to map HTTP request variables into jobs. So, instead of forcing you to do this manually for each request, Laravel provides some helper methods to make it a cinch. Let's take a look at the `dispatchFrom` method available on the `DispatchesJobs` trait. By default, this trait is included on the base Laravel controller class:
-
-    <?php
-
-    namespace App\Http\Controllers;
-
-    use Illuminate\Http\Request;
-    use App\Http\Controllers\Controller;
-
-    class CommerceController extends Controller
-    {
-        /**
-         * Process the given order.
-         *
-         * @param  Request  $request
-         * @param  int  $id
-         * @return Response
-         */
-        public function processOrder(Request $request, $id)
-        {
-            // Process the request...
-
-            $this->dispatchFrom('App\Jobs\ProcessOrder', $request);
-        }
-    }
-
-This method will examine the constructor of the given job class and extract variables from the HTTP request (or any other `ArrayAccess` object) to fill the needed constructor parameters of the job. So, if our job class accepts a `productId` variable in its constructor, the job bus will attempt to pull the `productId` parameter from the HTTP request.
-
-You may also pass an array as the third argument to the `dispatchFrom` method. This array will be used to fill any constructor parameters that are not available on the request:
-
-    $this->dispatchFrom('App\Jobs\ProcessOrder', $request, [
-        'taxPercentage' => 20,
-    ]);
-
-<a name="job-events"></a>
-### Job Events
-
-#### Job Completion Event
-
-The `Queue::after` method allows you to register a callback to be executed when a queued job executes successfully. This callback is a great opportunity to perform additional logging, queue a subsequent job, or increment statistics for a dashboard. For example, we may attach a callback to this event from the `AppServiceProvider` that is included with Laravel:
-
-    <?php
-
-    namespace App\Providers;
-
-    use Queue;
-    use Illuminate\Support\ServiceProvider;
-
-    class AppServiceProvider extends ServiceProvider
-    {
-        /**
-         * Bootstrap any application services.
-         *
-         * @return void
-         */
-        public function boot()
-        {
-            Queue::after(function ($connection, $job, $data) {
-                //
-            });
-        }
-
-        /**
-         * Register the service provider.
-         *
-         * @return void
-         */
-        public function register()
-        {
-            //
-        }
-    }
+When using Iron.io [push queues](#push-queues), you should take extra precaution queueing Closures. The end-point that receives your queue messages should check for a token to verify that the request is actually from Iron.io. For example, your push queue end-point should be something like: `https://yourapp.com/queue/receive?token=SecretToken`. You may then check the value of the secret token in your application before marshalling the queue request.
 
 <a name="running-the-queue-listener"></a>
 ## Running The Queue Listener
 
+Laravel includes an Artisan task that will run new jobs as they are pushed onto the queue. You may run this task using the `queue:listen` command:
+
 #### Starting The Queue Listener
 
-Laravel includes an Artisan command that will run new jobs as they are pushed onto the queue. You may run the listener using the `queue:listen` command:
-
-    php artisan queue:listen
+	php artisan queue:listen
 
 You may also specify which queue connection the listener should utilize:
 
-    php artisan queue:listen connection
+	php artisan queue:listen connection
 
 Note that once this task has started, it will continue to run until it is manually stopped. You may use a process monitor such as [Supervisor](http://supervisord.org/) to ensure that the queue listener does not stop running.
 
-#### Queue Priorities
+You may pass a comma-delimited list of queue connections to the `listen` command to set queue priorities:
 
-You may pass a comma-delimited list of queue connections to the `listen` job to set queue priorities:
+	php artisan queue:listen --queue=high,low
 
-    php artisan queue:listen --queue=high,low
-
-In this example, jobs on the `high` queue will always be processed before moving onto jobs from the `low` queue.
+In this example, jobs on the `high` connection will always be processed before moving onto jobs from the `low` connection.
 
 #### Specifying The Job Timeout Parameter
 
 You may also set the length of time (in seconds) each job should be allowed to run:
 
-    php artisan queue:listen --timeout=60
+	php artisan queue:listen --timeout=60
 
 #### Specifying Queue Sleep Duration
 
 In addition, you may specify the number of seconds to wait before polling for new jobs:
 
-    php artisan queue:listen --sleep=5
+	php artisan queue:listen --sleep=5
 
 Note that the queue only "sleeps" if no jobs are on the queue. If more jobs are available, the queue will continue to work them without sleeping.
 
-<a name="supervisor-configuration"></a>
-### Supervisor Configuration
+#### Processing The First Job On The Queue
 
-Supervisor is a process monitor for the Linux operating system, and will automatically restart your `queue:listen` or `queue:work` commands if they fail. To install Supervisor on Ubuntu, you may use the following command:
+To process only the first job on the queue, you may use the `queue:work` command:
 
-    sudo apt-get install supervisor
+	php artisan queue:work
 
-Supervisor configuration files are typically stored in the `/etc/supervisor/conf.d` directory. Within this directory, you may create any number of configuration files that instruct supervisor how your processes should be monitored. For example, let's create a `laravel-worker.conf` file that starts and monitors a `queue:work` process:
+<a name="daemon-queue-worker"></a>
+## Daemon Queue Worker
 
-    [program:laravel-worker]
-    process_name=%(program_name)s_%(process_num)02d
-    command=php /home/forge/app.com/artisan queue:work sqs --sleep=3 --tries=3 --daemon
-    autostart=true
-    autorestart=true
-    user=forge
-    numprocs=8
-    redirect_stderr=true
-    stdout_logfile=/home/forge/app.com/worker.log
-
-In this example, the `numprocs` directive will instruct Supervisor to run 8 `queue:work` processes and monitor all of them, automatically restarting them if they fail. Of course, you should change the `queue:work sqs` portion of the `command` directive to reflect your chosen queue connection.
-
-Once the configuration file has been created, you may update the Supervisor configuration and start the processes using the following commands:
-
-    sudo supervisorctl reread
-
-    sudo supervisorctl update
-
-    sudo supervisorctl start laravel-worker:*
-
-For more information on configuring and using Supervisor, consult the [Supervisor documentation](http://supervisord.org/index.html). Alternatively, you may use [Laravel Forge](https://forge.laravel.com) to automatically configure and manage your Supervisor configuration from a convenient web interface.
-
-<a name="daemon-queue-listener"></a>
-### Daemon Queue Listener
-
-The `queue:work` Artisan command includes a `--daemon` option for forcing the queue worker to continue processing jobs without ever re-booting the framework. This results in a significant reduction of CPU usage when compared to the `queue:listen` command:
+The `queue:work` also includes a `--daemon` option for forcing the queue worker to continue processing jobs without ever re-booting the framework. This results in a significant reduction of CPU usage when compared to the `queue:listen` command, but at the added complexity of needing to drain the queues of currently executing jobs during your deployments.
 
 To start a queue worker in daemon mode, use the `--daemon` flag:
 
-    php artisan queue:work connection --daemon
+	php artisan queue:work connection --daemon
 
-    php artisan queue:work connection --daemon --sleep=3
+	php artisan queue:work connection --daemon --sleep=3
 
-    php artisan queue:work connection --daemon --sleep=3 --tries=3
+	php artisan queue:work connection --daemon --sleep=3 --tries=3
 
-As you can see, the `queue:work` job supports most of the same options available to `queue:listen`. You may use the `php artisan help queue:work` job to view all of the available options.
+As you can see, the `queue:work` command supports most of the same options available to `queue:listen`. You may use the `php artisan help queue:work` command to view all of the available options.
 
-#### Coding Considerations For Daemon Queue Listeners
+### Deploying With Daemon Queue Workers
+
+The simplest way to deploy an application using daemon queue workers is to put the application in maintenance mode at the beginning of your deployment. This can be done using the `php artisan down` command. Once the application is in maintenance mode, Laravel will not accept any new jobs off of the queue, but will continue to process existing jobs.
+
+The easiest way to restart your workers is to include the following command in your deployment script:
+
+	php artisan queue:restart
+
+This command will instruct all queue workers to restart after they finish processing their current job.
+
+> **Note:** This command relies on the cache system to schedule the restart. By default, APCu does not work for CLI commands. If you are using APCu, add `apc.enable_cli=1` to your APCu configuration.
+
+### Coding For Daemon Queue Workers
 
 Daemon queue workers do not restart the framework before processing each job. Therefore, you should be careful to free any heavy resources before your job finishes. For example, if you are doing image manipulation with the GD library, you should free the memory with `imagedestroy` when you are done.
 
-Similarly, your database connection may disconnect when being used by a long-running daemon. You may use the `DB::reconnect` method to ensure you have a fresh connection.
+Similarly, your database connection may disconnect when being used by long-running daemon. You may use the `DB::reconnect` method to ensure you have a fresh connection.
 
-<a name="deploying-with-daemon-queue-listeners"></a>
-### Deploying With Daemon Queue Listeners
+<a name="push-queues"></a>
+## Push Queues
 
-Since daemon queue workers are long-lived processes, they will not pick up changes in your code without being restarted. So, the simplest way to deploy an application using daemon queue workers is to restart the workers during your deployment script. You may gracefully restart all of the workers by including the following command in your deployment script:
+Push queues allow you to utilize the powerful Laravel 5 queue facilities without running any daemons or background listeners. Currently, push queues are only supported by the [Iron.io](http://iron.io) driver. Before getting started, create an Iron.io account, and add your Iron credentials to the `config/queue.php` configuration file.
 
-    php artisan queue:restart
+#### Registering A Push Queue Subscriber
 
-This command will gracefully instruct all queue workers to restart after they finish processing their current job so that no existing jobs are lost.
+Next, you may use the `queue:subscribe` Artisan command to register a URL end-point that will receive newly pushed queue jobs:
 
-> **Note:** This command relies on the cache system to schedule the restart. By default, APCu does not work for CLI jobs. If you are using APCu, add `apc.enable_cli=1` to your APCu configuration.
+	php artisan queue:subscribe queue_name queue/receive
 
-<a name="dealing-with-failed-jobs"></a>
-## Dealing With Failed Jobs
+	php artisan queue:subscribe queue_name http://foo.com/queue/receive
 
-Since things don't always go as planned, sometimes your queued jobs will fail. Don't worry, it happens to the best of us! Laravel includes a convenient way to specify the maximum number of times a job should be attempted. After a job has exceeded this amount of attempts, it will be inserted into a `failed_jobs` table. The name of the table can be configured via the `config/queue.php` configuration file.
+Now, when you login to your Iron dashboard, you will see your new push queue, as well as the subscribed URL. You may subscribe as many URLs as you wish to a given queue. Next, create a route for your `queue/receive` end-point and return the response from the `Queue::marshal` method:
+
+	Route::post('queue/receive', function()
+	{
+		return Queue::marshal();
+	});
+
+The `marshal` method will take care of firing the correct job handler class. To fire jobs onto the push queue, just use the same `Queue::push` method used for conventional queues.
+
+<a name="failed-jobs"></a>
+## Failed Jobs
+
+Since things don't always go as planned, sometimes your queued jobs will fail. Don't worry, it happens to the best of us! Laravel includes a convenient way to specify the maximum number of times a job should be attempted. After a job has exceeded this amount of attempts, it will be inserted into a `failed_jobs` table. The failed jobs table name can be configured via the `config/queue.php` configuration file.
 
 To create a migration for the `failed_jobs` table, you may use the `queue:failed-table` command:
 
-    php artisan queue:failed-table
+	php artisan queue:failed-table
 
-When running your [queue listener](#running-the-queue-listener), you may specify the maximum number of times a job should be attempted using the `--tries` switch on the `queue:listen` command:
+You can specify the maximum number of times a job should be attempted using the `--tries` switch on the `queue:listen` command:
 
-    php artisan queue:listen connection-name --tries=3
+	php artisan queue:listen connection-name --tries=3
 
-<a name="failed-job-events"></a>
-### Failed Job Events
+If you would like to register an event that will be called when a queue job fails, you may use the `Queue::failing` method. This event is a great opportunity to notify your team via e-mail or [HipChat](https://www.hipchat.com).
 
-If you would like to register an event that will be called when a queued job fails, you may use the `Queue::failing` method. This event is a great opportunity to notify your team via e-mail or [HipChat](https://www.hipchat.com). For example, we may attach a callback to this event from the `AppServiceProvider` that is included with Laravel:
+	Queue::failing(function($connection, $job, $data)
+	{
+		//
+	});
 
-    <?php
+You may also define a `failed` method directly on a queue job class, allowing you to perform job specific actions when a failure occurs:
 
-    namespace App\Providers;
+	public function failed()
+	{
+		// Called when the job is failing...
+	}
 
-    use Queue;
-    use Illuminate\Support\ServiceProvider;
+If your job is not self-handling and has a seperate handler class the `failed` method needs to be defined there instead.
 
-    class AppServiceProvider extends ServiceProvider
-    {
-        /**
-         * Bootstrap any application services.
-         *
-         * @return void
-         */
-        public function boot()
-        {
-            Queue::failing(function ($connection, $job, $data) {
-                // Notify team of failing job...
-            });
-        }
-
-        /**
-         * Register the service provider.
-         *
-         * @return void
-         */
-        public function register()
-        {
-            //
-        }
-    }
-
-#### Failed Method On Job Classes
-
-For more granular control, you may define a `failed` method directly on a queue job class, allowing you to perform job specific actions when a failure occurs:
-
-    <?php
-
-    namespace App\Jobs;
-
-    use App\Jobs\Job;
-    use Illuminate\Contracts\Mail\Mailer;
-    use Illuminate\Queue\SerializesModels;
-    use Illuminate\Queue\InteractsWithQueue;
-    use Illuminate\Contracts\Bus\SelfHandling;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-
-    class SendReminderEmail extends Job implements SelfHandling, ShouldQueue
-    {
-        use InteractsWithQueue, SerializesModels;
-
-        /**
-         * Execute the job.
-         *
-         * @param  Mailer  $mailer
-         * @return void
-         */
-        public function handle(Mailer $mailer)
-        {
-            //
-        }
-
-        /**
-         * Handle a job failure.
-         *
-         * @return void
-         */
-        public function failed()
-        {
-            // Called when the job is failing...
-        }
-    }
-
-<a name="retrying-failed-jobs"></a>
 ### Retrying Failed Jobs
 
-To view all of your failed jobs that have been inserted into your `failed_jobs` database table, you may use the `queue:failed` Artisan command:
+To view all of your failed jobs, you may use the `queue:failed` Artisan command:
 
-    php artisan queue:failed
+	php artisan queue:failed
 
 The `queue:failed` command will list the job ID, connection, queue, and failure time. The job ID may be used to retry the failed job. For instance, to retry a failed job that has an ID of 5, the following command should be issued:
 
-    php artisan queue:retry 5
-
-To retry all of your failed jobs, use `queue:retry` with `all` as the ID:
-
-    php artisan queue:retry all
+	php artisan queue:retry 5
 
 If you would like to delete a failed job, you may use the `queue:forget` command:
 
-    php artisan queue:forget 5
+	php artisan queue:forget 5
 
 To delete all of your failed jobs, you may use the `queue:flush` command:
 
-    php artisan queue:flush
+	php artisan queue:flush

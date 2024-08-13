@@ -1,58 +1,30 @@
 # Encryption
 
-- [Configuration](#configuration)
+- [Introduction](#introduction)
 - [Basic Usage](#basic-usage)
 
-<a name="configuration"></a>
-## Configuration
+<a name="introduction"></a>
+## Introduction
 
-Before using Laravel's encrypter, you should set the `key` option of your `config/app.php` configuration file to a 32 character, random string. If this value is not properly set, all values encrypted by Laravel will be insecure.
+Laravel provides facilities for strong AES encryption via the Mcrypt PHP extension.
 
 <a name="basic-usage"></a>
 ## Basic Usage
 
 #### Encrypting A Value
 
-You may encrypt a value using the `Crypt` [facade](facades.md). All encrypted values are encrypted using OpenSSL and the `AES-256-CBC` cipher. Furthermore, all encrypted values are signed with a message authentication code (MAC) to detect any modifications to the encrypted string.
+	$encrypted = Crypt::encrypt('secret');
 
-For example, we may use the `encrypt` method to encrypt a secret and store it on an [Eloquent model](eloquent.md):
-
-    <?php
-
-    namespace App\Http\Controllers;
-
-    use Crypt;
-    use App\User;
-    use Illuminate\Http\Request;
-    use App\Http\Controllers\Controller;
-
-    class UserController extends Controller
-    {
-        /**
-         * Store a secret message for the user.
-         *
-         * @param  Request  $request
-         * @param  int  $id
-         * @return Response
-         */
-        public function storeSecret(Request $request, $id)
-        {
-            $user = User::findOrFail($id);
-
-            $user->fill([
-                'secret' => Crypt::encrypt($request->secret)
-            ])->save();
-        }
-    }
+> **Note:** Be sure to set a 16, 24, or 32 character random string in the `key` option of the `config/app.php` file. Otherwise, encrypted values will not be secure.
 
 #### Decrypting A Value
 
-Of course, you may decrypt values using the `decrypt` method on the `Crypt` facade. If the value can not be properly decrypted, such as when the MAC is invalid, an `Illuminate\Contracts\Encryption\DecryptException` will be thrown:
+	$decrypted = Crypt::decrypt($encryptedValue);
 
-    use Illuminate\Contracts\Encryption\DecryptException;
+#### Setting The Cipher & Mode
 
-    try {
-        $decrypted = Crypt::decrypt($encryptedValue);
-    } catch (DecryptException $e) {
-        //
-    }
+You may also set the cipher and mode used by the encrypter:
+
+	Crypt::setMode('ctr');
+
+	Crypt::setCipher($cipher);

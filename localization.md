@@ -1,87 +1,109 @@
 # Localization
 
 - [Introduction](#introduction)
+- [Language Files](#language-files)
 - [Basic Usage](#basic-usage)
-    - [Pluralization](#pluralization)
-- [Overriding Vendor Language Files](#overriding-vendor-language-files)
+- [Pluralization](#pluralization)
+- [Validation Localization](#validation)
+- [Overriding Package Language Files](#overriding-package-language-files)
 
 <a name="introduction"></a>
 ## Introduction
 
-Laravel's localization features provide a convenient way to retrieve strings in various languages, allowing you to easily support multiple languages within your application.
+The Laravel `Lang` facade provides a convenient way of retrieving strings in various languages, allowing you to easily support multiple languages within your application.
 
-Language strings are stored in files within the `resources/lang` directory. Within this directory there should be a subdirectory for each language supported by the application:
+<a name="language-files"></a>
+## Language Files
 
-    /resources
-        /lang
-            /en
-                messages.php
-            /es
-                messages.php
+Language strings are stored in files within the `resources/lang` directory. Within this directory there should be a subdirectory for each language supported by the application.
 
-All language files simply return an array of keyed strings. For example:
+	/resources
+		/lang
+			/en
+				messages.php
+			/es
+				messages.php
 
-    <?php
+#### Example Language File
 
-    return [
-        'welcome' => 'Welcome to our application'
-    ];
+Language files simply return an array of keyed strings. For example:
 
-#### Configuring The Locale
+	<?php
 
-The default language for your application is stored in the `config/app.php` configuration file. Of course, you may modify this value to suit the needs of your application. You may also change the active language at runtime using the `setLocale` method on the `App` facade:
+	return [
+		'welcome' => 'Welcome to our application'
+	];
 
-    Route::get('welcome/{locale}', function ($locale) {
-        App::setLocale($locale);
+#### Changing The Default Language At Runtime
 
-        //
-    });
+The default language for your application is stored in the `config/app.php` configuration file. You may change the active language at any time using the `App::setLocale` method:
+
+	App::setLocale('es');
+
+#### Setting The Fallback Language
 
 You may also configure a "fallback language", which will be used when the active language does not contain a given language line. Like the default language, the fallback language is also configured in the `config/app.php` configuration file:
 
-    'fallback_locale' => 'en',
+	'fallback_locale' => 'en',
 
 <a name="basic-usage"></a>
 ## Basic Usage
 
-You may retrieve lines from language files using the `trans` helper function. The `trans` method accepts the file and key of the language line as its first argument. For example, let's retrieve the language line `welcome` in the `resources/lang/messages.php` language file:
+#### Retrieving Lines From A Language File
 
-    echo trans('messages.welcome');
+	echo Lang::get('messages.welcome');
 
-Of course if you are using the [Blade templating engine](blade.md), you may use the `{{ }}` syntax to echo the language line:
+The first segment of the string passed to the `get` method is the name of the language file, and the second is the name of the line that should be retrieved.
 
-    {{ trans('messages.welcome') }}
+> **Note:** If a language line does not exist, the key will be returned by the `get` method.
 
-If the specified language line does not exist, the `trans` function will simply return the language line key. So, using the example above, the `trans` function would return `messages.welcome` if the language line does not exist.
+You may also use the `trans` helper function, which is an alias for the `Lang::get` method.
 
-#### Replacing Parameters In Language Lines
+	echo trans('messages.welcome');
 
-If you wish, you may define place-holders in your language lines. All place-holders are prefixed with a `:`. For example, you may define a welcome message with a place-holder name:
+#### Making Replacements In Lines
 
-    'welcome' => 'Welcome, :name',
+You may also define place-holders in your language lines:
 
-To replace the place-holders when retrieving a language line, pass an array of replacements as the second argument to the `trans` function:
+	'welcome' => 'Welcome, :name',
 
-    echo trans('messages.welcome', ['name' => 'Dayle']);
+Then, pass a second argument of replacements to the `Lang::get` method:
+
+	echo Lang::get('messages.welcome', ['name' => 'Dayle']);
+
+#### Determine If A Language File Contains A Line
+
+	if (Lang::has('messages.welcome'))
+	{
+		//
+	}
 
 <a name="pluralization"></a>
-### Pluralization
+## Pluralization
 
-Pluralization is a complex problem, as different languages have a variety of complex rules for pluralization. By using a "pipe" character, you may distinguish a singular and plural form of a string:
+Pluralization is a complex problem, as different languages have a variety of complex rules for pluralization. You may easily manage this in your language files. By using a "pipe" character, you may separate the singular and plural forms of a string:
 
-    'apples' => 'There is one apple|There are many apples',
+	'apples' => 'There is one apple|There are many apples',
 
-Then, you may then use the `trans_choice` function to retrieve the line for a given "count". In this example, since the count is greater than one, the plural form of the language line is returned:
+You may then use the `Lang::choice` method to retrieve the line:
 
-    echo trans_choice('messages.apples', 10);
+	echo Lang::choice('messages.apples', 10);
 
-Since the Laravel translator is powered by the Symfony Translation component, you may create even more complex pluralization rules:
+You may also supply a locale argument to specify the language. For example, if you want to use the Russian (ru) language:
 
-    'apples' => '{0} There are none|[1,19] There are some|[20,Inf] There are many',
+	echo Lang::choice('товар|товара|товаров', $count, [], 'ru');
 
-<a name="overriding-vendor-language-files"></a>
-## Overriding Vendor Language Files
+Since the Laravel translator is powered by the Symfony Translation component, you may also create more explicit pluralization rules easily:
 
-Some packages may ship with their own language files. Instead of hacking the package's core files to tweak these lines, you may override them by placing your own files in the `resources/lang/vendor/{package}/{locale}` directory.
+	'apples' => '{0} There are none|[1,19] There are some|[20,Inf] There are many',
 
-So, for example, if you need to override the English language lines in `messages.php` for a package named `skyrim/hearthfire`, you would place a language file at: `resources/lang/vendor/hearthfire/en/messages.php`. In this file you should only define the language lines you wish to override. Any language lines you don't override will still be loaded from the package's original language files.
+
+<a name="validation"></a>
+## Validation
+
+For localization for validation errors and messages, take a look at the <a href="validation.md#localization">documentation on Validation</a>.
+
+<a name="overriding-package-language-files"></a>
+## Overriding Package Language Files
+
+Many packages ship with their own language lines. Instead of hacking the package's core files to tweak these lines, you may override them by placing files in the `resources/lang/packages/{locale}/{package}` directory. So, for example, if you need to override the English language lines in `messages.php` for a package named `skyrim/hearthfire`, you would place a language file at: `resources/lang/packages/en/hearthfire/messages.php`. In this file you would define only the language lines you wish to override. Any language lines you don't override will still be loaded from the package's language files.

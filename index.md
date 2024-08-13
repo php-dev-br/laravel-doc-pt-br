@@ -1,5 +1,5 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.1/documentation.md -->
-<!-- revision: bae0792b4c258f164bee16b56ba1bf324822133c -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.0/documentation.md -->
+<!-- revision: cd876ec484c8903819d1bdb61c6701453123b8c6 -->
 <!-- status: ready -->
 
 # Documentação do Laravel
@@ -13,12 +13,8 @@
 ## Configuração
 
 - [Instalação](contributions.md)
+- [Configuration](configuration.md)
 - [Homestead](homestead.md)
-
-## Tutoriais
-
-- [Beginner Task List](quickstart.md)
-- [Intermediate Task List](quickstart-intermediate.md)
 
 ## O Básico
 
@@ -28,27 +24,27 @@
 - [Requisições](requests.md)
 - [Respostas](responses.md)
 - [Visualizações](views.md)
-- [Blade Templates](blade.md)
 
 ## Fundamentos de Arquitetura
 
-- [Ciclo de Vida da Requisição](lifecycle.md)
-- [Estrutura de Diretório](structure.md)
 - [Provedores de Serviços](providers.md)
 - [Contêiner de Serviços](container.md)
 - [Contratos](contracts.md)
 - [Fachadas](facades.md)
+- [Ciclo de Vida da Requisição](lifecycle.md)
+- [Estrutura da Aplicação](structure.md)
 
 ## Serviços
 
 - [Authentication](authentication.md)
-- [Authorization](authorization.md)
-- [Console Artisan](artisan.md)
 - [Cobrança](billing.md)
 - [Cache](cache.md)
 - [Coleções](collections.md)
+- [Command Bus](bus.md)
+- [Core Extension](extending.md)
 - [Elixir](elixir.md)
 - [Encryption](encryption.md)
+- [Envoy](envoy.md)
 - [Tratamento de erros e Logging](errors.md)
 - [Eventos](events.md)
 - [Sistema de Arquivos / Armazenamento em Nuvem](filesystem.md)
@@ -59,24 +55,21 @@
 - [Desenvolvimento de Pacotes](packages.md)
 - [Paginação](pagination.md)
 - [Filas](queues.md)
-- [Redis](redis.md)
 - [Sessão](session.md)
-- [Tarefas SSH](envoy.md)
-- [Agendamento de Tarefas](scheduling.md)
-- [Testes](testing.md)
+- [Modelos](templates.md)
+- [Testes Unitários](testing.md)
 - [Validação](validation.md)
 
 ## Banco de dados
 
-- [Começando](database.md)
-- [Construtor de consultas](queries.md)
-- [Migrações](migrations.md)
-- [Seeding](seeding.md)
+- [Uso Básico](database.md)
+- [Construtor de Consultas](queries.md)
+- [ORM Eloquent](eloquent.md)
+- [Construtor de Esquemas](schema.md)
+- [Migrações e Seeding](migrations.md)
+- [Redis](redis.md)
 
-## ORM Eloquent
+## Artisan CLI
 
-- [Começando](eloquent.md)
-- [Relacionamentos](eloquent-relationships.md)
-- [Coleções](eloquent-collections.md)
-- [Modificadores](eloquent-mutators.md)
-- [Serialização](eloquent-serialization.md)
+- [Visão Geral](artisan.md)
+- [Desenvolvimento](commands.md)
