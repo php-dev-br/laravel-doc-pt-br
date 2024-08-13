@@ -11,7 +11,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Facades provide a "static" interface to classes that are available in the application's [service container](container.md). Laravel ships with many facades which provide access to almost all of Laravel's features. Laravel facades serve as "static proxies" to underlying classes in the service container, providing the benefit of a terse, expressive syntax while maintaining more testability and flexibility than traditional static methods.
+Facades provide a "static" interface to classes that are available in the application's [service container](/docs/{{version}}/container). Laravel ships with many facades which provide access to almost all of Laravel's features. Laravel facades serve as "static proxies" to underlying classes in the service container, providing the benefit of a terse, expressive syntax while maintaining more testability and flexibility than traditional static methods.
 
 All of Laravel's facades are defined in the `Illuminate\Support\Facades` namespace. So, we can easily access a facade like so:
 
@@ -30,7 +30,7 @@ Facades have many benefits. They provide a terse, memorable syntax that allows y
 
 However, some care must be taken when using facades. The primary danger of facades is class scope creep. Since facades are so easy to use and do not require injection, it can be easy to let your classes continue to grow and use many facades in a single class. Using dependency injection, this potential is mitigated by the visual feedback a large constructor gives you that your class is growing too large. So, when using facades, pay special attention to the size of your class so that its scope of responsibility stays narrow.
 
-> {tip} When building a third-party package that interacts with Laravel, it's better to inject [Laravel contracts](contracts.md) instead of using facades. Since packages are built outside of Laravel itself, you will not have access to Laravel's facade testing helpers.
+> {tip} When building a third-party package that interacts with Laravel, it's better to inject [Laravel contracts](/docs/{{version}}/contracts) instead of using facades. Since packages are built outside of Laravel itself, you will not have access to Laravel's facade testing helpers.
 
 <a name="facades-vs-dependency-injection"></a>
 ### Facades Vs. Dependency Injection
@@ -142,7 +142,7 @@ If we look at that `Illuminate\Support\Facades\Cache` class, you'll see that the
         protected static function getFacadeAccessor() { return 'cache'; }
     }
 
-Instead, the `Cache` facade extends the base `Facade` class and defines the method `getFacadeAccessor()`. This method's job is to return the name of a service container binding. When a user references any static method on the `Cache` facade, Laravel resolves the `cache` binding from the [service container](container.md) and runs the requested method (in this case, `get`) against that object.
+Instead, the `Cache` facade extends the base `Facade` class and defines the method `getFacadeAccessor()`. This method's job is to return the name of a service container binding. When a user references any static method on the `Cache` facade, Laravel resolves the `cache` binding from the [service container](/docs/{{version}}/container) and runs the requested method (in this case, `get`) against that object.
 
 <a name="real-time-facades"></a>
 ## Real-Time Facades
@@ -203,9 +203,9 @@ When the real-time facade is used, the publisher implementation will be resolved
     namespace Tests\Feature;
 
     use App\Podcast;
+    use Tests\TestCase;
     use Facades\App\Contracts\Publisher;
     use Illuminate\Foundation\Testing\RefreshDatabase;
-    use Tests\TestCase;
 
     class PodcastTest extends TestCase
     {
@@ -229,7 +229,7 @@ When the real-time facade is used, the publisher implementation will be resolved
 <a name="facade-class-reference"></a>
 ## Facade Class Reference
 
-Below you will find every facade and its underlying class. This is a useful tool for quickly digging into the API documentation for a given facade root. The [service container binding](container.md) key is also included where applicable.
+Below you will find every facade and its underlying class. This is a useful tool for quickly digging into the API documentation for a given facade root. The [service container binding](/docs/{{version}}/container) key is also included where applicable.
 
 Facade  |  Class  |  Service Container Binding
 ------------- | ------------- | -------------

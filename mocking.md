@@ -23,8 +23,8 @@ Laravel provides helpers for mocking events, jobs, and facades out of the box. T
 
 When mocking an object that is going to be injected into your application via Laravel's service container, you will need to bind your mocked instance into the container as an `instance` binding. This will instruct the container to use your mocked instance of the object instead of constructing the object itself:
 
-    use App\Service;
     use Mockery;
+    use App\Service;
 
     $this->instance(Service::class, Mockery::mock(Service::class, function ($mock) {
         $mock->shouldReceive('process')->once();
@@ -35,14 +35,6 @@ In order to make this more convenient, you may use the `mock` method, which is p
     use App\Service;
 
     $this->mock(Service::class, function ($mock) {
-        $mock->shouldReceive('process')->once();
-    });
-
-You may use the `partialMock` method when you only need to mock a few methods of an object. The methods that are not mocked will be executed normally when called:
-
-    use App\Service;
-
-    $this->partialMock(Service::class, function ($mock) {
         $mock->shouldReceive('process')->once();
     });
 
@@ -63,11 +55,11 @@ As an alternative to mocking, you may use the `Bus` facade's `fake` method to pr
 
     namespace Tests\Feature;
 
+    use Tests\TestCase;
     use App\Jobs\ShipOrder;
+    use Illuminate\Support\Facades\Bus;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Illuminate\Support\Facades\Bus;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -95,12 +87,12 @@ As an alternative to mocking, you may use the `Event` facade's `fake` method to 
 
     namespace Tests\Feature;
 
-    use App\Events\OrderFailedToShip;
+    use Tests\TestCase;
     use App\Events\OrderShipped;
+    use App\Events\OrderFailedToShip;
+    use Illuminate\Support\Facades\Event;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Illuminate\Support\Facades\Event;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -157,12 +149,12 @@ If you only want to fake event listeners for a portion of your test, you may use
 
     namespace Tests\Feature;
 
-    use App\Events\OrderCreated;
     use App\Order;
-    use Illuminate\Foundation\Testing\RefreshDatabase;
-    use Illuminate\Support\Facades\Event;
-    use Illuminate\Foundation\Testing\WithoutMiddleware;
     use Tests\TestCase;
+    use App\Events\OrderCreated;
+    use Illuminate\Support\Facades\Event;
+    use Illuminate\Foundation\Testing\RefreshDatabase;
+    use Illuminate\Foundation\Testing\WithoutMiddleware;
 
     class ExampleTest extends TestCase
     {
@@ -187,17 +179,17 @@ If you only want to fake event listeners for a portion of your test, you may use
 <a name="mail-fake"></a>
 ## Mail Fake
 
-You may use the `Mail` facade's `fake` method to prevent mail from being sent. You may then assert that [mailables](mail.md) were sent to users and even inspect the data they received. When using fakes, assertions are made after the code under test is executed:
+You may use the `Mail` facade's `fake` method to prevent mail from being sent. You may then assert that [mailables](/docs/{{version}}/mail) were sent to users and even inspect the data they received. When using fakes, assertions are made after the code under test is executed:
 
     <?php
 
     namespace Tests\Feature;
 
+    use Tests\TestCase;
     use App\Mail\OrderShipped;
+    use Illuminate\Support\Facades\Mail;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Illuminate\Support\Facades\Mail;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -237,18 +229,18 @@ If you are queueing mailables for delivery in the background, you should use the
 <a name="notification-fake"></a>
 ## Notification Fake
 
-You may use the `Notification` facade's `fake` method to prevent notifications from being sent. You may then assert that [notifications](notifications.md) were sent to users and even inspect the data they received. When using fakes, assertions are made after the code under test is executed:
+You may use the `Notification` facade's `fake` method to prevent notifications from being sent. You may then assert that [notifications](/docs/{{version}}/notifications) were sent to users and even inspect the data they received. When using fakes, assertions are made after the code under test is executed:
 
     <?php
 
     namespace Tests\Feature;
 
+    use Tests\TestCase;
     use App\Notifications\OrderShipped;
+    use Illuminate\Support\Facades\Notification;
+    use Illuminate\Notifications\AnonymousNotifiable;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Illuminate\Notifications\AnonymousNotifiable;
-    use Illuminate\Support\Facades\Notification;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -283,15 +275,6 @@ You may use the `Notification` facade's `fake` method to prevent notifications f
             Notification::assertSentTo(
                 new AnonymousNotifiable, OrderShipped::class
             );
-
-            // Assert Notification::route() method sent notification to the correct user...
-            Notification::assertSentTo(
-                new AnonymousNotifiable,
-                OrderShipped::class,
-                function ($notification, $channels, $notifiable) use ($user) {
-                    return $notifiable->routes['mail'] === $user->email;
-                }
-            );
         }
     }
 
@@ -304,13 +287,11 @@ As an alternative to mocking, you may use the `Queue` facade's `fake` method to 
 
     namespace Tests\Feature;
 
-    use App\Jobs\AnotherJob;
-    use App\Jobs\FinalJob;
+    use Tests\TestCase;
     use App\Jobs\ShipOrder;
+    use Illuminate\Support\Facades\Queue;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Illuminate\Support\Facades\Queue;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -336,20 +317,11 @@ As an alternative to mocking, you may use the `Queue` facade's `fake` method to 
             // Assert a job was not pushed...
             Queue::assertNotPushed(AnotherJob::class);
 
-            // Assert a job was pushed with a given chain of jobs, matching by class...
+            // Assert a job was pushed with a specific chain...
             Queue::assertPushedWithChain(ShipOrder::class, [
                 AnotherJob::class,
                 FinalJob::class
             ]);
-
-            // Assert a job was pushed with a given chain of jobs, matching by both class and properties...
-            Queue::assertPushedWithChain(ShipOrder::class, [
-                new AnotherJob('foo'),
-                new FinalJob('bar'),
-            ]);
-
-            // Assert a job was pushed without a chain of jobs...
-            Queue::assertPushedWithoutChain(ShipOrder::class);
         }
     }
 
@@ -362,11 +334,11 @@ The `Storage` facade's `fake` method allows you to easily generate a fake disk t
 
     namespace Tests\Feature;
 
-    use Illuminate\Foundation\Testing\RefreshDatabase;
-    use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Tests\TestCase;
     use Illuminate\Http\UploadedFile;
     use Illuminate\Support\Facades\Storage;
-    use Tests\TestCase;
+    use Illuminate\Foundation\Testing\RefreshDatabase;
+    use Illuminate\Foundation\Testing\WithoutMiddleware;
 
     class ExampleTest extends TestCase
     {
@@ -394,7 +366,7 @@ The `Storage` facade's `fake` method allows you to easily generate a fake disk t
 <a name="mocking-facades"></a>
 ## Facades
 
-Unlike traditional static method calls, [facades](facades.md) may be mocked. This provides a great advantage over traditional static methods and grants you the same testability you would have if you were using dependency injection. When testing, you may often want to mock a call to a Laravel facade in one of your controllers. For example, consider the following controller action:
+Unlike traditional static method calls, [facades](/docs/{{version}}/facades) may be mocked. This provides a great advantage over traditional static methods and grants you the same testability you would have if you were using dependency injection. When testing, you may often want to mock a call to a Laravel facade in one of your controllers. For example, consider the following controller action:
 
     <?php
 
@@ -417,16 +389,16 @@ Unlike traditional static method calls, [facades](facades.md) may be mocked. Thi
         }
     }
 
-We can mock the call to the `Cache` facade by using the `shouldReceive` method, which will return an instance of a [Mockery](https://github.com/padraic/mockery) mock. Since facades are actually resolved and managed by the Laravel [service container](container.md), they have much more testability than a typical static class. For example, let's mock our call to the `Cache` facade's `get` method:
+We can mock the call to the `Cache` facade by using the `shouldReceive` method, which will return an instance of a [Mockery](https://github.com/padraic/mockery) mock. Since facades are actually resolved and managed by the Laravel [service container](/docs/{{version}}/container), they have much more testability than a typical static class. For example, let's mock our call to the `Cache` facade's `get` method:
 
     <?php
 
     namespace Tests\Feature;
 
+    use Tests\TestCase;
+    use Illuminate\Support\Facades\Cache;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Illuminate\Support\Facades\Cache;
-    use Tests\TestCase;
 
     class UserControllerTest extends TestCase
     {

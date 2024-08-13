@@ -18,7 +18,7 @@
     - [CSRF Field](#csrf-field)
     - [Method Field](#method-field)
     - [Validation Errors](#validation-errors)
-- [Including Subviews](#including-subviews)
+- [Including Sub-Views](#including-sub-views)
     - [Rendering Views For Collections](#rendering-views-for-collections)
 - [Stacks](#stacks)
 - [Service Injection](#service-injection)
@@ -113,9 +113,9 @@ The `{{ $slot }}` variable will contain the content we wish to inject into the c
 
 To instruct Laravel to load the first view that exists from a given array of possible views for the component, you may use the `componentFirst` directive:
 
-    @componentfirst(['custom.alert', 'alert'])
+    @componentFirst(['custom.alert', 'alert'])
         <strong>Whoops!</strong> Something went wrong!
-    @endcomponentfirst
+    @endcomponent
 
 Sometimes it is helpful to define multiple slots for a component. Let's modify our alert component to allow for the injection of a "title". Named slots may be displayed by "echoing" the variable that matches their name:
 
@@ -147,7 +147,7 @@ Sometimes you may need to pass additional data to a component. For this reason, 
 
 #### Aliasing Components
 
-If your Blade components are stored in a subdirectory, you may wish to alias them for easier access. For example, imagine a Blade component that is stored at `resources/views/components/alert.blade.php`. You may use the `component` method to alias the component from `components.alert` to `alert`. Typically, this should be done in the `boot` method of your `AppServiceProvider`:
+If your Blade components are stored in a sub-directory, you may wish to alias them for easier access. For example, imagine a Blade component that is stored at `resources/views/components/alert.blade.php`. You may use the `component` method to alias the component from `components.alert` to `alert`. Typically, this should be done in the `boot` method of your `AppServiceProvider`:
 
     use Illuminate\Support\Facades\Blade;
 
@@ -307,7 +307,7 @@ The `@auth` and `@guest` directives may be used to quickly determine if the curr
         // The user is not authenticated...
     @endguest
 
-If needed, you may specify the [authentication guard](authentication.md) that should be checked when using the `@auth` and `@guest` directives:
+If needed, you may specify the [authentication guard](/docs/{{version}}/authentication) that should be checked when using the `@auth` and `@guest` directives:
 
     @auth('admin')
         // The user is authenticated...
@@ -462,7 +462,7 @@ In some situations, it's useful to embed PHP code into your views. You can use t
 <a name="csrf-field"></a>
 ### CSRF Field
 
-Anytime you define an HTML form in your application, you should include a hidden CSRF token field in the form so that [the CSRF protection](https://laravel.comcsrf.md) middleware can validate the request. You may use the `@csrf` Blade directive to generate the token field:
+Anytime you define an HTML form in your application, you should include a hidden CSRF token field in the form so that [the CSRF protection](https://laravel.com/docs/{{version}}/csrf) middleware can validate the request. You may use the `@csrf` Blade directive to generate the token field:
 
     <form method="POST" action="/profile">
         @csrf
@@ -484,7 +484,7 @@ Since HTML forms can't make `PUT`, `PATCH`, or `DELETE` requests, you will need 
 <a name="validation-errors"></a>
 ### Validation Errors
 
-The `@error` directive may be used to quickly check if [validation error messages](validation.md#quick-displaying-the-validation-errors) exist for a given attribute. Within an `@error` directive, you may echo the `$message` variable to display the error message:
+The `@error` directive may be used to quickly check if [validation error messages](/docs/{{version}}/validation#quick-displaying-the-validation-errors) exist for a given attribute. Within an `@error` directive, you may echo the `$message` variable to display the error message:
 
     <!-- /resources/views/post/create.blade.php -->
 
@@ -496,20 +496,8 @@ The `@error` directive may be used to quickly check if [validation error message
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
 
-You may pass [the name of a specific error bag](validation.md#named-error-bags) as the second parameter to the `@error` directive to retrieve validation error messages on pages containing multiple forms:
-
-    <!-- /resources/views/auth.blade.php -->
-
-    <label for="email">Email address</label>
-
-    <input id="email" type="email" class="@error('email', 'login') is-invalid @enderror">
-
-    @error('email', 'login')
-        <div class="alert alert-danger">{{ $message }}</div>
-    @enderror
-
-<a name="including-subviews"></a>
-## Including Subviews
+<a name="including-sub-views"></a>
+## Including Sub-Views
 
 Blade's `@include` directive allows you to include a Blade view from within another view. All variables that are available to the parent view will be made available to the included view:
 
@@ -529,13 +517,9 @@ If you attempt to `@include` a view which does not exist, Laravel will throw an 
 
     @includeIf('view.name', ['some' => 'data'])
 
-If you would like to `@include` a view if a given boolean expression evaluates to `true`, you may use the `@includeWhen` directive:
+If you would like to `@include` a view depending on a given boolean condition, you may use the `@includeWhen` directive:
 
     @includeWhen($boolean, 'view.name', ['some' => 'data'])
-
-If you would like to `@include` a view if a given boolean expression evaluates to `false`, you may use the `@includeUnless` directive:
-
-    @includeUnless($boolean, 'view.name', ['some' => 'data'])
 
 To include the first view that exists from a given array of views, you may use the `includeFirst` directive:
 
@@ -545,7 +529,7 @@ To include the first view that exists from a given array of views, you may use t
 
 #### Aliasing Includes
 
-If your Blade includes are stored in a subdirectory, you may wish to alias them for easier access. For example, imagine a Blade include that is stored at `resources/views/includes/input.blade.php` with the following content:
+If your Blade includes are stored in a sub-directory, you may wish to alias them for easier access. For example, imagine a Blade include that is stored at `resources/views/includes/input.blade.php` with the following content:
 
     <input type="{{ $type ?? 'text' }}">
 
@@ -606,7 +590,7 @@ If you would like to prepend content onto the beginning of a stack, you should u
 <a name="service-injection"></a>
 ## Service Injection
 
-The `@inject` directive may be used to retrieve a service from the Laravel [service container](container.md). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
+The `@inject` directive may be used to retrieve a service from the Laravel [service container](/docs/{{version}}/container). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
 
     @inject('metrics', 'App\Services\MetricsService')
 
@@ -631,7 +615,7 @@ The following example creates a `@datetime($var)` directive which formats a give
     class AppServiceProvider extends ServiceProvider
     {
         /**
-         * Register any application services.
+         * Register bindings in the container.
          *
          * @return void
          */
@@ -686,8 +670,4 @@ Once the custom conditional has been defined, we can easily use it on our templa
         // The application is in the testing environment...
     @else
         // The application is not in the local or testing environment...
-    @endenv
-
-    @unlessenv('production')
-        // The application is not in the production environment...
     @endenv

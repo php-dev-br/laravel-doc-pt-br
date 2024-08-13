@@ -33,11 +33,11 @@ In addition to returning strings from your routes and controllers, you may also 
         return [1, 2, 3];
     });
 
-> {tip} Did you know you can also return [Eloquent collections](eloquent-collections.md) from your routes or controllers? They will automatically be converted to JSON. Give it a shot!
+> {tip} Did you know you can also return [Eloquent collections](/docs/{{version}}/eloquent-collections) from your routes or controllers? They will automatically be converted to JSON. Give it a shot!
 
 #### Response Objects
 
-Typically, you won't just be returning simple strings or arrays from your route actions. Instead, you will be returning full `Illuminate\Http\Response` instances or [views](views.md).
+Typically, you won't just be returning simple strings or arrays from your route actions. Instead, you will be returning full `Illuminate\Http\Response` instances or [views](/docs/{{version}}/views).
 
 Returning a full `Response` instance allows you to customize the response's HTTP status code and headers. A `Response` instance inherits from the `Symfony\Component\HttpFoundation\Response` class, which provides a variety of methods for building HTTP responses:
 
@@ -69,7 +69,7 @@ Or, you may use the `withHeaders` method to specify an array of headers to be ad
 
 Laravel includes a `cache.headers` middleware, which may be used to quickly set the `Cache-Control` header for a group of routes. If `etag` is specified in the list of directives, an MD5 hash of the response content will automatically be set as the ETag identifier:
 
-    Route::middleware('cache.headers:public;max_age=2628000;etag')->group(function () {
+    Route::middleware('cache.headers:public;max_age=2628000;etag')->group(function() {
         Route::get('privacy', function () {
             // ...
         });
@@ -121,7 +121,7 @@ Redirect responses are instances of the `Illuminate\Http\RedirectResponse` class
         return redirect('home/dashboard');
     });
 
-Sometimes you may wish to redirect the user to their previous location, such as when a submitted form is invalid. You may do so by using the global `back` helper function. Since this feature utilizes the [session](session.md), make sure the route calling the `back` function is using the `web` middleware group or has all of the session middleware applied:
+Sometimes you may wish to redirect the user to their previous location, such as when a submitted form is invalid. You may do so by using the global `back` helper function. Since this feature utilizes the [session](/docs/{{version}}/session), make sure the route calling the `back` function is using the `web` middleware group or has all of the session middleware applied:
 
     Route::post('user/profile', function () {
         // Validate the request...
@@ -165,7 +165,7 @@ If you would like to customize the value that is placed in the route parameter, 
 <a name="redirecting-controller-actions"></a>
 ### Redirecting To Controller Actions
 
-You may also generate redirects to [controller actions](controllers.md). To do so, pass the controller and action name to the `action` method. Remember, you do not need to specify the full namespace to the controller since Laravel's `RouteServiceProvider` will automatically set the base controller namespace:
+You may also generate redirects to [controller actions](/docs/{{version}}/controllers). To do so, pass the controller and action name to the `action` method. Remember, you do not need to specify the full namespace to the controller since Laravel's `RouteServiceProvider` will automatically set the base controller namespace:
 
     return redirect()->action('HomeController@index');
 
@@ -185,7 +185,7 @@ Sometimes you may need to redirect to a domain outside of your application. You 
 <a name="redirecting-with-flashed-session-data"></a>
 ### Redirecting With Flashed Session Data
 
-Redirecting to a new URL and [flashing data to the session](session.md#flash-data) are usually done at the same time. Typically, this is done after successfully performing an action when you flash a success message to the session. For convenience, you may create a `RedirectResponse` instance and flash data to the session in a single, fluent method chain:
+Redirecting to a new URL and [flashing data to the session](/docs/{{version}}/session#flash-data) are usually done at the same time. Typically, this is done after successfully performing an action when you flash a success message to the session. For convenience, you may create a `RedirectResponse` instance and flash data to the session in a single, fluent method chain:
 
     Route::post('user/profile', function () {
         // Update the user's profile...
@@ -193,7 +193,7 @@ Redirecting to a new URL and [flashing data to the session](session.md#flash-dat
         return redirect('dashboard')->with('status', 'Profile updated!');
     });
 
-After the user is redirected, you may display the flashed message from the [session](session.md). For example, using [Blade syntax](blade.md):
+After the user is redirected, you may display the flashed message from the [session](/docs/{{version}}/session). For example, using [Blade syntax](/docs/{{version}}/blade):
 
     @if (session('status'))
         <div class="alert alert-success">
@@ -204,12 +204,12 @@ After the user is redirected, you may display the flashed message from the [sess
 <a name="other-response-types"></a>
 ## Other Response Types
 
-The `response` helper may be used to generate other types of response instances. When the `response` helper is called without arguments, an implementation of the `Illuminate\Contracts\Routing\ResponseFactory` [contract](contracts.md) is returned. This contract provides several helpful methods for generating responses.
+The `response` helper may be used to generate other types of response instances. When the `response` helper is called without arguments, an implementation of the `Illuminate\Contracts\Routing\ResponseFactory` [contract](/docs/{{version}}/contracts) is returned. This contract provides several helpful methods for generating responses.
 
 <a name="view-responses"></a>
 ### View Responses
 
-If you need control over the response's status and headers but also need to return a [view](views.md) as the response's content, you should use the `view` method:
+If you need control over the response's status and headers but also need to return a [view](/docs/{{version}}/views) as the response's content, you should use the `view` method:
 
     return response()
                 ->view('hello', $data, 200)
@@ -268,14 +268,14 @@ The `file` method may be used to display a file, such as an image or PDF, direct
 <a name="response-macros"></a>
 ## Response Macros
 
-If you would like to define a custom response that you can re-use in a variety of your routes and controllers, you may use the `macro` method on the `Response` facade. For example, from a [service provider's](providers.md) `boot` method:
+If you would like to define a custom response that you can re-use in a variety of your routes and controllers, you may use the `macro` method on the `Response` facade. For example, from a [service provider's](/docs/{{version}}/providers) `boot` method:
 
     <?php
 
     namespace App\Providers;
 
-    use Illuminate\Support\Facades\Response;
     use Illuminate\Support\ServiceProvider;
+    use Illuminate\Support\Facades\Response;
 
     class ResponseMacroServiceProvider extends ServiceProvider
     {

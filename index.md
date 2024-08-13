@@ -1,4 +1,4 @@
-<!-- source_url: https://github.com/laravel/docs/blob/6.x/documentation.md -->
+<!-- source_url: https://github.com/laravel/docs/blob/5.8/documentation.md -->
 <!-- revision: 990c96b63b55650663403b72483b31c4d24ecebc -->
 <!-- status: ready -->
 
@@ -9,6 +9,7 @@
 - [Notas de Versão](releases.md)
 - [Guia de Atualização](upgrade.md)
 - [Guia de Contribuição](contributions.md)
+- [Documentação da API](https://laravel.com/api/5.8)
 
 ## Começando
 
@@ -112,7 +113,3 @@
 - [Scout](scout.md)
 - [Socialite](socialite.md)
 - [Telescope](telescope.md)
-
-## API
-
-- [Documentação da API](https://laravel.com/api/6.x/index.html)

@@ -21,7 +21,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel provides a powerful filesystem abstraction thanks to the wonderful [Flysystem](https://github.com/thephpleague/flysystem) PHP package by Frank de Jonge. The Laravel Flysystem integration provides simple to use drivers for working with local filesystems and Amazon S3. Even better, it's amazingly simple to switch between these storage options as the API remains the same for each system.
+Laravel provides a powerful filesystem abstraction thanks to the wonderful [Flysystem](https://github.com/thephpleague/flysystem) PHP package by Frank de Jonge. The Laravel Flysystem integration provides simple to use drivers for working with local filesystems, Amazon S3, and Rackspace Cloud Storage. Even better, it's amazingly simple to switch between these storage options as the API remains the same for each system.
 
 <a name="configuration"></a>
 ## Configuration
@@ -74,10 +74,11 @@ The `public` [visibility](#file-visibility) translates to `0755` for directories
 
 #### Composer Packages
 
-Before using the SFTP or S3 drivers, you will need to install the appropriate package via Composer:
+Before using the SFTP, S3, or Rackspace drivers, you will need to install the appropriate package via Composer:
 
 - SFTP: `league/flysystem-sftp ~1.0`
 - Amazon S3: `league/flysystem-aws-s3-v3 ~1.0`
+- Rackspace: `league/flysystem-rackspace ~1.0`
 
 An absolute must for performance is to use a cached adapter. You will need an additional package for this:
 
@@ -125,6 +126,20 @@ Laravel's Flysystem integrations works great with SFTP; however, a sample config
         // 'timeout' => 30,
     ],
 
+#### Rackspace Driver Configuration
+
+Laravel's Flysystem integrations works great with Rackspace; however, a sample configuration is not included with the framework's default `filesystems.php` configuration file. If you need to configure a Rackspace filesystem, you may use the example configuration below:
+
+    'rackspace' => [
+        'driver' => 'rackspace',
+        'username' => 'your-username',
+        'key' => 'your-key',
+        'container' => 'your-container',
+        'endpoint' => 'https://identity.api.rackspacecloud.com/v2.0/',
+        'region' => 'IAD',
+        'url_type' => 'publicURL',
+    ],
+
 <a name="caching"></a>
 ### Caching
 
@@ -166,10 +181,6 @@ The `exists` method may be used to determine if a file exists on the disk:
 
     $exists = Storage::disk('s3')->exists('file.jpg');
 
-The `missing` method may be used to determine if a file is missing from the disk:
-
-    $missing = Storage::disk('s3')->missing('file.jpg');
-
 <a name="downloading-files"></a>
 ### Downloading Files
 
@@ -182,7 +193,7 @@ The `download` method may be used to generate a response that forces the user's 
 <a name="file-urls"></a>
 ### File URLs
 
-You may use the `url` method to get the URL for the given file. If you are using the `local` driver, this will typically just prepend `/storage` to the given path and return a relative URL to the file. If you are using the `s3` driver, the fully qualified remote URL will be returned:
+You may use the `url` method to get the URL for the given file. If you are using the `local` driver, this will typically just prepend `/storage` to the given path and return a relative URL to the file. If you are using the `s3` or `rackspace` driver, the fully qualified remote URL will be returned:
 
     use Illuminate\Support\Facades\Storage;
 
@@ -192,7 +203,7 @@ You may use the `url` method to get the URL for the given file. If you are using
 
 #### Temporary URLs
 
-For files stored using the `s3` you may create a temporary URL to a given file using the `temporaryUrl` method. This method accepts a path and a `DateTime` instance specifying when the URL should expire:
+For files stored using the `s3` or `rackspace` driver, you may create a temporary URL to a given file using the `temporaryUrl` method. This methods accepts a path and a `DateTime` instance specifying when the URL should expire:
 
     $url = Storage::temporaryUrl(
         'file.jpg', now()->addMinutes(5)
@@ -233,7 +244,7 @@ The `lastModified` method returns the UNIX timestamp of the last time the file w
 <a name="storing-files"></a>
 ## Storing Files
 
-The `put` method may be used to store raw file contents on a disk. You may also pass a PHP `resource` to the `put` method, which will use Flysystem's underlying stream support. Remember, all file paths should be specified relative to the "root" location configured for the disk:
+The `put` method may be used to store raw file contents on a disk. You may also pass a PHP `resource` to the `put` method, which will use Flysystem's underlying stream support. Using streams is greatly recommended when dealing with large files:
 
     use Illuminate\Support\Facades\Storage;
 
@@ -285,8 +296,8 @@ In web applications, one of the most common use-cases for storing files is stori
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class UserAvatarController extends Controller
     {
@@ -334,16 +345,6 @@ By default, this method will use your default disk. If you would like to specify
         'avatars/'.$request->user()->id, 's3'
     );
 
-#### Other File Information
-
-If you would like to get original name of the uploaded file, you may do so using the `getClientOriginalName` method:
-
-    $name = $request->file('avatar')->getClientOriginalName();
-
-The `extension` method may be used to get the file extension of the uploaded file:
-
-    $extension = $request->file('avatar')->extension();
-
 <a name="file-visibility"></a>
 ### File Visibility
 
@@ -359,7 +360,7 @@ If the file has already been stored, its visibility can be retrieved and set via
 
     $visibility = Storage::getVisibility('file.jpg');
 
-    Storage::setVisibility('file.jpg', 'public');
+    Storage::setVisibility('file.jpg', 'public')
 
 <a name="deleting-files"></a>
 ## Deleting Files
@@ -383,7 +384,7 @@ If necessary, you may specify the disk that the file should be deleted from:
 
 #### Get All Files Within A Directory
 
-The `files` method returns an array of all of the files in a given directory. If you would like to retrieve a list of all files within a given directory including all subdirectories, you may use the `allFiles` method:
+The `files` method returns an array of all of the files in a given directory. If you would like to retrieve a list of all files within a given directory including all sub-directories, you may use the `allFiles` method:
 
     use Illuminate\Support\Facades\Storage;
 
@@ -393,7 +394,7 @@ The `files` method returns an array of all of the files in a given directory. If
 
 #### Get All Directories Within A Directory
 
-The `directories` method returns an array of all the directories within a given directory. Additionally, you may use the `allDirectories` method to get a list of all directories within a given directory and all of its subdirectories:
+The `directories` method returns an array of all the directories within a given directory. Additionally, you may use the `allDirectories` method to get a list of all directories within a given directory and all of its sub-directories:
 
     $directories = Storage::directories($directory);
 
@@ -402,7 +403,7 @@ The `directories` method returns an array of all the directories within a given 
 
 #### Create A Directory
 
-The `makeDirectory` method will create the given directory, including any needed subdirectories:
+The `makeDirectory` method will create the given directory, including any needed sub-directories:
 
     Storage::makeDirectory($directory);
 
@@ -421,22 +422,22 @@ In order to set up the custom filesystem you will need a Flysystem adapter. Let'
 
     composer require spatie/flysystem-dropbox
 
-Next, you should create a [service provider](providers.md) such as `DropboxServiceProvider`. In the provider's `boot` method, you may use the `Storage` facade's `extend` method to define the custom driver:
+Next, you should create a [service provider](/docs/{{version}}/providers) such as `DropboxServiceProvider`. In the provider's `boot` method, you may use the `Storage` facade's `extend` method to define the custom driver:
 
     <?php
 
     namespace App\Providers;
 
-    use Illuminate\Support\ServiceProvider;
+    use Storage;
     use League\Flysystem\Filesystem;
+    use Illuminate\Support\ServiceProvider;
     use Spatie\Dropbox\Client as DropboxClient;
     use Spatie\FlysystemDropbox\DropboxAdapter;
-    use Storage;
 
     class DropboxServiceProvider extends ServiceProvider
     {
         /**
-         * Register any application services.
+         * Register bindings in the container.
          *
          * @return void
          */

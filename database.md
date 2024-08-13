@@ -11,14 +11,14 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel makes interacting with databases extremely simple across a variety of database backends using either raw SQL, the [fluent query builder](queries.md), and the [Eloquent ORM](eloquent.md). Currently, Laravel supports four databases:
+Laravel makes interacting with databases extremely simple across a variety of database backends using either raw SQL, the [fluent query builder](/docs/{{version}}/queries), and the [Eloquent ORM](/docs/{{version}}/eloquent). Currently, Laravel supports four databases:
 
 <div class="content-list" markdown="1">
 
-- MySQL 5.6+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
-- PostgreSQL 9.4+ ([Version Policy](https://www.postgresql.org/support/versioning/))
-- SQLite 3.8.8+
-- SQL Server 2017+ ([Version Policy](https://support.microsoft.com/en-us/lifecycle/search))
+- MySQL
+- PostgreSQL
+- SQLite
+- SQL Server
 
 </div>
 
@@ -27,7 +27,7 @@ Laravel makes interacting with databases extremely simple across a variety of da
 
 The database configuration for your application is located at `config/database.php`. In this file you may define all of your database connections, as well as specify which connection should be used by default. Examples for most of the supported database systems are provided in this file.
 
-By default, Laravel's sample [environment configuration](configuration.md#environment-configuration) is ready to use with [Laravel Homestead](homestead.md), which is a convenient virtual machine for doing Laravel development on your local machine. You are free to modify this configuration as needed for your local database.
+By default, Laravel's sample [environment configuration](/docs/{{version}}/configuration#environment-configuration) is ready to use with [Laravel Homestead](/docs/{{version}}/homestead), which is a convenient virtual machine for doing Laravel development on your local machine. You are free to modify this configuration as needed for your local database.
 
 #### SQLite Configuration
 
@@ -36,9 +36,12 @@ After creating a new SQLite database using a command such as `touch database/dat
     DB_CONNECTION=sqlite
     DB_DATABASE=/absolute/path/to/database.sqlite
 
-To enable foreign key constraints for SQLite connections, you should set the `DB_FOREIGN_KEYS` environment variable to `true`:
+To enable foreign key constraints for SQLite connections, you should add the `foreign_key_constraints` option to your `config/database.php` configuration file:
 
-    DB_FOREIGN_KEYS=true
+    'sqlite' => [
+        // ...
+        'foreign_key_constraints' => true,
+    ],
 
 #### Configuration Using URLs
 
@@ -115,8 +118,8 @@ To run a basic query, you may use the `select` method on the `DB` facade:
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\DB;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -174,7 +177,7 @@ Some database statements do not return any value. For these types of operations,
 <a name="listening-for-query-events"></a>
 ## Listening For Query Events
 
-If you would like to receive each SQL query executed by your application, you may use the `listen` method. This method is useful for logging queries or debugging. You may register your query listener in a [service provider](providers.md):
+If you would like to receive each SQL query executed by your application, you may use the `listen` method. This method is useful for logging queries or debugging. You may register your query listener in a [service provider](/docs/{{version}}/providers):
 
     <?php
 
@@ -245,4 +248,4 @@ Lastly, you can commit a transaction via the `commit` method:
 
     DB::commit();
 
-> {tip} The `DB` facade's transaction methods control the transactions for both the [query builder](queries.md) and [Eloquent ORM](eloquent.md).
+> {tip} The `DB` facade's transaction methods control the transactions for both the [query builder](/docs/{{version}}/queries) and [Eloquent ORM](/docs/{{version}}/eloquent).

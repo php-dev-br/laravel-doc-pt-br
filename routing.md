@@ -11,7 +11,7 @@
 - [Route Groups](#route-groups)
     - [Middleware](#route-group-middleware)
     - [Namespaces](#route-group-namespaces)
-    - [Subdomain Routing](#route-group-subdomain-routing)
+    - [Sub-Domain Routing](#route-group-sub-domain-routing)
     - [Route Prefixes](#route-group-prefixes)
     - [Route Name Prefixes](#route-group-name-prefixes)
 - [Route Model Binding](#route-model-binding)
@@ -64,7 +64,7 @@ Sometimes you may need to register a route that responds to multiple HTTP verbs.
 
 #### CSRF Protection
 
-Any HTML forms pointing to `POST`, `PUT`, or `DELETE` routes that are defined in the `web` routes file should include a CSRF token field. Otherwise, the request will be rejected. You can read more about CSRF protection in the [CSRF documentation](csrf.md):
+Any HTML forms pointing to `POST`, `PUT`, or `DELETE` routes that are defined in the `web` routes file should include a CSRF token field. Otherwise, the request will be rejected. You can read more about CSRF protection in the [CSRF documentation](/docs/{{version}}/csrf):
 
     <form method="POST" action="/profile">
         @csrf
@@ -210,18 +210,6 @@ If the named route defines parameters, you may pass the parameters as the second
 
     $url = route('profile', ['id' => 1]);
 
-If you pass additional parameters in the array, those key / value pairs will automatically be added to the generated URL's query string:
-
-    Route::get('user/{id}/profile', function ($id) {
-        //
-    })->name('profile');
-
-    $url = route('profile', ['id' => 1, 'photos' => 'yes']);
-
-    // /user/1/profile?photos=yes
-
-> {tip} Sometimes, you may wish to specify request-wide default values for URL parameters, such as the current locale. To accomplish this, you may use the [`URL::defaults` method](urls.md#default-values).
-
 #### Inspecting The Current Route
 
 If you would like to determine if the current request was routed to a given named route, you may use the `named` method on a Route instance. For example, you may check the current route name from a route middleware:
@@ -275,10 +263,10 @@ Another common use-case for route groups is assigning the same PHP namespace to 
 
 Remember, by default, the `RouteServiceProvider` includes your route files within a namespace group, allowing you to register controller routes without specifying the full `App\Http\Controllers` namespace prefix. So, you only need to specify the portion of the namespace that comes after the base `App\Http\Controllers` namespace.
 
-<a name="route-group-subdomain-routing"></a>
-### Subdomain Routing
+<a name="route-group-sub-domain-routing"></a>
+### Sub-Domain Routing
 
-Route groups may also be used to handle subdomain routing. Subdomains may be assigned route parameters just like route URIs, allowing you to capture a portion of the subdomain for usage in your route or controller. The subdomain may be specified by calling the `domain` method before defining the group:
+Route groups may also be used to handle sub-domain routing. Sub-domains may be assigned route parameters just like route URIs, allowing you to capture a portion of the sub-domain for usage in your route or controller. The sub-domain may be specified by calling the `domain` method before defining the group:
 
     Route::domain('{account}.myapp.com')->group(function () {
         Route::get('user/{id}', function ($account, $id) {
@@ -286,7 +274,7 @@ Route groups may also be used to handle subdomain routing. Subdomains may be ass
         });
     });
 
-> {note} In order to ensure your subdomain routes are reachable, you should register subdomain routes before registering root domain routes. This will prevent root domain routes from overwriting subdomain routes which have the same URI path.
+> {note} In order to ensure your sub-domain routes are reachable, you should register sub-domain routes before registering root domain routes. This will prevent root domain routes from overwriting sub-domain routes which have the same URI path.
 
 <a name="route-group-prefixes"></a>
 ### Route Prefixes
@@ -376,7 +364,7 @@ If you wish to use your own resolution logic, you may use the `Route::bind` meth
         parent::boot();
 
         Route::bind('user', function ($value) {
-            return App\User::where('name', $value)->firstOrFail();
+            return App\User::where('name', $value)->first() ?? abort(404);
         });
     }
 
@@ -390,7 +378,7 @@ Alternatively, you may override the `resolveRouteBinding` method on your Eloquen
      */
     public function resolveRouteBinding($value)
     {
-        return $this->where('name', $value)->firstOrFail();
+        return $this->where('name', $value)->first() ?? abort(404);
     }
 
 <a name="fallback-routes"></a>
@@ -407,7 +395,7 @@ Using the `Route::fallback` method, you may define a route that will be executed
 <a name="rate-limiting"></a>
 ## Rate Limiting
 
-Laravel includes a [middleware](middleware.md) to rate limit access to routes within your application. To get started, assign the `throttle` middleware to a route or a group of routes. The `throttle` middleware accepts two parameters that determine the maximum number of requests that can be made in a given number of minutes. For example, let's specify that an authenticated user may access the following group of routes 60 times per minute:
+Laravel includes a [middleware](/docs/{{version}}/middleware) to rate limit access to routes within your application. To get started, assign the `throttle` middleware to a route or a group of routes. The `throttle` middleware accepts two parameters that determine the maximum number of requests that can be made in a given number of minutes. For example, let's specify that an authenticated user may access the following group of routes 60 times per minute:
 
     Route::middleware('auth:api', 'throttle:60,1')->group(function () {
         Route::get('/user', function () {
@@ -422,40 +410,6 @@ You may specify a dynamic request maximum based on an attribute of the authentic
     Route::middleware('auth:api', 'throttle:rate_limit,1')->group(function () {
         Route::get('/user', function () {
             //
-        });
-    });
-
-#### Distinct Guest & Authenticated User Rate Limits
-
-You may specify different rate limits for guest and authenticated users. For example, you may specify a maximum of `10` requests per minute for guests `60` for authenticated users:
-
-    Route::middleware('throttle:10|60,1')->group(function () {
-        //
-    });
-
-You may also combine this functionality with dynamic rate limits. For example, if your `User` model contains a `rate_limit` attribute, you may pass the name of the attribute to the `throttle` middleware so that it is used to calculate the maximum request count for authenticated users:
-
-    Route::middleware('auth:api', 'throttle:10|rate_limit,1')->group(function () {
-        Route::get('/user', function () {
-            //
-        });
-    });
-
-#### Rate Limit Segments
-
-Typically, you will probably specify one rate limit for your entire API. However, your application may require different rate limits for different segments of your API. If this is the case, you will need to pass a segment name as the third argument to the `throttle` middleware:
-
-    Route::middleware('auth:api')->group(function () {
-        Route::middleware('throttle:60,1,default')->group(function () {
-            Route::get('/servers', function () {
-                //
-            });
-        });
-
-        Route::middleware('throttle:60,1,deletes')->group(function () {
-            Route::delete('/servers/{id}', function () {
-                //
-            });
         });
     });
 

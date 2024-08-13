@@ -41,7 +41,7 @@ Laravel Telescope is an elegant debug assistant for the Laravel framework. Teles
 
 You may use Composer to install Telescope into your Laravel project:
 
-    composer require laravel/telescope:^3.0
+    composer require laravel/telescope "2.1.7"
 
 After installing Telescope, publish its assets using the `telescope:install` Artisan command. After installing Telescope, you should also run the `migrate` command:
 
@@ -59,7 +59,7 @@ When updating Telescope, you should re-publish Telescope's assets:
 
 If you plan to only use Telescope to assist your local development, you may install Telescope using the `--dev` flag:
 
-    composer require laravel/telescope --dev
+    composer require laravel/telescope "2.1.7" --dev
 
 After running `telescope:install`, you should remove the `TelescopeServiceProvider` service provider registration from your `app` configuration file. Instead, manually register the service provider in the `register` method of your `AppServiceProvider`:
 
@@ -320,6 +320,8 @@ The query watcher records the raw SQL, bindings, and execution time for all quer
 
 <a name="redis-watcher"></a>
 ### Redis Watcher
+
+> {note} Redis events must be enabled for the Redis watcher to function. You may enable Redis events by calling `Redis::enableEvents()` in the `boot` method of your `app/Providers/AppServiceProvider.php` file.
 
 The Redis watcher records all Redis commands executed by your application. If you are using Redis for caching, cache commands will also be recorded by the Redis Watcher.
 

@@ -8,7 +8,7 @@
 <a name="creating-views"></a>
 ## Creating Views
 
-> {tip} Looking for more information on how to write Blade templates? Check out the full [Blade documentation](blade.md) to get started.
+> {tip} Looking for more information on how to write Blade templates? Check out the full [Blade documentation](/docs/{{version}}/blade) to get started.
 
 Views contain the HTML served by your application and separate your controller / application logic from your presentation logic. Views are stored in the `resources/views` directory. A simple view might look something like this:
 
@@ -26,13 +26,11 @@ Since this view is stored at `resources/views/greeting.blade.php`, we may return
         return view('greeting', ['name' => 'James']);
     });
 
-As you can see, the first argument passed to the `view` helper corresponds to the name of the view file in the `resources/views` directory. The second argument is an array of data that should be made available to the view. In this case, we are passing the `name` variable, which is displayed in the view using [Blade syntax](blade.md).
+As you can see, the first argument passed to the `view` helper corresponds to the name of the view file in the `resources/views` directory. The second argument is an array of data that should be made available to the view. In this case, we are passing the `name` variable, which is displayed in the view using [Blade syntax](/docs/{{version}}/blade).
 
-Views may also be nested within subdirectories of the `resources/views` directory. "Dot" notation may be used to reference nested views. For example, if your view is stored at `resources/views/admin/profile.blade.php`, you may reference it like so:
+Views may also be nested within sub-directories of the `resources/views` directory. "Dot" notation may be used to reference nested views. For example, if your view is stored at `resources/views/admin/profile.blade.php`, you may reference it like so:
 
     return view('admin.profile', $data);
-
-> {note} View directory names should not contain the `.` character.
 
 #### Determining If A View Exists
 
@@ -50,7 +48,7 @@ Using the `first` method, you may create the first view that exists in a given a
 
     return view()->first(['custom.admin', 'admin'], $data);
 
-You may also call this method via the `View` [facade](facades.md):
+You may also call this method via the `View` [facade](/docs/{{version}}/facades):
 
     use Illuminate\Support\Facades\View;
 
@@ -106,7 +104,7 @@ Occasionally, you may need to share a piece of data with all views that are rend
 
 View composers are callbacks or class methods that are called when a view is rendered. If you have data that you want to be bound to a view each time that view is rendered, a view composer can help you organize that logic into a single location.
 
-For this example, let's register the view composers within a [service provider](providers.md). We'll use the `View` facade to access the underlying `Illuminate\Contracts\View\Factory` contract implementation. Remember, Laravel does not include a default directory for view composers. You are free to organize them however you wish. For example, you could create an `app/Http/View/Composers` directory:
+For this example, let's register the view composers within a [service provider](/docs/{{version}}/providers). We'll use the `View` facade to access the underlying `Illuminate\Contracts\View\Factory` contract implementation. Remember, Laravel does not include a default directory for view composers. You are free to organize them however you wish. For example, you could create an `app/Http/View/Composers` directory:
 
     <?php
 
@@ -154,8 +152,8 @@ Now that we have registered the composer, the `ProfileComposer@compose` method w
 
     namespace App\Http\View\Composers;
 
-    use App\Repositories\UserRepository;
     use Illuminate\View\View;
+    use App\Repositories\UserRepository;
 
     class ProfileComposer
     {
@@ -192,7 +190,7 @@ Now that we have registered the composer, the `ProfileComposer@compose` method w
 
 Just before the view is rendered, the composer's `compose` method is called with the `Illuminate\View\View` instance. You may use the `with` method to bind data to the view.
 
-> {tip} All view composers are resolved via the [service container](container.md), so you may type-hint any dependencies you need within a composer's constructor.
+> {tip} All view composers are resolved via the [service container](/docs/{{version}}/container), so you may type-hint any dependencies you need within a composer's constructor.
 
 #### Attaching A Composer To Multiple Views
 

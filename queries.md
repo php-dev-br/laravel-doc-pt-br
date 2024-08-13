@@ -12,7 +12,7 @@
     - [Parameter Grouping](#parameter-grouping)
     - [Where Exists Clauses](#where-exists-clauses)
     - [JSON Where Clauses](#json-where-clauses)
-- [Ordering, Grouping, Limit & Offset](#ordering-grouping-limit-and-offset)
+- [Ordering, Grouping, Limit, & Offset](#ordering-grouping-limit-and-offset)
 - [Conditional Clauses](#conditional-clauses)
 - [Inserts](#inserts)
 - [Updates](#updates)
@@ -42,8 +42,8 @@ You may use the `table` method on the `DB` facade to begin a query. The `table` 
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\DB;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -103,7 +103,7 @@ If you would like to retrieve a Collection containing the values of a single col
 <a name="chunking-results"></a>
 ### Chunking Results
 
-If you need to work with thousands of database records, consider using the `chunk` method. This method retrieves a small chunk of the results at a time and feeds each chunk into a `Closure` for processing. This method is very useful for writing [Artisan commands](artisan.md) that process thousands of records. For example, let's work with the entire `users` table in chunks of 100 records at a time:
+If you need to work with thousands of database records, consider using the `chunk` method. This method retrieves a small chunk of the results at a time and feeds each chunk into a `Closure` for processing. This method is very useful for writing [Artisan commands](/docs/{{version}}/artisan) that process thousands of records. For example, let's work with the entire `users` table in chunks of 100 records at a time:
 
     DB::table('users')->orderBy('id')->chunk(100, function ($users) {
         foreach ($users as $user) {
@@ -194,7 +194,7 @@ Instead of using `DB::raw`, you may also use the following methods to insert a r
 
 #### `selectRaw`
 
-The `selectRaw` method can be used in place of `addSelect(DB::raw(...))`. This method accepts an optional array of bindings as its second argument:
+The `selectRaw` method can be used in place of `select(DB::raw(...))`. This method accepts an optional array of bindings as its second argument:
 
     $orders = DB::table('orders')
                     ->selectRaw('price * ? as price_with_tax', [1.0825])
@@ -224,15 +224,6 @@ The `orderByRaw` method may be used to set a raw string as the value of the `ord
 
     $orders = DB::table('orders')
                     ->orderByRaw('updated_at - created_at DESC')
-                    ->get();
-
-### `groupByRaw`
-
-The `groupByRaw` method may be used to set a raw string as the value of the `group by` clause:
-
-    $orders = DB::table('orders')
-                    ->select('city', 'state')
-                    ->groupByRaw('city, state')
                     ->get();
 
 <a name="joins"></a>
@@ -265,7 +256,7 @@ If you would like to perform a "left join" or "right join" instead of an "inner 
 To perform a "cross join" use the `crossJoin` method with the name of the table you wish to cross join to. Cross joins generate a cartesian product between the first table and the joined table:
 
     $users = DB::table('sizes')
-                ->crossJoin('colors')
+                ->crossJoin('colours')
                 ->get();
 
 #### Advanced Join Clauses
@@ -287,9 +278,9 @@ If you would like to use a "where" style clause on your joins, you may use the `
             })
             ->get();
 
-#### Subquery Joins
+#### Sub-Query Joins
 
-You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a query to a subquery. Each of these methods receive three arguments: the subquery, its table alias, and a Closure that defines the related columns:
+You may use the `joinSub`, `leftJoinSub`, and `rightJoinSub` methods to join a query to a sub-query. Each of these methods receive three arguments: the sub-query, its table alias, and a Closure that defines the related columns:
 
     $latestPosts = DB::table('posts')
                        ->select('user_id', DB::raw('MAX(created_at) as last_post_created_at'))
@@ -361,18 +352,6 @@ You may chain where constraints together as well as add `or` clauses to the quer
                         ->orWhere('name', 'John')
                         ->get();
 
-If you need to group an "or" condition within parentheses, you may pass a Closure as the first argument to the `orWhere` method:
-
-    $users = DB::table('users')
-                ->where('votes', '>', 100)
-                ->orWhere(function($query) {
-                    $query->where('name', 'Abigail')
-                          ->where('votes', '>', 50);
-                })
-                ->get();
-
-    // SQL: select * from users where votes > 100 or (name = 'Abigail' and votes > 50)
-
 #### Additional Where Clauses
 
 **whereBetween / orWhereBetween**
@@ -380,8 +359,7 @@ If you need to group an "or" condition within parentheses, you may pass a Closur
 The `whereBetween` method verifies that a column's value is between two values:
 
     $users = DB::table('users')
-               ->whereBetween('votes', [1, 100])
-               ->get();
+                        ->whereBetween('votes', [1, 100])->get();
 
 **whereNotBetween / orWhereNotBetween**
 
@@ -470,7 +448,7 @@ The `whereColumn` method can also be passed an array of multiple conditions. The
     $users = DB::table('users')
                     ->whereColumn([
                         ['first_name', '=', 'last_name'],
-                        ['updated_at', '>', 'created_at'],
+                        ['updated_at', '>', 'created_at']
                     ])->get();
 
 <a name="parameter-grouping"></a>
@@ -478,13 +456,13 @@ The `whereColumn` method can also be passed an array of multiple conditions. The
 
 Sometimes you may need to create more advanced where clauses such as "where exists" clauses or nested parameter groupings. The Laravel query builder can handle these as well. To get started, let's look at an example of grouping constraints within parenthesis:
 
-    $users = DB::table('users')
-               ->where('name', '=', 'John')
-               ->where(function ($query) {
-                   $query->where('votes', '>', 100)
-                         ->orWhere('title', '=', 'Admin');
-               })
-               ->get();
+    DB::table('users')
+                ->where('name', '=', 'John')
+                ->where(function ($query) {
+                    $query->where('votes', '>', 100)
+                          ->orWhere('title', '=', 'Admin');
+                })
+                ->get();
 
 As you can see, passing a `Closure` into the `where` method instructs the query builder to begin a constraint group. The `Closure` will receive a query builder instance which you can use to set the constraints that should be contained within the parenthesis group. The example above will produce the following SQL:
 
@@ -497,13 +475,13 @@ As you can see, passing a `Closure` into the `where` method instructs the query 
 
 The `whereExists` method allows you to write `where exists` SQL clauses. The `whereExists` method accepts a `Closure` argument, which will receive a query builder instance allowing you to define the query that should be placed inside of the "exists" clause:
 
-    $users = DB::table('users')
-               ->whereExists(function ($query) {
-                   $query->select(DB::raw(1))
-                         ->from('orders')
-                         ->whereRaw('orders.user_id = users.id');
-               })
-               ->get();
+    DB::table('users')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                          ->from('orders')
+                          ->whereRaw('orders.user_id = users.id');
+                })
+                ->get();
 
 The query above will produce the following SQL:
 
@@ -548,7 +526,7 @@ You may use `whereJsonLength` to query JSON arrays by their length:
                     ->get();
 
 <a name="ordering-grouping-limit-and-offset"></a>
-## Ordering, Grouping, Limit & Offset
+## Ordering, Grouping, Limit, & Offset
 
 #### orderBy
 
@@ -670,9 +648,9 @@ If the table has an auto-incrementing id, use the `insertGetId` method to insert
 
 In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, like the `insert` method, accepts an array of column and value pairs containing the columns to be updated. You may constrain the `update` query using `where` clauses:
 
-    $affected = DB::table('users')
-                  ->where('id', 1)
-                  ->update(['votes' => 1]);
+    DB::table('users')
+                ->where('id', 1)
+                ->update(['votes' => 1]);
 
 #### Update Or Insert
 
@@ -691,9 +669,9 @@ The `updateOrInsert` method will first attempt to locate a matching database rec
 
 When updating a JSON column, you should use `->` syntax to access the appropriate key in the JSON object. This operation is supported on MySQL 5.7+ and PostgreSQL 9.5+:
 
-    $affected = DB::table('users')
-                  ->where('id', 1)
-                  ->update(['options->enabled' => true]);
+    DB::table('users')
+                ->where('id', 1)
+                ->update(['options->enabled' => true]);
 
 <a name="increment-and-decrement"></a>
 ### Increment & Decrement

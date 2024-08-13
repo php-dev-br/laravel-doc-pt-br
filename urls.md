@@ -42,7 +42,7 @@ If no path is provided to the `url` helper, a `Illuminate\Routing\UrlGenerator` 
     // Get the full URL for the previous request...
     echo url()->previous();
 
-Each of these methods may also be accessed via the `URL` [facade](facades.md):
+Each of these methods may also be accessed via the `URL` [facade](/docs/{{version}}/facades):
 
     use Illuminate\Support\Facades\URL;
 
@@ -63,7 +63,7 @@ To generate a URL to this route, you may use the `route` helper like so:
 
     // http://example.com/post/1
 
-You will often be generating URLs using the primary key of [Eloquent models](eloquent.md). For this reason, you may pass Eloquent models as parameter values. The `route` helper will automatically extract the model's primary key:
+You will often be generating URLs using the primary key of [Eloquent models](/docs/{{version}}/eloquent). For this reason, you may pass Eloquent models as parameter values. The `route` helper will automatically extract the model's primary key:
 
     echo route('post.show', ['post' => $post]);
 
@@ -155,7 +155,7 @@ For some applications, you may wish to specify request-wide default values for c
         //
     })->name('post.index');
 
-It is cumbersome to always pass the `locale` every time you call the `route` helper. So, you may use the `URL::defaults` method to define a default value for this parameter that will always be applied during the current request. You may wish to call this method from a [route middleware](middleware.md#assigning-middleware-to-routes) so that you have access to the current request:
+It is cumbersome to always pass the `locale` every time you call the `route` helper. So, you may use the `URL::defaults` method to define a default value for this parameter that will always be applied during the current request. You may wish to call this method from a [route middleware](/docs/{{version}}/middleware#assigning-middleware-to-routes) so that you have access to the current request:
 
     <?php
 

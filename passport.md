@@ -1,7 +1,6 @@
 # Laravel Passport
 
 - [Introduction](#introduction)
-- [Upgrading Passport](#upgrading)
 - [Installation](#installation)
     - [Frontend Quickstart](#frontend-quickstart)
     - [Deploying Passport](#deploying-passport)
@@ -12,10 +11,6 @@
     - [Managing Clients](#managing-clients)
     - [Requesting Tokens](#requesting-tokens)
     - [Refreshing Tokens](#refreshing-tokens)
-    - [Purging Tokens](#purging-tokens)
-- [Authorization Code Grant with PKCE](#code-grant-pkce)
-    - [Creating The Client](#creating-a-auth-pkce-grant-client)
-    - [Requesting Tokens](#requesting-auth-pkce-grant-tokens)
 - [Password Grant Tokens](#password-grant-tokens)
     - [Creating A Password Grant Client](#creating-a-password-grant-client)
     - [Requesting Tokens](#requesting-password-grant-tokens)
@@ -46,17 +41,12 @@ Laravel already makes it easy to perform authentication via traditional login fo
 
 > {note} This documentation assumes you are already familiar with OAuth2. If you do not know anything about OAuth2, consider familiarizing yourself with the general [terminology](https://oauth2.thephpleague.com/terminology/) and features of OAuth2 before continuing.
 
-<a name="upgrading"></a>
-## Upgrading Passport
-
-When upgrading to a new major version of Passport, it's important that you carefully review [the upgrade guide](https://github.com/laravel/passport/blob/master/UPGRADE.md).
-
 <a name="installation"></a>
 ## Installation
 
 To get started, install Passport via the Composer package manager:
 
-    composer require laravel/passport
+    composer require laravel/passport:7.5.1
 
 The Passport service provider registers its own database migration directory with the framework, so you should migrate your database after installing the package. The Passport migrations will create the tables your application needs to store clients and access tokens:
 
@@ -72,9 +62,9 @@ After running this command, add the `Laravel\Passport\HasApiTokens` trait to you
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
-    use Illuminate\Notifications\Notifiable;
     use Laravel\Passport\HasApiTokens;
+    use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
@@ -87,9 +77,9 @@ Next, you should call the `Passport::routes` method within the `boot` method of 
 
     namespace App\Providers;
 
-    use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-    use Illuminate\Support\Facades\Gate;
     use Laravel\Passport\Passport;
+    use Illuminate\Support\Facades\Gate;
+    use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
     class AuthServiceProvider extends ServiceProvider
     {
@@ -233,21 +223,12 @@ By default, Passport issues long-lived access tokens that expire after one year.
 <a name="overriding-default-models"></a>
 ### Overriding Default Models
 
-You are free to extend the models used internally by Passport:
+You are free to extend the models used internally by Passport. Then, you may instruct Passport to use your custom models via the `Passport` class:
 
-    use Laravel\Passport\Client as PassportClient;
-
-    class Client extends PassportClient
-    {
-        // ...
-    }
-
-Then, you may instruct Passport to use your custom models via the `Passport` class:
-
-    use App\Models\Passport\AuthCode;
     use App\Models\Passport\Client;
-    use App\Models\Passport\PersonalAccessClient;
     use App\Models\Passport\Token;
+    use App\Models\Passport\AuthCode;
+    use App\Models\Passport\PersonalAccessClient;
 
     /**
      * Register any authentication / authorization services.
@@ -288,13 +269,13 @@ If you would like to whitelist multiple redirect URLs for your client, you may s
 
     http://example.com/callback,http://examplefoo.com/callback
 
-> {note} Any URL which contains commas must be encoded.
+> {note} Any URLs which contains commas must be encoded.
 
 #### JSON API
 
 Since your users will not be able to utilize the `client` command, Passport provides a JSON API that you may use to create clients. This saves you the trouble of having to manually code controllers for creating, updating, and deleting clients.
 
-However, you will need to pair Passport's JSON API with your own frontend to provide a dashboard for your users to manage their clients. Below, we'll review all of the API endpoints for managing clients. For convenience, we'll use [Axios](https://github.com/axios/axios) to demonstrate making HTTP requests to the endpoints.
+However, you will need to pair Passport's JSON API with your own frontend to provide a dashboard for your users to manage their clients. Below, we'll review all of the API endpoints for managing clients. For convenience, we'll use [Axios](https://github.com/mzabriskie/axios) to demonstrate making HTTP requests to the endpoints.
 
 The JSON API is guarded by the `web` and `auth` middleware; therefore, it may only be called from your own application. It is not able to be called from an external source.
 
@@ -385,7 +366,7 @@ If you would like to customize the authorization approval screen, you may publis
 
     php artisan vendor:publish --tag=passport-views
 
-Sometimes you may wish to skip the authorization prompt, such as when authorizing a first-party client. You may accomplish this by [extending the `Client` model](#overriding-default-models) and defining a `skipsAuthorization` method. If `skipsAuthorization` returns `true` the client will be approved and the user will be redirected back to the `redirect_uri` immediately:
+Sometimes you may wish to skip the authorization prompt, such as when authorizing a first-party client. You may accomplish this by defining a `skipsAuthorization` method on the client model. If `skipsAuthorization` returns `true` the client will be approved and the user will be redirected back to the `redirect_uri` immediately:
 
     <?php
 
@@ -458,115 +439,6 @@ If your application issues short-lived access tokens, users will need to refresh
 
 This `/oauth/token` route will return a JSON response containing `access_token`, `refresh_token`, and `expires_in` attributes. The `expires_in` attribute contains the number of seconds until the access token expires.
 
-<a name="purging-tokens"></a>
-### Purging Tokens
-
-When tokens have been revoked or expired, you might want to purge them from the database. Passport ships with a command that can do this for you:
-
-    # Purge revoked and expired tokens and auth codes...
-    php artisan passport:purge
-
-    # Only purge revoked tokens and auth codes...
-    php artisan passport:purge --revoked
-
-    # Only purge expired tokens and auth codes...
-    php artisan passport:purge --expired
-
-You may also configure a [scheduled job](scheduling.md) in your console `Kernel` class to automatically prune your tokens on a schedule:
-
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('passport:purge')->hourly();
-    }
-
-<a name="code-grant-pkce"></a>
-## Authorization Code Grant with PKCE
-
-The Authorization Code grant with "Proof Key for Code Exchange" (PKCE) is a secure way to authenticate single page applications or native applications to access your API. This grant should be used when you can't guarantee that the client secret will be stored confidentially or in order to mitigate the threat of having the authorization code intercepted by an attacker. A combination of a "code verifier" and a "code challenge" replaces the client secret when exchanging the authorization code for an access token.
-
-<a name="creating-a-auth-pkce-grant-client"></a>
-### Creating The Client
-
-Before your application can issue tokens via the authorization code grant with PKCE, you will need to create a PKCE-enabled client. You may do this using the `passport:client` command with the `--public` option:
-
-    php artisan passport:client --public
-
-<a name="requesting-auth-pkce-grant-tokens"></a>
-### Requesting Tokens
-
-#### Code Verifier & Code Challenge
-
-As this authorization grant does not provide a client secret, developers will need to generate a combination of a code verifier and a code challenge in order to request a token.
-
-The code verifier should be a random string of between 43 and 128 characters containing letters, numbers and  `"-"`, `"."`, `"_"`, `"~"`, as defined in the [RFC 7636 specification](https://tools.ietf.org/html/rfc7636).
-
-The code challenge should be a Base64 encoded string with URL and filename-safe characters. The trailing `'='` characters should be removed and no line breaks, whitespace, or other additional characters should be present.
-
-    $encoded = base64_encode(hash('sha256', $code_verifier, true));
-
-    $codeChallenge = strtr(rtrim($encoded, '='), '+/', '-_');
-
-#### Redirecting For Authorization
-
-Once a client has been created, you may use the client ID and the generated code verifier and code challenge to request an authorization code and access token from your application. First, the consuming application should make a redirect request to your application's `/oauth/authorize` route:
-
-    Route::get('/redirect', function (Request $request) {
-        $request->session()->put('state', $state = Str::random(40));
-
-        $request->session()->put('code_verifier', $code_verifier = Str::random(128));
-
-        $codeChallenge = strtr(rtrim(
-            base64_encode(hash('sha256', $code_verifier, true))
-        , '='), '+/', '-_');
-
-        $query = http_build_query([
-            'client_id' => 'client-id',
-            'redirect_uri' => 'http://example.com/callback',
-            'response_type' => 'code',
-            'scope' => '',
-            'state' => $state,
-            'code_challenge' => $codeChallenge,
-            'code_challenge_method' => 'S256',
-        ]);
-
-        return redirect('http://your-app.com/oauth/authorize?'.$query);
-    });
-
-#### Converting Authorization Codes To Access Tokens
-
-If the user approves the authorization request, they will be redirected back to the consuming application. The consumer should verify the `state` parameter against the value that was stored prior to the redirect, as in the standard Authorization Code Grant.
-
-If the state parameter matches, the consumer should issue a `POST` request to your application to request an access token. The request should include the authorization code that was issued by your application when the user approved the authorization request along with the originally generated code verifier:
-
-    Route::get('/callback', function (Request $request) {
-        $state = $request->session()->pull('state');
-
-        $codeVerifier = $request->session()->pull('code_verifier');
-
-        throw_unless(
-            strlen($state) > 0 && $state === $request->state,
-            InvalidArgumentException::class
-        );
-
-        $response = (new GuzzleHttp\Client)->post('http://your-app.com/oauth/token', [
-            'form_params' => [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'client-id',
-                'redirect_uri' => 'http://example.com/callback',
-                'code_verifier' => $codeVerifier,
-                'code' => $request->code,
-            ],
-        ]);
-
-        return json_decode((string) $response->getBody(), true);
-    });
-
 <a name="password-grant-tokens"></a>
 ## Password Grant Tokens
 
@@ -626,9 +498,9 @@ When authenticating using the password grant, Passport will use the `email` attr
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
-    use Illuminate\Notifications\Notifiable;
     use Laravel\Passport\HasApiTokens;
+    use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
@@ -655,21 +527,21 @@ When authenticating using the password grant, Passport will use the `password` a
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
-    use Illuminate\Notifications\Notifiable;
-    use Illuminate\Support\Facades\Hash;
     use Laravel\Passport\HasApiTokens;
+    use Illuminate\Support\Facades\Hash;
+    use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
         use HasApiTokens, Notifiable;
 
         /**
-         * Validate the password of the user for the Passport password grant.
-         *
-         * @param  string  $password
-         * @return bool
-         */
+        * Validate the password of the user for the Passport password grant.
+        *
+        * @param  string $password
+        * @return bool
+        */
         public function validateForPassportPasswordGrant($password)
         {
             return Hash::check($password, $this->password);
@@ -855,7 +727,7 @@ This route may be used to delete personal access tokens:
 <a name="via-middleware"></a>
 ### Via Middleware
 
-Passport includes an [authentication guard](authentication.md#adding-custom-guards) that will validate access tokens on incoming requests. Once you have configured the `api` guard to use the `passport` driver, you only need to specify the `auth:api` middleware on any routes that require a valid access token:
+Passport includes an [authentication guard](/docs/{{version}}/authentication#adding-custom-guards) that will validate access tokens on incoming requests. Once you have configured the `api` guard to use the `passport` driver, you only need to specify the `auth:api` middleware on any routes that require a valid access token:
 
     Route::get('/user', function () {
         //
@@ -940,7 +812,7 @@ The `scopes` middleware may be assigned to a route to verify that the incoming r
 
     Route::get('/orders', function () {
         // Access token has both "check-status" and "place-orders" scopes...
-    })->middleware(['auth:api', 'scopes:check-status,place-orders']);
+    })->middleware('scopes:check-status,place-orders');
 
 #### Check For Any Scopes
 
@@ -948,7 +820,7 @@ The `scope` middleware may be assigned to a route to verify that the incoming re
 
     Route::get('/orders', function () {
         // Access token has either "check-status" or "place-orders" scope...
-    })->middleware(['auth:api', 'scope:check-status,place-orders']);
+    })->middleware('scope:check-status,place-orders');
 
 #### Checking Scopes On A Token Instance
 
@@ -992,7 +864,7 @@ Typically, if you want to consume your API from your JavaScript application, you
         \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
     ],
 
-> {note} You should ensure that the `CreateFreshApiToken` middleware is the last middleware listed in your middleware stack.
+> {note} You should ensure that the `EncryptCookies` middleware is listed prior to the `CreateFreshApiToken` middleware in your middleware stack.
 
 This Passport middleware will attach a `laravel_token` cookie to your outgoing responses. This cookie contains an encrypted JWT that Passport will use to authenticate API requests from your JavaScript application. Now, you may make requests to your application's API without explicitly passing an access token:
 
@@ -1021,9 +893,15 @@ If needed, you can customize the `laravel_token` cookie's name using the `Passpo
 
 #### CSRF Protection
 
-When using this method of authentication, you will need to ensure a valid CSRF token header is included in your requests. The default Laravel JavaScript scaffolding includes an Axios instance, which will automatically use the encrypted `XSRF-TOKEN` cookie value to send a `X-XSRF-TOKEN` header on same-origin requests.
+When using this method of authentication, the default Laravel JavaScript scaffolding instructs Axios to always send the `X-CSRF-TOKEN` and `X-Requested-With` headers. However, you should be sure to include your CSRF token in a [HTML meta tag](/docs/{{version}}/csrf#csrf-x-csrf-token):
 
-> {tip} If you choose to send the `X-CSRF-TOKEN` header instead of `X-XSRF-TOKEN`, you will need to use the unencrypted token provided by `csrf_token()`.
+    // In your application layout...
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    // Laravel's JavaScript scaffolding...
+    window.axios.defaults.headers.common = {
+        'X-Requested-With': 'XMLHttpRequest',
+    };
 
 <a name="events"></a>
 ## Events
@@ -1063,21 +941,4 @@ Passport's `actingAs` method may be used to specify the currently authenticated 
         $response = $this->post('/api/create-server');
 
         $response->assertStatus(201);
-    }
-
-Passport's `actingAsClient` method may be used to specify the currently authenticated client as well as its scopes. The first argument given to the `actingAsClient` method is the client instance and the second is an array of scopes that should be granted to the client's token:
-
-    use Laravel\Passport\Client;
-    use Laravel\Passport\Passport;
-
-    public function testGetOrders()
-    {
-        Passport::actingAsClient(
-            factory(Client::class)->create(),
-            ['check-status']
-        );
-
-        $response = $this->get('/api/orders');
-
-        $response->assertStatus(200);
     }

@@ -33,25 +33,13 @@ Every command also includes a "help" screen which displays and describes the com
 <a name="tinker"></a>
 ### Tinker (REPL)
 
-Laravel Tinker is a powerful REPL for the Laravel framework, powered by the [PsySH](https://github.com/bobthecow/psysh) package.
-
-#### Installation
-
-All Laravel applications include Tinker by default. However, you may install it manually if needed using Composer:
-
-    composer require laravel/tinker
-
-#### Usage
-
-Tinker allows you to interact with your entire Laravel application on the command line, including the Eloquent ORM, jobs, events, and more. To enter the Tinker environment, run the `tinker` Artisan command:
+All Laravel applications include Tinker, a REPL powered by the [PsySH](https://github.com/bobthecow/psysh) package. Tinker allows you to interact with your entire Laravel application on the command line, including the Eloquent ORM, jobs, events, and more. To enter the Tinker environment, run the `tinker` Artisan command:
 
     php artisan tinker
 
 You can publish Tinker's configuration file using the `vendor:publish` command:
 
     php artisan vendor:publish --provider="Laravel\Tinker\TinkerServiceProvider"
-
-> {note} The `dispatch` helper function and `dispatch` method on the `Dispatchable` class depends on garbage collection to place the job on the queue. Therefore, when using tinker, you should use `Bus::dispatch` or `Queue::push` to dispatch jobs.
 
 #### Command Whitelist
 
@@ -88,14 +76,14 @@ After generating your command, you should fill in the `signature` and `descripti
 
 > {tip} For greater code reuse, it is good practice to keep your console commands light and let them defer to application services to accomplish their tasks. In the example below, note that we inject a service class to do the "heavy lifting" of sending the e-mails.
 
-Let's take a look at an example command. Note that we are able to inject any dependencies we need into the command's `handle` method. The Laravel [service container](container.md) will automatically inject all dependencies that are type-hinted in this method's signature:
+Let's take a look at an example command. Note that we are able to inject any dependencies we need into the command's `handle` method. The Laravel [service container](/docs/{{version}}/container) will automatically inject all dependencies that are type-hinted in this method's signature:
 
     <?php
 
     namespace App\Console\Commands;
 
-    use App\DripEmailer;
     use App\User;
+    use App\DripEmailer;
     use Illuminate\Console\Command;
 
     class SendEmails extends Command
@@ -161,10 +149,10 @@ The Closure is bound to the underlying command instance, so you have full access
 
 #### Type-Hinting Dependencies
 
-In addition to receiving your command's arguments and options, command Closures may also type-hint additional dependencies that you would like resolved out of the [service container](container.md):
+In addition to receiving your command's arguments and options, command Closures may also type-hint additional dependencies that you would like resolved out of the [service container](/docs/{{version}}/container):
 
-    use App\DripEmailer;
     use App\User;
+    use App\DripEmailer;
 
     Artisan::command('email:send {user}', function (DripEmailer $drip, $user) {
         $drip->send(User::find($user));
@@ -344,27 +332,11 @@ The `anticipate` method can be used to provide auto-completion for possible choi
 
     $name = $this->anticipate('What is your name?', ['Taylor', 'Dayle']);
 
-Alternatively, you may pass a Closure as the second argument to the `anticipate` method. The Closure will be called each time the user types an input character. The Closure should accept a string parameter containing the user's input so far, and return an array of options for auto-completion:
-
-    $name = $this->anticipate('What is your name?', function ($input) {
-        // Return auto-completion options...
-    });
-
 #### Multiple Choice Questions
 
 If you need to give the user a predefined set of choices, you may use the `choice` method. You may set the array index of the default value to be returned if no option is chosen:
 
     $name = $this->choice('What is your name?', ['Taylor', 'Dayle'], $defaultIndex);
-
-In addition, the `choice` method accepts optional fourth and fifth arguments for determining the maximum number of attempts to select a valid response and whether multiple selections are permitted:
-
-    $name = $this->choice(
-        'What is your name?',
-        ['Taylor', 'Dayle'],
-        $defaultIndex,
-        $maxAttempts = null,
-        $allowMultipleSelections = false
-    );
 
 <a name="writing-output"></a>
 ### Writing Output
@@ -437,7 +409,7 @@ Because of the `load` method call in your console kernel's `commands` method, al
         // ...
     }
 
-You may also manually register commands by adding its class name to the `$commands` property of your `app/Console/Kernel.php` file. When Artisan boots, all the commands listed in this property will be resolved by the [service container](container.md) and registered with Artisan:
+You may also manually register commands by adding its class name to the `$commands` property of your `app/Console/Kernel.php` file. When Artisan boots, all the commands listed in this property will be resolved by the [service container](/docs/{{version}}/container) and registered with Artisan:
 
     protected $commands = [
         Commands\SendEmails::class
@@ -460,7 +432,7 @@ Alternatively, you may pass the entire Artisan command to the `call` method as a
 
     Artisan::call('email:send 1 --queue=default');
 
-Using the `queue` method on the `Artisan` facade, you may even queue Artisan commands so they are processed in the background by your [queue workers](queues.md). Before using this method, make sure you have configured your queue and are running a queue listener:
+Using the `queue` method on the `Artisan` facade, you may even queue Artisan commands so they are processed in the background by your [queue workers](/docs/{{version}}/queues). Before using this method, make sure you have configured your queue and are running a queue listener:
 
     Route::get('/foo', function () {
         Artisan::queue('email:send', [

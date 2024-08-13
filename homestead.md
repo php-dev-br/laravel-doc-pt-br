@@ -57,10 +57,8 @@ Homestead runs on any Windows, Mac, or Linux system, and includes Nginx, PHP, My
 </style>
 
 <div id="software-list" markdown="1">
-
 - Ubuntu 18.04
 - Git
-- PHP 7.4
 - PHP 7.3
 - PHP 7.2
 - PHP 7.1
@@ -82,7 +80,6 @@ Homestead runs on any Windows, Mac, or Linux system, and includes Nginx, PHP, My
 - Xdebug
 - XHProf / Tideways / XHGui
 - wp-cli
-
 </div>
 
 <a name="optional-software"></a>
@@ -97,7 +94,6 @@ Homestead runs on any Windows, Mac, or Linux system, and includes Nginx, PHP, My
 </style>
 
 <div id="software-list" markdown="1">
-
 - Apache
 - Blackfire
 - Cassandra
@@ -122,7 +118,6 @@ Homestead runs on any Windows, Mac, or Linux system, and includes Nginx, PHP, My
 - RabbitMQ
 - Solr
 - Webdriver & Laravel Dusk Utilities
-
 </div>
 
 <a name="installation-and-setup"></a>
@@ -463,7 +458,7 @@ After updating the `Homestead.yaml`, be sure to re-provision the machine by runn
 <a name="configuring-cron-schedules"></a>
 ### Configuring Cron Schedules
 
-Laravel provides a convenient way to [schedule Cron jobs](scheduling.md) by scheduling a single `schedule:run` Artisan command to be run every minute. The `schedule:run` command will examine the job schedule defined in your `App\Console\Kernel` class to determine which jobs should be run.
+Laravel provides a convenient way to [schedule Cron jobs](/docs/{{version}}/scheduling) by scheduling a single `schedule:run` Artisan command to be run every minute. The `schedule:run` command will examine the job schedule defined in your `App\Console\Kernel` class to determine which jobs should be run.
 
 If you would like the `schedule:run` command to be run for a Homestead site, you may set the `schedule` option to `true` when defining the site:
 
@@ -495,7 +490,7 @@ Minio is an open source object storage server with an Amazon S3 compatible API. 
 
     minio: true
 
-By default, Minio is available on port 9600. You may access the Minio control panel by visiting `http://localhost:9600/`. The default access key is `homestead`, while the default secret key is `secretkey`. When accessing Minio, you should always use region `us-east-1`.
+By default, Minio is available on port 9600. You may access the Minio control panel by visiting `http://homestead:9600/`. The default access key is `homestead`, while the default secret key is `secretkey`. When accessing Minio, you should always use region `us-east-1`.
 
 In order to use Minio you will need to adjust the S3 disk configuration in your `config/filesystems.php` configuration file. You will need to add the `use_path_style_endpoint` option to the disk configuration, as well as change the `url` key to `endpoint`:
 
@@ -514,7 +509,7 @@ Finally, ensure your `.env` file has the following options:
     AWS_ACCESS_KEY_ID=homestead
     AWS_SECRET_ACCESS_KEY=secretkey
     AWS_DEFAULT_REGION=us-east-1
-    AWS_URL=http://localhost:9600
+    AWS_URL=http://homestead:9600
 
 To provision buckets, add a `buckets` directive to your Homestead configuration file:
 
@@ -559,7 +554,7 @@ If you wish, you may forward additional ports to the Vagrant box, as well as spe
 <a name="sharing-your-environment"></a>
 ### Sharing Your Environment
 
-Sometimes you may wish to share what you're currently working on with coworkers or a client. Vagrant has a built-in way to support this via `vagrant share`; however, this will not work if you have multiple sites configured in your `Homestead.yaml` file.
+Sometimes you may wish to share what you're currently working on with coworkers or a  client. Vagrant has a built-in way to support this via `vagrant share`; however, this will not work if you have multiple sites configured in your `Homestead.yaml` file.
 
 To solve this problem, Homestead includes its own `share` command. To get started, SSH into your Homestead machine via `vagrant ssh` and run `share homestead.test`. This will share the `homestead.test` site from your `Homestead.yaml` configuration file. You may substitute any of your other configured sites for `homestead.test`:
 
@@ -574,7 +569,7 @@ After running the command, you will see an Ngrok screen appear which contains th
 <a name="multiple-php-versions"></a>
 ### Multiple PHP Versions
 
-Homestead 6 introduced support for multiple versions of PHP on the same virtual machine. You may specify which version of PHP to use for a given site within your `Homestead.yaml` file. The available PHP versions are: "5.6", "7.0", "7.1", "7.2", "7.3", and "7.4" (the default):
+Homestead 6 introduced support for multiple versions of PHP on the same virtual machine. You may specify which version of PHP to use for a given site within your `Homestead.yaml` file. The available PHP versions are: "5.6", "7.0", "7.1", "7.2" and "7.3" (the default):
 
     sites:
         - map: homestead.test
@@ -588,7 +583,6 @@ In addition, you may use any of the supported PHP versions via the CLI:
     php7.1 artisan list
     php7.2 artisan list
     php7.3 artisan list
-    php7.4 artisan list
 
 You may also update the default CLI version by issuing the following commands from within your Homestead virtual machine:
 
@@ -597,7 +591,6 @@ You may also update the default CLI version by issuing the following commands fr
     php71
     php72
     php73
-    php74
 
 <a name="web-servers"></a>
 ### Web Servers
@@ -632,9 +625,9 @@ To debug a PHP CLI application, use the `xphp` shell alias inside your Vagrant b
 
 #### Autostarting Xdebug
 
-When debugging functional tests that make requests to the web server, it is easier to autostart debugging rather than modifying tests to pass through a custom header or cookie to trigger debugging. To force Xdebug to start automatically, modify `/etc/php/7.x/fpm/conf.d/20-xdebug.ini` inside your Vagrant box and add the following configuration:
+When debugging functional tests that make requests to the web server, it is easier to autostart debugging rather than modifying tests to pass through a custom header or cookie to trigger debugging. To force Xdebug to start automatically, modify `/etc/php/7.#/fpm/conf.d/20-xdebug.ini` inside your Vagrant box and add the following configuration:
 
-    ; If Homestead.yaml contains a different subnet for the IP address, this address may be different...
+    ; If Homestead.yml contains a different subnet for the IP address, this address may be different...
     xdebug.remote_host = 192.168.10.1
     xdebug.remote_autostart = 1
 
@@ -734,7 +727,7 @@ Next, you need to update the Homestead source code. If you cloned the repository
 
 These commands pull the latest Homestead code from the GitHub repository, fetches the latest tags, and then checks out the latest tagged release. You can find the latest stable release version on the [GitHub releases page](https://github.com/laravel/homestead/releases).
 
-If you have installed Homestead via your project's `composer.json` file, you should ensure your `composer.json` file contains `"laravel/homestead": "^10"` and update your dependencies:
+If you have installed Homestead via your project's `composer.json` file, you should ensure your `composer.json` file contains `"laravel/homestead": "^9"` and update your dependencies:
 
     composer update
 

@@ -5,25 +5,25 @@
     - [Installing Laravel](#installing-laravel)
     - [Configuration](#configuration)
 - [Web Server Configuration](#web-server-configuration)
-    - [Directory Configuration](#directory-configuration)
     - [Pretty URLs](#pretty-urls)
 
 <a name="installation"></a>
 ## Installation
 
+> {video} Laracasts provides a [free, thorough introduction to Laravel](http://laravelfromscratch.com) for newcomers to the framework. It's a great place to start your journey.
+
 <a name="server-requirements"></a>
 ### Server Requirements
 
-The Laravel framework has a few system requirements. All of these requirements are satisfied by the [Laravel Homestead](homestead.md) virtual machine, so it's highly recommended that you use Homestead as your local Laravel development environment.
+The Laravel framework has a few system requirements. All of these requirements are satisfied by the [Laravel Homestead](/docs/{{version}}/homestead) virtual machine, so it's highly recommended that you use Homestead as your local Laravel development environment.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
 
 <div class="content-list" markdown="1">
 
-- PHP >= 7.2.5
+- PHP >= 7.1.3
 - BCMath PHP Extension
 - Ctype PHP Extension
-- Fileinfo PHP Extension
 - JSON PHP Extension
 - Mbstring PHP Extension
 - OpenSSL PHP Extension
@@ -44,17 +44,14 @@ First, download the Laravel installer using Composer:
 
     composer global require laravel/installer
 
-Make sure to place Composer's system-wide vendor bin directory in your `$PATH` so the laravel executable can be located by your system. This directory exists in different locations based on your operating system; however, some common locations include:
+Make sure to place composer's system-wide vendor bin directory in your `$PATH` so the laravel executable can be located by your system. This directory exists in different locations based on your operating system; however, some common locations include:
 
 <div class="content-list" markdown="1">
 
-- macOS: `$HOME/.composer/vendor/bin`
+- macOS and GNU / Linux Distributions: `$HOME/.composer/vendor/bin`
 - Windows: `%USERPROFILE%\AppData\Roaming\Composer\vendor\bin`
-- GNU / Linux Distributions: `$HOME/.config/composer/vendor/bin` or `$HOME/.composer/vendor/bin`
 
 </div>
-
-You could also find Composer's global installation path by running `composer global about` and looking up from the first line.
 
 Once installed, the `laravel new` command will create a fresh Laravel installation in the directory you specify. For instance, `laravel new blog` will create a directory named `blog` containing a fresh Laravel installation with all of Laravel's dependencies already installed:
 
@@ -64,7 +61,7 @@ Once installed, the `laravel new` command will create a fresh Laravel installati
 
 Alternatively, you may also install Laravel by issuing the Composer `create-project` command in your terminal:
 
-    composer create-project --prefer-dist laravel/laravel blog "6.*"
+    composer create-project --prefer-dist laravel/laravel blog "5.8.*"
 
 #### Local Development Server
 
@@ -72,7 +69,7 @@ If you have PHP installed locally and you would like to use PHP's built-in devel
 
     php artisan serve
 
-More robust local development options are available via [Homestead](homestead.md) and [Valet](valet.md).
+More robust local development options are available via [Homestead](/docs/{{version}}/homestead) and [Valet](/docs/{{version}}/valet).
 
 <a name="configuration"></a>
 ### Configuration
@@ -87,13 +84,13 @@ All of the configuration files for the Laravel framework are stored in the `conf
 
 #### Directory Permissions
 
-After installing Laravel, you may need to configure some permissions. Directories within the `storage` and the `bootstrap/cache` directories should be writable by your web server or Laravel will not run. If you are using the [Homestead](homestead.md) virtual machine, these permissions should already be set.
+After installing Laravel, you may need to configure some permissions. Directories within the `storage` and the `bootstrap/cache` directories should be writable by your web server or Laravel will not run. If you are using the [Homestead](/docs/{{version}}/homestead) virtual machine, these permissions should already be set.
 
 #### Application Key
 
 The next thing you should do after installing Laravel is set your application key to a random string. If you installed Laravel via Composer or the Laravel installer, this key has already been set for you by the `php artisan key:generate` command.
 
-Typically, this string should be 32 characters long. The key can be set in the `.env` environment file. If you have not copied the `.env.example` file to a new file named `.env`, you should do that now. **If the application key is not set, your user sessions and other encrypted data will not be secure!**
+Typically, this string should be 32 characters long. The key can be set in the `.env` environment file. If you have not renamed the `.env.example` file to `.env`, you should do that now. **If the application key is not set, your user sessions and other encrypted data will not be secure!**
 
 #### Additional Configuration
 
@@ -103,19 +100,14 @@ You may also want to configure a few additional components of Laravel, such as:
 
 <div class="content-list" markdown="1">
 
-- [Cache](cache.md#configuration)
-- [Database](database.md#configuration)
-- [Session](session.md#configuration)
+- [Cache](/docs/{{version}}/cache#configuration)
+- [Database](/docs/{{version}}/database#configuration)
+- [Session](/docs/{{version}}/session#configuration)
 
 </div>
 
 <a name="web-server-configuration"></a>
 ## Web Server Configuration
-
-<a name="directory-configuration"></a>
-### Directory Configuration
-
-Laravel should always be served out of the root of the "web directory" configured for your web server. You should not attempt to serve a Laravel application out of a subdirectory of the "web directory". Attempting to do so could expose sensitive files present within your application.
 
 <a name="pretty-urls"></a>
 ### Pretty URLs
@@ -144,4 +136,4 @@ If you are using Nginx, the following directive in your site configuration will 
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-When using [Homestead](homestead.md) or [Valet](valet.md), pretty URLs will be automatically configured.
+When using [Homestead](/docs/{{version}}/homestead) or [Valet](/docs/{{version}}/valet), pretty URLs will be automatically configured.

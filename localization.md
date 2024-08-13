@@ -30,8 +30,6 @@ All language files return an array of keyed strings. For example:
         'welcome' => 'Welcome to our application'
     ];
 
-> {note} For languages that differ by territory, you should name the language directories according to the ISO 15897. For example, "en_GB" should be used for British English rather than "en-gb".
-
 <a name="configuring-the-locale"></a>
 ### Configuring The Locale
 
@@ -102,7 +100,7 @@ You may retrieve lines from language files using the `__` helper function. The `
 
     echo __('I love programming.');
 
-If you are using the [Blade templating engine](blade.md), you may use the `{{ }}` syntax to echo the translation string or use the `@lang` directive:
+If you are using the [Blade templating engine](/docs/{{version}}/blade), you may use the `{{ }}` syntax to echo the translation string or use the `@lang` directive:
 
     {{ __('messages.welcome') }}
 

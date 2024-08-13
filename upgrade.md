@@ -1,14 +1,18 @@
 # Upgrade Guide
 
-- [Upgrading To 6.0 From 5.8](#upgrade-6.0)
+- [Upgrading To 5.8.0 From 5.7](#upgrade-5.8.0)
 
 <a name="high-impact-changes"></a>
 ## High Impact Changes
 
 <div class="content-list" markdown="1">
 
-- [Authorized Resources & `viewAny`](#authorized-resources)
-- [String & Array Helpers](#helpers)
+- [Cache TTL In Seconds](#cache-ttl-in-seconds)
+- [Cache Lock Safety Improvements](#cache-lock-safety-improvements)
+- [Environment Variable Parsing](#environment-variable-parsing)
+- [Markdown File Directory Change](#markdown-file-directory-change)
+- [Nexmo / Slack Notification Channels](#nexmo-slack-notification-channels)
+- [New Default Password Length](#new-default-password-length)
 
 </div>
 
@@ -17,406 +21,633 @@
 
 <div class="content-list" markdown="1">
 
-- [Carbon 1.x No Longer Supported](#carbon-support)
-- [Redis Default Client](#redis-default-client)
-- [Database `Capsule::table` Method](#capsule-table)
-- [Eloquent Arrayable & `toArray`](#eloquent-to-array)
-- [Eloquent `BelongsTo::update` Method](#belongs-to-update)
-- [Eloquent Primary Key Types](#eloquent-primary-key-type)
-- [Localization `Lang::trans` and `Lang::transChoice` Methods](#trans-and-trans-choice)
-- [Localization `Lang::getFromJson` Method](#get-from-json)
-- [Queue Retry Limit](#queue-retry-limit)
-- [Resend Email Verification Route](#email-verification-route)
-- [Email Verification Route Change](#email-verification-route-change)
-- [The `Input` Facade](#the-input-facade)
+- [Container Generators & Tagged Services](#container-generators)
+- [SQLite Version Constraints](#sqlite)
+- [Prefer String And Array Classes Over Helpers](#string-and-array-helpers)
+- [Deferred Service Providers](#deferred-service-providers)
+- [PSR-16 Conformity](#psr-16-conformity)
+- [Model Names Ending With Irregular Plurals](#model-names-ending-with-irregular-plurals)
+- [Custom Pivot Models With Incrementing IDs](#custom-pivot-models-with-incrementing-ids)
+- [Pheanstalk 4.0](#pheanstalk-4)
+- [Carbon 2.0](#carbon-2.0)
 
 </div>
 
-<a name="upgrade-6.0"></a>
-## Upgrading To 6.0 From 5.8
+<a name="upgrade-5.8.0"></a>
+## Upgrading To 5.8.0 From 5.7
 
-#### Estimated Upgrade Time: One Hour
+#### Estimated Upgrade Time: 1 Hour
 
 > {note} We attempt to document every possible breaking change. Since some of these breaking changes are in obscure parts of the framework only a portion of these changes may actually affect your application.
-
-### PHP 7.2 Required
-
-**Likelihood Of Impact: Medium**
-
-PHP 7.1 will no longer be actively maintained as of December 2019. Therefore, Laravel 6.0 requires PHP 7.2 or greater.
 
 <a name="updating-dependencies"></a>
 ### Updating Dependencies
 
-Update your `laravel/framework` dependency to `^6.0` in your `composer.json` file. If installed, update your `laravel/passport` dependency to `^9.3.2` in your `composer.json` file.
+Update your `laravel/framework` dependency to `5.8.*` in your `composer.json` file.
 
-Next, examine any 3rd party packages consumed by your application and verify you are using the proper version for Laravel 6 support.
+Next, examine any 3rd party packages consumed by your application and verify you are using the proper version for Laravel 5.8 support.
 
-### Authorization
+<a name="the-application-contract"></a>
+### The `Application` Contract
 
-<a name="authorized-resources"></a>
-#### Authorized Resources & `viewAny`
+#### The `environment` Method
+
+**Likelihood Of Impact: Very Low**
+
+The `environment` method signature of the `Illuminate\Contracts\Foundation\Application` contract [has changed](https://github.com/laravel/framework/pull/26296). If you are implementing this contract in your application, you should update the method signature:
+
+    /**
+     * Get or check the current application environment.
+     *
+     * @param  string|array  $environments
+     * @return string|bool
+     */
+    public function environment(...$environments);
+
+#### Added Methods
+
+**Likelihood Of Impact: Very Low**
+
+The `bootstrapPath`, `configPath`, `databasePath`, `environmentPath`, `resourcePath`, `storagePath`, `resolveProvider`, `bootstrapWith`, `configurationIsCached`, `detectEnvironment`, `environmentFile`, `environmentFilePath`, `getCachedConfigPath`, `getCachedRoutesPath`, `getLocale`, `getNamespace`, `getProviders`, `hasBeenBootstrapped`, `loadDeferredProviders`, `loadEnvironmentFrom`, `routesAreCached`, `setLocale`, `shouldSkipMiddleware` and `terminate`  methods [were added to the `Illuminate\Contracts\Foundation\Application` contract](https://github.com/laravel/framework/pull/26477).
+
+In the very unlikely event you are implementing this interface, you should add these methods to your implementation.
+
+<a name="authentication"></a>
+### Authentication
+
+#### Password Reset Notification Route Parameter
+
+**Likelihood Of Impact: Low**
+
+When a user requests a link to reset their password, Laravel generates the URL using the `route` helper to create a URL to the `password.reset` named route. When using Laravel 5.7, the token is passed to the `route` helper without an explicit name, like so:
+
+    route('password.reset', $token);
+
+When using Laravel 5.8, the token is passed to the `route` helper as an explicit parameter:
+
+    route('password.reset', ['token' => $token]);
+
+Therefore, if you are defining your own `password.reset` route, you should ensure that it contains a `{token}` parameter in its URI.
+
+<a name="new-default-password-length"></a>
+#### New Default Password Length
 
 **Likelihood Of Impact: High**
 
-Authorization policies attached to controllers using the `authorizeResource` method should now define a `viewAny` method, which will be called when a user accesses the controller's `index` method. Otherwise, calls to the `index` method of the controller will be rejected as unauthorized.
+The required password length when choosing or resetting a password was [changed to eight characters](https://github.com/laravel/framework/pull/25957). You should update any validation rules or logic within your application to match this new eight character default.
 
-#### Authorization Responses
+If you need to preserve the previous six character length or a different length, you may extend the `Illuminate\Auth\Passwords\PasswordBroker` class and overwrite the `validatePasswordWithDefaults` method with custom logic.
 
-**Likelihood Of Impact: Low**
+<a name="cache"></a>
+### Cache
 
-The constructor signature of the `Illuminate\Auth\Access\Response` class has changed. You should update your code accordingly. If you are not constructing authorization responses manually and are only using the `allow` and `deny` instance methods within your policies, no change is required:
+<a name="cache-ttl-in-seconds"></a>
+#### TTL in seconds
 
-    /**
-     * Create a new response.
-     *
-     * @param  bool  $allowed
-     * @param  string  $message
-     * @param  mixed  $code
-     * @return void
-     */
-    public function __construct($allowed, $message = '', $code = null)
+**Likelihood Of Impact: Very High**
 
-#### Returning "Deny" Responses
+In order to allow a more granular expiration time when storing items, the cache item time-to-live has changed from minutes to seconds. The `put`, `putMany`, `add`, `remember` and `setDefaultCacheTime` methods of the `Illuminate\Cache\Repository` class and its extended classes, as well as the `put` method of each cache store were updated with this changed behavior. See [the related PR](https://github.com/laravel/framework/pull/27276) for more info.
 
-**Likelihood Of Impact: Low**
+If you are passing an integer to any of these methods, you should update your code to ensure you are now passing the number of seconds you wish the item to remain in the cache. Alternatively, you may pass a `DateTime` instance indicating when the item should expire:
 
-In previous releases of Laravel, you did not need to return the value of the `deny` method from your policy methods since an exception was thrown immediately. However, in accordance with the Laravel documentation, you must now return the value of the `deny` method from your policies:
+    // Laravel 5.7 - Store item for 30 minutes...
+    Cache::put('foo', 'bar', 30);
 
-    public function update(User $user, Post $post)
-    {
-        if (! $user->role->isEditor()) {
-            return $this->deny("You must be an editor to edit this post.")
-        }
+    // Laravel 5.8 - Store item for 30 seconds...
+    Cache::put('foo', 'bar', 30);
 
-        return $user->id === $post->user_id;
+    // Laravel 5.7 / 5.8 - Store item for 30 seconds...
+    Cache::put('foo', 'bar', now()->addSeconds(30));
+
+> {tip} This change makes the Laravel cache system fully compliant with the [PSR-16 caching library standard](https://www.php-fig.org/psr/psr-16/).
+
+<a name="psr-16-conformity"></a>
+#### PSR-16 Conformity
+
+**Likelihood Of Impact: Medium**
+
+In addition to [the return value changes from below](#the-repository-and-store-contracts), the TTL argument of the `put`, `putMany` and `add` method's of the `Illuminate\Cache\Repository` class was updated to conform better with the PSR-16 spec. The new behavior provides a default of `null` so a call without specifying a TTL will result in storing the cache item forever. Additionally, storing cache items with a TTL of 0 or lower will remove items from the cache. See [the related PR](https://github.com/laravel/framework/pull/27217) for more info.
+
+The `KeyWritten` event [was also updated](https://github.com/laravel/framework/pull/27265) with these changes.
+
+<a name="cache-lock-safety-improvements"></a>
+#### Lock Safety Improvements
+
+**Likelihood Of Impact: High**
+
+In Laravel 5.7 and prior versions of Laravel, the "atomic lock" feature provided by some cache drivers could have unexpected behavior leading to the early release of locks.
+
+For example: **Client A** acquires lock `foo` with a 10 second expiration. **Client A** actually takes 20 seconds to finish its task. The lock is released automatically by the cache system 10 seconds into **Client A's** processing time. **Client B** acquires lock `foo`. **Client A** finally finishes its task and releases lock `foo`, inadvertently releasing **Client B's** hold on the lock. **Client C** is now able to acquire the lock.
+
+In order to mitigate this scenario, locks are now generated with an embedded "scope token" which allows the framework to ensure that, under normal circumstances, only the proper owner of a lock can release a lock.
+
+If you are using the `Cache::lock()->get(Closure)` method of interacting with locks, no changes are required:
+
+    Cache::lock('foo', 10)->get(function () {
+        // Lock will be released safely automatically...
+    });
+
+However, if you are manually calling `Cache::lock()->release()`, you must update your code to maintain an instance of the lock. Then, after you are done performing your task, you may call the `release` method on **the same lock instance**. For example:
+
+    if (($lock = Cache::lock('foo', 10))->get()) {
+        // Perform task...
+
+        $lock->release();
     }
 
-<a name="auth-access-gate-contract"></a>
-#### The `Illuminate\Contracts\Auth\Access\Gate` Contract
+Sometimes, you may wish to acquire a lock in one process and release it in another process. For example, you may acquire a lock during a web request and wish to release the lock at the end of a queued job that is triggered by that request. In this scenario, you should pass the lock's scoped "owner token" to the queued job so that the job can re-instantiate the lock using the given token:
+
+    // Within Controller...
+    $podcast = Podcast::find(1);
+
+    if (($lock = Cache::lock('foo', 120))->get()) {
+        ProcessPodcast::dispatch($podcast, $lock->owner());
+    }
+
+    // Within ProcessPodcast Job...
+    Cache::restoreLock('foo', $this->owner)->release();
+
+If you would like to release a lock without respecting its current owner, you may use the `forceRelease` method:
+
+    Cache::lock('foo')->forceRelease();
+
+<a name="the-repository-and-store-contracts"></a>
+#### The `Repository` and `Store` Contracts
+
+**Likelihood Of Impact: Very Low**
+
+In order to be fully compliant with `PSR-16` the return values of the `put` and `forever` methods of the `Illuminate\Contracts\Cache\Repository` contract and the return values of the `put`, `putMany` and `forever` methods of the `Illuminate\Contracts\Cache\Store` contract [have been changed](https://github.com/laravel/framework/pull/26726) from `void` to `bool`.
+
+<a name="carbon-2.0"></a>
+### Carbon 2.0
+
+**Likelihood Of Impact: Medium**
+
+Laravel now supports both Carbon 1 and Carbon 2; therefore, Composer will try to upgrade to Carbon 2.0 if no other compatibility issues with any other packages are detected. Please review the [migration guide for Carbon 2.0](https://carbon.nesbot.com/docs/#api-carbon-2).
+
+<a name="collections"></a>
+### Collections
+
+#### The `add` Method
+
+**Likelihood Of Impact: Very Low**
+
+The `add` method [has been moved](https://github.com/laravel/framework/pull/27082) from the Eloquent collection class to the base collection class. If you are extending `Illuminate\Support\Collection` and your extended class has an `add` method, make sure the method signature matches its parent:
+
+    public function add($item);
+
+#### The `firstWhere` Method
+
+**Likelihood Of Impact: Very Low**
+
+The `firstWhere` method signature [has changed](https://github.com/laravel/framework/pull/26261) to match the `where` method's signature. If you are overriding this method, you should update the method signature to match its parent:
+
+    /**
+     * Get the first item by the given key value pair.
+     *
+     * @param  string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function firstWhere($key, $operator = null, $value = null);
+
+<a name="console"></a>
+### Console
+
+#### The `Kernel` Contract
+
+**Likelihood Of Impact: Very Low**
+
+The `terminate` method [has been added to the `Illuminate\Contracts\Console\Kernel` contract](https://github.com/laravel/framework/pull/26393). If you are implementing this interface, you should add this method to your implementation.
+
+<a name="container"></a>
+### Container
+
+<a name="container-generators"></a>
+#### Generators & Tagged Services
+
+**Likelihood Of Impact: Medium**
+
+The container's `tagged` method now utilizes PHP generators to lazy-instantiate the services with a given tag. This provides a performance improvement if you are not utilizing every tagged service.
+
+Because of this change, the `tagged` method now returns an `iterable` instead of an `array`. If you are type-hinting the return value of this method, you should ensure that your type-hint is changed to `iterable`.
+
+In addition, it is no longer possible to directly access a tagged service by its array offset value, such as `$container->tagged('foo')[0]`.
+
+#### The `resolve` Method
+
+**Likelihood Of Impact: Very Low**
+
+The `resolve` method [now accepts](https://github.com/laravel/framework/pull/27066) a new boolean parameter which indicates whether events (resolving callbacks) should be raised/executed during the instantiation of an object. If you are overriding this method, you should update the method signature to match its parent.
+
+#### The `addContextualBinding` Method
+
+**Likelihood Of Impact: Very Low**
+
+The `addContextualBinding` method [was added to the `Illuminate\Contracts\Container\Container` contract](https://github.com/laravel/framework/pull/26551). If you are implementing this interface, you should add this method to your implementation.
+
+#### The `tagged` Method
 
 **Likelihood Of Impact: Low**
 
-The `Illuminate\Contracts\Auth\Access\Gate` contract has received a new `inspect` method. If you are implementing this interface manually, you should add this method to your implementation.
+The `tagged` method signature [has been changed](https://github.com/laravel/framework/pull/26953) and it now returns an `iterable` instead of an `array`. If you have type-hinted in your code some parameter which gets the return value of this method with `array`, you should modify the type-hint to `iterable`.
 
-### Carbon
+#### The `flush` Method
 
-<a name="carbon-support"></a>
-#### Carbon 1.x No Longer Supported
+**Likelihood Of Impact: Very Low**
 
-**Likelihood Of Impact: Medium**
+The `flush` method [was added to the `Illuminate\Contracts\Container\Container` contract](https://github.com/laravel/framework/pull/26477). If you are implementing this interface, you should add this method to your implementation.
 
-Carbon 1.x [is no longer supported](https://github.com/laravel/framework/pull/28683) since it is nearing its maintenance end of life. Please upgrade your application to Carbon 2.0.
-
-### Configuration
-
-#### The `AWS_REGION` Environment Variable
-
-**Likelihood Of Impact: Optional**
-
-If you plan to utilize [Laravel Vapor](https://vapor.laravel.com), you should update all occurrences of `AWS_REGION` within your `config` directory to `AWS_DEFAULT_REGION`. In addition, you should update this environment variable's name in your `.env` file.
-
-<a name="redis-default-client"></a>
-#### Redis Default Client
-
-**Likelihood Of Impact: Medium**
-
-The default Redis client has changed from `predis` to `phpredis`. In order to keep using `predis`, ensure the `redis.client` configuration option is set to `predis` in your `config/database.php` configuration file.
-
-<a name="dynamodb-cache-store"></a>
-#### DynamoDB Cache Store
-
-**Likelihood Of Impact: Optional**
-
-If you plan to utilize [Laravel Vapor](https://vapor.laravel.com), you should update your `config/cache.php` file to include the `dynamodb` store.
-
-    <?php
-    return [
-        ...
-        'stores' => [
-            ...
-            'dynamodb' => [
-                'driver' => 'dynamodb',
-                'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
-                'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-                'table' => env('DYNAMODB_CACHE_TABLE', 'cache'),
-                'endpoint' => env('DYNAMODB_ENDPOINT'),
-            ],
-        ],
-        ...
-    ];
-
-<a name="sqs-environment-variables"></a>
-#### SQS Environment Variables
-
-**Likelihood Of Impact: Optional**
-
-If you plan to utilize [Laravel Vapor](https://vapor.laravel.com), you should update your `config/queue.php` file to include the updated `sqs` connection environment variables.
-
-    <?php
-    return [
-        ...
-        'connections' => [
-            ...
-            'sqs' => [
-                'driver' => 'sqs',
-                'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
-                'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
-                'queue' => env('SQS_QUEUE', 'your-queue-name'),
-                'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-            ],
-        ],
-        ...
-    ];
-
+<a name="database"></a>
 ### Database
 
-<a name="capsule-table"></a>
-#### The Capsule `table` Method
-
-**Likelihood Of Impact: Medium**
-
-> {note} This change only applies to non-Laravel applications that are using `illuminate/database` as a dependency.
-
-The signature of the `Illuminate\Database\Capsule\Manager` class' `table` method has
-updated to accept a table alias as its second argument. If you are using `illuminate/database` outside of a Laravel application, you should update any calls to this method accordingly:
-
-    /**
-     * Get a fluent query builder instance.
-     *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $table
-     * @param  string|null  $as
-     * @param  string|null  $connection
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public static function table($table, $as = null, $connection = null)
-
-#### The `cursor` Method
+#### Unquoted MySQL JSON Values
 
 **Likelihood Of Impact: Low**
 
-The `cursor` method now returns an instance of `Illuminate\Support\LazyCollection` instead of a `Generator` The `LazyCollection` may be iterated just like a generator:
+The query builder will now return unquoted JSON values when using MySQL and MariaDB. This behavior is consistent with the other supported databases:
 
-    $users = App\User::cursor();
+    $value = DB::table('users')->value('options->language');
 
-    foreach ($users as $user) {
-        //
-    }
+    dump($value);
+
+    // Laravel 5.7...
+    '"en"'
+
+    // Laravel 5.8...
+    'en'
+
+As a result, the `->>` operator is no longer supported or necessary.
+
+<a name="sqlite"></a>
+#### SQLite
+
+**Likelihood Of Impact: Medium**
+
+As of Laravel 5.8 the [oldest supported SQLite version](https://github.com/laravel/framework/pull/25995) is SQLite 3.7.11. If you are using an older SQLite version, you should update it (SQLite 3.8.8+ is recommended).
+
+#### Migrations & `bigIncrements`
+
+**Likelihood Of Impact: None**
+
+[As of Laravel 5.8](https://github.com/laravel/framework/pull/26472), migration stubs use the `bigIncrements` method on ID columns by default. Previously, ID columns were created using the `increments` method.
+
+This will not affect any existing code in your project; however, be aware that foreign key columns must be of the same type. Therefore, a column created using the `increments` method can not reference a column created using the `bigIncrements` method.
 
 <a name="eloquent"></a>
 ### Eloquent
 
-<a name="belongs-to-update"></a>
-#### The `BelongsTo::update` Method
+<a name="model-names-ending-with-irregular-plurals"></a>
+#### Model Names Ending With Irregular Plurals
 
 **Likelihood Of Impact: Medium**
 
-For consistency, the `update` method of the `BelongsTo` relationship now functions as an ad-hoc update query, meaning it does not provide mass assignment protection or fire Eloquent events. This makes the relationship consistent with the `update` methods on all other types of relationships.
+As of Laravel 5.8, multi-word model names ending in a word with an irregular plural [are now correctly pluralized](https://github.com/laravel/framework/pull/26421).
 
-If you would like to update a model attached via a `BelongsTo` relationship and receive mass assignment update protection and events, you should call the `update` method on the model itself:
+    // Laravel 5.7...
+    App\Feedback.php -> feedback (correctly pluralized)
+    App\UserFeedback.php -> user_feedbacks (incorrectly pluralized)
 
-    // Ad-hoc query... no mass assignment protection or events...
-    $post->user()->update(['foo' => 'bar']);
+    // Laravel 5.8
+    App\Feedback.php -> feedback (correctly pluralized)
+    App\UserFeedback.php -> user_feedback (correctly pluralized)
 
-    // Model update... provides mass assignment protection and events...
-    $post->user->update(['foo' => 'bar']);
-
-<a name="eloquent-to-array"></a>
-#### Arrayable & `toArray`
-
-**Likelihood Of Impact: Medium**
-
-The Eloquent model's `toArray` method will now cast any attributes that implement `Illuminate\Contracts\Support\Arrayable` to an array.
-
-<a name="eloquent-primary-key-type"></a>
-#### Declaration Of Primary Key Type
-
-**Likelihood Of Impact: Medium**
-
-Laravel 6.0 has received [performance optimizations](https://github.com/laravel/framework/pull/28153) for integer key types. If you are using a string as your model's primary key, you should declare the key type using the `$keyType` property on your model:
+If you have a model that was incorrectly pluralized, you may continue using the old table name by defining a `$table` property on your model:
 
     /**
-     * The "type" of the primary key ID.
+     * The table associated with the model.
      *
      * @var string
      */
-    protected $keyType = 'string';
+    protected $table = 'user_feedbacks';
 
-### Email Verification
+<a name="custom-pivot-models-with-incrementing-ids"></a>
+#### Custom Pivot Models With Incrementing IDs
 
-<a name="email-verification-route"></a>
-#### Resend Verification Route HTTP Method
+If you have defined a many-to-many relationship that uses a custom pivot model, and that pivot model has an auto-incrementing primary key, you should ensure your custom pivot model class defines an `incrementing` property that is set to `true`:
 
-**Likelihood Of Impact: Medium**
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = true;
 
-To prevent possible CSRF attacks, the `email/resend` route registered by the router when using Laravel's built-in email verification has been updated from a `GET` route to a `POST` route. Therefore, you will need to update your frontend to send the proper request type to this route. For example, if you are using the built-in email verification template scaffolding:
-
-    {{ __('Before proceeding, please check your email for a verification link.') }}
-    {{ __('If you did not receive the email') }},
-
-    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-        @csrf
-
-        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
-            {{ __('click here to request another') }}
-        </button>.
-    </form>
-
-<a name="mustverifyemail-contract"></a>
-#### The `MustVerifyEmail` Contract
+#### The `loadCount` Method
 
 **Likelihood Of Impact: Low**
 
-A new `getEmailForVerification` method has been added to the `Illuminate\Contracts\Auth\MustVerifyEmail` contract. If you are manually implementing this contract, you should implement this method. This method should return the object's associated email address. If your `App\User` model is using the `Illuminate\Auth\MustVerifyEmail` trait, no changes are required, as this trait implements this method for you.
+A `loadCount` method has been added to the base `Illuminate\Database\Eloquent\Model` class. If your application also defines a `loadCount` method, it may conflict with Eloquent's definition.
 
-<a name="email-verification-route-change"></a>
-#### Email Verification Route Change
+#### The `originalIsEquivalent` Method
 
-**Likelihood Of Impact: Medium**
+**Likelihood Of Impact: Very Low**
 
-The route path for verifying emails has changed from `/email/verify/{id}` to `/email/verify/{id}/{hash}`. Any email verification emails that were sent prior to upgrading to Laravel 6.x will not longer be valid and will display a 404 page. If you wish, you may define a route matching the old verification URL path and display an informative message for your users that asks them to re-verify their email address.
+The `originalIsEquivalent` method of the `Illuminate\Database\Eloquent\Concerns\HasAttributes` trait [has been changed](https://github.com/laravel/framework/pull/26391) from `protected` to `public`.
 
-<a name="helpers"></a>
-### Helpers
+#### Automatic Soft-Deleted Casting Of `deleted_at` Property
 
-#### String & Array Helpers Package
+**Likelihood Of Impact: Low**
+
+The `deleted_at` property [will now be automatically casted](https://github.com/laravel/framework/pull/26985) to a `Carbon` instance when your Eloquent model uses the `Illuminate\Database\Eloquent\SoftDeletes` trait. You can override this behavior by writing your custom accessor for that property or by manually adding it to the `casts` attribute:
+
+    protected $casts = ['deleted_at' => 'string'];
+
+#### BelongsTo `getForeignKey` & `getOwnerKey` Methods
+
+**Likelihood Of Impact: Low**
+
+The `getForeignKey`, `getQualifiedForeignKey`, and `getOwnerKey` methods of the `BelongsTo` relationship have been renamed to `getForeignKeyName`, `getQualifiedForeignKeyName`, and `getOwnerKeyName` respectively, making the method names consistent with the other relationships offered by Laravel.
+
+<a name="environment-variable-parsing"></a>
+### Environment Variable Parsing
 
 **Likelihood Of Impact: High**
 
-All `str_` and `array_` helpers have been moved to the new `laravel/helpers` Composer package and removed from the framework. If desired, you may update all calls to these helpers to use the `Illuminate\Support\Str` and `Illuminate\Support\Arr` classes. Alternatively, you can add the new `laravel/helpers` package to your application to continue using these helpers:
+The [phpdotenv](https://github.com/vlucas/phpdotenv) package that is used to parse `.env` files has released a new major version, which may impact the results returned from the `env` helper. Specifically, the `#` character in an unquoted value will now be considered a comment instead of part of the value:
 
-    composer require laravel/helpers
+Previous behavior:
+
+    ENV_VALUE=foo#bar
+
+    env('ENV_VALUE'); // foo#bar
+
+New behavior:
+
+    ENV_VALUE=foo#bar
+    env('ENV_VALUE'); // foo
+
+To preserve the previous behavior, you may wrap the environment values in quotes:
+
+    ENV_VALUE="foo#bar"
+
+    env('ENV_VALUE'); // foo#bar
+
+For more information, please refer to the [phpdotenv upgrade guide](https://github.com/vlucas/phpdotenv/blob/master/UPGRADING.md).
+
+<a name="events"></a>
+### Events
+
+#### The `fire` Method
+
+**Likelihood Of Impact: Low**
+
+The `fire` method (which was deprecated in Laravel 5.4) of the `Illuminate\Events\Dispatcher` class [has been removed](https://github.com/laravel/framework/pull/26392).
+You should use the `dispatch` method instead.
+
+<a name="exception-handling"></a>
+### Exception Handling
+
+#### The `ExceptionHandler` Contract
+
+**Likelihood Of Impact: Low**
+
+The `shouldReport` method [has been added to the `Illuminate\Contracts\Debug\ExceptionHandler` contract](https://github.com/laravel/framework/pull/26193). If you are implementing this interface, you should add this method to your implementation.
+
+#### The `renderHttpException` Method
+
+**Likelihood Of Impact: Low**
+
+The `renderHttpException` method signature of the `Illuminate\Foundation\Exceptions\Handler` class [has changed](https://github.com/laravel/framework/pull/25975). If you are overriding this method in your exception handler, you should update the method signature to match its parent:
+
+    /**
+     * Render the given HttpException.
+     *
+     * @param  \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface  $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function renderHttpException(HttpExceptionInterface $e);
+
+<a name="mail"></a>
+### Mail
+
+<a name="markdown-file-directory-change"></a>
+<a name="markdown-file-directory-change"></a>
+### Markdown File Directory Change
+
+**Likelihood Of Impact: High**
+
+If you have published Laravel's Markdown mail components using the `vendor:publish` command, you should rename the `/resources/views/vendor/mail/markdown` directory to `/resources/views/vendor/mail/text`.
+
+In addition, the `markdownComponentPaths` method [has been renamed](https://github.com/laravel/framework/pull/26938) to `textComponentPaths`. If you are overriding this method, you should update the method name to match its parent.
+
+#### Method Signature Changes In The `PendingMail` Class
+
+**Likelihood Of Impact: Very Low**
+
+The `send`, `sendNow`, `queue`, `later` and `fill` methods of the `Illuminate\Mail\PendingMail` class [have been changed](https://github.com/laravel/framework/pull/26790) to accept an `Illuminate\Contracts\Mail\Mailable` instance instead of `Illuminate\Mail\Mailable`. If you are overriding some of these methods, you should update their signature to match its parent.
+
+<a name="queue"></a>
+### Queue
+
+<a name="pheanstalk-4"></a>
+#### Pheanstalk 4.0
+
+**Likelihood Of Impact: Medium**
+
+Laravel 5.8 provides support for the `~4.0` release of the Pheanstalk queue library. If you are using Pheanstalk library in your application, please upgrade your library to the `~4.0` release via Composer.
+
+#### The `Job` Contract
+
+**Likelihood Of Impact: Very Low**
+
+The `isReleased`, `hasFailed` and `markAsFailed` methods [have been added to the `Illuminate\Contracts\Queue\Job` contract](https://github.com/laravel/framework/pull/26908). If you are implementing this interface, you should add these methods to your implementation.
+
+#### The `Job::failed` & `FailingJob` Class
+
+**Likelihood Of Impact: Very Low**
+
+When a queued job failed in Laravel 5.7, the queue worker executed the `FailingJob::handle` method. In Laravel 5.8, the logic contained in the `FailingJob` class has been moved to a `fail` method directly on the job class itself. Because of this, a `fail` method has been added to the `Illuminate\Contracts\Queue\Job` contract.
+
+The base `Illuminate\Queue\Jobs\Job` class contains the implementation of `fail` and no code changes should be required by typical application code. However, if you are building custom queue driver which utilizes a job class that **does not** extend the base job class offered by Laravel, you should implement the `fail` method manually in your custom job class. You may refer to Laravel's base job class as a reference implementation.
+
+This change allows custom queue drivers to have more control over the job deletion process.
+
+#### Redis Blocking Pop
+
+**Likelihood Of Impact: Very Low**
+
+Using the "blocking pop" feature of the Redis queue driver is now safe. Previously, there was a small chance that a queued job could be lost if the Redis server or worker crashed at the same time the job was retrieved. In order to make blocking pops safe, a new Redis list with suffix `:notify` is created for each Laravel queue.
+
+<a name="requests"></a>
+### Requests
+
+#### The `TransformsRequest` Middleware
+
+**Likelihood Of Impact: Low**
+
+The `transform` method of the `Illuminate\Foundation\Http\Middleware\TransformsRequest` middleware now receives the "fully-qualified" request input key when the input is an array:
+
+    'employee' => [
+        'name' => 'Taylor Otwell',
+    ],
+
+    /**
+     * Transform the given value.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    protected function transform($key, $value)
+    {
+        dump($key); // 'employee.name' (Laravel 5.8)
+        dump($key); // 'name' (Laravel 5.7)
+    }
+
+<a name="routing"></a>
+### Routing
+
+#### The `UrlGenerator` Contract
+
+**Likelihood Of Impact: Very Low**
+
+The `previous` method [has been added to the `Illuminate\Contracts\Routing\UrlGenerator` contract](https://github.com/laravel/framework/pull/25616). If you are implementing this interface, you should add this method to your implementation.
+
+#### The `cachedSchema` Property Of `Illuminate\Routing\UrlGenerator`
+
+**Likelihood Of Impact: Very Low**
+
+The `$cachedSchema` property name (which has been deprecated in Laravel `5.7`) of `Illuminate\Routing\UrlGenerator` [has been changed to](https://github.com/laravel/framework/pull/26728) `$cachedScheme`.
+
+<a name="sessions"></a>
+### Sessions
+
+#### The `StartSession` Middleware
+
+**Likelihood Of Impact: Very Low**
+
+The session persistence logic has been [moved from the `terminate()` method to the `handle()` method](https://github.com/laravel/framework/pull/26410). If you are overriding one or both of these methods, you should update them to reflect these changes.
+
+<a name="support"></a>
+### Support
+
+<a name="string-and-array-helpers"></a>
+#### Prefer String And Array Classes Over Helpers
+
+**Likelihood Of Impact: Medium**
+
+All `array_*` and `str_*` global helpers [have been deprecated](https://github.com/laravel/framework/pull/26898). You should use the `Illuminate\Support\Arr` and `Illuminate\Support\Str` methods directly.
+
+The impact of this change has been marked as `medium` since the helpers have been moved to the new [laravel/helpers](https://github.com/laravel/helpers) package which offers a backwards compatibility layer for all of the global array and string functions.
 
 If you choose to update your Laravel application's views to use the class based methods, you should clear your compiled views which may still be using the global helpers:
 
     php artisan view:clear
 
-### Localization
-
-<a name="trans-and-trans-choice"></a>
-#### The `Lang::trans` & `Lang::transChoice` Methods
+<a name="deferred-service-providers"></a>
+#### Deferred Service Providers
 
 **Likelihood Of Impact: Medium**
 
-The `Lang::trans` and `Lang::transChoice` methods of the translator have been renamed to `Lang::get` and `Lang::choice`.
+The `defer` boolean property on the service provider which is/was used to indicate if a provider is deferred [has been deprecated](https://github.com/laravel/framework/pull/27067). In order to mark the service provider as deferred it should implement the `Illuminate\Contracts\Support\DeferrableProvider` contract.
 
-In addition, if you are manually implementing the `Illuminate\Contracts\Translation\Translator` contract, you should update your implementation's `trans` and `transChoice` methods to `get` and `choice`.
-
-<a name="get-from-json"></a>
-#### The `Lang::getFromJson` Method
-
-**Likelihood Of Impact: Medium**
-
-The `Lang::get` and `Lang::getFromJson` methods have been consolidated. Calls to the `Lang::getFromJson` method should be updated to call `Lang::get`.
-
-> {note} You should run the `php artisan view:clear` Artisan command to avoid Blade errors related to the removal of `Lang::transChoice`, `Lang::trans`, and `Lang::getFromJson`.
-
-### Mail
-
-#### Mandrill & SparkPost Drivers Removed
+#### Read-Only `env` Helper
 
 **Likelihood Of Impact: Low**
 
-The `mandrill` and `sparkpost` mail drivers have been removed. If you would like to continue using either of these drivers, we encourage you to adopt a community maintained package of your choice that provides the driver.
+Previously, the `env` helper could retrieve values from environment variables which were changed at runtime. In Laravel 5.8, the `env` helper treats environment variables as immutable. If you would like to change an environment variable at runtime, consider using a configuration value that can be retrieved using the `config` helper:
 
-### Notifications
+Previous behavior:
 
-#### Nexmo Routing Removed
+    dump(env('APP_ENV')); // local
 
-**Likelihood Of Impact: Low**
+    putenv('APP_ENV=staging');
 
-A lingering part of the Nexmo notification channel was removed from the core of the framework. If you're relying on routing Nexmo notifications you should manually implement the `routeNotificationForNexmo` method on your notifiable entity [as described in the documentation](notifications.md#routing-sms-notifications).
+    dump(env('APP_ENV')); // staging
 
-### Password Reset
+New behavior:
 
-#### Password Validation
+    dump(env('APP_ENV')); // local
 
-**Likelihood Of Impact: Low**
+    putenv('APP_ENV=staging');
 
-The `PasswordBroker` no longer restricts or validates passwords. Password validation was already being handled by the `ResetPasswordController` class, making the broker's validations redundant and impossible to customize. If you are manually using the `PasswordBroker` (or `Password` facade) outside of the built-in `ResetPasswordController`, you should validate all passwords before passing them to the broker.
+    dump(env('APP_ENV')); // local
 
-### Queues
+<a name="testing"></a>
+### Testing
 
-<a name="queue-retry-limit"></a>
-#### Queue Retry Limit
+#### The `setUp` & `tearDown` Methods
 
-**Likelihood Of Impact: Medium**
+The `setUp` and `tearDown` methods now require a void return type:
 
-In previous releases of Laravel, the `php artisan queue:work` command would retry jobs indefinitely. Beginning with Laravel 6.0, this command will now try a job one time by default. If you would like to force jobs to be tried indefinitely, you may pass `0` to the `--tries` option:
+    protected function setUp(): void
+    protected function tearDown(): void
 
-    php artisan queue:work --tries=0
+#### PHPUnit 8
 
-In addition, please ensure your application's database contains a `failed_jobs` table. You can generate a migration for this table using the `queue:failed-table` Artisan command:
+**Likelihood Of Impact: Optional**
 
-    php artisan queue:failed-table
+By default, Laravel 5.8 uses PHPUnit 7. However, you may optionally upgrade to PHPUnit 8, which requires PHP >= 7.2. In addition, please read through the entire list of changes in [the PHPUnit 8 release announcement](https://phpunit.de/announcements/phpunit-8.html).
 
-### Requests
-
-<a name="the-input-facade"></a>
-#### The `Input` Facade
-
-**Likelihood Of Impact: Medium**
-
-The `Input` facade, which was primarily a duplicate of the `Request` facade, has been removed. If you are using the `Input::get` method, you should now call the `Request::input` method. All other calls to the `Input` facade may simply be updated to use the `Request` facade.
-
-### Scheduling
-
-#### The `between` Method
-
-**Likelihood Of Impact: Low**
-
-In previous releases of Laravel, the scheduler's `between` method exhibited confusing behavior across date boundaries. For example:
-
-    $schedule->command('list')->between('23:00', '4:00');
-
-For most users, the expected behavior of this method would be to run the `list` command every minute for all minutes between 23:00 and 4:00. However, in previous releases of Laravel, the scheduler ran the `list` command every minute between 4:00 and 23:00, essentially swapping the time thresholds. In Laravel 6.0, this behavior has been corrected.
-
-### Storage
-
-<a name="rackspace-storage-driver"></a>
-#### Rackspace Storage Driver Removed
-
-**Likelihood Of Impact: Low**
-
-The `rackspace` storage driver has been removed. If you would like to continue using Rackspace as a storage provider, we encourage you to adopt a community maintained package of your choice that provides this driver.
-
-### URL Generation
-
-#### Route URL Generation & Extra Parameters
-
-In previous releases of Laravel, passing associative array parameters to the `route` helper or `URL::route` method would occasionally use these parameters as URI values when generating URLs for routes, even if the parameter value had no matching key within the route path. Beginning in Laravel 6.0, these values will be attached to the query string instead. For example, consider the following route:
-
-    Route::get('/profile/{location?}', function ($location = null) {
-        //
-    })->name('profile');
-
-    // Laravel 5.8: http://example.com/profile/active
-    echo route('profile', ['status' => 'active']);
-
-    // Laravel 6.0: http://example.com/profile?status=active
-    echo route('profile', ['status' => 'active']);
-
-The `action` helper and `URL::action` method are also affected by this change:
-
-    Route::get('/profile/{id?}', 'ProfileController@show');
-
-    // Laravel 5.8: http://example.com/profile/1
-    echo action('ProfileController@show', ['profile' => 1]);
-
-    // Laravel 6.0: http://example.com/profile?profile=1
-    echo action('ProfileController@show', ['profile' => 1]);
-
+<a name="validation"></a>
 ### Validation
 
-#### FormRequest `validationData` Method
+#### The `Validator` Contract
 
-**Likelihood Of Impact: Low**
+**Likelihood Of Impact: Very Low**
 
-The form request's `validationData` method was changed from `protected` to `public`. If you are overriding this method in your implementation, you should update the visibility to `public`.
+The `validated` method [was added to the `Illuminate\Contracts\Validation\Validator` contract](https://github.com/laravel/framework/pull/26419):
+
+    /**
+     * Get the attributes and values that were validated.
+     *
+     * @return array
+     */
+    public function validated();
+
+If you are implementing this interface, you should add this method to your implementation.
+
+#### The `ValidatesAttributes` Trait
+
+**Likelihood Of Impact: Very Low**
+
+The `parseTable`, `getQueryColumn` and `requireParameterCount` methods of the `Illuminate\Validation\Concerns\ValidatesAttributes` trait have been changed from `protected` to `public`.
+
+#### The `DatabasePresenceVerifier` Class
+
+**Likelihood Of Impact: Very Low**
+
+The `table` method of the `Illuminate\Validation\DatabasePresenceVerifier` class has been changed from `protected` to `public`.
+
+#### The `Validator` Class
+
+**Likelihood Of Impact: Very Low**
+
+The `getPresenceVerifierFor` method of the `Illuminate\Validation\Validator` class [has been changed](https://github.com/laravel/framework/pull/26717) from `protected` to `public`.
+
+#### Email Validation
+
+**Likelihood Of Impact: Very Low**
+
+The email validation rule now checks if the email is [RFC6530](https://tools.ietf.org/html/rfc6530) compliant, making the validation logic consistent with the logic used by SwiftMailer. In Laravel `5.7`, the `email` rule only verified that the email was [RFC822](https://tools.ietf.org/html/rfc822) compliant.
+
+Therefore, when using Laravel 5.8, emails that were previously incorrectly considered invalid will now be considered valid (e.g `hej@bär.se`).  Generally, this should be considered a bug fix; however, it is listed as a breaking change out of caution. [Please let us know if you encounter any issues surrounding this change](https://github.com/laravel/framework/pull/26503).
+
+<a name="view"></a>
+### View
+
+#### The `getData` Method
+
+**Likelihood Of Impact: Very Low**
+
+The `getData` method [was added to the `Illuminate\Contracts\View\View` contract](https://github.com/laravel/framework/pull/26754). If you are implementing this interface, you should add this method to your implementation.
+
+<a name="notifications"></a>
+### Notifications
+
+<a name="nexmo-slack-notification-channels"></a>
+#### Nexmo / Slack Notification Channels
+
+**Likelihood Of Impact: High**
+
+The Nexmo and Slack Notification channels have been extracted into first-party packages. To use these channels in your application, require the following packages:
+
+    composer require laravel/nexmo-notification-channel
+    composer require laravel/slack-notification-channel
 
 <a name="miscellaneous"></a>
 ### Miscellaneous
 
-We also encourage you to view the changes in the `laravel/laravel` [GitHub repository](https://github.com/laravel/laravel). While many of these changes are not required, you may wish to keep these files in sync with your application. Some of these changes will be covered in this upgrade guide, but others, such as changes to configuration files or comments, will not be. You can easily view the changes with the [GitHub comparison tool](https://github.com/laravel/laravel/compare/5.8...6.x) and choose which updates are important to you.
+We also encourage you to view the changes in the `laravel/laravel` [GitHub repository](https://github.com/laravel/laravel). While many of these changes are not required, you may wish to keep these files in sync with your application. Some of these changes will be covered in this upgrade guide, but others, such as changes to configuration files or comments, will not be. You can easily view the changes with the [GitHub comparison tool](https://github.com/laravel/laravel/compare/5.7...5.8) and choose which updates are important to you.

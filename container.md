@@ -24,9 +24,9 @@ Let's look at a simple example:
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Repositories\UserRepository;
     use App\User;
+    use App\Repositories\UserRepository;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -62,7 +62,7 @@ Let's look at a simple example:
         }
     }
 
-In this example, the `UserController` needs to retrieve users from a data source. So, we will **inject** a service that is able to retrieve users. In this context, our `UserRepository` most likely uses [Eloquent](eloquent.md) to retrieve user information from the database. However, since the repository is injected, we are able to easily swap it out with another implementation. We are also able to easily "mock", or create a dummy implementation of the `UserRepository` when testing our application.
+In this example, the `UserController` needs to retrieve users from a data source. So, we will **inject** a service that is able to retrieve users. In this context, our `UserRepository` most likely uses [Eloquent](/docs/{{version}}/eloquent) to retrieve user information from the database. However, since the repository is injected, we are able to easily swap it out with another implementation. We are also able to easily "mock", or create a dummy implementation of the `UserRepository` when testing our application.
 
 A deep understanding of the Laravel service container is essential to building a powerful, large application, as well as for contributing to the Laravel core itself.
 
@@ -72,7 +72,7 @@ A deep understanding of the Laravel service container is essential to building a
 <a name="binding-basics"></a>
 ### Binding Basics
 
-Almost all of your service container bindings will be registered within [service providers](providers.md), so most of these examples will demonstrate using the container in that context.
+Almost all of your service container bindings will be registered within [service providers](/docs/{{version}}/providers), so most of these examples will demonstrate using the container in that context.
 
 > {tip} There is no need to bind classes into the container if they do not depend on any interfaces. The container does not need to be instructed on how to build these objects, since it can automatically resolve these objects using reflection.
 
@@ -81,7 +81,7 @@ Almost all of your service container bindings will be registered within [service
 Within a service provider, you always have access to the container via the `$this->app` property. We can register a binding using the `bind` method, passing the class or interface name that we wish to register along with a `Closure` that returns an instance of the class:
 
     $this->app->bind('HelpSpot\API', function ($app) {
-        return new \HelpSpot\API($app->make('HttpClient'));
+        return new HelpSpot\API($app->make('HttpClient'));
     });
 
 Note that we receive the container itself as an argument to the resolver. We can then use the container to resolve sub-dependencies of the object we are building.
@@ -91,14 +91,14 @@ Note that we receive the container itself as an argument to the resolver. We can
 The `singleton` method binds a class or interface into the container that should only be resolved one time. Once a singleton binding is resolved, the same object instance will be returned on subsequent calls into the container:
 
     $this->app->singleton('HelpSpot\API', function ($app) {
-        return new \HelpSpot\API($app->make('HttpClient'));
+        return new HelpSpot\API($app->make('HttpClient'));
     });
 
 #### Binding Instances
 
 You may also bind an existing object instance into the container using the `instance` method. The given instance will always be returned on subsequent calls into the container:
 
-    $api = new \HelpSpot\API(new HttpClient);
+    $api = new HelpSpot\API(new HttpClient);
 
     $this->app->instance('HelpSpot\API', $api);
 
@@ -138,13 +138,12 @@ This statement tells the container that it should inject the `RedisEventPusher` 
 <a name="contextual-binding"></a>
 ### Contextual Binding
 
-Sometimes you may have two classes that utilize the same interface, but you wish to inject different implementations into each class. For example, two controllers may depend on different implementations of the `Illuminate\Contracts\Filesystem\Filesystem` [contract](contracts.md). Laravel provides a simple, fluent interface for defining this behavior:
+Sometimes you may have two classes that utilize the same interface, but you wish to inject different implementations into each class. For example, two controllers may depend on different implementations of the `Illuminate\Contracts\Filesystem\Filesystem` [contract](/docs/{{version}}/contracts). Laravel provides a simple, fluent interface for defining this behavior:
 
+    use Illuminate\Support\Facades\Storage;
     use App\Http\Controllers\PhotoController;
-    use App\Http\Controllers\UploadController;
     use App\Http\Controllers\VideoController;
     use Illuminate\Contracts\Filesystem\Filesystem;
-    use Illuminate\Support\Facades\Storage;
 
     $this->app->when(PhotoController::class)
               ->needs(Filesystem::class)
@@ -182,9 +181,9 @@ Once the services have been tagged, you may easily resolve them all via the `tag
 <a name="extending-bindings"></a>
 ### Extending Bindings
 
-The `extend` method allows the modification of resolved services. For example, when a service is resolved, you may run additional code to decorate or configure the service. The `extend` method accepts a Closure, which should return the modified service, as its only argument. The Closure receives the service being resolved and the container instance:
+The `extend` method allows the modification of resolved services. For example, when a service is resolved, you may run additional code to decorate or configure the service. The `extend` method accepts a Closure, which should return the modified service, as its only argument:
 
-    $this->app->extend(Service::class, function ($service, $app) {
+    $this->app->extend(Service::class, function ($service) {
         return new DecoratedService($service);
     });
 
@@ -209,7 +208,7 @@ If some of your class' dependencies are not resolvable via the container, you ma
 <a name="automatic-injection"></a>
 #### Automatic Injection
 
-Alternatively, and importantly, you may "type-hint" the dependency in the constructor of a class that is resolved by the container, including [controllers](controllers.md), [event listeners](events.md), [middleware](middleware.md), and more. Additionally, you may type-hint dependencies in the `handle` method of [queued jobs](queues.md). In practice, this is how most of your objects should be resolved by the container.
+Alternatively, and importantly, you may "type-hint" the dependency in the constructor of a class that is resolved by the container, including [controllers](/docs/{{version}}/controllers), [event listeners](/docs/{{version}}/events), [middleware](/docs/{{version}}/middleware), and more. Additionally, you may type-hint dependencies in the `handle` method of [queued jobs](/docs/{{version}}/queues). In practice, this is how most of your objects should be resolved by the container.
 
 For example, you may type-hint a repository defined by your application in a controller's constructor. The repository will automatically be resolved and injected into the class:
 
@@ -258,7 +257,7 @@ The service container fires an event each time it resolves an object. You may li
         // Called when container resolves object of any type...
     });
 
-    $this->app->resolving(\HelpSpot\API::class, function ($api, $app) {
+    $this->app->resolving(HelpSpot\API::class, function ($api, $app) {
         // Called when container resolves objects of type "HelpSpot\API"...
     });
 

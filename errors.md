@@ -27,14 +27,14 @@ For local development, you should set the `APP_DEBUG` environment variable to `t
 <a name="report-method"></a>
 ### The Report Method
 
-All exceptions are handled by the `App\Exceptions\Handler` class. This class contains two methods: `report` and `render`. We'll examine each of these methods in detail. The `report` method is used to log exceptions or send them to an external service like [Flare](https://flareapp.io), [Bugsnag](https://bugsnag.com) or [Sentry](https://github.com/getsentry/sentry-laravel). By default, the `report` method passes the exception to the base class where the exception is logged. However, you are free to log exceptions however you wish.
+All exceptions are handled by the `App\Exceptions\Handler` class. This class contains two methods: `report` and `render`. We'll examine each of these methods in detail. The `report` method is used to log exceptions or send them to an external service like [Bugsnag](https://bugsnag.com) or [Sentry](https://github.com/getsentry/sentry-laravel). By default, the `report` method passes the exception to the base class where the exception is logged. However, you are free to log exceptions however you wish.
 
 For example, if you need to report different types of exceptions in different ways, you may use the PHP `instanceof` comparison operator:
 
     /**
      * Report or log an exception.
      *
-     * This is a great spot to send exceptions to Flare, Sentry, Bugsnag, etc.
+     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
      * @param  \Exception  $exception
      * @return void
@@ -48,7 +48,7 @@ For example, if you need to report different types of exceptions in different wa
         parent::report($exception);
     }
 
-> {tip} Instead of making a lot of `instanceof` checks in your `report` method, consider using [reportable exceptions](errors.md#renderable-exceptions)
+> {tip} Instead of making a lot of `instanceof` checks in your `report` method, consider using [reportable exceptions](/docs/{{version}}/errors#renderable-exceptions)
 
 #### Global Log Context
 
@@ -145,7 +145,7 @@ Instead of type-checking exceptions in the exception handler's `report` and `ren
         /**
          * Render the exception into an HTTP response.
          *
-         * @param  \Illuminate\Http\Request  $request
+         * @param  \Illuminate\Http\Request
          * @return \Illuminate\Http\Response
          */
         public function render($request)
@@ -154,7 +154,7 @@ Instead of type-checking exceptions in the exception handler's `report` and `ren
         }
     }
 
-> {tip} You may type-hint any required dependencies of the `report` method and they will automatically be injected into the method by Laravel's [service container](container.md).
+> {tip} You may type-hint any required dependencies of the `report` method and they will automatically be injected into the method by Laravel's [service container](/docs/{{version}}/container).
 
 <a name="http-exceptions"></a>
 ## HTTP Exceptions

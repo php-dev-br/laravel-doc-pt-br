@@ -9,13 +9,10 @@
     - [The "Link" Command](#the-link-command)
     - [Securing Sites With TLS](#securing-sites)
 - [Sharing Sites](#sharing-sites)
-- [Serving A Default Site](#serving-a-default-site)
 - [Site Specific Environment Variables](#site-specific-environment-variables)
 - [Custom Valet Drivers](#custom-valet-drivers)
     - [Local Drivers](#local-drivers)
-- [PHP Configuration](#php-configuration)
 - [Other Valet Commands](#other-valet-commands)
-- [Valet Directories & Files](#valet-directories-and-files)
 
 <a name="introduction"></a>
 ## Introduction
@@ -36,14 +33,13 @@ Out of the box, Valet support includes, but is not limited to:
 </style>
 
 <div id="valet-support" markdown="1">
-
 - [Laravel](https://laravel.com)
 - [Lumen](https://lumen.laravel.com)
 - [Bedrock](https://roots.io/bedrock/)
 - [CakePHP 3](https://cakephp.org)
 - [Concrete5](https://www.concrete5.org/)
 - [Contao](https://contao.org/en/)
-- [Craft CMS](https://craftcms.com)
+- [Craft](https://craftcms.com)
 - [Drupal](https://www.drupal.org/)
 - [Jigsaw](https://jigsaw.tighten.co)
 - [Joomla](https://www.joomla.org/)
@@ -58,7 +54,6 @@ Out of the box, Valet support includes, but is not limited to:
 - [Symfony](https://symfony.com)
 - [WordPress](https://wordpress.org)
 - [Zend](https://framework.zend.com)
-
 </div>
 
 However, you may extend Valet with your own [custom drivers](#custom-valet-drivers).
@@ -66,7 +61,7 @@ However, you may extend Valet with your own [custom drivers](#custom-valet-drive
 <a name="valet-or-homestead"></a>
 ### Valet Or Homestead
 
-As you may know, Laravel offers [Homestead](homestead.md), another local Laravel development environment. Homestead and Valet differ in regards to their intended audience and their approach to local development. Homestead offers an entire Ubuntu virtual machine with automated Nginx configuration. Homestead is a wonderful choice if you want a fully virtualized Linux development environment or are on Windows / Linux.
+As you may know, Laravel offers [Homestead](/docs/{{version}}/homestead), another local Laravel development environment. Homestead and Valet differ in regards to their intended audience and their approach to local development. Homestead offers an entire Ubuntu virtual machine with automated Nginx configuration. Homestead is a wonderful choice if you want a fully virtualized Linux development environment or are on Windows / Linux.
 
 Valet only supports Mac, and requires you to install PHP and a database server directly onto your local machine. This is easily achieved by using [Homebrew](https://brew.sh/) with commands like `brew install php` and `brew install mysql`. Valet provides a blazing fast local development environment with minimal resource consumption, so it's great for developers who only require PHP / MySQL and do not need a fully virtualized development environment.
 
@@ -80,7 +75,7 @@ Both Valet and Homestead are great choices for configuring your Laravel developm
 <div class="content-list" markdown="1">
 
 - Install or update [Homebrew](https://brew.sh/) to the latest version using `brew update`.
-- Install PHP 7.4 using Homebrew via `brew install php`.
+- Install PHP 7.3 using Homebrew via `brew install php`.
 - Install [Composer](https://getcomposer.org).
 - Install Valet with Composer via `composer global require laravel/valet`. Make sure the `~/.composer/vendor/bin` directory is in your system's "PATH".
 - Run the `valet install` command. This will configure and install Valet and DnsMasq, and register Valet's daemon to launch when your system starts.
@@ -109,16 +104,28 @@ Valet allows you to switch PHP versions using the `valet use php@version` comman
 
     valet use php
 
-> {note} Valet only serves one PHP version at a time, even if you have multiple PHP versions installed.
-
-#### Resetting Your Installation
-
-If you are having trouble getting your Valet installation to run properly, executing the `composer global update` command followed by `valet install` will reset your installation and can solve a variety of problems. In rare cases it may be necessary to "hard reset" Valet by executing `valet uninstall --force` followed by `valet install`.
-
 <a name="upgrading"></a>
 ### Upgrading
 
 You may update your Valet installation using the `composer global update` command in your terminal. After upgrading, it is good practice to run the `valet install` command so Valet can make additional upgrades to your configuration files if necessary.
+
+#### Upgrading To Valet 2.0
+
+Valet 2.0 transitions Valet's underlying web server from Caddy to Nginx. Before upgrading to this version you should run the following commands to stop and uninstall the existing Caddy daemon:
+
+    valet stop
+    valet uninstall
+
+Next, you should upgrade to the latest version of Valet. Depending on how you installed Valet, this is typically done through Git or Composer. If you installed Valet via Composer, you should use the following command to update to the latest major version:
+
+    composer global require laravel/valet
+
+Once the fresh Valet source code has been downloaded, you should run the `install` command:
+
+    valet install
+    valet restart
+
+After upgrading, it may be necessary to re-park or re-link your sites.
 
 <a name="serving-sites"></a>
 ## Serving Sites
@@ -126,7 +133,7 @@ You may update your Valet installation using the `composer global update` comman
 Once Valet is installed, you're ready to start serving sites. Valet provides two commands to help you serve your Laravel sites: `park` and `link`.
 
 <a name="the-park-command"></a>
-#### The `park` Command
+**The `park` Command**
 
 <div class="content-list" markdown="1">
 
@@ -136,10 +143,10 @@ Once Valet is installed, you're ready to start serving sites. Valet provides two
 
 </div>
 
-**That's all there is to it.** Now, any Laravel project you create within your "parked" directory will automatically be served using the `http://folder-name.test` convention.
+**That's all there is to it.** Now, any Laravel project you create within your "parked" directory will automatically be served using the `http://folder-name.test` convention. To view a list of all of your parked directory's sites, you may execute the `valet parked` command.
 
 <a name="the-link-command"></a>
-#### The `link` Command
+**The `link` Command**
 
 The `link` command may also be used to serve your Laravel sites. This command is useful if you want to serve a single site in a directory and not the entire directory.
 
@@ -155,7 +162,7 @@ To see a listing of all of your linked directories, run the `valet links` comman
 > {tip} You can use `valet link` to serve the same project from multiple (sub)domains. To add a subdomain or another domain to your project run `valet link subdomain.app-name` from the project folder.
 
 <a name="securing-sites"></a>
-#### Securing Sites With TLS
+**Securing Sites With TLS**
 
 By default, Valet serves sites over plain HTTP. However, if you would like to serve a site over encrypted TLS using HTTP/2, use the `secure` command. For example, if your site is being served by Valet on the `laravel.test` domain, you should run the following command to secure it:
 
@@ -168,25 +175,11 @@ To "unsecure" a site and revert back to serving its traffic over plain HTTP, use
 <a name="sharing-sites"></a>
 ## Sharing Sites
 
-Valet even includes a command to share your local sites with the world, providing an easy way to test your site on mobile devices or share it with team members and clients. No additional software installation is required once Valet is installed.
+Valet even includes a command to share your local sites with the world. No additional software installation is required once Valet is installed.
 
-### Sharing Sites Via Ngrok
-
-To share a site, navigate to the site's directory in your terminal and run the `valet share` command. A publicly accessible URL will be inserted into your clipboard and is ready to paste directly into your browser or share with your team.
+To share a site, navigate to the site's directory in your terminal and run the `valet share` command. A publicly accessible URL will be inserted into your clipboard and is ready to paste directly into your browser. That's it.
 
 To stop sharing your site, hit `Control + C` to cancel the process.
-
-> {tip} You may pass additional parameters to the share command, such as `valet share --region=eu`. For more information, consult the [ngrok documentation](https://ngrok.com/docs).
-
-### Sharing Sites On Your Local Network
-
-Valet restricts incoming traffic to the internal `127.0.0.1` interface by default. This way your development machine isn't exposed to security risks from the Internet.
-
-If you wish to allow other devices on your local network to access the Valet sites on your machine via your machine's IP address (eg: `192.168.1.10/app-name.test`), you will need to manually edit the appropriate Nginx configuration file for that site to remove the restriction on the `listen` directive by removing the the `127.0.0.1:` prefix on the directive for ports 80 and 443.
-
-If you have not run `valet secure` on the project, you can open up network access for all non-HTTPS sites by editing the `/usr/local/etc/nginx/valet/valet.conf` file. However, if you're serving the project site over HTTPS (you have run `valet secure` for the site) then you should edit the `~/.config/valet/Nginx/app-name.test` file.
-
-Once you have updated your Nginx configuration, run the `valet restart` command to apply the configuration changes.
 
 <a name="site-specific-environment-variables"></a>
 ## Site Specific Environment Variables
@@ -195,26 +188,9 @@ Some applications using other frameworks may depend on server environment variab
 
     <?php
 
-    // Set $_SERVER['key'] to "value" for the foo.test site...
     return [
-        'foo' => [
-            'key' => 'value',
-        ],
+        'WEBSITE_NAME' => 'My Blog',
     ];
-
-    // Set $_SERVER['key'] to "value" for all sites...
-    return [
-        '*' => [
-            'key' => 'value',
-        ],
-    ];
-
-<a name="serving-a-default-site"></a>
-## Serving A Default Site
-
-Sometimes, you may wish to configure Valet to serve a "default" site instead of a `404` when visiting an unknown `test` domain. To accomplish this, you may add a `default` option to your `~/.config/valet/config.json` configuration file containing the path to the site that should function as your default site:
-
-    "default": "/Users/Sally/Sites/foo",
 
 <a name="custom-valet-drivers"></a>
 ## Custom Valet Drivers
@@ -320,19 +296,6 @@ If you would like to define a custom Valet driver for a single application, crea
         }
     }
 
-<a name="php-configuration"></a>
-## PHP Configuration
-
-You may add additional PHP configuration `.ini` files in the `/usr/local/etc/php/7.X/conf.d/` directory to customize your PHP installation. Once you've added or updated these settings you should run `valet restart php`.
-
-### PHP Memory Limits
-
-By default, Valet specifies the PHP installation's memory limit and max file upload size in the `/usr/local/etc/php/7.X/conf.d/php-memory-limits.ini` configuration file. This affects both the CLI and FPM PHP processes.
-
-### PHP-FPM Pool Processes
-
-Valet's PHP-FPM configuration is contained within the `/usr/local/etc/php/7.X/php-fpm.d/valet-fpm.conf` configuration file. In this file you may increase the number of FPM servers and child processes utilized by your PHP application.
-
 <a name="other-valet-commands"></a>
 ## Other Valet Commands
 
@@ -345,27 +308,4 @@ Command  | Description
 `valet start` | Start the Valet daemon.
 `valet stop` | Stop the Valet daemon.
 `valet trust` | Add sudoers files for Brew and Valet to allow Valet commands to be run without prompting for passwords.
-`valet uninstall` | Uninstall Valet: Shows instructions for manual uninstall; or pass the `--force` parameter to aggressively delete all of Valet.
-
-<a name="valet-directories-and-files"></a>
-## Valet Directories & Files
-
-You may find the following directory and file information helpful while troubleshooting issues with your Valet environment:
-
-File / Path | Description
---------- | -----------
-`~/.config/valet/` | Contains all of Valet's configuration. You may wish to maintain a backup of this folder.
-`~/.config/valet/dnsmasq.d/` | Contains DNSMasq's configuration.
-`~/.config/valet/Drivers/` | Contains custom Valet drivers.
-`~/.config/valet/Extensions/` | Contains custom Valet extensions / commands.
-`~/.config/valet/Nginx/` | Contains all Valet generated Nginx site configurations. These files are rebuilt when running the `install`, `secure`, and `tld` commands.
-`~/.config/valet/Sites/` | Contains all symbolic links for linked projects.
-`~/.config/valet/config.json` | Valet's master configuration file
-`~/.config/valet/valet.sock` | The PHP-FPM socket used by Valet's Nginx configuration. This will only exist if PHP is running properly.
-`~/.config/valet/Log/fpm-php.www.log` | User log for PHP errors.
-`~/.config/valet/Log/nginx-error.log` | User log for Nginx errors.
-`/usr/local/var/log/php-fpm.log` | System log for PHP-FPM errors.
-`/usr/local/var/log/nginx` | Contains Nginx access and error logs.
-`/usr/local/etc/php/X.X/conf.d` | Contains `*.ini` files for various PHP configuration settings.
-`/usr/local/etc/php/X.X/php-fpm.d/valet-fpm.conf` | PHP-FPM pool configuration file.
-`~/.composer/vendor/laravel/valet/cli/stubs/secure.valet.conf` | The default Nginx configuration used for building site certificates.
+`valet uninstall` | Uninstall the Valet daemon.

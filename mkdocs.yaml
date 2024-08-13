@@ -12,7 +12,7 @@ nav:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
-      - Documentação da API: https://laravel.com/api/6.x/index.html
+      - Documentação da API: https://laravel.com/api/5.8
   - Começando:
       - Instalação: contributions.md
       - Configuração: configuration.md

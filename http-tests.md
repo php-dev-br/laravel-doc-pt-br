@@ -2,7 +2,6 @@
 
 - [Introduction](#introduction)
     - [Customizing Request Headers](#customizing-request-headers)
-    - [Cookies](#cookies)
     - [Debugging Responses](#debugging-responses)
 - [Session / Authentication](#session-and-authentication)
 - [Testing JSON APIs](#testing-json-apis)
@@ -14,15 +13,15 @@
 <a name="introduction"></a>
 ## Introduction
 
-Laravel provides a very fluent API for making HTTP requests to your application and examining the output. For example, take a look at the feature test defined below:
+Laravel provides a very fluent API for making HTTP requests to your application and examining the output. For example, take a look at the test defined below:
 
     <?php
 
     namespace Tests\Feature;
 
+    use Tests\TestCase;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -71,38 +70,18 @@ You may use the `withHeaders` method to customize the request's headers before i
 
 > {tip} The CSRF middleware is automatically disabled when running tests.
 
-<a name="cookies"></a>
-### Cookies
-
-You may use the `withCookie` or `withCookies` methods to set cookie values before making a request. The `withCookie` method accepts a cookie name and value as its two arguments, while the `withCookies` method accepts an array of name / value pairs:
-
-    <?php
-
-    class ExampleTest extends TestCase
-    {
-        public function testCookies()
-        {
-            $response = $this->withCookie('color', 'blue')->get('/');
-
-            $response = $this->withCookies([
-                'color' => 'blue',
-                'name' => 'Taylor',
-            ])->get('/');
-        }
-    }
-
 <a name="debugging-responses"></a>
 ### Debugging Responses
 
-After making a test request to your application, the `dump`, `dumpHeaders`, and `dumpSession` methods may be used to examine and debug the response contents:
+After making a test request to your application, the `dump` and `dumpHeaders` methods may be used to examine and debug the response contents:
 
     <?php
 
     namespace Tests\Feature;
 
+    use Tests\TestCase;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Illuminate\Foundation\Testing\WithoutMiddleware;
-    use Tests\TestCase;
 
     class ExampleTest extends TestCase
     {
@@ -116,8 +95,6 @@ After making a test request to your application, the `dump`, `dumpHeaders`, and 
             $response = $this->get('/');
 
             $response->dumpHeaders();
-
-            $response->dumpSession();
 
             $response->dump();
         }
@@ -139,7 +116,7 @@ Laravel provides several helpers for working with the session during HTTP testin
         }
     }
 
-One common use of the session is for maintaining state for the authenticated user. The `actingAs` helper method provides a simple way to authenticate a given user as the current user. For example, we may use a [model factory](database-testing.md#writing-factories) to generate and authenticate a user:
+One common use of the session is for maintaining state for the authenticated user. The `actingAs` helper method provides a simple way to authenticate a given user as the current user. For example, we may use a [model factory](/docs/{{version}}/database-testing#writing-factories) to generate and authenticate a user:
 
     <?php
 
@@ -164,7 +141,7 @@ You may also specify which guard should be used to authenticate the given user b
 <a name="testing-json-apis"></a>
 ## Testing JSON APIs
 
-Laravel also provides several helpers for testing JSON APIs and their responses. For example, the `json`, `getJson`, `postJson`, `putJson`, `patchJson`, `deleteJson`, and `optionsJson` methods may be used to issue JSON requests with various HTTP verbs. You may also easily pass data and headers to these methods. To get started, let's write a test to make a `POST` request to `/user` and assert that the expected data was returned:
+Laravel also provides several helpers for testing JSON APIs and their responses. For example, the `json`, `get`, `post`, `put`, `patch`, `delete`, and `option` methods may be used to issue requests with various HTTP verbs. You may also easily pass data and headers to these methods. To get started, let's write a test to make a `POST` request to `/user` and assert that the expected data was returned:
 
     <?php
 
@@ -177,7 +154,7 @@ Laravel also provides several helpers for testing JSON APIs and their responses.
          */
         public function testBasicExample()
         {
-            $response = $this->postJson('/user', ['name' => 'Sally']);
+            $response = $this->json('POST', '/user', ['name' => 'Sally']);
 
             $response
                 ->assertStatus(201)
@@ -215,30 +192,6 @@ If you would like to verify that the given array is an **exact** match for the J
         }
     }
 
-<a name="verifying-json-paths"></a>
-### Verifying JSON Paths
-
-If you would like to verify that the JSON response contains some given data at a specified path, you should use the `assertJsonPath` method:
-
-    <?php
-
-    class ExampleTest extends TestCase
-    {
-        /**
-         * A basic functional test example.
-         *
-         * @return void
-         */
-        public function testBasicExample()
-        {
-            $response = $this->json('POST', '/user', ['name' => 'Sally']);
-
-            $response
-                ->assertStatus(201)
-                ->assertJsonPath('team.owner.name', 'foo')
-        }
-    }
-
 <a name="testing-file-uploads"></a>
 ## Testing File Uploads
 
@@ -248,11 +201,11 @@ The `Illuminate\Http\UploadedFile` class provides a `fake` method which may be u
 
     namespace Tests\Feature;
 
-    use Illuminate\Foundation\Testing\RefreshDatabase;
-    use Illuminate\Foundation\Testing\WithoutMiddleware;
+    use Tests\TestCase;
     use Illuminate\Http\UploadedFile;
     use Illuminate\Support\Facades\Storage;
-    use Tests\TestCase;
+    use Illuminate\Foundation\Testing\RefreshDatabase;
+    use Illuminate\Foundation\Testing\WithoutMiddleware;
 
     class ExampleTest extends TestCase
     {
@@ -284,17 +237,13 @@ In addition to creating images, you may create files of any other type using the
 
     UploadedFile::fake()->create('document.pdf', $sizeInKilobytes);
 
-If needed, you may pass a `$mimeType` argument to the method to explicitly define the MIME type that should be returned by the file:
-
-    UploadedFile::fake()->create('document.pdf', $sizeInKilobytes, 'application/pdf');
-
 <a name="available-assertions"></a>
 ## Available Assertions
 
 <a name="response-assertions"></a>
 ### Response Assertions
 
-Laravel provides a variety of custom assertion methods for your [PHPUnit](https://phpunit.de/) feature tests. These assertions may be accessed on the response that is returned from the `json`, `get`, `post`, `put`, and `delete` test methods:
+Laravel provides a variety of custom assertion methods for your [PHPUnit](https://phpunit.de/) tests. These assertions may be accessed on the response that is returned from the `json`, `get`, `post`, `put`, and `delete` test methods:
 
 <style>
     .collection-method-list > p {
@@ -313,7 +262,6 @@ Laravel provides a variety of custom assertion methods for your [PHPUnit](https:
 [assertCookieExpired](#assert-cookie-expired)
 [assertCookieNotExpired](#assert-cookie-not-expired)
 [assertCookieMissing](#assert-cookie-missing)
-[assertCreated](#assert-created)
 [assertDontSee](#assert-dont-see)
 [assertDontSeeText](#assert-dont-see-text)
 [assertExactJson](#assert-exact-json)
@@ -326,11 +274,9 @@ Laravel provides a variety of custom assertion methods for your [PHPUnit](https:
 [assertJsonMissing](#assert-json-missing)
 [assertJsonMissingExact](#assert-json-missing-exact)
 [assertJsonMissingValidationErrors](#assert-json-missing-validation-errors)
-[assertJsonPath](#assert-json-path)
 [assertJsonStructure](#assert-json-structure)
 [assertJsonValidationErrors](#assert-json-validation-errors)
 [assertLocation](#assert-location)
-[assertNoContent](#assert-no-content)
 [assertNotFound](#assert-not-found)
 [assertOk](#assert-ok)
 [assertPlainCookie](#assert-plain-cookie)
@@ -385,13 +331,6 @@ Assert that the response does not contains the given cookie:
 
     $response->assertCookieMissing($cookieName);
 
-<a name="assert-created"></a>
-#### assertCreated
-
-Assert that the response has a 201 status code:
-
-    $response->assertCreated();
-
 <a name="assert-dont-see"></a>
 #### assertDontSee
 
@@ -439,7 +378,7 @@ Assert that the given header is not present on the response:
 
 Assert that the response contains the given JSON data:
 
-    $response->assertJson(array $data, $strict = false);
+    $response->assertJson(array $data);
 
 <a name="assert-json-count"></a>
 #### assertJsonCount
@@ -476,13 +415,6 @@ Assert that the response has no JSON validation errors for the given keys:
 
     $response->assertJsonMissingValidationErrors($keys);
 
-<a name="assert-json-path"></a>
-#### assertJsonPath
-
-Assert that the response contains the given data at the specified path:
-
-    $response->assertJsonPath($path, array $data, $strict = false);
-
 <a name="assert-json-structure"></a>
 #### assertJsonStructure
 
@@ -503,13 +435,6 @@ Assert that the response has the given JSON validation errors:
 Assert that the response has the given URI value in the `Location` header:
 
     $response->assertLocation($uri);
-
-<a name="assert-no-content"></a>
-#### assertNoContent
-
-Assert that the response has the given status code and no content.
-
-    $response->assertNoContent($status = 204);
 
 <a name="assert-not-found"></a>
 #### assertNotFound
@@ -591,14 +516,14 @@ Assert that the session has a given list of values:
 <a name="assert-session-has-errors"></a>
 #### assertSessionHasErrors
 
-Assert that the session contains an error for the given `$keys`. If `$keys` is an associative array, assert that the session contains a specific error message (value) for each field (key):
+Assert that the session contains an error for the given field:
 
     $response->assertSessionHasErrors(array $keys, $format = null, $errorBag = 'default');
 
 <a name="assert-session-has-errors-in"></a>
 #### assertSessionHasErrorsIn
 
-Assert that the session contains an error for the given `$keys`, within a specific error bag. If `$keys` is an associative array, assert that the session contains a specific error message (value) for each field (key), within the error bag:
+Assert that the session has the given errors:
 
     $response->assertSessionHasErrorsIn($errorBag, $keys = [], $format = null);
 
@@ -633,7 +558,7 @@ Assert that the response has a given code:
 <a name="assert-successful"></a>
 #### assertSuccessful
 
-Assert that the response has a successful (>= 200 and < 300) status code:
+Assert that the response has a successful (200) status code:
 
     $response->assertSuccessful();
 
@@ -675,7 +600,7 @@ Assert that the response view is missing a piece of bound data:
 <a name="authentication-assertions"></a>
 ### Authentication Assertions
 
-Laravel also provides a variety of authentication related assertions for your [PHPUnit](https://phpunit.de/) feature tests:
+Laravel also provides a variety of authentication related assertions for your [PHPUnit](https://phpunit.de/) tests:
 
 Method  | Description
 ------------- | -------------

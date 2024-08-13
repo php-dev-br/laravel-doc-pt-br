@@ -31,7 +31,6 @@
 - [SMS Notifications](#sms-notifications)
     - [Prerequisites](#sms-prerequisites)
     - [Formatting SMS Notifications](#formatting-sms-notifications)
-    - [Formatting Shortcode Notifications](#formatting-shortcode-notifications)
     - [Customizing The "From" Number](#customizing-the-from-number)
     - [Routing SMS Notifications](#routing-sms-notifications)
 - [Slack Notifications](#slack-notifications)
@@ -46,7 +45,7 @@
 <a name="introduction"></a>
 ## Introduction
 
-In addition to support for [sending email](mail.md), Laravel provides support for sending notifications across a variety of delivery channels, including mail, SMS (via [Nexmo](https://www.nexmo.com/)), and [Slack](https://slack.com). Notifications may also be stored in a database so they may be displayed in your web interface.
+In addition to support for [sending email](/docs/{{version}}/mail), Laravel provides support for sending notifications across a variety of delivery channels, including mail, SMS (via [Nexmo](https://www.nexmo.com/)), and [Slack](https://slack.com). Notifications may also be stored in a database so they may be displayed in your web interface.
 
 Typically, notifications should be short, informational messages that notify users of something that occurred in your application. For example, if you are writing a billing application, you might send an "Invoice Paid" notification to your users via the email and SMS channels.
 
@@ -65,14 +64,14 @@ This command will place a fresh notification class in your `app/Notifications` d
 <a name="using-the-notifiable-trait"></a>
 ### Using The Notifiable Trait
 
-Notifications may be sent in two ways: using the `notify` method of the `Notifiable` trait or using the `Notification` [facade](facades.md). First, let's explore using the trait:
+Notifications may be sent in two ways: using the `notify` method of the `Notifiable` trait or using the `Notification` [facade](/docs/{{version}}/facades). First, let's explore using the trait:
 
     <?php
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
     use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
@@ -90,7 +89,7 @@ This trait is utilized by the default `App\User` model and contains one method t
 <a name="using-the-notification-facade"></a>
 ### Using The Notification Facade
 
-Alternatively, you may send notifications via the `Notification` [facade](facades.md). This is useful primarily when you need to send a notification to multiple notifiable entities such as a collection of users. To send notifications using the facade, pass all of the notifiable entities and the notification instance to the `send` method:
+Alternatively, you may send notifications via the `Notification` [facade](/docs/{{version}}/facades). This is useful primarily when you need to send a notification to multiple notifiable entities such as a collection of users. To send notifications using the facade, pass all of the notifiable entities and the notification instance to the `send` method:
 
     Notification::send($users, new InvoicePaid($invoice));
 
@@ -117,7 +116,7 @@ The `via` method receives a `$notifiable` instance, which will be an instance of
 <a name="queueing-notifications"></a>
 ### Queueing Notifications
 
-> {note} Before queueing notifications you should configure your queue and [start a worker](queues.md).
+> {note} Before queueing notifications you should configure your queue and [start a worker](/docs/{{version}}/queues).
 
 Sending notifications can take time, especially if the channel needs an external API call to deliver the notification. To speed up your application's response time, let your notification be queued by adding the `ShouldQueue` interface and `Queueable` trait to your class. The interface and trait are already imported for all notifications generated using `make:notification`, so you may immediately add them to your notification class:
 
@@ -126,8 +125,8 @@ Sending notifications can take time, especially if the channel needs an external
     namespace App\Notifications;
 
     use Illuminate\Bus\Queueable;
-    use Illuminate\Contracts\Queue\ShouldQueue;
     use Illuminate\Notifications\Notification;
+    use Illuminate\Contracts\Queue\ShouldQueue;
 
     class InvoicePaid extends Notification implements ShouldQueue
     {
@@ -153,7 +152,6 @@ Sometimes you may need to send a notification to someone who is not stored as a 
 
     Notification::route('mail', 'taylor@example.com')
                 ->route('nexmo', '5555555555')
-                ->route('slack', 'https://hooks.slack.com/services/...')
                 ->notify(new InvoicePaid($invoice));
 
 <a name="mail-notifications"></a>
@@ -206,7 +204,7 @@ Instead of defining the "lines" of text in the notification class, you may use t
         );
     }
 
-In addition, you may return a [mailable object](mail.md) from the `toMail` method:
+In addition, you may return a [mailable object](/docs/{{version}}/mail) from the `toMail` method:
 
     use App\Mail\InvoicePaid as Mailable;
 
@@ -267,8 +265,8 @@ When sending notifications via the `mail` channel, the notification system will 
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
     use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
@@ -278,15 +276,11 @@ When sending notifications via the `mail` channel, the notification system will 
          * Route notifications for the mail channel.
          *
          * @param  \Illuminate\Notifications\Notification  $notification
-         * @return array|string
+         * @return string
          */
         public function routeNotificationForMail($notification)
         {
-            // Return email address only...
             return $this->email_address;
-
-            // Return name and email address...
-            return [$this->email_address => $this->name];
         }
     }
 
@@ -521,12 +515,12 @@ You may `delete` the notifications to remove them from the table entirely:
 <a name="broadcast-prerequisites"></a>
 ### Prerequisites
 
-Before broadcasting notifications, you should configure and be familiar with Laravel's [event broadcasting](broadcasting.md) services. Event broadcasting provides a way to react to server-side fired Laravel events from your JavaScript client.
+Before broadcasting notifications, you should configure and be familiar with Laravel's [event broadcasting](/docs/{{version}}/broadcasting) services. Event broadcasting provides a way to react to server-side fired Laravel events from your JavaScript client.
 
 <a name="formatting-broadcast-notifications"></a>
 ### Formatting Broadcast Notifications
 
-The `broadcast` channel broadcasts notifications using Laravel's [event broadcasting](broadcasting.md) services, allowing your JavaScript client to catch notifications in realtime. If a notification supports broadcasting, you can define a `toBroadcast` method on the notification class. This method will receive a `$notifiable` entity and should return a `BroadcastMessage` instance. If the `toBroadcast` method does not exist, the `toArray` method will be used to gather the data that should be broadcast. The returned data will be encoded as JSON and broadcast to your JavaScript client. Let's take a look at an example `toBroadcast` method:
+The `broadcast` channel broadcasts notifications using Laravel's [event broadcasting](/docs/{{version}}/broadcasting) services, allowing your JavaScript client to catch notifications in realtime. If a notification supports broadcasting, you can define a `toBroadcast` method on the notification class. This method will receive a `$notifiable` entity and should return a `BroadcastMessage` instance. If the `toBroadcast` method does not exist, the `toArray` method will be used to gather the data that should be broadcast. The returned data will be encoded as JSON and broadcast to your JavaScript client. Let's take a look at an example `toBroadcast` method:
 
     use Illuminate\Notifications\Messages\BroadcastMessage;
 
@@ -557,7 +551,7 @@ All broadcast notifications are queued for broadcasting. If you would like to co
 <a name="listening-for-notifications"></a>
 ### Listening For Notifications
 
-Notifications will broadcast on a private channel formatted using a `{notifiable}.{id}` convention. So, if you are sending a notification to a `App\User` instance with an ID of `1`, the notification will be broadcast on the `App.User.1` private channel. When using [Laravel Echo](broadcasting.md), you may easily listen for notifications on a channel using the `notification` helper method:
+Notifications will broadcast on a private channel formatted using a `{notifiable}.{id}` convention. So, if you are sending a notification to a `App\User` instance with an ID of `1`, the notification will be broadcast on the `App.User.1` private channel. When using [Laravel Echo](/docs/{{version}}/broadcasting), you may easily listen for notifications on a channel using the `notification` helper method:
 
     Echo.private('App.User.' + userId)
         .notification((notification) => {
@@ -572,9 +566,9 @@ If you would like to customize which channels a notifiable entity receives its b
 
     namespace App;
 
+    use Illuminate\Notifications\Notifiable;
     use Illuminate\Broadcasting\PrivateChannel;
     use Illuminate\Foundation\Auth\User as Authenticatable;
-    use Illuminate\Notifications\Notifiable;
 
     class User extends Authenticatable
     {
@@ -601,11 +595,11 @@ Sending SMS notifications in Laravel is powered by [Nexmo](https://www.nexmo.com
 
     composer require laravel/nexmo-notification-channel
 
-This will also install the [`nexmo/laravel`](https://github.com/Nexmo/nexmo-laravel) package. This package includes [its own configuration file](https://github.com/Nexmo/nexmo-laravel/blob/master/config/nexmo.php). You can use the `NEXMO_KEY` and `NEXMO_SECRET` environment variables to set your Nexmo public and secret key.
-
-Next, you will need to add a configuration option to your `config/services.php` configuration file. You may copy the example configuration below to get started:
+Next, you will need to add a few configuration options to your `config/services.php` configuration file. You may copy the example configuration below to get started:
 
     'nexmo' => [
+        'key' => env('NEXMO_KEY'),
+        'secret' => env('NEXMO_SECRET'),
         'sms_from' => '15556666666',
     ],
 
@@ -627,29 +621,6 @@ If a notification supports being sent as an SMS, you should define a `toNexmo` m
         return (new NexmoMessage)
                     ->content('Your SMS message content');
     }
-
-<a name="formatting-shortcode-notifications"></a>
-### Formatting Shortcode Notifications
-
-Laravel also supports sending shortcode notifications, which are pre-defined message templates in your Nexmo account. You may specify the type of notification (`alert`, `2fa`, or `marketing`), as well as the custom values that will populate the template:
-
-    /**
-     * Get the Nexmo / Shortcode representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toShortcode($notifiable)
-    {
-        return [
-            'type' => 'alert',
-            'custom' => [
-                'code' => 'ABC123',
-            ];
-        ];
-    }
-
-> {tip} Like [routing SMS Notifications](#routing-sms-notifications), you should implement the `routeNotificationForShortcode` method on your notifiable model.
 
 #### Unicode Content
 
@@ -689,14 +660,14 @@ If you would like to send some notifications from a phone number that is differe
 <a name="routing-sms-notifications"></a>
 ### Routing SMS Notifications
 
-To route Nexmo notifications to the proper phone number, define a `routeNotificationForNexmo` method on your notifiable entity:
+When sending notifications via the `nexmo` channel, the notification system will automatically look for a `phone_number` attribute on the notifiable entity. If you would like to customize the phone number the notification is delivered to, define a `routeNotificationForNexmo` method on the entity:
 
     <?php
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
     use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
@@ -710,7 +681,7 @@ To route Nexmo notifications to the proper phone number, define a `routeNotifica
          */
         public function routeNotificationForNexmo($notification)
         {
-            return $this->phone_number;
+            return $this->phone;
         }
     }
 
@@ -777,7 +748,7 @@ You may also use an image as your logo instead of an emoji:
     {
         return (new SlackMessage)
                     ->from('Laravel')
-                    ->image('https://laravel.com/img/favicon/favicon.ico')
+                    ->image('https://laravel.com/favicon.png')
                     ->content('This will display the Laravel logo next to the message');
     }
 
@@ -872,8 +843,8 @@ To route Slack notifications to the proper location, define a `routeNotification
 
     namespace App;
 
-    use Illuminate\Foundation\Auth\User as Authenticatable;
     use Illuminate\Notifications\Notifiable;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
 
     class User extends Authenticatable
     {
@@ -995,11 +966,11 @@ Once your notification channel class has been defined, you may return the class 
 
     namespace App\Notifications;
 
-    use App\Channels\Messages\VoiceMessage;
-    use App\Channels\VoiceChannel;
     use Illuminate\Bus\Queueable;
-    use Illuminate\Contracts\Queue\ShouldQueue;
+    use App\Channels\VoiceChannel;
+    use App\Channels\Messages\VoiceMessage;
     use Illuminate\Notifications\Notification;
+    use Illuminate\Contracts\Queue\ShouldQueue;
 
     class InvoicePaid extends Notification
     {

@@ -6,7 +6,6 @@
 - [Creating Jobs](#creating-jobs)
     - [Generating Job Classes](#generating-job-classes)
     - [Class Structure](#class-structure)
-    - [Job Middleware](#job-middleware)
 - [Dispatching Jobs](#dispatching-jobs)
     - [Delayed Dispatching](#delayed-dispatching)
     - [Synchronous Dispatching](#synchronous-dispatching)
@@ -31,11 +30,11 @@
 <a name="introduction"></a>
 ## Introduction
 
-> {tip} Laravel now offers Horizon, a beautiful dashboard and configuration system for your Redis powered queues. Check out the full [Horizon documentation](horizon.md) for more information.
+> {tip} Laravel now offers Horizon, a beautiful dashboard and configuration system for your Redis powered queues. Check out the full [Horizon documentation](/docs/{{version}}/horizon) for more information.
 
 Laravel queues provide a unified API across a variety of different queue backends, such as Beanstalk, Amazon SQS, Redis, or even a relational database. Queues allow you to defer the processing of a time consuming task, such as sending an email, until a later time. Deferring these time consuming tasks drastically speeds up web requests to your application.
 
-The queue configuration file is stored in `config/queue.php`. In this file you will find connection configurations for each of the queue drivers that are included with the framework, which includes a database, [Beanstalkd](https://beanstalkd.github.io/), [Amazon SQS](https://aws.amazon.com/sqs/), [Redis](https://redis.io),  and a synchronous driver that will execute jobs immediately (for local use). A `null` queue driver is also included which discards queued jobs.
+The queue configuration file is stored in `config/queue.php`. In this file you will find connection configurations for each of the queue drivers that are included with the framework, which includes a database, [Beanstalkd](https://kr.github.io/beanstalkd/), [Amazon SQS](https://aws.amazon.com/sqs/), [Redis](https://redis.io),  and a synchronous driver that will execute jobs immediately (for local use). A `null` queue driver is also included which discards queued jobs.
 
 <a name="connections-vs-queues"></a>
 ### Connections Vs. Queues
@@ -94,8 +93,6 @@ Adjusting this value based on your queue load can be more efficient than continu
         'block_for' => 5,
     ],
 
-> {note} Setting `block_for` to `0` will cause queue workers to block indefinitely until a job is available. This will also prevent signals such as `SIGTERM` from being handled until the next job has been processed.
-
 #### Other Driver Prerequisites
 
 The following dependencies are needed for the listed queue drivers:
@@ -104,7 +101,7 @@ The following dependencies are needed for the listed queue drivers:
 
 - Amazon SQS: `aws/aws-sdk-php ~3.0`
 - Beanstalkd: `pda/pheanstalk ~4.0`
-- Redis: `predis/predis ~1.0` or phpredis PHP extension
+- Redis: `predis/predis ~1.0`
 
 </div>
 
@@ -129,13 +126,13 @@ Job classes are very simple, normally containing only a `handle` method which is
 
     namespace App\Jobs;
 
-    use App\AudioProcessor;
     use App\Podcast;
+    use App\AudioProcessor;
     use Illuminate\Bus\Queueable;
+    use Illuminate\Queue\SerializesModels;
+    use Illuminate\Queue\InteractsWithQueue;
     use Illuminate\Contracts\Queue\ShouldQueue;
     use Illuminate\Foundation\Bus\Dispatchable;
-    use Illuminate\Queue\InteractsWithQueue;
-    use Illuminate\Queue\SerializesModels;
 
     class ProcessPodcast implements ShouldQueue
     {
@@ -166,11 +163,11 @@ Job classes are very simple, normally containing only a `handle` method which is
         }
     }
 
-In this example, note that we were able to pass an [Eloquent model](eloquent.md) directly into the queued job's constructor. Because of the `SerializesModels` trait that the job is using, Eloquent models and their loaded relationships will be gracefully serialized and unserialized when the job is processing. If your queued job accepts an Eloquent model in its constructor, only the identifier for the model will be serialized onto the queue. When the job is actually handled, the queue system will automatically re-retrieve the full model instance and its loaded relationships from the database. It's all totally transparent to your application and prevents issues that can arise from serializing full Eloquent model instances.
+In this example, note that we were able to pass an [Eloquent model](/docs/{{version}}/eloquent) directly into the queued job's constructor. Because of the `SerializesModels` trait that the job is using, Eloquent models will be gracefully serialized and unserialized when the job is processing. If your queued job accepts an Eloquent model in its constructor, only the identifier for the model will be serialized onto the queue. When the job is actually handled, the queue system will automatically re-retrieve the full model instance from the database. It's all totally transparent to your application and prevents issues that can arise from serializing full Eloquent model instances.
 
-The `handle` method is called when the job is processed by the queue. Note that we are able to type-hint dependencies on the `handle` method of the job. The Laravel [service container](container.md) automatically injects these dependencies.
+The `handle` method is called when the job is processed by the queue. Note that we are able to type-hint dependencies on the `handle` method of the job. The Laravel [service container](/docs/{{version}}/container) automatically injects these dependencies.
 
-If you would like to take total control over how the container injects dependencies into the `handle` method, you may use the container's `bindMethod` method. The `bindMethod` method accepts a callback which receives the job and the container. Within the callback, you are free to invoke the `handle` method however you wish. Typically, you should call this method from a [service provider](providers.md):
+If you would like to take total control over how the container injects dependencies into the `handle` method, you may use the container's `bindMethod` method. The `bindMethod` method accepts a callback which receives the job and the container. Within the callback, you are free to invoke the `handle` method however you wish. Typically, you should call this method from a [service provider](/docs/{{version}}/providers):
 
     use App\Jobs\ProcessPodcast;
 
@@ -179,95 +176,6 @@ If you would like to take total control over how the container injects dependenc
     });
 
 > {note} Binary data, such as raw image contents, should be passed through the `base64_encode` function before being passed to a queued job. Otherwise, the job may not properly serialize to JSON when being placed on the queue.
-
-#### Handling Relationships
-
-Because loaded relationships also get serialized, the serialized job string can become quite large. To prevent relations from being serialized, you can call the `withoutRelations` method on the model when setting a property value. This method will return an instance of the model with no loaded relationships:
-
-    /**
-     * Create a new job instance.
-     *
-     * @param  \App\Podcast  $podcast
-     * @return void
-     */
-    public function __construct(Podcast $podcast)
-    {
-        $this->podcast = $podcast->withoutRelations();
-    }
-
-<a name="job-middleware"></a>
-### Job Middleware
-
-Job middleware allow you wrap custom logic around the execution of queued jobs, reducing boilerplate in the jobs themselves. For example, consider the following `handle` method which leverages Laravel's Redis rate limiting features to allow only one job to process every five seconds:
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        Redis::throttle('key')->block(0)->allow(1)->every(5)->then(function () {
-            info('Lock obtained...');
-
-            // Handle job...
-        }, function () {
-            // Could not obtain lock...
-
-            return $this->release(5);
-        });
-    }
-
-While this code is valid, the structure of the `handle` method becomes noisy since it is cluttered with Redis rate limiting logic. In addition, this rate limiting logic must be duplicated for any other jobs that we want to rate limit.
-
-Instead of rate limiting in the handle method, we could define a job middleware that handles rate limiting. Laravel does not have a default location for job middleware, so you are welcome to place job middleware anywhere in your application. In this example, we will place the middleware in a `app/Jobs/Middleware` directory:
-
-    <?php
-
-    namespace App\Jobs\Middleware;
-
-    use Illuminate\Support\Facades\Redis;
-
-    class RateLimited
-    {
-        /**
-         * Process the queued job.
-         *
-         * @param  mixed  $job
-         * @param  callable  $next
-         * @return mixed
-         */
-        public function handle($job, $next)
-        {
-            Redis::throttle('key')
-                    ->block(0)->allow(1)->every(5)
-                    ->then(function () use ($job, $next) {
-                        // Lock obtained...
-
-                        $next($job);
-                    }, function () use ($job) {
-                        // Could not obtain lock...
-
-                        $job->release(5);
-                    });
-        }
-    }
-
-As you can see, like [route middleware](middleware.md), job middleware receive the job being processed and a callback that should be invoked to continue processing the job.
-
-After creating job middleware, they may be attached to a job by returning them from the job's `middleware` method. This method does not exist on jobs scaffolded by the `make:job` Artisan command, so you will need to add it to your own job class definition:
-
-    use App\Jobs\Middleware\RateLimited;
-
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array
-     */
-    public function middleware()
-    {
-        return [new RateLimited];
-    }
 
 <a name="dispatching-jobs"></a>
 ## Dispatching Jobs
@@ -278,9 +186,9 @@ Once you have written your job class, you may dispatch it using the `dispatch` m
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class PodcastController extends Controller
     {
@@ -307,9 +215,9 @@ If you would like to delay the execution of a queued job, you may use the `delay
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class PodcastController extends Controller
     {
@@ -339,9 +247,9 @@ If you would like to dispatch a job immediately (synchronously), you may use the
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Jobs\ProcessPodcast;
     use Illuminate\Http\Request;
+    use App\Jobs\ProcessPodcast;
+    use App\Http\Controllers\Controller;
 
     class PodcastController extends Controller
     {
@@ -391,9 +299,9 @@ By pushing jobs to different queues, you may "categorize" your queued jobs and e
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class PodcastController extends Controller
     {
@@ -419,9 +327,9 @@ If you are working with multiple queue connections, you may specify which connec
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\Jobs\ProcessPodcast;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class PodcastController extends Controller
     {
@@ -530,7 +438,7 @@ However, you may also define the maximum number of seconds a job should be allow
 <a name="rate-limiting"></a>
 ### Rate Limiting
 
-> {note} This feature requires that your application can interact with a [Redis server](redis.md).
+> {note} This feature requires that your application can interact with a [Redis server](/docs/{{version}}/redis).
 
 If your application interacts with Redis, you may throttle your queued jobs by time or concurrency. This feature can be of assistance when your queued jobs are interacting with APIs that are also rate limited.
 
@@ -587,9 +495,9 @@ Laravel includes a queue worker that will process new jobs as they are pushed on
 
 > {tip} To keep the `queue:work` process running permanently in the background, you should use a process monitor such as [Supervisor](#supervisor-configuration) to ensure that the queue worker does not stop running.
 
-Remember, queue workers are long-lived processes and store the booted application state in memory. As a result, they will not notice changes in your code base after they have been started. So, during your deployment process, be sure to [restart your queue workers](#queue-workers-and-deployment). In addition, remember that any static state created or modified by your application will not be automatically reset between jobs.
+Remember, queue workers are long-lived processes and store the booted application state in memory. As a result, they will not notice changes in your code base after they have been started. So, during your deployment process, be sure to [restart your queue workers](#queue-workers-and-deployment).
 
-Alternatively, you may run the `queue:listen` command. When using the `queue:listen` command, you don't have to manually restart the worker when you want to reload your updated code or reset the application state; however, this command is not as efficient as `queue:work`:
+Alternatively, you may run the `queue:listen` command. When using the `queue:listen` command, you don't have to manually restart the worker after your code is changed; however, this command is not as efficient as `queue:work`:
 
     php artisan queue:listen
 
@@ -599,7 +507,7 @@ You may also specify which queue connection the worker should utilize. The conne
 
     php artisan queue:work redis
 
-You may customize your queue worker even further by only processing particular queues for a given connection. For example, if all of your emails are processed in an `emails` queue on your `redis` queue connection, you may issue the following command to start a worker that only processes that queue:
+You may customize your queue worker even further by only processing particular queues for a given connection. For example, if all of your emails are processed in an `emails` queue on your `redis` queue connection, you may issue the following command to start a worker that only processes only that queue:
 
     php artisan queue:work redis --queue=emails
 
@@ -639,7 +547,7 @@ Since queue workers are long-lived processes, they will not pick up changes to y
 
 This command will instruct all queue workers to gracefully "die" after they finish processing their current job so that no existing jobs are lost. Since the queue workers will die when the `queue:restart` command is executed, you should be running a process manager such as [Supervisor](#supervisor-configuration) to automatically restart the queue workers.
 
-> {tip} The queue uses the [cache](cache.md) to store restart signals, so you should verify a cache driver is properly configured for your application before using this feature.
+> {tip} The queue uses the [cache](/docs/{{version}}/cache) to store restart signals, so you should verify a cache driver is properly configured for your application before using this feature.
 
 <a name="job-expirations-and-timeouts"></a>
 ### Job Expirations & Timeouts
@@ -652,7 +560,7 @@ In your `config/queue.php` configuration file, each queue connection defines a `
 
 #### Worker Timeouts
 
-The `queue:work` Artisan command exposes a `--timeout` option. The `--timeout` option specifies how long the Laravel queue master process will wait before killing off a child queue worker that is processing a job. Sometimes a child queue process can become "frozen" for various reasons. The `--timeout` option removes frozen processes that have exceeded that specified time limit:
+The `queue:work` Artisan command exposes a `--timeout` option. The `--timeout` option specifies how long the Laravel queue master process will wait before killing off a child queue worker that is processing a job. Sometimes a child queue process can become "frozen" for various reasons, such as an external HTTP call that is not responding. The `--timeout` option removes frozen processes that have exceeded that specified time limit:
 
     php artisan queue:work --timeout=60
 
@@ -690,11 +598,8 @@ Supervisor configuration files are typically stored in the `/etc/supervisor/conf
     numprocs=8
     redirect_stderr=true
     stdout_logfile=/home/forge/app.com/worker.log
-    stopwaitsecs=3600
 
 In this example, the `numprocs` directive will instruct Supervisor to run 8 `queue:work` processes and monitor all of them, automatically restarting them if they fail. You should change the `queue:work sqs` portion of the `command` directive to reflect your desired queue connection.
-
-> {note} You should ensure that the value of `stopwaitsecs` is greater than the number of seconds consumed by your longest running job. Otherwise, Supervisor may kill the job before it is finished processing.
 
 #### Starting Supervisor
 
@@ -717,7 +622,7 @@ Sometimes your queued jobs will fail. Don't worry, things don't always go as pla
 
     php artisan migrate
 
-Then, when running your [queue worker](#running-the-queue-worker), you can specify the maximum number of times a job should be attempted using the `--tries` switch on the `queue:work` command. If you do not specify a value for the `--tries` option, jobs will only be attempted once:
+Then, when running your [queue worker](#running-the-queue-worker), you should specify the maximum number of times a job should be attempted using the `--tries` switch on the `queue:work` command. If you do not specify a value for the `--tries` option, jobs will be attempted indefinitely:
 
     php artisan queue:work redis --tries=3
 
@@ -743,13 +648,13 @@ You may define a `failed` method directly on your job class, allowing you to per
 
     namespace App\Jobs;
 
-    use App\AudioProcessor;
-    use App\Podcast;
     use Exception;
+    use App\Podcast;
+    use App\AudioProcessor;
     use Illuminate\Bus\Queueable;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Queue\InteractsWithQueue;
     use Illuminate\Queue\SerializesModels;
+    use Illuminate\Queue\InteractsWithQueue;
+    use Illuminate\Contracts\Queue\ShouldQueue;
 
     class ProcessPodcast implements ShouldQueue
     {
@@ -791,8 +696,6 @@ You may define a `failed` method directly on your job class, allowing you to per
         }
     }
 
-> {note} The `failed` method will not be called if the job was dispatched using the `dispatchNow` method.
-
 <a name="failed-job-events"></a>
 ### Failed Job Events
 
@@ -803,8 +706,8 @@ If you would like to register an event that will be called when a job fails, you
     namespace App\Providers;
 
     use Illuminate\Support\Facades\Queue;
-    use Illuminate\Support\ServiceProvider;
     use Illuminate\Queue\Events\JobFailed;
+    use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
     {
@@ -873,7 +776,7 @@ For convenience, you may choose to automatically delete jobs with missing models
 <a name="job-events"></a>
 ## Job Events
 
-Using the `before` and `after` methods on the `Queue` [facade](facades.md), you may specify callbacks to be executed before or after a queued job is processed. These callbacks are a great opportunity to perform additional logging or increment statistics for a dashboard. Typically, you should call these methods from a [service provider](providers.md). For example, we may use the `AppServiceProvider` that is included with Laravel:
+Using the `before` and `after` methods on the `Queue` [facade](/docs/{{version}}/facades), you may specify callbacks to be executed before or after a queued job is processed. These callbacks are a great opportunity to perform additional logging or increment statistics for a dashboard. Typically, you should call these methods from a [service provider](/docs/{{version}}/providers). For example, we may use the `AppServiceProvider` that is included with Laravel:
 
     <?php
 
@@ -917,7 +820,7 @@ Using the `before` and `after` methods on the `Queue` [facade](facades.md), you 
         }
     }
 
-Using the `looping` method on the `Queue` [facade](facades.md), you may specify callbacks that execute before the worker attempts to fetch a job from a queue. For example, you might register a Closure to rollback any transactions that were left open by a previously failed job:
+Using the `looping` method on the `Queue` [facade](/docs/{{version}}/facades), you may specify callbacks that execute before the worker attempts to fetch a job from a queue. For example, you might register a Closure to rollback any transactions that were left open by a previously failed job:
 
     Queue::looping(function () {
         while (DB::transactionLevel() > 0) {

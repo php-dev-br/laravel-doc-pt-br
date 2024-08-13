@@ -5,11 +5,6 @@
     - [Extending Collections](#extending-collections)
 - [Available Methods](#available-methods)
 - [Higher Order Messages](#higher-order-messages)
-- [Lazy Collections](#lazy-collections)
-    - [Introduction](#lazy-collection-introduction)
-    - [Creating Lazy Collections](#creating-lazy-collections)
-    - [The Enumerable Contract](#the-enumerable-contract)
-    - [Lazy Collection Methods](#lazy-collection-methods)
 
 <a name="introduction"></a>
 ## Introduction
@@ -32,14 +27,13 @@ As mentioned above, the `collect` helper returns a new `Illuminate\Support\Colle
 
     $collection = collect([1, 2, 3]);
 
-> {tip} The results of [Eloquent](eloquent.md) queries are always returned as `Collection` instances.
+> {tip} The results of [Eloquent](/docs/{{version}}/eloquent) queries are always returned as `Collection` instances.
 
 <a name="extending-collections"></a>
 ### Extending Collections
 
 Collections are "macroable", which allows you to add additional methods to the `Collection` class at run time. For example, the following code adds a `toUpper` method to the `Collection` class:
 
-    use Illuminate\Support\Collection;
     use Illuminate\Support\Str;
 
     Collection::macro('toUpper', function () {
@@ -54,7 +48,7 @@ Collections are "macroable", which allows you to add additional methods to the `
 
     // ['FIRST', 'SECOND']
 
-Typically, you should declare collection macros in a [service provider](providers.md).
+Typically, you should declare collection macros in a [service provider](/docs/{{version}}/providers).
 
 <a name="available-methods"></a>
 ## Available Methods
@@ -79,7 +73,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [avg](#method-avg)
 [chunk](#method-chunk)
 [collapse](#method-collapse)
-[collect](#method-collect)
 [combine](#method-combine)
 [concat](#method-concat)
 [contains](#method-contains)
@@ -151,7 +144,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [search](#method-search)
 [shift](#method-shift)
 [shuffle](#method-shuffle)
-[skip](#method-skip)
 [slice](#method-slice)
 [some](#method-some)
 [sort](#method-sort)
@@ -188,8 +180,6 @@ For the remainder of this documentation, we'll discuss each method available on 
 [whereNotBetween](#method-wherenotbetween)
 [whereNotIn](#method-wherenotin)
 [whereNotInStrict](#method-wherenotinstrict)
-[whereNotNull](#method-wherenotnull)
-[whereNull](#method-wherenull)
 [wrap](#method-wrap)
 [zip](#method-zip)
 
@@ -248,7 +238,7 @@ The `chunk` method breaks the collection into multiple, smaller collections of a
 
     // [[1, 2, 3, 4], [5, 6, 7]]
 
-This method is especially useful in [views](views.md) when working with a grid system such as [Bootstrap](https://getbootstrap.com/docs/4.1/layout/grid/). Imagine you have a collection of [Eloquent](eloquent.md) models you want to display in a grid:
+This method is especially useful in [views](/docs/{{version}}/views) when working with a grid system such as [Bootstrap](https://getbootstrap.com/docs/4.1/layout/grid/). Imagine you have a collection of [Eloquent](/docs/{{version}}/eloquent) models you want to display in a grid:
 
     @foreach ($products->chunk(3) as $chunk)
         <div class="row">
@@ -283,39 +273,6 @@ The `combine` method combines the values of the collection, as keys, with the va
     $combined->all();
 
     // ['name' => 'George', 'age' => 29]
-
-<a name="method-collect"></a>
-#### `collect()` {#collection-method}
-
-The `collect` method returns a new `Collection` instance with the items currently in the collection:
-
-    $collectionA = collect([1, 2, 3]);
-
-    $collectionB = $collectionA->collect();
-
-    $collectionB->all();
-
-    // [1, 2, 3]
-
-The `collect` method is primarily useful for converting [lazy collections](#lazy-collections) into standard `Collection` instances:
-
-    $lazyCollection = LazyCollection::make(function () {
-        yield 1;
-        yield 2;
-        yield 3;
-    });
-
-    $collection = $lazyCollection->collect();
-
-    get_class($collection);
-
-    // 'Illuminate\Support\Collection'
-
-    $collection->all();
-
-    // [1, 2, 3]
-
-> {tip} The `collect` method is especially useful when you have an instance of `Enumerable` and need a non-lazy collection instance. Since `collect()` is part of the `Enumerable` contract, you can safely use it to get a `Collection` instance.
 
 <a name="method-concat"></a>
 #### `concat()` {#collection-method}
@@ -372,8 +329,6 @@ The `contains` method uses "loose" comparisons when checking item values, meanin
 #### `containsStrict()` {#collection-method}
 
 This method has the same signature as the [`contains`](#method-contains) method; however, all values are compared using "strict" comparisons.
-
-> {tip} This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-contains).
 
 <a name="method-count"></a>
 #### `count()` {#collection-method}
@@ -483,8 +438,6 @@ The `diff` method compares the collection against another collection or a plain 
 
     // [1, 3, 5]
 
-> {tip} This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-diff).
-
 <a name="method-diffassoc"></a>
 #### `diffAssoc()` {#collection-method}
 
@@ -500,7 +453,7 @@ The `diffAssoc` method compares the collection against another collection or a p
         'color' => 'yellow',
         'type' => 'fruit',
         'remain' => 3,
-        'used' => 6,
+        'used' => 6
     ]);
 
     $diff->all();
@@ -628,7 +581,7 @@ If the collection is empty, `every` will return true:
 
     $collection = collect([]);
 
-    $collection->every(function ($value, $key) {
+    $collection->every(function($value, $key) {
         return $value > 2;
     });
 
@@ -648,8 +601,6 @@ The `except` method returns all items in the collection except for those with th
     // ['product_id' => 1]
 
 For the inverse of `except`, see the [only](#method-only) method.
-
-> {tip} This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-except).
 
 <a name="method-filter"></a>
 #### `filter()` {#collection-method}
@@ -984,8 +935,6 @@ The `intersect` method removes any values from the original collection that are 
     $intersect->all();
 
     // [0 => 'Desk', 2 => 'Chair']
-
-> {tip} This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-intersect).
 
 <a name="method-intersectbykeys"></a>
 #### `intersectByKeys()` {#collection-method}
@@ -1361,8 +1310,6 @@ The `only` method returns the items in the collection with the specified keys:
 
 For the inverse of `only`, see the [except](#method-except) method.
 
-> {tip} This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-only).
-
 <a name="method-pad"></a>
 #### `pad()` {#collection-method}
 
@@ -1609,7 +1556,7 @@ The `replace` method behaves similarly to `merge`; however, in addition to overw
 <a name="method-replacerecursive"></a>
 #### `replaceRecursive()` {#collection-method}
 
-This method works like `replace`, but it will recur into arrays and apply the same replacement process to the inner values:
+This method works like `replace`, but it will recurse into arrays and apply the same replacement process to the inner values:
 
     $collection = collect(['Taylor', 'Abigail', ['James', 'Victoria', 'Finn']]);
 
@@ -1692,19 +1639,6 @@ The `shuffle` method randomly shuffles the items in the collection:
     $shuffled->all();
 
     // [3, 2, 5, 1, 4] - (generated randomly)
-
-<a name="method-skip"></a>
-#### `skip()` {#collection-method}
-
-The `skip` method returns a new collection, without the first given amount of items:
-
-    $collection = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-
-    $collection = $collection->skip(4);
-
-    $collection->all();
-
-    // [5, 6, 7, 8, 9, 10]
 
 <a name="method-slice"></a>
 #### `slice()` {#collection-method}
@@ -1971,7 +1905,7 @@ The static `times` method creates a new collection by invoking the callback a gi
 
     // [9, 18, 27, 36, 45, 54, 63, 72, 81, 90]
 
-This method can be useful when combined with factories to create [Eloquent](eloquent.md) models:
+This method can be useful when combined with factories to create [Eloquent](/docs/{{version}}/eloquent) models:
 
     $categories = Collection::times(3, function ($number) {
         return factory(Category::class)->create(['name' => "Category No. $number"]);
@@ -1981,16 +1915,16 @@ This method can be useful when combined with factories to create [Eloquent](eloq
 
     /*
         [
-            ['id' => 1, 'name' => 'Category No. 1'],
-            ['id' => 2, 'name' => 'Category No. 2'],
-            ['id' => 3, 'name' => 'Category No. 3'],
+            ['id' => 1, 'name' => 'Category #1'],
+            ['id' => 2, 'name' => 'Category #2'],
+            ['id' => 3, 'name' => 'Category #3'],
         ]
     */
 
 <a name="method-toarray"></a>
 #### `toArray()` {#collection-method}
 
-The `toArray` method converts the collection into a plain PHP `array`. If the collection's values are [Eloquent](eloquent.md) models, the models will also be converted to arrays:
+The `toArray` method converts the collection into a plain PHP `array`. If the collection's values are [Eloquent](/docs/{{version}}/eloquent) models, the models will also be converted to arrays:
 
     $collection = collect(['name' => 'Desk', 'price' => 200]);
 
@@ -2097,8 +2031,6 @@ You may also pass your own callback to determine item uniqueness:
     */
 
 The `unique` method uses "loose" comparisons when checking item values, meaning a string with an integer value will be considered equal to an integer of the same value. Use the [`uniqueStrict`](#method-uniquestrict) method to filter using "strict" comparisons.
-
-> {tip} This method's behavior is modified when using [Eloquent Collections](eloquent-collections.md#method-unique).
 
 <a name="method-uniquestrict"></a>
 #### `uniqueStrict()` {#collection-method}
@@ -2224,9 +2156,9 @@ The `whenEmpty` method will execute the given callback when the collection is em
 
     $collection = collect(['michael', 'tom']);
 
-    $collection->whenEmpty(function ($collection) {
+    $collection->whenEmpty(function($collection) {
         return $collection->push('adam');
-    }, function ($collection) {
+    }, function($collection) {
         return $collection->push('taylor');
     });
 
@@ -2265,9 +2197,9 @@ The `whenNotEmpty` method will execute the given callback when the collection is
 
     $collection = collect();
 
-    $collection->whenNotEmpty(function ($collection) {
+    $collection->whenNotEmpty(function($collection) {
         return $collection->push('adam');
-    }, function ($collection) {
+    }, function($collection) {
         return $collection->push('taylor');
     });
 
@@ -2369,8 +2301,8 @@ The `whereIn` method filters the collection by a given key / value contained wit
 
     /*
         [
-            ['product' => 'Desk', 'price' => 200],
             ['product' => 'Bookcase', 'price' => 150],
+            ['product' => 'Desk', 'price' => 200],
         ]
     */
 
@@ -2386,20 +2318,13 @@ This method has the same signature as the [`whereIn`](#method-wherein) method; h
 
 The `whereInstanceOf` method filters the collection by a given class type:
 
-    use App\User;
-    use App\Post;
-
     $collection = collect([
         new User,
         new User,
         new Post,
     ]);
 
-    $filtered = $collection->whereInstanceOf(User::class);
-
-    $filtered->all();
-
-    // [App\User, App\User]
+    return $collection->whereInstanceOf(User::class);
 
 <a name="method-wherenotbetween"></a>
 #### `whereNotBetween()` {#collection-method}
@@ -2455,50 +2380,6 @@ The `whereNotIn` method uses "loose" comparisons when checking item values, mean
 
 This method has the same signature as the [`whereNotIn`](#method-wherenotin) method; however, all values are compared using "strict" comparisons.
 
-<a name="method-wherenotnull"></a>
-#### `whereNotNull()` {#collection-method}
-
-The `whereNotNull` method filters items where the given key is not null:
-
-    $collection = collect([
-        ['name' => 'Desk'],
-        ['name' => null],
-        ['name' => 'Bookcase'],
-    ]);
-
-    $filtered = $collection->whereNotNull('name');
-
-    $filtered->all();
-
-    /*
-        [
-            ['name' => 'Desk'],
-            ['name' => 'Bookcase'],
-        ]
-    */
-
-<a name="method-wherenull"></a>
-#### `whereNull()` {#collection-method}
-
-The `whereNull` method filters items where the given key is null:
-
-    $collection = collect([
-        ['name' => 'Desk'],
-        ['name' => null],
-        ['name' => 'Bookcase'],
-    ]);
-
-    $filtered = $collection->whereNull('name');
-
-    $filtered->all();
-
-    /*
-        [
-            ['name' => null],
-        ]
-    */
-
-
 <a name="method-wrap"></a>
 #### `wrap()` {#collection-method}
 
@@ -2551,219 +2432,3 @@ Likewise, we can use the `sum` higher order message to gather the total number o
     $users = User::where('group', 'Development')->get();
 
     return $users->sum->votes;
-
-<a name="lazy-collections"></a>
-## Lazy Collections
-
-<a name="lazy-collection-introduction"></a>
-### Introduction
-
-> {note} Before learning more about Laravel's lazy collections, take some time to familiarize yourself with [PHP generators](https://www.php.net/manual/en/language.generators.overview.php).
-
-To supplement the already powerful `Collection` class, the `LazyCollection` class leverages PHP's [generators](https://www.php.net/manual/en/language.generators.overview.php) to allow you to work with very large datasets while keeping memory usage low.
-
-For example, imagine your application needs to process a multi-gigabyte log file while taking advantage of Laravel's collection methods to parse the logs. Instead of reading the entire file into memory at once, lazy collections may be used to keep only a small part of the file in memory at a given time:
-
-    use App\LogEntry;
-    use Illuminate\Support\LazyCollection;
-
-    LazyCollection::make(function () {
-        $handle = fopen('log.txt', 'r');
-
-        while (($line = fgets($handle)) !== false) {
-            yield $line;
-        }
-    })->chunk(4)->map(function ($lines) {
-        return LogEntry::fromLines($lines);
-    })->each(function (LogEntry $logEntry) {
-        // Process the log entry...
-    });
-
-Or, imagine you need to iterate through 10,000 Eloquent models. When using traditional Laravel collections, all 10,000 Eloquent models must be loaded into memory at the same time:
-
-    $users = App\User::all()->filter(function ($user) {
-        return $user->id > 500;
-    });
-
-However, the query builder's `cursor` method returns a `LazyCollection` instance. This allows you to still only run a single query against the database but also only keep one Eloquent model loaded in memory at a time. In this example, the `filter` callback is not executed until we actually iterate over each user individually, allowing for a drastic reduction in memory usage:
-
-    $users = App\User::cursor()->filter(function ($user) {
-        return $user->id > 500;
-    });
-
-    foreach ($users as $user) {
-        echo $user->id;
-    }
-
-<a name="creating-lazy-collections"></a>
-### Creating Lazy Collections
-
-To create a lazy collection instance, you should pass a PHP generator function to the collection's `make` method:
-
-    use Illuminate\Support\LazyCollection;
-
-    LazyCollection::make(function () {
-        $handle = fopen('log.txt', 'r');
-
-        while (($line = fgets($handle)) !== false) {
-            yield $line;
-        }
-    });
-
-<a name="the-enumerable-contract"></a>
-### The Enumerable Contract
-
-Almost all methods available on the `Collection` class are also available on the `LazyCollection` class. Both of these classes implement the `Illuminate\Support\Enumerable` contract, which defines the following methods:
-
-<div id="collection-method-list" markdown="1">
-
-[all](#method-all)
-[average](#method-average)
-[avg](#method-avg)
-[chunk](#method-chunk)
-[collapse](#method-collapse)
-[collect](#method-collect)
-[combine](#method-combine)
-[concat](#method-concat)
-[contains](#method-contains)
-[containsStrict](#method-containsstrict)
-[count](#method-count)
-[countBy](#method-countBy)
-[crossJoin](#method-crossjoin)
-[dd](#method-dd)
-[diff](#method-diff)
-[diffAssoc](#method-diffassoc)
-[diffKeys](#method-diffkeys)
-[dump](#method-dump)
-[duplicates](#method-duplicates)
-[duplicatesStrict](#method-duplicatesstrict)
-[each](#method-each)
-[eachSpread](#method-eachspread)
-[every](#method-every)
-[except](#method-except)
-[filter](#method-filter)
-[first](#method-first)
-[firstWhere](#method-first-where)
-[flatMap](#method-flatmap)
-[flatten](#method-flatten)
-[flip](#method-flip)
-[forPage](#method-forpage)
-[get](#method-get)
-[groupBy](#method-groupby)
-[has](#method-has)
-[implode](#method-implode)
-[intersect](#method-intersect)
-[intersectByKeys](#method-intersectbykeys)
-[isEmpty](#method-isempty)
-[isNotEmpty](#method-isnotempty)
-[join](#method-join)
-[keyBy](#method-keyby)
-[keys](#method-keys)
-[last](#method-last)
-[macro](#method-macro)
-[make](#method-make)
-[map](#method-map)
-[mapInto](#method-mapinto)
-[mapSpread](#method-mapspread)
-[mapToGroups](#method-maptogroups)
-[mapWithKeys](#method-mapwithkeys)
-[max](#method-max)
-[median](#method-median)
-[merge](#method-merge)
-[mergeRecursive](#method-mergerecursive)
-[min](#method-min)
-[mode](#method-mode)
-[nth](#method-nth)
-[only](#method-only)
-[pad](#method-pad)
-[partition](#method-partition)
-[pipe](#method-pipe)
-[pluck](#method-pluck)
-[random](#method-random)
-[reduce](#method-reduce)
-[reject](#method-reject)
-[replace](#method-replace)
-[replaceRecursive](#method-replacerecursive)
-[reverse](#method-reverse)
-[search](#method-search)
-[shuffle](#method-shuffle)
-[skip](#method-skip)
-[slice](#method-slice)
-[some](#method-some)
-[sort](#method-sort)
-[sortBy](#method-sortby)
-[sortByDesc](#method-sortbydesc)
-[sortKeys](#method-sortkeys)
-[sortKeysDesc](#method-sortkeysdesc)
-[split](#method-split)
-[sum](#method-sum)
-[take](#method-take)
-[tap](#method-tap)
-[times](#method-times)
-[toArray](#method-toarray)
-[toJson](#method-tojson)
-[union](#method-union)
-[unique](#method-unique)
-[uniqueStrict](#method-uniquestrict)
-[unless](#method-unless)
-[unlessEmpty](#method-unlessempty)
-[unlessNotEmpty](#method-unlessnotempty)
-[unwrap](#method-unwrap)
-[values](#method-values)
-[when](#method-when)
-[whenEmpty](#method-whenempty)
-[whenNotEmpty](#method-whennotempty)
-[where](#method-where)
-[whereStrict](#method-wherestrict)
-[whereBetween](#method-wherebetween)
-[whereIn](#method-wherein)
-[whereInStrict](#method-whereinstrict)
-[whereInstanceOf](#method-whereinstanceof)
-[whereNotBetween](#method-wherenotbetween)
-[whereNotIn](#method-wherenotin)
-[whereNotInStrict](#method-wherenotinstrict)
-[wrap](#method-wrap)
-[zip](#method-zip)
-
-</div>
-
-> {note} Methods that mutate the collection (such as `shift`, `pop`, `prepend` etc.) are _not_ available on the `LazyCollection` class.
-
-<a name="lazy-collection-methods"></a>
-### Lazy Collection Methods
-
-In addition to the methods defined in the `Enumerable` contract, the `LazyCollection` class contains the following methods:
-
-<a name="method-tapEach"></a>
-#### `tapEach()` {#collection-method}
-
-While the `each` method calls the given callback for each item in the collection right away, the `tapEach` method only calls the given callback as the items are being pulled out of the list one by one:
-
-    $lazyCollection = LazyCollection::times(INF)->tapEach(function ($value) {
-        dump($value);
-    });
-
-    // Nothing has been dumped so far...
-
-    $array = $lazyCollection->take(3)->all();
-
-    // 1
-    // 2
-    // 3
-
-<a name="method-remember"></a>
-#### `remember()` {#collection-method}
-
-The `remember` method returns a new lazy collection that will remember any values that have already been enumerated and will not retrieve them again when the collection is enumerated again:
-
-    $users = User::cursor()->remember();
-
-    // No query has been executed yet...
-
-    $users->take(5)->all();
-
-    // The query has been executed and the first 5 users have been hydrated from the database...
-
-    $users->take(20)->all();
-
-    // First 5 users come from the collection's cache... The rest are hydrated from the database...

@@ -8,7 +8,6 @@
 - [Controller Middleware](#controller-middleware)
 - [Resource Controllers](#resource-controllers)
     - [Partial Resource Routes](#restful-partial-resource-routes)
-    - [Nested Resources](#restful-nested-resources)
     - [Naming Resource Routes](#restful-naming-resource-routes)
     - [Naming Resource Route Parameters](#restful-naming-resource-route-parameters)
     - [Localizing Resource URIs](#restful-localizing-resource-uris)
@@ -33,8 +32,8 @@ Below is an example of a basic controller class. Note that the controller extend
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\User;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -76,8 +75,8 @@ If you would like to define a controller that only handles a single action, you 
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\User;
+    use App\Http\Controllers\Controller;
 
     class ShowProfile extends Controller
     {
@@ -104,7 +103,7 @@ You may generate an invokable controller by using the `--invokable` option of th
 <a name="controller-middleware"></a>
 ## Controller Middleware
 
-[Middleware](middleware.md) may be assigned to the controller's routes in your route files:
+[Middleware](/docs/{{version}}/middleware) may be assigned to the controller's routes in your route files:
 
     Route::get('profile', 'UserController@show')->middleware('auth');
 
@@ -215,35 +214,6 @@ To quickly generate an API resource controller that does not include the `create
 
     php artisan make:controller API/PhotoController --api
 
-<a name="restful-nested-resources"></a>
-### Nested Resources
-
-Sometimes you may need to define routes to a nested resource. For example, a photo resource may have multiple comments that may be attached to the photo. To nest the resource controllers, use "dot" notation in your route declaration:
-
-    Route::resource('photos.comments', 'PhotoCommentController');
-
-This route will register a nested resource that may be accessed with URIs like the following:
-
-    /photos/{photo}/comments/{comment}
-
-#### Shallow Nesting
-
-Often, it is not entirely necessary to have both the parent and the child IDs within a URI since the child ID is already a unique identifier. When using unique identifier such as auto-incrementing primary keys to identify your models in URI segments, you may choose to use "shallow nesting":
-
-    Route::resource('photos.comments', 'CommentController')->shallow();
-
-The route definition above will define the following routes:
-
-Verb      | URI                               | Action       | Route Name
-----------|-----------------------------------|--------------|---------------------
-GET       | `/photos/{photo}/comments`        | index        | photos.comments.index
-GET       | `/photos/{photo}/comments/create` | create       | photos.comments.create
-POST      | `/photos/{photo}/comments`        | store        | photos.comments.store
-GET       | `/comments/{comment}`             | show         | comments.show
-GET       | `/comments/{comment}/edit`        | edit         | comments.edit
-PUT/PATCH | `/comments/{comment}`             | update       | comments.update
-DELETE    | `/comments/{comment}`             | destroy      | comments.destroy
-
 <a name="restful-naming-resource-routes"></a>
 ### Naming Resource Routes
 
@@ -308,7 +278,7 @@ If you need to add additional routes to a resource controller beyond the default
 
 #### Constructor Injection
 
-The Laravel [service container](container.md) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
+The Laravel [service container](/docs/{{version}}/container) is used to resolve all Laravel controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
 
     <?php
 
@@ -335,7 +305,7 @@ The Laravel [service container](container.md) is used to resolve all Laravel con
         }
     }
 
-You may also type-hint any [Laravel contract](contracts.md). If the container can resolve it, you can type-hint it. Depending on your application, injecting your dependencies into your controller may provide better testability.
+You may also type-hint any [Laravel contract](/docs/{{version}}/contracts). If the container can resolve it, you can type-hint it. Depending on your application, injecting your dependencies into your controller may provide better testability.
 
 #### Method Injection
 

@@ -15,7 +15,7 @@
 <a name="accessing-the-request"></a>
 ## Accessing The Request
 
-To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `Illuminate\Http\Request` class on your controller method. The incoming request instance will automatically be injected by the [service container](container.md):
+To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `Illuminate\Http\Request` class on your controller method. The incoming request instance will automatically be injected by the [service container](/docs/{{version}}/container):
 
     <?php
 
@@ -121,7 +121,7 @@ The `method` method will return the HTTP verb for the request. You may use the `
 The [PSR-7 standard](https://www.php-fig.org/psr/psr-7/) specifies interfaces for HTTP messages, including requests and responses. If you would like to obtain an instance of a PSR-7 request instead of a Laravel request, you will first need to install a few libraries. Laravel uses the *Symfony HTTP Message Bridge* component to convert typical Laravel requests and responses into PSR-7 compatible implementations:
 
     composer require symfony/psr-http-message-bridge
-    composer require nyholm/psr7
+    composer require zendframework/zend-diactoros
 
 Once you have installed these libraries, you may obtain a PSR-7 request by type-hinting the request interface on your route Closure or controller method:
 
@@ -197,12 +197,6 @@ When sending JSON requests to your application, you may access the JSON data via
 
     $name = $request->input('user.name');
 
-#### Retrieving Boolean Input Values
-
-When dealing with HTML elements like checkboxes, your application may receive "truthy" values that are actually strings. For example, "true" or "on". For convenience, you may use the `boolean` method to retrieve these values as booleans. The `boolean` method returns `true` for 1, "1", true, "true", "on", and "yes". All other values will return `false`:
-
-    $archived = $request->boolean('archived');
-
 #### Retrieving A Portion Of The Input Data
 
 If you need to retrieve a subset of the input data, you may use the `only` and `except` methods. Both of these methods accept a single `array` or a dynamic list of arguments:
@@ -231,32 +225,20 @@ When given an array, the `has` method will determine if all of the specified val
         //
     }
 
-The `hasAny` method returns `true` if any of the specified values are present:
-
-    if ($request->hasAny(['name', 'email'])) {
-        //
-    }
-
 If you would like to determine if a value is present on the request and is not empty, you may use the `filled` method:
 
     if ($request->filled('name')) {
         //
     }
 
-To determine if a given key is absent from the request, you may use the `missing` method:
-
-    if ($request->missing('name')) {
-        //
-    }
-
 <a name="old-input"></a>
 ### Old Input
 
-Laravel allows you to keep input from one request during the next request. This feature is particularly useful for re-populating forms after detecting validation errors. However, if you are using Laravel's included [validation features](validation.md), it is unlikely you will need to manually use these methods, as some of Laravel's built-in validation facilities will call them automatically.
+Laravel allows you to keep input from one request during the next request. This feature is particularly useful for re-populating forms after detecting validation errors. However, if you are using Laravel's included [validation features](/docs/{{version}}/validation), it is unlikely you will need to manually use these methods, as some of Laravel's built-in validation facilities will call them automatically.
 
 #### Flashing Input To The Session
 
-The `flash` method on the `Illuminate\Http\Request` class will flash the current input to the [session](session.md) so that it is available during the user's next request to the application:
+The `flash` method on the `Illuminate\Http\Request` class will flash the current input to the [session](/docs/{{version}}/session) so that it is available during the user's next request to the application:
 
     $request->flash();
 
@@ -278,11 +260,11 @@ Since you often will want to flash input to the session and then redirect to the
 
 #### Retrieving Old Input
 
-To retrieve flashed input from the previous request, use the `old` method on the `Request` instance. The `old` method will pull the previously flashed input data from the [session](session.md):
+To retrieve flashed input from the previous request, use the `old` method on the `Request` instance. The `old` method will pull the previously flashed input data from the [session](/docs/{{version}}/session):
 
     $username = $request->old('username');
 
-Laravel also provides a global `old` helper. If you are displaying old input within a [Blade template](blade.md), it is more convenient to use the `old` helper. If no old input exists for the given field, `null` will be returned:
+Laravel also provides a global `old` helper. If you are displaying old input within a [Blade template](/docs/{{version}}/blade), it is more convenient to use the `old` helper. If no old input exists for the given field, `null` will be returned:
 
     <input type="text" name="username" value="{{ old('username') }}">
 
@@ -296,7 +278,7 @@ All cookies created by the Laravel framework are encrypted and signed with an au
     $value = $request->cookie('name');
 
 Alternatively, you may use the `Cookie` facade to access cookie values:
-
+    
     use Illuminate\Support\Facades\Cookie;
 
     $value = Cookie::get('name');
@@ -370,7 +352,7 @@ There are a variety of other methods available on `UploadedFile` instances. Chec
 <a name="storing-uploaded-files"></a>
 ### Storing Uploaded Files
 
-To store an uploaded file, you will typically use one of your configured [filesystems](filesystem.md). The `UploadedFile` class has a `store` method which will move an uploaded file to one of your disks, which may be a location on your local filesystem or even a cloud storage location like Amazon S3.
+To store an uploaded file, you will typically use one of your configured [filesystems](/docs/{{version}}/filesystem). The `UploadedFile` class has a `store` method which will move an uploaded file to one of your disks, which may be a location on your local filesystem or even a cloud storage location like Amazon S3.
 
 The `store` method accepts the path where the file should be stored relative to the filesystem's configured root directory. This path should not contain a file name, since a unique ID will automatically be generated to serve as the file name.
 
@@ -397,15 +379,15 @@ To solve this, you may use the `App\Http\Middleware\TrustProxies` middleware tha
 
     namespace App\Http\Middleware;
 
-    use Fideloper\Proxy\TrustProxies as Middleware;
     use Illuminate\Http\Request;
+    use Fideloper\Proxy\TrustProxies as Middleware;
 
     class TrustProxies extends Middleware
     {
         /**
          * The trusted proxies for this application.
          *
-         * @var string|array
+         * @var array
          */
         protected $proxies = [
             '192.168.1.1',
@@ -429,6 +411,6 @@ If you are using Amazon AWS or another "cloud" load balancer provider, you may n
     /**
      * The trusted proxies for this application.
      *
-     * @var string|array
+     * @var array
      */
     protected $proxies = '*';

@@ -66,7 +66,7 @@ The `papertrail` channel requires the `url` and `port` configuration options. Yo
 
 #### Configuring The Slack Channel
 
-The `slack` channel requires a `url` configuration option. This URL should match a URL for an [incoming webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) that you have configured for your Slack team. By default, Slack will only receive logs at the `critical` level and above; however, you can adjust this in your `logging` configuration file.
+The `slack` channel requires a `url` configuration option. This URL should match a URL for an [incoming webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) that you have configured for your Slack team.
 
 <a name="building-log-stacks"></a>
 ### Building Log Stacks
@@ -110,7 +110,7 @@ Given our configuration, the `syslog` channel will write the message to the syst
 <a name="writing-log-messages"></a>
 ## Writing Log Messages
 
-You may write information to the logs using the `Log` [facade](facades.md). As previously mentioned, the logger provides the eight logging levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info** and **debug**:
+You may write information to the logs using the `Log` [facade](/docs/{{version}}/facades). As previously mentioned, the logger provides the eight logging levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info** and **debug**:
 
     Log::emergency($message);
     Log::alert($message);
@@ -127,9 +127,9 @@ So, you may call any of these methods to log a message for the corresponding lev
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\User;
     use Illuminate\Support\Facades\Log;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -204,7 +204,7 @@ Once you have configured the `tap` option on your channel, you're ready to defin
         }
     }
 
-> {tip} All of your "tap" classes are resolved by the [service container](container.md), so any constructor dependencies they require will automatically be injected.
+> {tip} All of your "tap" classes are resolved by the [service container](/docs/{{version}}/container), so any constructor dependencies they require will automatically be injected.
 
 <a name="creating-monolog-handler-channels"></a>
 ### Creating Monolog Handler Channels

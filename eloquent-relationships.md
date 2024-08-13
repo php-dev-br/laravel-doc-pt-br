@@ -51,13 +51,11 @@ Database tables are often related to one another. For example, a blog post may h
 <a name="defining-relationships"></a>
 ## Defining Relationships
 
-Eloquent relationships are defined as methods on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](queries.md), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
+Eloquent relationships are defined as methods on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](/docs/{{version}}/queries), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
 
     $user->posts()->where('active', 1)->get();
 
 But, before diving too deep into using relationships, let's learn how to define each type.
-
-> {note} Relationship names cannot collide with attribute names as that could lead to your model not being able to know which one to resolve.
 
 <a name="one-to-one"></a>
 ### One To One
@@ -227,25 +225,7 @@ If your parent model does not use `id` as its primary key, or you wish to join t
 <a name="many-to-many"></a>
 ### Many To Many
 
-Many-to-many relations are slightly more complicated than `hasOne` and `hasMany` relationships. An example of such a relationship is a user with many roles, where the roles are also shared by other users. For example, many users may have the role of "Admin".
-
-#### Table Structure
-
-To define this relationship, three database tables are needed: `users`, `roles`, and `role_user`. The `role_user` table is derived from the alphabetical order of the related model names, and contains the `user_id` and `role_id` columns:
-
-    users
-        id - integer
-        name - string
-
-    roles
-        id - integer
-        name - string
-
-    role_user
-        user_id - integer
-        role_id - integer
-
-#### Model Structure
+Many-to-many relations are slightly more complicated than `hasOne` and `hasMany` relationships. An example of such a relationship is a user with many roles, where the roles are also shared by other users. For example, many users may have the role of "Admin". To define this relationship, three database tables are needed: `users`, `roles`, and `role_user`. The `role_user` table is derived from the alphabetical order of the related model names, and contains the `user_id` and `role_id` columns.
 
 Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. For example, let's define the `roles` method on our `User` model:
 
@@ -349,13 +329,11 @@ Once this is done, you may access the intermediate table data using the customiz
 
 #### Filtering Relationships Via Intermediate Table Columns
 
-You can also filter the results returned by `belongsToMany` using the `wherePivot`, `wherePivotIn`, and `wherePivotNotIn` methods when defining the relationship:
+You can also filter the results returned by `belongsToMany` using the `wherePivot` and `wherePivotIn` methods when defining the relationship:
 
     return $this->belongsToMany('App\Role')->wherePivot('approved', 1);
 
     return $this->belongsToMany('App\Role')->wherePivotIn('priority', [1, 2]);
-
-    return $this->belongsToMany('App\Role')->wherePivotNotIn('priority', [1, 2]);
 
 <a name="defining-custom-intermediate-table-models"></a>
 ### Defining Custom Intermediate Table Models
@@ -411,7 +389,7 @@ You can combine `using` and `withPivot` in order to retrieve columns from the in
                             ->using('App\RoleUser')
                             ->withPivot([
                                 'created_by',
-                                'updated_by',
+                                'updated_by'
                             ]);
         }
     }
@@ -828,7 +806,7 @@ You may register the `morphMap` in the `boot` function of your `AppServiceProvid
 <a name="querying-relations"></a>
 ## Querying Relations
 
-Since all types of Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing the relationship queries. In addition, all types of Eloquent relationships also serve as [query builders](queries.md), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL against your database.
+Since all types of Eloquent relationships are defined via methods, you may call those methods to obtain an instance of the relationship without actually executing the relationship queries. In addition, all types of Eloquent relationships also serve as [query builders](/docs/{{version}}/queries), allowing you to continue to chain constraints onto the relationship query before finally executing the SQL against your database.
 
 For example, imagine a blog system in which a `User` model has many associated `Post` models:
 
@@ -855,7 +833,7 @@ You may query the `posts` relationship and add additional constraints to the rel
 
     $user->posts()->where('active', 1)->get();
 
-You are able to use any of the [query builder](queries.md) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
+You are able to use any of the [query builder](/docs/{{version}}/queries) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
 
 #### Chaining `orWhere` Clauses After Relationships
 
@@ -869,7 +847,7 @@ As demonstrated in the example above, you are free to add additional constraints
     // select * from posts
     // where user_id = ? and active = 1 or votes >= 100
 
-In most situations, you likely intend to use [constraint groups](queries.md#parameter-grouping) to logically group the conditional checks between parentheses:
+In most situations, you likely intend to use [constraint groups](/docs/{{version}}/queries#parameter-grouping) to logically group the conditional checks between parentheses:
 
     use Illuminate\Database\Eloquent\Builder;
 
@@ -948,7 +926,7 @@ You may use "dot" notation to execute a query against a nested relationship. For
     use Illuminate\Database\Eloquent\Builder;
 
     $posts = App\Post::whereDoesntHave('comments.author', function (Builder $query) {
-        $query->where('banned', 0);
+        $query->where('banned', 1);
     })->get();
 
 <a name="querying-polymorphic-relationships"></a>
@@ -1030,7 +1008,7 @@ You may also alias the relationship count result, allowing multiple counts on th
         'comments',
         'comments as pending_comments_count' => function (Builder $query) {
             $query->where('approved', false);
-        },
+        }
     ])->get();
 
     echo $posts[0]->comments_count;
@@ -1044,18 +1022,6 @@ If you're combining `withCount` with a `select` statement, ensure that you call 
     echo $posts[0]->title;
     echo $posts[0]->body;
     echo $posts[0]->comments_count;
-
-In addition, using the `loadCount` method, you may load a relationship count after the parent model has already been retrieved:
-
-    $book = App\Book::first();
-
-    $book->loadCount('genres');
-
-If you need to set additional query constraints on the eager loading query, you may pass an array keyed by the relationships you wish to load. The array values should be `Closure` instances which receive the query builder instance:
-
-    $book->loadCount(['reviews' => function ($query) {
-        $query->where('rating', 5);
-    }])
 
 <a name="eager-loading"></a>
 ## Eager Loading
@@ -1198,7 +1164,7 @@ Sometimes you may wish to eager load a relationship, but also specify additional
         $query->where('title', 'like', '%first%');
     }])->get();
 
-In this example, Eloquent will only eager load posts where the post's `title` column contains the word `first`. You may call other [query builder](queries.md) methods to further customize the eager loading operation:
+In this example, Eloquent will only eager load posts where the post's `title` column contains the word `first`. You may call other [query builder](/docs/{{version}}/queries) methods to further customize the eager loading operation:
 
     $users = App\User::with(['posts' => function ($query) {
         $query->orderBy('created_at', 'desc');
@@ -1219,7 +1185,7 @@ Sometimes you may need to eager load a relationship after the parent model has a
 
 If you need to set additional query constraints on the eager loading query, you may pass an array keyed by the relationships you wish to load. The array values should be `Closure` instances which receive the query instance:
 
-    $author->load(['books' => function ($query) {
+    $books->load(['author' => function ($query) {
         $query->orderBy('published_date', 'asc');
     }]);
 
@@ -1231,7 +1197,7 @@ To load a relationship only when it has not already been loaded, use the `loadMi
 
         return [
             'name' => $book->name,
-            'author' => $book->author->name,
+            'author' => $book->author->name
         ];
     }
 
@@ -1316,7 +1282,7 @@ In addition to the `save` and `saveMany` methods, you may also use the `create` 
         'message' => 'A new comment.',
     ]);
 
-> {tip} Before using the `create` method, be sure to review the documentation on attribute [mass assignment](eloquent.md#mass-assignment).
+> {tip} Before using the `create` method, be sure to review the documentation on attribute [mass assignment](/docs/{{version}}/eloquent#mass-assignment).
 
 You may use the `createMany` method to create multiple related models:
 
@@ -1331,7 +1297,7 @@ You may use the `createMany` method to create multiple related models:
         ],
     ]);
 
-You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate` and `updateOrCreate` methods to [create and update models on relationships](https://laravel.comeloquent.md#other-creation-methods).
+You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate` and `updateOrCreate` methods to [create and update models on relationships](https://laravel.com/docs/{{version}}/eloquent#other-creation-methods).
 
 <a name="updating-belongs-to-relationships"></a>
 ### Belongs To Relationships
@@ -1416,7 +1382,7 @@ For convenience, `attach` and `detach` also accept arrays of IDs as input:
 
     $user->roles()->attach([
         1 => ['expires' => $expires],
-        2 => ['expires' => $expires],
+        2 => ['expires' => $expires]
     ]);
 
 #### Syncing Associations

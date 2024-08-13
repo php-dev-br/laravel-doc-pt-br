@@ -38,9 +38,9 @@ You may define all of your scheduled tasks in the `schedule` method of the `App\
 
     namespace App\Console;
 
+    use Illuminate\Support\Facades\DB;
     use Illuminate\Console\Scheduling\Schedule;
     use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-    use Illuminate\Support\Facades\DB;
 
     class Kernel extends ConsoleKernel
     {
@@ -74,7 +74,7 @@ In addition to scheduling using Closures, you may also use [invokable objects](h
 <a name="scheduling-artisan-commands"></a>
 ### Scheduling Artisan Commands
 
-In addition to scheduling Closure calls, you may also schedule [Artisan commands](artisan.md) and operating system commands. For example, you may use the `command` method to schedule an Artisan command using either the command's name or class:
+In addition to scheduling Closure calls, you may also schedule [Artisan commands](/docs/{{version}}/artisan) and operating system commands. For example, you may use the `command` method to schedule an Artisan command using either the command's name or class:
 
     $schedule->command('emails:send Taylor --force')->daily();
 
@@ -83,7 +83,7 @@ In addition to scheduling Closure calls, you may also schedule [Artisan commands
 <a name="scheduling-queued-jobs"></a>
 ### Scheduling Queued Jobs
 
-The `job` method may be used to schedule a [queued job](queues.md). This method provides a convenient way to schedule jobs without using the `call` method to manually create Closures to queue the job:
+The `job` method may be used to schedule a [queued job](/docs/{{version}}/queues). This method provides a convenient way to schedule jobs without using the `call` method to manually create Closures to queue the job:
 
     $schedule->job(new Heartbeat)->everyFiveMinutes();
 
@@ -111,16 +111,16 @@ Method  | Description
 `->everyFifteenMinutes();`  |  Run the task every fifteen minutes
 `->everyThirtyMinutes();`  |  Run the task every thirty minutes
 `->hourly();`  |  Run the task every hour
-`->hourlyAt(17);`  |  Run the task every hour at 17 minutes past the hour
+`->hourlyAt(17);`  |  Run the task every hour at 17 mins past the hour
 `->daily();`  |  Run the task every day at midnight
 `->dailyAt('13:00');`  |  Run the task every day at 13:00
 `->twiceDaily(1, 13);`  |  Run the task daily at 1:00 & 13:00
-`->weekly();`  |  Run the task every sunday at 00:00
+`->weekly();`  |  Run the task every week
 `->weeklyOn(1, '8:00');`  |  Run the task every week on Monday at 8:00
-`->monthly();`  |  Run the task on the first day of every month at 00:00
+`->monthly();`  |  Run the task every month
 `->monthlyOn(4, '15:00');`  |  Run the task every month on the 4th at 15:00
-`->quarterly();` |  Run the task on the first day of every quarter at 00:00
-`->yearly();`  |  Run the task on the first day of every year at 00:00
+`->quarterly();` |  Run the task every quarter
+`->yearly();`  |  Run the task every year
 `->timezone('America/New_York');` | Set the timezone
 
 These methods may be combined with additional constraints to create even more finely tuned schedules that only run on certain days of the week. For example, to schedule a command to run weekly on Monday:
@@ -222,7 +222,7 @@ By default, scheduled tasks will be run even if the previous instance of the tas
 
     $schedule->command('emails:send')->withoutOverlapping();
 
-In this example, the `emails:send` [Artisan command](artisan.md) will be run every minute if it is not already running. The `withoutOverlapping` method is especially useful if you have tasks that vary drastically in their execution time, preventing you from predicting exactly how long a given task will take.
+In this example, the `emails:send` [Artisan command](/docs/{{version}}/artisan) will be run every minute if it is not already running. The `withoutOverlapping` method is especially useful if you have tasks that vary drastically in their execution time, preventing you from predicting exactly how long a given task will take.
 
 If needed, you may specify how many minutes must pass before the "without overlapping" lock expires. By default, the lock will expire after 24 hours:
 
@@ -256,7 +256,7 @@ By default, multiple commands scheduled at the same time will execute sequential
 <a name="maintenance-mode"></a>
 ### Maintenance Mode
 
-Laravel's scheduled tasks will not run when Laravel is in [maintenance mode](configuration.md#maintenance-mode), since we don't want your tasks to interfere with any unfinished maintenance you may be performing on your server. However, if you would like to force a task to run even in maintenance mode, you may use the `evenInMaintenanceMode` method:
+Laravel's scheduled tasks will not run when Laravel is in [maintenance mode](/docs/{{version}}/configuration#maintenance-mode), since we don't want your tasks to interfere with any unfinished maintenance you may be performing on your server. However, if you would like to force a task to run even in maintenance mode, you may use the `evenInMaintenanceMode` method:
 
     $schedule->command('emails:send')->evenInMaintenanceMode();
 
@@ -275,7 +275,7 @@ If you would like to append the output to a given file, you may use the `appendO
              ->daily()
              ->appendOutputTo($filePath);
 
-Using the `emailOutputTo` method, you may e-mail the output to an e-mail address of your choice. Before e-mailing the output of a task, you should configure Laravel's [e-mail services](mail.md):
+Using the `emailOutputTo` method, you may e-mail the output to an e-mail address of your choice. Before e-mailing the output of a task, you should configure Laravel's [e-mail services](/docs/{{version}}/mail):
 
     $schedule->command('foo')
              ->daily()

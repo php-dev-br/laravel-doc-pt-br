@@ -21,7 +21,7 @@ Since HTTP driven applications are stateless, sessions provide a way to store in
 <a name="configuration"></a>
 ### Configuration
 
-The session configuration file is stored at `config/session.php`. Be sure to review the options available to you in this file. By default, Laravel is configured to use the `file` session driver, which will work well for many applications.
+The session configuration file is stored at `config/session.php`. Be sure to review the options available to you in this file. By default, Laravel is configured to use the `file` session driver, which will work well for many applications. In production applications, you may consider using the `memcached` or `redis` drivers for even faster session performance.
 
 The session `driver` configuration option defines where session data will be stored for each request. Laravel ships with several great drivers out of the box:
 
@@ -35,7 +35,7 @@ The session `driver` configuration option defines where session data will be sto
 
 </div>
 
-> {tip} The array driver is used during [testing](testing.md) and prevents the data stored in the session from being persisted.
+> {tip} The array driver is used during [testing](/docs/{{version}}/testing) and prevents the data stored in the session from being persisted.
 
 <a name="driver-prerequisites"></a>
 ### Driver Prerequisites
@@ -61,9 +61,7 @@ You may use the `session:table` Artisan command to generate this migration:
 
 #### Redis
 
-Before using Redis sessions with Laravel, you will need to either install the PhpRedis PHP extension via PECL or install the `predis/predis` package (~1.0) via Composer. For more information on configuring Redis, consult its [Laravel documentation page](redis.md#configuration).
-
-> {tip} In the `session` configuration file, the `connection` option may be used to specify which Redis connection is used by the session.
+Before using Redis sessions with Laravel, you will need to install the `predis/predis` package (~1.0) via Composer. You may configure your Redis connections in the `database` configuration file. In the `session` configuration file, the `connection` option may be used to specify which Redis connection is used by the session.
 
 <a name="using-the-session"></a>
 ## Using The Session
@@ -71,14 +69,14 @@ Before using Redis sessions with Laravel, you will need to either install the Ph
 <a name="retrieving-data"></a>
 ### Retrieving Data
 
-There are two primary ways of working with session data in Laravel: the global `session` helper and via a `Request` instance. First, let's look at accessing the session via a `Request` instance, which can be type-hinted on a controller method. Remember, controller method dependencies are automatically injected via the Laravel [service container](container.md):
+There are two primary ways of working with session data in Laravel: the global `session` helper and via a `Request` instance. First, let's look at accessing the session via a `Request` instance, which can be type-hinted on a controller method. Remember, controller method dependencies are automatically injected via the Laravel [service container](/docs/{{version}}/container):
 
     <?php
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -120,7 +118,7 @@ You may also use the global `session` PHP function to retrieve and store data in
         session(['key' => 'value']);
     });
 
-> {tip} There is little practical difference between using the session via an HTTP request instance versus using the global `session` helper. Both methods are [testable](testing.md) via the `assertSessionHas` method which is available in all of your test cases.
+> {tip} There is little practical difference between using the session via an HTTP request instance versus using the global `session` helper. Both methods are [testable](/docs/{{version}}/testing) via the `assertSessionHas` method which is available in all of your test cases.
 
 #### Retrieving All Session Data
 
@@ -168,7 +166,7 @@ The `pull` method will retrieve and delete an item from the session in a single 
 <a name="flash-data"></a>
 ### Flash Data
 
-Sometimes you may wish to store items in the session only for the next request. You may do so using the `flash` method. Data stored in the session using this method will be available immediately and during the subsequent HTTP request. After the subsequent HTTP request, the flashed data will be deleted. Flash data is primarily useful for short-lived status messages:
+Sometimes you may wish to store items in the session only for the next request. You may do so using the `flash` method. Data stored in the session using this method will only be available during the subsequent HTTP request, and then will be deleted. Flash data is primarily useful for short-lived status messages:
 
     $request->session()->flash('status', 'Task was successful!');
 
@@ -240,7 +238,7 @@ Since the purpose of these methods is not readily understandable, let's quickly 
 <a name="registering-the-driver"></a>
 #### Registering The Driver
 
-Once your driver has been implemented, you are ready to register it with the framework. To add additional drivers to Laravel's session backend, you may use the `extend` method on the `Session` [facade](facades.md). You should call the `extend` method from the `boot` method of a [service provider](providers.md). You may do this from the existing `AppServiceProvider` or create an entirely new provider:
+Once your driver has been implemented, you are ready to register it with the framework. To add additional drivers to Laravel's session backend, you may use the `extend` method on the `Session` [facade](/docs/{{version}}/facades). You should call the `extend` method from the `boot` method of a [service provider](/docs/{{version}}/providers). You may do this from the existing `AppServiceProvider` or create an entirely new provider:
 
     <?php
 
@@ -253,7 +251,7 @@ Once your driver has been implemented, you are ready to register it with the fra
     class SessionServiceProvider extends ServiceProvider
     {
         /**
-         * Register any application services.
+         * Register bindings in the container.
          *
          * @return void
          */

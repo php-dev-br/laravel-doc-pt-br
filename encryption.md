@@ -25,9 +25,9 @@ You may encrypt a value using the `encrypt` helper. All encrypted values are enc
 
     namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
     use App\User;
     use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
 
     class UserController extends Controller
     {
@@ -43,7 +43,7 @@ You may encrypt a value using the `encrypt` helper. All encrypted values are enc
             $user = User::findOrFail($id);
 
             $user->fill([
-                'secret' => encrypt($request->secret),
+                'secret' => encrypt($request->secret)
             ])->save();
         }
     }

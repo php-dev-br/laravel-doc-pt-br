@@ -7,12 +7,8 @@
     - [Billable Model](#billable-model)
     - [API Keys](#api-keys)
     - [Currency Configuration](#currency-configuration)
-    - [Logging](#logging)
 - [Customers](#customers)
-    - [Retrieving Customers](#retrieving-customers)
     - [Creating Customers](#creating-customers)
-    - [Updating Customers](#updating-customers)
-    - [Custom Email Addresses](#custom-email-addresses)
 - [Payment Methods](#payment-methods)
     - [Storing Payment Methods](#storing-payment-methods)
     - [Retrieving Payment Methods](#retrieving-payment-methods)
@@ -32,7 +28,6 @@
 - [Subscription Trials](#subscription-trials)
     - [With Payment Method Up Front](#with-payment-method-up-front)
     - [Without Payment Method Up Front](#without-payment-method-up-front)
-    - [Extending Trials](#extending-trials)
 - [Handling Stripe Webhooks](#handling-stripe-webhooks)
     - [Defining Webhook Event Handlers](#defining-webhook-event-handlers)
     - [Failed Subscriptions](#handling-failed-subscriptions)
@@ -46,19 +41,18 @@
 - [Strong Customer Authentication (SCA)](#strong-customer-authentication)
     - [Payments Requiring Additional Confirmation](#payments-requiring-additional-confirmation)
     - [Off-session Payment Notifications](#off-session-payment-notifications)
-- [Stripe SDK](#stripe-sdk)
 
 <a name="introduction"></a>
 ## Introduction
 
 Laravel Cashier provides an expressive, fluent interface to [Stripe's](https://stripe.com) subscription billing services. It handles almost all of the boilerplate subscription billing code you are dreading writing. In addition to basic subscription management, Cashier can handle coupons, swapping subscription, subscription "quantities", cancellation grace periods, and even generate invoice PDFs.
 
+> {note} To prevent breaking changes, Cashier uses a fixed Stripe API version. Cashier 10.1 utilizes Stripe API version `2019-08-14`. The Stripe API version will be updated on minor releases in order to make use of new Stripe features and improvements.
+
 <a name="upgrading-cashier"></a>
 ## Upgrading Cashier
 
 When upgrading to a new version of Cashier, it's important that you carefully review [the upgrade guide](https://github.com/laravel/cashier/blob/master/UPGRADE.md).
-
-> {note} To prevent breaking changes, Cashier uses a fixed Stripe API version. Cashier 10.1 utilizes Stripe API version `2019-08-14`. The Stripe API version will be updated on minor releases in order to make use of new Stripe features and improvements.
 
 <a name="installation"></a>
 ## Installation
@@ -129,63 +123,17 @@ In addition to configuring Cashier's currency, you may also specify a locale to 
 
 > {note} In order to use locales other than `en`, ensure the `ext-intl` PHP extension is installed and configured on your server.
 
-<a name="logging"></a>
-#### Logging
-
-Cashier allows you to specify the log channel to be used when logging all Stripe related exceptions. You may specify the log channel using the `CASHIER_LOGGER` environment variable:
-
-    CASHIER_LOGGER=stack
-
 <a name="customers"></a>
 ## Customers
-
-<a name="retrieving-customers"></a>
-### Retrieving Customers
-
-You can retrieve a customer by their Stripe ID using the `Cashier::findBillable` method. This will return an instance of the Billable model:
-
-    use Laravel\Cashier\Cashier;
-
-    $user = Cashier::findBillable($stripeId);
 
 <a name="creating-customers"></a>
 ### Creating Customers
 
 Occasionally, you may wish to create a Stripe customer without beginning a subscription. You may accomplish this using the `createAsStripeCustomer` method:
 
-    $stripeCustomer = $user->createAsStripeCustomer();
+    $user->createAsStripeCustomer();
 
-Once the customer has been created in Stripe, you may begin a subscription at a later date. You can also use an optional `$options` array to pass in any additional parameters which are supported by the Stripe API:
-
-    $stripeCustomer = $user->createAsStripeCustomer($options);
-
-You may also use the `createOrGetStripeCustomer` method if you want to return the customer object if the billable entity is already a customer within Stripe.
-
-    $stripeCustomer = $user->createOrGetStripeCustomer();
-
-<a name="updating-customers"></a>
-### Updating Customers
-
-Occasionally, you may wish to update the Stripe customer directly with additional information. You may accomplish this using the `updateStripeCustomer` method:
-
-    $stripeCustomer = $user->updateStripeCustomer($options);
-
-<a name="custom-email-addresses"></a>
-### Custom Email Addresses
-
-By default, Cashier will use the `email` attribute on your Billable model to create customers within Stripe. You can override this using the `stripeEmail` method:
-
-    /**
-     * Get the email address used to create the customer in Stripe.
-     *
-     * @return string|null
-     */
-    public function stripeEmail()
-    {
-        return $this->email;
-    }
-
-You can also choose to return `null` since an email address isn't required for creating a customer within Stripe. If you do not provide an email address, features within Stripe like dunning emails, failed payment reminders, and other email related features will not be available.
+Once the customer has been created in Stripe, you may begin a subscription at a later date.
 
 <a name="payment-methods"></a>
 ## Payment Methods
@@ -227,17 +175,16 @@ Next, the Stripe.js library may be used to attach a Stripe Element to the form a
         cardElement.mount('#card-element');
     </script>
 
-Next, the card can be verified and a secure "payment method identifier" can be retrieved from Stripe using [Stripe's `confirmCardSetup` method](https://stripe.com/docs/js/setup_intents/confirm_card_setup):
+Next, the card can be verified and a secure "payment method identifier" can be retrieved from Stripe using [Stripe's `handleCardSetup` method](https://stripe.com/docs/stripe-js/reference#stripe-handle-card-setup):
 
     const cardHolderName = document.getElementById('card-holder-name');
     const cardButton = document.getElementById('card-button');
     const clientSecret = cardButton.dataset.secret;
 
     cardButton.addEventListener('click', async (e) => {
-        const { setupIntent, error } = await stripe.confirmCardSetup(
-            clientSecret, {
-                payment_method: {
-                    card: cardElement,
+        const { setupIntent, error } = await stripe.handleCardSetup(
+            clientSecret, cardElement, {
+                payment_method_data: {
                     billing_details: { name: cardHolderName.value }
                 }
             }
@@ -252,7 +199,7 @@ Next, the card can be verified and a secure "payment method identifier" can be r
 
 After the card has been verified by Stripe, you may pass the resulting `setupIntent.payment_method` identifier to your Laravel application, where it can be attached to the customer. The payment method can either be [added as a new payment method](#adding-payment-methods) or [used to update the default payment method](#updating-the-default-payment-method). You can also immediately use the payment method identifier to [create a new subscription](#creating-subscriptions).
 
-> {tip} If you would like more information about Setup Intents and gathering customer payment details please [review this overview provided by Stripe](https://stripe.com/docs/payments/save-and-reuse#php).
+> {tip} If you would like more information about Setup Intents and gathering customer payment details please [review this overview provided by Stripe](https://stripe.com/docs/payments/cards/saving-cards#saving-card-without-payment).
 
 #### Payment Methods For Single Charges
 
@@ -308,13 +255,9 @@ The `paymentMethods` method on the Billable model instance returns a collection 
 
     $paymentMethods = $user->paymentMethods();
 
-To retrieve the default payment method, the `defaultPaymentMethod` method may be used:
+To retrieve the default payment method, the `defaultPaymentMethod` method may be used;
 
     $paymentMethod = $user->defaultPaymentMethod();
-
-You can also retrieve a specific payment method that is owned by the Billable model using the `findPaymentMethod` method:
-
-    $paymentMethod = $user->findPaymentMethod($paymentMethodId);
 
 <a name="check-for-a-payment-method"></a>
 ### Determining If A User Has A Payment Method
@@ -370,9 +313,9 @@ To create a subscription, first retrieve an instance of your billable model, whi
 
     $user = User::find(1);
 
-    $user->newSubscription('default', 'premium')->create($paymentMethod);
+    $user->newSubscription('main', 'premium')->create($paymentMethod);
 
-The first argument passed to the `newSubscription` method should be the name of the subscription. If your application only offers a single subscription, you might call this `default` or `primary`. The second argument is the specific plan the user is subscribing to. This value should correspond to the plan's identifier in Stripe.
+The first argument passed to the `newSubscription` method should be the name of the subscription. If your application only offers a single subscription, you might call this `main` or `primary`. The second argument is the specific plan the user is subscribing to. This value should correspond to the plan's identifier in Stripe.
 
 The `create` method, which accepts [a Stripe payment method identifier](#storing-payment-methods) or Stripe `PaymentMethod` object, will begin the subscription as well as update your database with the customer ID and other relevant billing information.
 
@@ -382,7 +325,7 @@ The `create` method, which accepts [a Stripe payment method identifier](#storing
 
 If you would like to specify additional customer details, you may do so by passing them as the second argument to the `create` method:
 
-    $user->newSubscription('default', 'monthly')->create($paymentMethod, [
+    $user->newSubscription('main', 'monthly')->create($paymentMethod, [
         'email' => $email,
     ]);
 
@@ -392,7 +335,7 @@ To learn more about the additional fields supported by Stripe, check out Stripe'
 
 If you would like to apply a coupon when creating the subscription, you may use the `withCoupon` method:
 
-    $user->newSubscription('default', 'monthly')
+    $user->newSubscription('main', 'monthly')
          ->withCoupon('code')
          ->create($paymentMethod);
 
@@ -401,15 +344,15 @@ If you would like to apply a coupon when creating the subscription, you may use 
 
 Once a user is subscribed to your application, you may easily check their subscription status using a variety of convenient methods. First, the `subscribed` method returns `true` if the user has an active subscription, even if the subscription is currently within its trial period:
 
-    if ($user->subscribed('default')) {
+    if ($user->subscribed('main')) {
         //
     }
 
-The `subscribed` method also makes a great candidate for a [route middleware](middleware.md), allowing you to filter access to routes and controllers based on the user's subscription status:
+The `subscribed` method also makes a great candidate for a [route middleware](/docs/{{version}}/middleware), allowing you to filter access to routes and controllers based on the user's subscription status:
 
     public function handle($request, Closure $next)
     {
-        if ($request->user() && ! $request->user()->subscribed('default')) {
+        if ($request->user() && ! $request->user()->subscribed('main')) {
             // This user is not a paying customer...
             return redirect('billing');
         }
@@ -419,25 +362,19 @@ The `subscribed` method also makes a great candidate for a [route middleware](mi
 
 If you would like to determine if a user is still within their trial period, you may use the `onTrial` method. This method can be useful for displaying a warning to the user that they are still on their trial period:
 
-    if ($user->subscription('default')->onTrial()) {
+    if ($user->subscription('main')->onTrial()) {
         //
     }
 
-The `subscribedToPlan` method may be used to determine if the user is subscribed to a given plan based on a given Stripe plan ID. In this example, we will determine if the user's `default` subscription is actively subscribed to the `monthly` plan:
+The `subscribedToPlan` method may be used to determine if the user is subscribed to a given plan based on a given Stripe plan ID. In this example, we will determine if the user's `main` subscription is actively subscribed to the `monthly` plan:
 
-    if ($user->subscribedToPlan('monthly', 'default')) {
-        //
-    }
-
-By passing an array to the `subscribedToPlan` method, you may determine if the user's `default` subscription is actively subscribed to the `monthly` or the `yearly` plan:
-
-    if ($user->subscribedToPlan(['monthly', 'yearly'], 'default')) {
+    if ($user->subscribedToPlan('monthly', 'main')) {
         //
     }
 
 The `recurring` method may be used to determine if the user is currently subscribed and is no longer within their trial period:
 
-    if ($user->subscription('default')->recurring()) {
+    if ($user->subscription('main')->recurring()) {
         //
     }
 
@@ -445,19 +382,19 @@ The `recurring` method may be used to determine if the user is currently subscri
 
 To determine if the user was once an active subscriber, but has cancelled their subscription, you may use the `cancelled` method:
 
-    if ($user->subscription('default')->cancelled()) {
+    if ($user->subscription('main')->cancelled()) {
         //
     }
 
 You may also determine if a user has cancelled their subscription, but are still on their "grace period" until the subscription fully expires. For example, if a user cancels a subscription on March 5th that was originally scheduled to expire on March 10th, the user is on their "grace period" until March 10th. Note that the `subscribed` method still returns `true` during this time:
 
-    if ($user->subscription('default')->onGracePeriod()) {
+    if ($user->subscription('main')->onGracePeriod()) {
         //
     }
 
 To determine if the user has cancelled their subscription and is no longer within their "grace period", you may use the `ended` method:
 
-    if ($user->subscription('default')->ended()) {
+    if ($user->subscription('main')->ended()) {
         //
     }
 
@@ -468,11 +405,11 @@ If a subscription requires a secondary payment action after creation the subscri
 
 Similarly, if a secondary payment action is required when swapping plans the subscription will be marked as `past_due`. When your subscription is in either of these states it will not be active until the customer has confirmed their payment. Checking if a subscription has an incomplete payment can be done using the `hasIncompletePayment` method on the Billable model or a subscription instance:
 
-    if ($user->hasIncompletePayment('default')) {
+    if ($user->hasIncompletePayment('main')) {
         //
     }
 
-    if ($user->subscription('default')->hasIncompletePayment()) {
+    if ($user->subscription('main')->hasIncompletePayment()) {
         //
     }
 
@@ -481,20 +418,6 @@ When a subscription has an incomplete payment, you should direct the user to Cas
     <a href="{{ route('cashier.payment', $subscription->latestPayment()->id) }}">
         Please confirm your payment.
     </a>
-
-If you would like the subscription to still be considered active when it's in a `past_due` state, you may use the `keepPastDueSubscriptionsActive` method provided by Cashier. Typically, this method should be called in the `register` method of your `AppServiceProvider`:
-
-    use Laravel\Cashier\Cashier;
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        Cashier::keepPastDueSubscriptionsActive();
-    }
 
 > {note} When a subscription is in an `incomplete` state it cannot be changed until the payment is confirmed. Therefore, the `swap` and `updateQuantity` methods will throw an exception when the subscription is in an `incomplete` state.
 
@@ -505,13 +428,13 @@ After a user is subscribed to your application, they may occasionally want to ch
 
     $user = App\User::find(1);
 
-    $user->subscription('default')->swap('provider-plan-id');
+    $user->subscription('main')->swap('provider-plan-id');
 
 If the user is on trial, the trial period will be maintained. Also, if a "quantity" exists for the subscription, that quantity will also be maintained.
 
 If you would like to swap plans and cancel any trial period the user is currently on, you may use the `skipTrial` method:
 
-    $user->subscription('default')
+    $user->subscription('main')
             ->skipTrial()
             ->swap('provider-plan-id');
 
@@ -519,15 +442,7 @@ If you would like to swap plans and immediately invoice the user instead of wait
 
     $user = App\User::find(1);
 
-    $user->subscription('default')->swapAndInvoice('provider-plan-id');
-
-#### Prorations
-
-By default, Stripe prorates charges when swapping between plans. The `noProrate` method may be used to update the subscription's without prorating the charges:
-
-    $user->subscription('default')->noProrate()->swap('provider-plan-id');
-
-For more information on subscription proration, consult the [Stripe documentation](https://stripe.com/docs/billing/subscriptions/prorations).
+    $user->subscription('main')->swapAndInvoice('provider-plan-id');
 
 <a name="subscription-quantity"></a>
 ### Subscription Quantity
@@ -536,23 +451,23 @@ Sometimes subscriptions are affected by "quantity". For example, your applicatio
 
     $user = User::find(1);
 
-    $user->subscription('default')->incrementQuantity();
+    $user->subscription('main')->incrementQuantity();
 
     // Add five to the subscription's current quantity...
-    $user->subscription('default')->incrementQuantity(5);
+    $user->subscription('main')->incrementQuantity(5);
 
-    $user->subscription('default')->decrementQuantity();
+    $user->subscription('main')->decrementQuantity();
 
     // Subtract five to the subscription's current quantity...
-    $user->subscription('default')->decrementQuantity(5);
+    $user->subscription('main')->decrementQuantity(5);
 
 Alternatively, you may set a specific quantity using the `updateQuantity` method:
 
-    $user->subscription('default')->updateQuantity(10);
+    $user->subscription('main')->updateQuantity(10);
 
-The `noProrate` method may be used to update the subscription's quantity without prorating the charges:
+The `noProrate` method may be used to update the subscription's quantity without pro-rating the charges:
 
-    $user->subscription('default')->noProrate()->updateQuantity(10);
+    $user->subscription('main')->noProrate()->updateQuantity(10);
 
 For more information on subscription quantities, consult the [Stripe documentation](https://stripe.com/docs/subscriptions/quantities).
 
@@ -574,7 +489,7 @@ The `taxPercentage` method enables you to apply a tax rate on a model-by-model b
 
 When changing the hard-coded value returned by the `taxPercentage` method, the tax settings on any existing subscriptions for the user will remain the same. If you wish to update the tax value for existing subscriptions with the returned `taxPercentage` value, you should call the `syncTaxPercentage` method on the user's subscription instance:
 
-    $user->subscription('default')->syncTaxPercentage();
+    $user->subscription('main')->syncTaxPercentage();
 
 <a name="subscription-anchor-date"></a>
 ### Subscription Anchor Date
@@ -588,7 +503,7 @@ By default, the billing cycle anchor is the date the subscription was created, o
 
     $anchor = Carbon::parse('first day of next month');
 
-    $user->newSubscription('default', 'premium')
+    $user->newSubscription('main', 'premium')
                 ->anchorBillingCycleOn($anchor->startOfDay())
                 ->create($paymentMethod);
 
@@ -599,33 +514,31 @@ For more information on managing subscription billing cycles, consult the [Strip
 
 To cancel a subscription, call the `cancel` method on the user's subscription:
 
-    $user->subscription('default')->cancel();
+    $user->subscription('main')->cancel();
 
 When a subscription is cancelled, Cashier will automatically set the `ends_at` column in your database. This column is used to know when the `subscribed` method should begin returning `false`. For example, if a customer cancels a subscription on March 1st, but the subscription was not scheduled to end until March 5th, the `subscribed` method will continue to return `true` until March 5th.
 
 You may determine if a user has cancelled their subscription but are still on their "grace period" using the `onGracePeriod` method:
 
-    if ($user->subscription('default')->onGracePeriod()) {
+    if ($user->subscription('main')->onGracePeriod()) {
         //
     }
 
 If you wish to cancel a subscription immediately, call the `cancelNow` method on the user's subscription:
 
-    $user->subscription('default')->cancelNow();
+    $user->subscription('main')->cancelNow();
 
 <a name="resuming-subscriptions"></a>
 ### Resuming Subscriptions
 
 If a user has cancelled their subscription and you wish to resume it, use the `resume` method. The user **must** still be on their grace period in order to resume a subscription:
 
-    $user->subscription('default')->resume();
+    $user->subscription('main')->resume();
 
 If the user cancels a subscription and then resumes that subscription before the subscription has fully expired, they will not be billed immediately. Instead, their subscription will be re-activated, and they will be billed on the original billing cycle.
 
 <a name="subscription-trials"></a>
 ## Subscription Trials
-
-> {note} Cashier manages trial dates for subscriptions and does not derive them from the Stripe plan. Therefore, you should configure your plan in Stripe to have a trial period of zero days so that Cashier can manage the trials instead.
 
 <a name="with-payment-method-up-front"></a>
 ### With Payment Method Up Front
@@ -634,7 +547,7 @@ If you would like to offer trial periods to your customers while still collectin
 
     $user = User::find(1);
 
-    $user->newSubscription('default', 'monthly')
+    $user->newSubscription('main', 'monthly')
                 ->trialDays(10)
                 ->create($paymentMethod);
 
@@ -646,17 +559,17 @@ The `trialUntil` method allows you to provide a `DateTime` instance to specify w
 
     use Carbon\Carbon;
 
-    $user->newSubscription('default', 'monthly')
+    $user->newSubscription('main', 'monthly')
                 ->trialUntil(Carbon::now()->addDays(10))
                 ->create($paymentMethod);
 
 You may determine if the user is within their trial period using either the `onTrial` method of the user instance, or the `onTrial` method of the subscription instance. The two examples below are identical:
 
-    if ($user->onTrial('default')) {
+    if ($user->onTrial('main')) {
         //
     }
 
-    if ($user->subscription('default')->onTrial()) {
+    if ($user->subscription('main')->onTrial()) {
         //
     }
 
@@ -670,7 +583,7 @@ If you would like to offer trial periods without collecting the user's payment m
         'trial_ends_at' => now()->addDays(10),
     ]);
 
-> {note} Be sure to add a [date mutator](eloquent-mutators.md#date-mutators) for `trial_ends_at` to your model definition.
+> {note} Be sure to add a [date mutator](/docs/{{version}}/eloquent-mutators#date-mutators) for `trial_ends_at` to your model definition.
 
 Cashier refers to this type of trial as a "generic trial", since it is not attached to any existing subscription. The `onTrial` method on the `User` instance will return `true` if the current date is not past the value of `trial_ends_at`:
 
@@ -688,29 +601,12 @@ Once you are ready to create an actual subscription for the user, you may use th
 
     $user = User::find(1);
 
-    $user->newSubscription('default', 'monthly')->create($paymentMethod);
-
-<a name="extending-trials"></a>
-### Extending Trials
-
-The `extendTrial` method allows you to extend the trial period of a subscription after it's been created:
-
-    // End the trial 7 days from now...
-    $subscription->extendTrial(
-        now()->addDays(7)
-    );
-
-    // Add an additional 5 days to the trial...
-    $subscription->extendTrial(
-        $subscription->trial_ends_at->addDays(5)
-    );
-
-If the trial has already expired and the customer is already being billed for the subscription, you can still offer them an extended trial. The time spent within the trial period will be deducted from the customer's next invoice.
+    $user->newSubscription('main', 'monthly')->create($paymentMethod);
 
 <a name="handling-stripe-webhooks"></a>
 ## Handling Stripe Webhooks
 
-> {tip} You may use [the Stripe CLI](https://stripe.com/docs/stripe-cli) to help test webhooks during local development.
+> {tip} You may use [Laravel Valet's](/docs/{{version}}/valet) `valet share` command to help test webhooks during local development.
 
 Stripe can notify your application of a variety of events via webhooks. By default, a route that points to Cashier's webhook controller is configured through the Cashier service provider. This controller will handle all incoming webhook requests.
 
@@ -724,11 +620,11 @@ To ensure your application can handle Stripe webhooks, be sure to configure the 
 - `customer.deleted`
 - `invoice.payment_action_required`
 
-> {note} Make sure you protect incoming requests with Cashier's included [webhook signature verification](billing.md#verifying-webhook-signatures) middleware.
+> {note} Make sure you protect incoming requests with Cashier's included [webhook signature verification](/docs/{{version}}/billing#verifying-webhook-signatures) middleware.
 
 #### Webhooks & CSRF Protection
 
-Since Stripe webhooks need to bypass Laravel's [CSRF protection](csrf.md), be sure to list the URI as an exception in your `VerifyCsrfToken` middleware or list the route outside of the `web` middleware group:
+Since Stripe webhooks need to bypass Laravel's [CSRF protection](/docs/{{version}}/csrf), be sure to list the URI as an exception in your `VerifyCsrfToken` middleware or list the route outside of the `web` middleware group:
 
     protected $except = [
         'stripe/*',
@@ -765,8 +661,6 @@ Next, define a route to your Cashier controller within your `routes/web.php` fil
         'stripe/webhook',
         '\App\Http\Controllers\WebhookController@handleWebhook'
     );
-
-Cashier emits a `Laravel\Cashier\Events\WebhookReceived` event when a webhook is received, and a `Laravel\Cashier\Events\WebhookHandled` event when a webhook was handled by Cashier. Both events contain the full payload of the Stripe webhook.
 
 <a name="handling-failed-subscriptions"></a>
 ### Failed Subscriptions
@@ -900,11 +794,11 @@ On the payment confirmation page, the customer will be prompted to enter their c
 
 Alternatively, you could allow Stripe to handle the payment confirmation for you. In this case, instead of redirecting to the payment confirmation page, you may [setup Stripe's automatic billing emails](https://dashboard.stripe.com/account/billing/automatic) in your Stripe dashboard. However, if an `IncompletePayment` exception is caught, you should still inform the user they will receive an email with further payment confirmation instructions.
 
-Incomplete payment exceptions may be thrown for the following methods: `charge`, `invoiceFor`, and `invoice` on the `Billable` user. When handling subscriptions, the `create` method on the `SubscriptionBuilder`, and the `incrementAndInvoice` and `swapAndInvoice` methods on the `Subscription` model may throw exceptions.
+Incomplete payment exceptions may be thrown for the following methods: `charge`, `invoiceFor`, and `invoice` on the `Billable` user. When handling subscriptions, the `create` method on the `SubscriptionBuilder`, and the `incrementAndInvoice` and `swapAndInvoice` methods on the `Susbcription` model may throw exceptions.
 
 #### Incomplete and Past Due State
 
-When a payment needs additional confirmation, the subscription will remain in an `incomplete` or `past_due` state as indicated by its `stripe_status` database column. Cashier will automatically activate the customer's subscription via a webhook as soon as payment confirmation is complete.
+When a payment needs additional confirmation, the subscription will remain in an `incomplete` or `past_due` state as indicated by its `stripe_status` database column. Cashier will make automatically activate the customer's subscription via a webhook as soon as payment confirmation is complete.
 
 For more information on `incomplete` and `past_due` states, please refer to [our additional documentation](#incomplete-and-past-due-status).
 
@@ -918,12 +812,3 @@ Since SCA regulations require customers to occasionally verify their payment det
 To ensure that off-session payment confirmation notifications are delivered, verify that [Stripe webhooks are configured](#handling-stripe-webhooks) for your application and the `invoice.payment_action_required` webhook is enabled in your Stripe dashboard. In addition, your `Billable` model should also use Laravel's `Illuminate\Notifications\Notifiable` trait.
 
 > {note} Notifications will be sent even when customers are manually making a payment that requires additional confirmation. Unfortunately, there is no way for Stripe to know that the payment was done manually or "off-session". But, a customer will simply see a "Payment Successful" message if they visit the payment page after already confirming their payment. The customer will not be allowed to accidentally confirm the same payment twice and incur an accidental second charge.
-
-<a name="stripe-sdk"></a>
-## Stripe SDK
-
-Many of Cashier's objects are wrappers around Stripe SDK objects. If you would like to interact with the Stripe objects directly, you may conveniently retrieve them using the `asStripe` method:
-
-    $stripeSubscription = $subscription->asStripeSubscription();
-
-    $stripeSubscription->update($subscription->stripe_id, ['application_fee_percent' => 5]);
