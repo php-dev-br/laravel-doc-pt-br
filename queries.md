@@ -10,7 +10,6 @@
 - [Updates](#updates)
 - [Deletes](#deletes)
 - [Unions](#unions)
-- [Pessimistic Locking](#pessimistic-locking)
 - [Caching Queries](#caching-queries)
 
 <a name="introduction"></a>
@@ -23,7 +22,7 @@ The database query builder provides a convenient, fluent interface to creating a
 <a name="selects"></a>
 ## Selects
 
-#### Retrieving All Rows From A Table
+**Retrieving All Rows From A Table**
 
 	$users = DB::table('users')->get();
 
@@ -32,17 +31,17 @@ The database query builder provides a convenient, fluent interface to creating a
 		var_dump($user->name);
 	}
 
-#### Retrieving A Single Row From A Table
+**Retrieving A Single Row From A Table**
 
 	$user = DB::table('users')->where('name', 'John')->first();
 
 	var_dump($user->name);
 
-#### Retrieving A Single Column From A Row
+**Retrieving A Single Column From A Row**
 
 	$name = DB::table('users')->where('name', 'John')->pluck('name');
 
-#### Retrieving A List Of Column Values
+**Retrieving A List Of Column Values**
 
 	$roles = DB::table('roles')->lists('title');
 
@@ -50,7 +49,7 @@ This method will return an array of role titles. You may also specify a custom k
 
 	$roles = DB::table('roles')->lists('title', 'name');
 
-#### Specifying A Select Clause
+**Specifying A Select Clause**
 
 	$users = DB::table('users')->select('name', 'email')->get();
 
@@ -58,34 +57,29 @@ This method will return an array of role titles. You may also specify a custom k
 
 	$users = DB::table('users')->select('name as user_name')->get();
 
-#### Adding A Select Clause To An Existing Query
+**Adding A Select Clause To An Existing Query**
 
 	$query = DB::table('users')->select('name');
 
 	$users = $query->addSelect('age')->get();
 
-#### Using Where Operators
+**Using Where Operators**
 
 	$users = DB::table('users')->where('votes', '>', 100)->get();
 
-#### Or Statements
+**Or Statements**
 
 	$users = DB::table('users')
 	                    ->where('votes', '>', 100)
 	                    ->orWhere('name', 'John')
 	                    ->get();
 
-#### Using Where Between
+**Using Where Between**
 
 	$users = DB::table('users')
 	                    ->whereBetween('votes', array(1, 100))->get();
 
-#### Using Where Not Between
-
-	$users = DB::table('users')
-	                    ->whereNotBetween('votes', array(1, 100))->get();
-
-#### Using Where In With An Array
+**Using Where In With An Array**
 
 	$users = DB::table('users')
 	                    ->whereIn('id', array(1, 2, 3))->get();
@@ -93,12 +87,12 @@ This method will return an array of role titles. You may also specify a custom k
 	$users = DB::table('users')
 	                    ->whereNotIn('id', array(1, 2, 3))->get();
 
-#### Using Where Null To Find Records With Unset Values
+**Using Where Null To Find Records With Unset Values**
 
 	$users = DB::table('users')
 	                    ->whereNull('updated_at')->get();
 
-#### Order By, Group By, And Having
+**Order By, Group By, And Having**
 
 	$users = DB::table('users')
 	                    ->orderBy('name', 'desc')
@@ -106,7 +100,7 @@ This method will return an array of role titles. You may also specify a custom k
 	                    ->having('count', '>', 100)
 	                    ->get();
 
-#### Offset & Limit
+**Offset & Limit**
 
 	$users = DB::table('users')->skip(10)->take(5)->get();
 
@@ -115,15 +109,14 @@ This method will return an array of role titles. You may also specify a custom k
 
 The query builder may also be used to write join statements. Take a look at the following examples:
 
-#### Basic Join Statement
+**Basic Join Statement**
 
 	DB::table('users')
 	            ->join('contacts', 'users.id', '=', 'contacts.user_id')
 	            ->join('orders', 'users.id', '=', 'orders.user_id')
-	            ->select('users.id', 'contacts.phone', 'orders.price')
-	            ->get();
+	            ->select('users.id', 'contacts.phone', 'orders.price');
 
-#### Left Join Statement
+**Left Join Statement**
 
 	DB::table('users')
 		    ->leftJoin('posts', 'users.id', '=', 'posts.user_id')
@@ -138,22 +131,12 @@ You may also specify more advanced join clauses:
 	        })
 	        ->get();
 
-If you would like to use a "where" style clause on your joins, you may use the `where` and `orWhere` methods on a join. Instead of comparing two columns, these methods will compare the column against a value:
-
-	DB::table('users')
-	        ->join('contacts', function($join)
-	        {
-	        	$join->on('users.id', '=', 'contacts.user_id')
-	        	     ->where('contacts.user_id', '>', 5);
-	        })
-	        ->get();
-
 <a name="advanced-wheres"></a>
 ## Advanced Wheres
 
-#### Parameter Grouping
-
 Sometimes you may need to create more advanced where clauses such as "where exists" or nested parameter groupings. The Laravel query builder can handle these as well:
+
+**Parameter Grouping**
 
 	DB::table('users')
 	            ->where('name', '=', 'John')
@@ -168,7 +151,7 @@ The query above will produce the following SQL:
 
 	select * from users where name = 'John' or (votes > 100 and title <> 'Admin')
 
-#### Exists Statements
+**Exists Statements**
 
 	DB::table('users')
 	            ->whereExists(function($query)
@@ -191,7 +174,7 @@ The query above will produce the following SQL:
 
 The query builder also provides a variety of aggregate methods, such as `count`, `max`, `min`, `avg`, and `sum`.
 
-#### Using Aggregate Methods
+**Using Aggregate Methods**
 
 	$users = DB::table('users')->count();
 
@@ -208,7 +191,7 @@ The query builder also provides a variety of aggregate methods, such as `count`,
 
 Sometimes you may need to use a raw expression in a query. These expressions will be injected into the query as strings, so be careful not to create any SQL injection points! To create a raw expression, you may use the `DB::raw` method:
 
-#### Using A Raw Expression
+**Using A Raw Expression**
 
 	$users = DB::table('users')
 	                     ->select(DB::raw('count(*) as user_count, status'))
@@ -216,7 +199,7 @@ Sometimes you may need to use a raw expression in a query. These expressions wil
 	                     ->groupBy('status')
 	                     ->get();
 
-#### Incrementing or decrementing a value of a column
+**Incrementing or decrementing a value of a column**
 
 	DB::table('users')->increment('votes');
 
@@ -233,15 +216,15 @@ You may also specify additional columns to update:
 <a name="inserts"></a>
 ## Inserts
 
-#### Inserting Records Into A Table
+**Inserting Records Into A Table**
 
 	DB::table('users')->insert(
 		array('email' => 'john@example.com', 'votes' => 0)
 	);
 
-#### Inserting Records Into A Table With An Auto-Incrementing ID
-
 If the table has an auto-incrementing id, use `insertGetId` to insert a record and retrieve the id:
+
+**Inserting Records Into A Table With An Auto-Incrementing ID**
 
 	$id = DB::table('users')->insertGetId(
 		array('email' => 'john@example.com', 'votes' => 0)
@@ -249,7 +232,7 @@ If the table has an auto-incrementing id, use `insertGetId` to insert a record a
 
 > **Note:** When using PostgreSQL the insertGetId method expects the auto-incrementing column to be named "id".
 
-#### Inserting Multiple Records Into A Table
+**Inserting Multiple Records Into A Table**
 
 	DB::table('users')->insert(array(
 		array('email' => 'taylor@example.com', 'votes' => 0),
@@ -259,7 +242,7 @@ If the table has an auto-incrementing id, use `insertGetId` to insert a record a
 <a name="updates"></a>
 ## Updates
 
-#### Updating Records In A Table
+**Updating Records In A Table**
 
 	DB::table('users')
 	            ->where('id', 1)
@@ -268,15 +251,15 @@ If the table has an auto-incrementing id, use `insertGetId` to insert a record a
 <a name="deletes"></a>
 ## Deletes
 
-#### Deleting Records In A Table
+**Deleting Records In A Table**
 
 	DB::table('users')->where('votes', '<', 100)->delete();
 
-#### Deleting All Records From A Table
+**Deleting All Records From A Table**
 
 	DB::table('users')->delete();
 
-#### Truncating A Table
+**Truncating A Table**
 
 	DB::table('users')->truncate();
 
@@ -285,34 +268,21 @@ If the table has an auto-incrementing id, use `insertGetId` to insert a record a
 
 The query builder also provides a quick way to "union" two queries together:
 
+**Performing A Query Union**
+
 	$first = DB::table('users')->whereNull('first_name');
 
 	$users = DB::table('users')->whereNull('last_name')->union($first)->get();
 
 The `unionAll` method is also available, and has the same method signature as `union`.
 
-<a name="pessimistic-locking"></a>
-## Pessimistic Locking
-
-The query builder includes a few functions to help you do "pessimistic locking" on your SELECT statements.
-
-To run the SELECT statement with a "shared lock", you may use the `sharedLock` method on a query:
-
-	DB::table('users')->where('votes', '>', 100)->sharedLock()->get();
-
-To "lock for update" on a SELECT statement, you may use the `lockForUpdate` method on a query:
-
-	DB::table('users')->where('votes', '>', 100)->lockForUpdate()->get();
-
 <a name="caching-queries"></a>
 ## Caching Queries
 
 You may easily cache the results of a query using the `remember` method:
 
+**Caching A Query Result**
+
 	$users = DB::table('users')->remember(10)->get();
 
 In this example, the results of the query will be cached for ten minutes. While the results are cached, the query will not be run against the database, and the results will be loaded from the default cache driver specified for your application.
-
-If you are using a [supported cache driver](cache.md#cache-tags), you can also add tags to the caches:
-
-	$users = DB::table('users')->cacheTags(array('people', 'authors'))->remember(10)->get();

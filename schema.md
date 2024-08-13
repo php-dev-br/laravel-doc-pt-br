@@ -59,45 +59,42 @@ The table builder contains a variety of column types that you may use when build
 
 Command  | Description
 ------------- | -------------
-`$table->bigIncrements('id');`  |  Incrementing ID using a "big integer" equivalent.
-`$table->bigInteger('votes');`  |  BIGINT equivalent to the table
-`$table->binary('data');`  |  BLOB equivalent to the table
-`$table->boolean('confirmed');`  |  BOOLEAN equivalent to the table
-`$table->char('name', 4);`  |  CHAR equivalent with a length
-`$table->date('created_at');`  |  DATE equivalent to the table
-`$table->dateTime('created_at');`  |  DATETIME equivalent to the table
-`$table->decimal('amount', 5, 2);`  |  DECIMAL equivalent with a precision and scale
-`$table->double('column', 15, 8);`  |  DOUBLE equivalent with precision
-`$table->enum('choices', array('foo', 'bar'));` | ENUM equivalent to the table
-`$table->float('amount');`  |  FLOAT equivalent to the table
 `$table->increments('id');`  |  Incrementing ID to the table (primary key).
-`$table->integer('votes');`  |  INTEGER equivalent to the table
-`$table->longText('description');`  |  LONGTEXT equivalent to the table
-`$table->mediumText('description');`  |  MEDIUMTEXT equivalent to the table
-`$table->morphs('taggable');`  |  Adds INTEGER `taggable_id` and STRING `taggable_type`
-`$table->smallInteger('votes');`  |  SMALLINT equivalent to the table
-`$table->tinyInteger('numbers');`  |  TINYINT equivalent to the table
-`$table->softDeletes();`  |  Adds **deleted\_at** column for soft deletes
+`$table->bigIncrements('id');`  |  Incrementing ID using a "big integer" equivalent.
 `$table->string('email');`  |  VARCHAR equivalent column
 `$table->string('name', 100);`  |  VARCHAR equivalent with a length
-`$table->text('description');`  |  TEXT equivalent to the table
+`$table->integer('votes');`  |  INTEGER equivalent to the table
+`$table->bigInteger('votes');`  |  BIGINT equivalent to the table
+`$table->smallInteger('votes');`  |  SMALLINT equivalent to the table
+`$table->float('amount');`  |  FLOAT equivalent to the table
+`$table->double('column', 15, 8);`  |  DOUBLE equivalent with precision
+`$table->decimal('amount', 5, 2);`  |  DECIMAL equivalent with a precision and scale
+`$table->boolean('confirmed');`  |  BOOLEAN equivalent to the table
+`$table->date('created_at');`  |  DATE equivalent to the table
+`$table->dateTime('created_at');`  |  DATETIME equivalent to the table
 `$table->time('sunrise');`  |  TIME equivalent to the table
 `$table->timestamp('added_on');`  |  TIMESTAMP equivalent to the table
 `$table->timestamps();`  |  Adds **created\_at** and **updated\_at** columns
+`$table->softDeletes();`  |  Adds **deleted\_at** column for soft deletes
+`$table->text('description');`  |  TEXT equivalent to the table
+`$table->binary('data');`  |  BLOB equivalent to the table
+`$table->enum('choices', array('foo', 'bar'));` | ENUM equivalent to the table
 `->nullable()`  |  Designate that the column allows NULL values
 `->default($value)`  |  Declare a default value for a column
 `->unsigned()`  |  Set INTEGER to UNSIGNED
 
-#### Using After On MySQL
-
 If you are using the MySQL database, you may use the `after` method to specify the order of columns:
+
+**Using After On MySQL**
 
 	$table->string('name')->after('email');
 
 <a name="renaming-columns"></a>
 ## Renaming Columns
 
-To rename a column, you may use the `renameColumn` method on the Schema builder. Before renaming a column, be sure to add the `doctrine/dbal` dependency to your `composer.json` file.
+To rename a column, you may use the `renameColumn` method on the Schema builder:
+
+**Renaming A Column**
 
 	Schema::table('users', function($table)
 	{
@@ -109,14 +106,14 @@ To rename a column, you may use the `renameColumn` method on the Schema builder.
 <a name="dropping-columns"></a>
 ## Dropping Columns
 
-#### Dropping A Column From A Database Table
+**Dropping A Column From A Database Table**
 
 	Schema::table('users', function($table)
 	{
 		$table->dropColumn('votes');
 	});
 
-#### Dropping Multiple Columns From A Database Table
+**Dropping Multiple Columns From A Database Table**
 
 	Schema::table('users', function($table)
 	{
@@ -126,16 +123,16 @@ To rename a column, you may use the `renameColumn` method on the Schema builder.
 <a name="checking-existence"></a>
 ## Checking Existence
 
-#### Checking For Existence Of Table
-
 You may easily check for the existence of a table or column using the `hasTable` and `hasColumn` methods:
+
+**Checking For Existence Of Table**
 
 	if (Schema::hasTable('users'))
 	{
 		//
 	}
 
-#### Checking For Existence Of Columns
+**Checking For Existence Of Columns**
 
 	if (Schema::hasColumn('users', 'email'))
 	{
@@ -146,6 +143,8 @@ You may easily check for the existence of a table or column using the `hasTable`
 ## Adding Indexes
 
 The schema builder supports several types of indexes. There are two ways to add them. First, you may fluently define them on a column definition, or you may add them separately:
+
+**Fluently Creating A Column And Index**
 
 	$table->string('email')->unique();
 
@@ -162,6 +161,8 @@ Command  | Description
 ## Foreign Keys
 
 Laravel also provides support for adding foreign key constraints to your tables:
+
+**Adding A Foreign Key To A Table**
 
 	$table->foreign('user_id')->references('id')->on('users');
 

@@ -7,12 +7,11 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel 7.1: index.md
+  - Documentação do Laravel 7.0: index.md
   - Prefácio:
       - Introdução: introduction.md
       - Início Rápido: quick.md
-      - Notas de Versão: releases.md
-      - Guia de Atualização: upgrade.md
+      - Contribuindo: contributing.md
   - Começando:
       - Instalação: installation.md
       - Configuration: configuration.md
@@ -23,7 +22,6 @@ nav:
       - Controladores: controllers.md
       - Erros e Logging: errors.md
   - Aprendendo Mais:
-      - Authentication: security.md
       - Cache: cache.md
       - Core Extension: extending.md
       - Eventos: events.md
@@ -38,7 +36,6 @@ nav:
       - Filas: queues.md
       - Segurança: security.md
       - Sessão: session.md
-      - SSH: ssh.md
       - Modelos: templates.md
       - Testes Unitários: testing.md
       - Validação: validation.md

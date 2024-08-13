@@ -1,15 +1,14 @@
-<!-- source_url: https://github.com/laravel/docs/blob/4.1/documentation.md -->
-<!-- revision: 9e13e8a3fa59ce24976eb4594a15e0437dcd92b7 -->
+<!-- source_url: https://github.com/laravelblob.md/4.0/documentation.md -->
+<!-- revision: 2cd8d5873d0dbee24bd9013d5da6fd9f08c1e047 -->
 <!-- status: ready -->
 
-# Documentação do Laravel 4.1
+# Documentação do Laravel 4.0
 
 ## Prefácio
 
 - [Introdução](introduction.md)
 - [Início Rápido](quick.md)
-- [Notas de Versão](releases.md)
-- [Guia de Atualização](upgrade.md)
+- [Contribuindo](contributing.md)
 
 ## Começando
 
@@ -24,7 +23,6 @@
 
 ## Aprendendo Mais
 
-- [Authentication](security.md)
 - [Cache](cache.md)
 - [Core Extension](extending.md)
 - [Eventos](events.md)
@@ -39,7 +37,6 @@
 - [Filas](queues.md)
 - [Segurança](security.md)
 - [Sessão](session.md)
-- [SSH](ssh.md)
 - [Modelos](templates.md)
 - [Testes Unitários](testing.md)
 - [Validação](validation.md)

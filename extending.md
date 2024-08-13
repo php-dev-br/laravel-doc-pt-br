@@ -2,7 +2,6 @@
 
 - [Introduction](#introduction)
 - [Managers & Factories](#managers-and-factories)
-- [Where To Extend](#where-to-extend)
 - [Cache](#cache)
 - [Session](#session)
 - [Authentication](#authentication)
@@ -21,16 +20,11 @@ Laravel components are generally extended in two ways: binding new implementatio
 <a name="managers-and-factories"></a>
 ## Managers & Factories
 
-Laravel has several `Manager` classes that manage the creation of driver-based components. These include the cache, session, authentication, and queue components. The manager class is responsible for creating a particular driver implementation based on the application's configuration. For example, the `CacheManager` class can create APC, Memcached, File, and various other implementations of cache drivers.
+Laravel has several `Manager` classes that manage the creation of driver-based components. These include the cache, session, authentication, and queue components. The manager class is responsible for creating a particular driver implementation based on the application's configuration. For example, the `CacheManager` class can create APC, Memcached, Native, and various other implementations of cache drivers.
 
 Each of these managers includes an `extend` method which may be used to easily inject new driver resolution functionality into the manager. We'll cover each of these managers below, with examples of how to inject custom driver support into each of them.
 
 > **Note:** Take a moment to explore the various `Manager` classes that ship with Laravel, such as the `CacheManager` and `SessionManager`. Reading through these classes will give you a more thorough understanding of how Laravel works under the hood. All manager classes extend the `Illuminate\Support\Manager` base class, which provides some helpful, common functionality for each manager.
-
-<a name="where-to-extend"></a>
-## Where To Extend
-
-This documentation covers how to extend a variety of Laravel's components, but you may be wondering where to place your extension code. Like most other bootstrapping code, you are free to place some extensions in your `start` files. Cache and Auth extensions are good candidates for this approach. Other extensions, like `Session`, must be placed in the `register` method of a service provider since they are needed very early in the request life-cycle.
 
 <a name="cache"></a>
 ## Cache
@@ -83,12 +77,6 @@ Extending Laravel with a custom session driver is just as easy as extending the 
 		// Return implementation of SessionHandlerInterface
 	});
 
-### Where To Extend The Session
-
-Session extensions need to be registered differently than other extensions like Cache and Auth. Since sessions are started very early in the request-lifecycle, registering the extensions in a `start` file will happen too late. Instead, a [service provider](ioc.md#service-providers) will be needed. You should place your session extension code in the `register` method of your service provider, and the provider should be placed **below** the default `Illuminate\Session\SessionServiceProvider` in the `providers` configuration array.
-
-### Writing The Session Extension
-
 Note that our custom cache driver should implement the `SessionHandlerInterface`. This interface is included in the PHP 5.4+ core. If you are using PHP 5.3, the interface will be defined for you by Laravel so you have forward-compatibility. This interface contains just a few simple methods we need to implement. A stubbed MongoDB implementation would look something like this:
 
 	class MongoHandler implements SessionHandlerInterface {
@@ -100,11 +88,11 @@ Note that our custom cache driver should implement the `SessionHandlerInterface`
 		public function destroy($sessionId) {}
 		public function gc($lifetime) {}
 
-	}
+	}	
 
 Since these methods are not as readily understandable as the cache `StoreInterface`, let's quickly cover what each of the methods do:
 
-- The `open` method would typically be used in file based session store systems. Since Laravel ships with a `file` session driver, you will almost never need to put anything in this method. You can leave it as an empty stub. It is simply a fact of poor interface design (which we'll discuss later) that PHP requires us to implement this method.
+- The `open` method would typically be used in file based session store systems. Since Laravel ships with a `native` session driver that uses PHP's native file storage for sessions, you will almost never need to put anything in this method. You can leave it as an empty stub. It is simply a fact of poor interface design (which we'll discuss later) that PHP requires us to implement this method.
 - The `close` method, like the `open` method, can also usually be disregarded. For most drivers, it is not needed.
 - The `read` method should return the string version of the session data associated with the given `$sessionId`. There is no need to do any serialization or other encoding when retrieving or storing session data in your driver, as Laravel will perform the serialization for you.
 - The `write` method should write the given `$data` string associated with the `$sessionId` to some persistent storage system, such as MongoDB, Dynamo, etc.
@@ -146,7 +134,7 @@ Let's take a look at the `UserProviderInterface`:
 
 The `retrieveById` function typically receives a numeric key representing the user, such as an auto-incrementing ID from a MySQL database. The `UserInterface` implementation matching the ID should be retrieved and returned by the method.
 
-The `retrieveByCredentials` method receives the array of credentials passed to the `Auth::attempt` method when attempting to sign into an application. The method should then "query" the underlying persistent storage for the user matching those credentials. Typically, this method will run a query with a "where" condition on `$credentials['username']`. **This method should not attempt to do any password validation or authentication.**
+The `retrieveByCredentials` method receives the array of credentials passed to the `Auth::attempt` method when attempting to sign into an application. The method should then "query" the underlying persistent storage for the user matching those credentials. Typically, this method will run a query with a "where" condition on `$credentails['username']`. **This method should not attempt to do any password validation or authentication.**
 
 The `validateCredentials` method should compare the given `$user` with the `$credentials` to authenticate the user. For example, this method might compare the `$user->getAuthPassword()` string to a `Hash::make` of `$credentials['password']`.
 
@@ -175,15 +163,25 @@ After you have registered the driver with the `extend` method, you switch to the
 
 Almost every service provider included with the Laravel framework binds objects into the IoC container. You can find a list of your application's service providers in the `app/config/app.php` configuration file. As you have time, you should skim through each of these provider's source code. By doing so, you will gain a much better understanding of what each provider adds to the framework, as well as what keys are used to bind various services into the IoC container.
 
-For example, the `HashServiceProvider` binds a `hash` key into the IoC container, which resolves into a `Illuminate\Hashing\BcryptHasher` instance. You can easily extend and override this class within your own application by overriding this IoC binding. For example:
+For example, the `PaginationServiceProvider` binds a `paginator` key into the IoC container, which resolves into a `Illuminate\Pagination\Environment` instance. You can easily extend and override this class within your own application by overriding this IoC binding. For example, you could create a class that extend the base `Environment`:
 
-	class SnappyHashProvider extends Illuminate\Hashing\HashServiceProvider {
+	namespace Snappy\Extensions\Pagination;
+
+	class Environment extends \Illuminate\Pagination\Environment {
+
+		//
+
+	}
+
+Once you have created your class extension, you may create a new `SnappyPaginationProvider` service provider class which overrides the paginator in its `boot` method:
+
+	class SnappyPaginationProvider extends PaginationServiceProvider {
 
 		public function boot()
 		{
-			App::bindShared('hash', function()
+			App::bind('paginator', function()
 			{
-				return new Snappy\Hashing\ScryptHasher;
+				return new Snappy\Extensions\Pagination\Environment;
 			});
 
 			parent::boot();
@@ -191,7 +189,7 @@ For example, the `HashServiceProvider` binds a `hash` key into the IoC container
 
 	}
 
-Note that this class extends the `HashServiceProvider`, not the default `ServiceProvider` base class. Once you have extended the service provider, swap out the `HashServiceProvider` in your `app/config/app.php` configuration file with the name of your extended provider.
+Note that this class extends the `PaginationServiceProvider`, not the default `ServiceProvider` base class. Once you have extended the service provider, swap out the `PaginationServiceProvider` in your `app/config/app.php` configuration file with the name of your extended provider.
 
 This is the general method of extending any core class that is bound in the container. Essentially every core class is bound in the container in this fashion, and can be overridden. Again, reading through the included framework service providers will familiarize you with where various classes are bound into the container, and what keys they are bound by. This is a great way to learn more about how Laravel is put together.
 

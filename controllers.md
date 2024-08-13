@@ -11,7 +11,7 @@
 
 Instead of defining all of your route-level logic in a single `routes.php` file, you may wish to organize this behavior using Controller classes. Controllers can group related route logic into a class, as well as take advantage of more advanced framework features such as automatic [dependency injection](ioc.md).
 
-Controllers are typically stored in the `app/controllers` directory, and this directory is registered in the `classmap` option of your `composer.json` file by default. However, controllers can technically live in any directory or any sub-directory. Route declarations are not dependent on the location of the controller class file on disk. So, as long as Composer knows how to autoload the controller class, it may be placed anywhere you wish.
+Controllers are typically stored in the `app/controllers` directory, and this directory is registered in the `classmap` option of your `composer.json` file by default.
 
 Here is an example of a basic controller class:
 
@@ -29,7 +29,7 @@ Here is an example of a basic controller class:
 
 	}
 
-All controllers should extend the `BaseController` class. The `BaseController` is also stored in the `app/controllers` directory, and may be used as a place to put shared controller logic. The `BaseController` extends the framework's `Controller` class. Now, we can route to this controller action like so:
+All controllers should extend the `BaseController` class. The `BaseController` is also stored in the `app/controllers` directory, and may be used as a place to put shared controller logic. The `BaseController` extends the framework's `Controller` class. Now, We can route to this controller action like so:
 
 	Route::get('user/{id}', 'UserController@showProfile');
 
@@ -37,18 +37,14 @@ If you choose to nest or organize your controller using PHP namespaces, simply u
 
 	Route::get('foo', 'Namespace\FooController@method');
 
-> **Note:** Since we're using [Composer](http://getcomposer.org) to auto-load our PHP classes, controllers may live anywhere on the file system, as long as composer knows how to load them. The controller directory does not enforce any folder structure for your application. Routing to controllers is entirely de-coupled from the file system.
-
 You may also specify names on controller routes:
 
 	Route::get('foo', array('uses' => 'FooController@method',
 											'as' => 'name'));
 
-To generate a URL to a controller action, you may use the `URL::action` method or the `action` helper method:
+To generate a URL to a controller action, you may use the `URL::action` method:
 
 	$url = URL::action('FooController@method');
-
-	$url = action('FooController@method');
 
 You may access the name of the controller action being run using the `currentRouteAction` method:
 
@@ -98,32 +94,12 @@ You may also specify controller filters inline using a Closure:
 
 	}
 
-If you would like to use another method on the controller as a filter, you may use `@` syntax to define the filter:
-
-	class UserController extends BaseController {
-
-		/**
-		 * Instantiate a new UserController instance.
-		 */
-		public function __construct()
-		{
-			$this->beforeFilter('@filterRequests');
-		}
-
-		/**
-		 * Filter the incoming requests.
-		 */
-		public function filterRequests($route, $request)
-		{
-			//
-		}
-
-	}
-
 <a name="restful-controllers"></a>
 ## RESTful Controllers
 
 Laravel allows you to easily define a single route to handle every action in a controller using simple, REST naming conventions. First, define the route using the `Route::controller` method:
+
+**Defining A RESTful Controller**
 
 	Route::controller('users', 'UserController');
 
@@ -137,11 +113,6 @@ The `controller` method accepts two arguments. The first is the base URI the con
 		}
 
 		public function postProfile()
-		{
-			//
-		}
-
-		public function anyLogin()
 		{
 			//
 		}
@@ -169,7 +140,7 @@ Now we can register a resourceful route to the controller:
 
 This single route declaration creates multiple routes to handle a variety of RESTful actions on the photo resource. Likewise, the generated controller will already have stubbed methods for each of these actions with notes informing you which URIs and verbs they handle.
 
-#### Actions Handled By Resource Controller
+**Actions Handled By Resource Controller**
 
 Verb      | Path                        | Action       | Route Name
 ----------|-----------------------------|--------------|---------------------
@@ -193,21 +164,16 @@ And, you may also specify a subset of actions to handle on the route:
 					array('only' => array('index', 'show')));
 
 	Route::resource('photo', 'PhotoController',
-					array('except' => array('create', 'store', 'update', 'destroy')));
-
-By default, all resource controller actions have a route name; however, you can override these names by passing a `names` array with your options:
-
-	Route::resource('photo', 'PhotoController',
-					array('names' => array('create' => 'photo.build')));
+					array('except' => array('create', 'store', 'update', 'delete')));
 
 <a name="handling-missing-methods"></a>
 ## Handling Missing Methods
 
-A catch-all method may be defined which will be called when no other matching method is found on a given controller. The method should be named `missingMethod`, and receives the method and parameter array for the request:
+A catch-all method may be defined which will be called when no other matching method is found on a given controller. The method should be named `missingMethod`, and receives the parameter array for the request as its only argument:
 
-#### Defining A Catch-All Method
+**Defining A Catch-All Method**
 
-	public function missingMethod($parameters = array())
+	public function missingMethod($parameters)
 	{
 		//
 	}

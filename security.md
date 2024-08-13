@@ -8,7 +8,6 @@
 - [HTTP Basic Authentication](#http-basic-authentication)
 - [Password Reminders & Reset](#password-reminders-and-reset)
 - [Encryption](#encryption)
-- [Authentication Drivers](#authentication-drivers)
 
 <a name="configuration"></a>
 ## Configuration
@@ -19,25 +18,23 @@ By default, Laravel includes a `User` model in your `app/models` directory which
 
 If your application is not using Eloquent, you may use the `database` authentication driver which uses the Laravel query builder.
 
-> **Note:** Before getting started, make sure that your `users` (or equivalent) table contains a nullable, string `remember_token` column of 100 characters. This column will be used to store a token for "remember me" sessions being maintained by your application.
-
 <a name="storing-passwords"></a>
 ## Storing Passwords
 
 The Laravel `Hash` class provides secure Bcrypt hashing:
 
-#### Hashing A Password Using Bcrypt
+**Hashing A Password Using Bcrypt**
 
 	$password = Hash::make('secret');
 
-#### Verifying A Password Against A Hash
+**Verifying A Password Against A Hash**
 
 	if (Hash::check('secret', $hashedPassword))
 	{
 		// The passwords match...
 	}
 
-#### Checking If A Password Needs To Be Rehashed
+**Checking If A Password Needs To Be Rehashed**
 
 	if (Hash::needsRehash($hashed))
 	{
@@ -58,18 +55,18 @@ Take note that `email` is not a required option, it is merely used for example. 
 
 When the `attempt` method is called, the `auth.attempt` [event](events.md) will be fired. If the authentication attempt is successful and the user is logged in, the `auth.login` event will be fired as well.
 
-#### Determining If A User Is Authenticated
-
 To determine if the user is already logged into your application, you may use the `check` method:
+
+**Determining If A User Is Authenticated**
 
 	if (Auth::check())
 	{
 		// The user is logged in...
 	}
 
-#### Authenticating A User And "Remembering" Them
+If you would like to provide "remember me" functionality in your application, you may pass `true` as the second argument to the `attempt` method, which will keep the user authenticated indefinitely (or until they manually logout):
 
-If you would like to provide "remember me" functionality in your application, you may pass `true` as the second argument to the `attempt` method, which will keep the user authenticated indefinitely (or until they manually logout). Of course, your `users` table must include the string `remember_token` column, which will be used to store the "remember me" token.
+**Authenticating A User And "Remembering" Them**
 
 	if (Auth::attempt(array('email' => $email, 'password' => $password), true))
 	{
@@ -78,28 +75,18 @@ If you would like to provide "remember me" functionality in your application, yo
 
 **Note:** If the `attempt` method returns `true`, the user is considered logged into the application.
 
-#### Determining If User Authed Via Remember
-If you are "remembering" user logins, you may use the `viaRemember` method to determine if the user was authenticated using the "remember me" cookie:
-
-	if (Auth::viaRemember())
-	{
-		//
-	}
-
-#### Authenticating A User With Conditions
-
 You also may add extra conditions to the authenticating query:
+
+**Authenticating A User With Conditions**
 
     if (Auth::attempt(array('email' => $email, 'password' => $password, 'active' => 1)))
     {
         // The user is active, not suspended, and exists.
     }
 
-> **Note:** For added protection against session fixation, the user's session ID will automatically be regenerated after authenticating.
-
-#### Accessing The Logged In User
-
 Once a user is authenticated, you may access the User model / record:
+
+**Accessing The Logged In User**
 
 	$email = Auth::user()->email;
 
@@ -107,25 +94,25 @@ To simply log a user into the application by their ID, use the `loginUsingId` me
 
 	Auth::loginUsingId(1);
 
-#### Validating User Credentials Without Login
-
 The `validate` method allows you to validate a user's credentials without actually logging them into the application:
+
+**Validating User Credentials Without Login**
 
 	if (Auth::validate($credentials))
 	{
 		//
 	}
 
-#### Logging A User In For A Single Request
-
 You may also use the `once` method to log a user into the application for a single request. No sessions or cookies will be utilized.
+
+**Logging A User In For A Single Request**
 
 	if (Auth::once($credentials))
 	{
 		//
 	}
 
-#### Logging A User Out Of The Application
+**Logging A User Out Of The Application**
 
 	Auth::logout();
 
@@ -145,7 +132,7 @@ This is equivalent to logging in a user via credentials using the `attempt` meth
 
 Route filters may be used to allow only authenticated users to access a given route. Laravel provides the `auth` filter by default, and it is defined in `app/filters.php`.
 
-#### Protecting A Route
+**Protecting A Route**
 
 	Route::get('profile', array('before' => 'auth', function()
 	{
@@ -156,11 +143,11 @@ Route filters may be used to allow only authenticated users to access a given ro
 
 Laravel provides an easy method of protecting your application from cross-site request forgeries.
 
-#### Inserting CSRF Token Into Form
+**Inserting CSRF Token Into Form**
 
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
 
-#### Validate The Submitted CSRF Token
+**Validate The Submitted CSRF Token**
 
     Route::post('register', array('before' => 'csrf', function()
     {
@@ -172,23 +159,20 @@ Laravel provides an easy method of protecting your application from cross-site r
 
 HTTP Basic Authentication provides a quick way to authenticate users of your application without setting up a dedicated "login" page. To get started, attach the `auth.basic` filter to your route:
 
-#### Protecting A Route With HTTP Basic
+**Protecting A Route With HTTP Basic**
 
 	Route::get('profile', array('before' => 'auth.basic', function()
 	{
 		// Only authenticated users may enter...
 	}));
 
-By default, the `basic` filter will use the `email` column on the user record when authenticating. If you wish to use another column you may pass the column name as the first parameter to the `basic` method in your `app/filters.php` file:
+By default, the `basic` filter will use the `email` column on the user record when authenticating. If you wish to use another column you may pass the column name as the first parameter to the `basic` method:
 
-	Route::filter('auth.basic', function()
-	{
-		return Auth::basic('username');
-	});
-
-#### Setting Up A Stateless HTTP Basic Filter
+	return Auth::basic('username');
 
 You may also use HTTP Basic Authentication without setting a user identifier cookie in the session, which is particularly useful for API authentication. To do so, define a filter that returns the `onceBasic` method:
+
+**Setting Up A Stateless HTTP Basic Filter**
 
 	Route::filter('basic.once', function()
 	{
@@ -203,11 +187,11 @@ If you are using PHP FastCGI, HTTP Basic authentication will not work correctly 
 <a name="password-reminders-and-reset"></a>
 ## Password Reminders & Reset
 
-### Model & Table
+### Sending Password Reminders
 
 Most web applications provide a way for users to reset their forgotten passwords. Rather than forcing you to re-implement this on each application, Laravel provides convenient methods for sending password reminders and performing password resets. To get started, verify that your `User` model implements the `Illuminate\Auth\Reminders\RemindableInterface` contract. Of course, the `User` model included with the framework already implements this interface.
 
-#### Implementing The RemindableInterface
+**Implementing The RemindableInterface**
 
 	class User extends Eloquent implements RemindableInterface {
 
@@ -218,89 +202,112 @@ Most web applications provide a way for users to reset their forgotten passwords
 
 	}
 
-#### Generating The Reminder Table Migration
+Next, a table must be created to store the password reset tokens. To generate a migration for this table, simply execute the `auth:reminders` Artisan command:
 
-Next, a table must be created to store the password reset tokens. To generate a migration for this table, simply execute the `auth:reminders-table` Artisan command:
+**Generating The Reminder Table Migration**
 
-	php artisan auth:reminders-table
+	php artisan auth:reminders
 
 	php artisan migrate
 
-### Password Reminder Controller
+To send a password reminder, we can use the `Password::remind` method:
 
-Now we're ready to generate the password reminder controller. To automatically generate a controller, you may use the `auth:reminders-controller` Artisan command, which will create a `RemindersController.php` file in your `app/controllers` directory.
+**Sending A Password Reminder**
 
-	php artisan auth:reminders-controller
-
-The generated controller will already have a `getRemind` method that handles showing your password reminder form. All you need to do is create a `password.remind` [view](responses.md#views). This view should have a basic form with an `email` field. The form should POST to the `RemindersController@postRemind` action.
-
-A simple form on the `password.remind` view might look like this:
-
-	<form action="{{ action('RemindersController@postRemind') }}" method="POST">
-		<input type="email" name="email">
-		<input type="submit" value="Send Reminder">
-	</form>
-
-In addition to `getRemind`, the generated controller will already have a `postRemind` method that handles sending the password reminder e-mails to your users. This method expects the `email` field to be present in the `POST` variables. If the reminder e-mail is successfully sent to the user, a `status` message will be flashed to the session. If the reminder fails, an `error` message will be flashed instead.
-
-Within the `postRemind` controller method you may modify the message instance before it is sent to the user:
-
-	Password::remind(Input::only('email'), function($message)
+	Route::post('password/remind', function()
 	{
-		$message->subject('Password Reminder');
+		$credentials = array('email' => Input::get('email'));
+
+		return Password::remind($credentials);
 	});
 
-Your user will receive an e-mail with a link that points to the `getReset` method of the controller. The password reminder token, which is used to identify a given password reminder attempt, will also be passed to the controller method. The action is already configured to return a `password.reset` view which you should build. The `token` will be passed to the view, and you should place this token in a hidden form field named `token`. In addition to the `token`, your password reset form should contain `email`, `password`, and `password_confirmation` fields. The form should POST to the `RemindersController@postReset` method.
+Note that the arguments passed to the `remind` method are similar to the `Auth::attempt` method. This method will retrieve the `User` and send them a password reset link via e-mail. The e-mail view will be passed a `token` variable which may be used to construct the link to the password reset form. The `user` object will also be passed to the view.
 
-A simple form on the `password.reset` view might look like this:
+> **Note:** You may specify which view is used as the e-mail message by changing the `auth.reminder.email` configuration option. Of course, a default view is provided out of the box.
 
-	<form action="{{ action('RemindersController@postReset') }}" method="POST">
-		<input type="hidden" name="token" value="{{ $token }}">
-		<input type="email" name="email">
-		<input type="password" name="password">
-		<input type="password" name="password_confirmation">
-		<input type="submit" value="Reset Password">
-	</form>
+You may modify the message instance that is sent to the user by passing a Closure as the second argument to the `remind` method:
 
-Finally, the `postReset` method is responsible for actually changing the password in storage. In this controller action, the Closure passed to the `Password::reset` method sets the `password` attribute on the `User` and calls the `save` method. Of course, this Closure is assuming your `User` model is an [Eloquent model](eloquent.md); however, you are free to change this Closure as needed to be compatible with your application's database storage system.
-
-If the password is successfully reset, the user will be redirected to the root of your application. Again, you are free to change this redirect URL. If the password reset fails, the user will be redirect back to the reset form, and an `error` message will be flashed to the session.
-
-### Password Validation
-
-By default, the `Password::reset` method will verify that the passwords match and are >= six characters. You may customize these rules using the `Password::validator` method, which accepts a Closure. Within this Closure, you may do any password validation you wish. Note that you are not required to verify that the passwords match, as this will be done automatically by the framework.
-
-	Password::validator(function($credentials)
+	return Password::remind($credentials, function($message, $user)
 	{
-		return strlen($credentials['password']) >= 6;
+		$message->subject('Your Password Reminder');
 	});
 
-> **Note:** By default, password reset tokens expire after one hour. You may change this via the `reminder.expire` option of your `app/config/auth.php` file.
+You may also have noticed that we are returning the results of the `remind` method directly from a route. By default, the `remind` method will return a `Redirect` to the current URI. If an error occurred while attempting to reset the password, an `error` variable will be flashed to the session, as well as a `reason`, which can be used to extract a language line from the `reminders` language file. If the password reset was successful, a `success` variable will be flashed to the session. So, your password reset form view could look something like this:
+
+	@if (Session::has('error'))
+		{{ trans(Session::get('reason')) }}
+	@elseif (Session::has('success'))
+		An e-mail with the password reset has been sent.
+	@endif
+
+	<input type="text" name="email">
+	<input type="submit" value="Send Reminder">
+
+### Resetting Passwords
+
+Once a user has clicked on the reset link from the reminder e-mail, they should be directed to a form that includes a hidden `token` field, as well as a `password` and `password_confirmation` field. Below is an example route for the password reset form:
+
+	Route::get('password/reset/{token}', function($token)
+	{
+		return View::make('auth.reset')->with('token', $token);
+	});
+
+And, a password reset form might look like this:
+
+	@if (Session::has('error'))
+		{{ trans(Session::get('reason')) }}
+	@endif
+
+	<input type="hidden" name="token" value="{{ $token }}">
+	<input type="text" name="email">
+	<input type="password" name="password">
+	<input type="password" name="password_confirmation">
+
+Again, notice we are using the `Session` to display any errors that may be detected by the framework while resetting passwords. Next, we can define a `POST` route to handle the reset:
+
+	Route::post('password/reset/{token}', function()
+	{
+		$credentials = array(
+		    'email' => Input::get('email'),
+		    'password' => Input::get('password'),
+		    'password_confirmation' => Input::get('password_confirmation')
+		);
+
+		return Password::reset($credentials, function($user, $password)
+		{
+			$user->password = Hash::make($password);
+
+			$user->save();
+
+			return Redirect::to('home');
+		});
+	});
+
+If the password reset is successful, the `User` instance and the password will be passed to your Closure, allowing you to actually perform the save operation. Then, you may return a `Redirect` or any other type of response from the Closure which will be returned by the `reset` method. Note that the `reset` method automatically checks for a valid `token` in the request, valid credentials, and matching passwords.
+
+By default, password reset tokens expire after one hour. You may change this via the `reminder.expire` option of your `app/config/auth.php` file.
+
+Also, similarly to the `remind` method, if an error occurs while resetting the password, the `reset` method will return a `Redirect` to the current URI with an `error` and `reason`.
 
 <a name="encryption"></a>
 ## Encryption
 
 Laravel provides facilities for strong AES-256 encryption via the mcrypt PHP extension:
 
-#### Encrypting A Value
+**Encrypting A Value**
 
 	$encrypted = Crypt::encrypt('secret');
 
 > **Note:** Be sure to set a 32 character, random string in the `key` option of the `app/config/app.php` file. Otherwise, encrypted values will not be secure.
 
-#### Decrypting A Value
+**Decrypting A Value**
 
 	$decrypted = Crypt::decrypt($encryptedValue);
 
-#### Setting The Cipher & Mode
-
 You may also set the cipher and mode used by the encrypter:
+
+**Setting The Cipher & Mode**
 
 	Crypt::setMode('ctr');
 
 	Crypt::setCipher($cipher);
-
-<a name="authentication-drivers"></a>
-## Authentication Drivers
-
-Laravel offers the `database` and `eloquent` authentication drivers out of the box. For more information about adding additional authentication drivers, check out the [Authentication extension documentation](extending.md#authentication).
