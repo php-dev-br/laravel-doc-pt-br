@@ -13,7 +13,7 @@
 
 ## Começando
 
-- [Instalação](contributions.md)
+- [Instalação](installation.md)
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
 - [_Front-end_](frontend.md)
@@ -106,6 +106,7 @@
 ## Pacotes Oficiais
 
 - [Cashier](billing.md)
+- [Cashier (Braintree)](braintree.md)
 - [Dusk](dusk.md)
 - [Envoy](envoy.md)
 - [Horizon](horizon.md)
