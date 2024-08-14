@@ -7,12 +7,12 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel: index.md
+  - Documentação do Laravel 6.x: index.md
   - Prólogo:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
-      - Documentação da API: https://laravel.com/api/6.x/index.html
+      - Documentação da API: https://laravel.com/api/6.x
   - Começando:
       - Instalação: installation.md
       - Configuração: configuration.md
