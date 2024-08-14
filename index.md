@@ -4,7 +4,7 @@ revision: 1b0efc2e03b470a3e8f5b95c43475caa9b2f469b
 status: ready
 ---
 
-# Documentação do Laravel
+# Documentação do Laravel 11.x
 
 ## Prólogo
 
@@ -134,4 +134,4 @@ status: ready
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/11.x/index.html)
+- [Documentação da API](https://laravel.com/api/11.x)
