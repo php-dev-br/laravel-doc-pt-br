@@ -200,7 +200,7 @@ You may re-seed your database from a test using the `seed` method:
 
 	$this->seed('DatabaseSeeder');
 
-More information on creating seeds may be found in the [migrations and seeding](/docs/migrations#database-seeding) section of the documentation.
+More information on creating seeds may be found in the [migrations and seeding](migrations.md#database-seeding) section of the documentation.
 
 <a name="refreshing-the-application"></a>
 ## Refreshing The Application

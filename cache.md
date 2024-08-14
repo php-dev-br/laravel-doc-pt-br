@@ -193,4 +193,4 @@ You may also set the `host` option to a UNIX socket path. If you do this, the `p
 <a name="redis-cache"></a>
 #### Redis Cache
 
-See [Redis Configuration](/docs/redis#configuration)
+See [Redis Configuration](redis.md#configuration)
