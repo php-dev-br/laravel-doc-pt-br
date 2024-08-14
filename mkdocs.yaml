@@ -90,7 +90,7 @@ nav:
       - Banco de dados: database-testing.md
       - Simulação: mocking.md
   - Pacotes:
-      - Breeze: comecando/kits-para-iniciantes.html#laravel-breeze
+      - Breeze: comecando/kits-para-iniciantes.md#laravel-breeze
       - Cashier (Stripe): billing.md
       - Cashier (Paddle): cashier-paddle.md
       - Dusk: dusk.md

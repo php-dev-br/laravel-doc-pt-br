@@ -25,7 +25,7 @@ uma nova versão maior em um dia ou menos.
 
 ### Argumentos Nomeados
 
-[Argumentos nomeados](/docs/php/doc/8.3/functions.arguments.html#functions.named-arguments)
+[Argumentos nomeados](/docs/php/doc/8/functions.arguments.html#functions.named-arguments)
 não são cobertos pelas diretrizes de compatibilidade com versões anteriores do
 Laravel.
 Podemos optar por renomear os argumentos de funções quando necessário para

@@ -7,7 +7,7 @@
 - [Introdução](#introducao)
 - [Escrevendo Provedores de Serviços](#escrevendo-provedores-de-servicos)
     - [O Método `register`](#o-metodo-register)
-    - [O Método `boot`](o-metodo-boot)
+    - [O Método `boot`](#o-metodo-boot)
 - [Registrando Provedores](#registrando-provedores)
 - [Provedores Adiados](#provedores-adiados)
 
