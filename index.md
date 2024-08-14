@@ -12,7 +12,7 @@
 
 ## Começando
 
-- [Instalação](contributions.md)
+- [Instalação](installation.md)
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
 - [Ciclo de Vida da Requisição](lifecycle.md)

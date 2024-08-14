@@ -13,7 +13,7 @@ nav:
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
   - Começando:
-      - Instalação: contributions.md
+      - Instalação: installation.md
       - Configuração: configuration.md
       - Estrutura de Diretório: structure.md
       - Ciclo de Vida da Requisição: lifecycle.md
@@ -52,7 +52,6 @@ nav:
   - Tópicos Gerais:
       - Transmissão: broadcasting.md
       - Cache: cache.md
-      - Contexto: context.md
       - Tratamento de erros e Logging: errors.md
       - Eventos: events.md
       - Armazenamento de arquivos: filesystem.md
