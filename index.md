@@ -12,7 +12,7 @@
 
 ## Começando
 
-- [Instalação](contributions.md)
+- [Instalação](installation.md)
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
 - [_Kits_ para Iniciantes](starter-kits.md)
