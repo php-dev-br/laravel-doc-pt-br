@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/5.7/documentation.md -->
-<!-- revision: f2cc3533881602bfc491b8c5023bb100ba137ef9 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/5.7/documentation.md
+revision: f2cc3533881602bfc491b8c5023bb100ba137ef9
+status: ready
+---
 
 # Documentação do Laravel
 
