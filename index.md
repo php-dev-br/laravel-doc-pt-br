@@ -13,7 +13,7 @@
 
 ## Começando
 
-- [Instalação](contributions.md)
+- [Instalação](installation.md)
 - [Configuração](configuration.md)
 - [Estrutura de Diretório](structure.md)
 - [_Front-end_](frontend.md)
