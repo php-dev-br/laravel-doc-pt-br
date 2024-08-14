@@ -13,12 +13,11 @@ nav:
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
   - Configuração:
-      - Instalação: contributions.md
+      - Instalação: installation.md
       - Configuration: configuration.md
       - Homestead: homestead.md
   - O Básico:
       - Roteamento: routing.md
-      - Redirecionamentos: redirects.md
       - Middleware: middleware.md
       - Controladores: controllers.md
       - Requisições: requests.md
