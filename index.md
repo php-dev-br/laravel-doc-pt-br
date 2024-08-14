@@ -4,7 +4,7 @@ revision: cd876ec484c8903819d1bdb61c6701453123b8c6
 status: ready
 ---
 
-# Documentação do Laravel
+# Documentação do Laravel 5.0
 
 ## Prólogo
 
