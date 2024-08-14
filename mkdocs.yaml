@@ -13,14 +13,13 @@ nav:
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
   - Configuração:
-      - Instalação: contributions.md
+      - Instalação: installation.md
       - Homestead: homestead.md
   - Tutoriais:
       - Beginner Task List: quickstart.md
       - Intermediate Task List: quickstart-intermediate.md
   - O Básico:
       - Roteamento: routing.md
-      - Redirecionamentos: redirects.md
       - Middleware: middleware.md
       - Controladores: controllers.md
       - Requisições: requests.md

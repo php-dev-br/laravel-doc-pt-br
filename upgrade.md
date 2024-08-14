@@ -239,7 +239,7 @@ In your `bootstrap/autoload.php` file, update the `$compiledPath` variable to:
 
 The recommended method of upgrading is to create a new Laravel `5.0` install and then to copy your `4.2` site's unique application files into the new application. This would include controllers, routes, Eloquent models, Artisan commands, assets, and other code specific files to your application.
 
-To start, [install a new Laravel 5.0 application](/docs/5.0/installation) into a fresh directory in your local environment.  Do not install any versions newer than 5.0 yet, since we need to complete the migration steps for 5.0 first. We'll discuss each piece of the migration process in further detail below.
+To start, [install a new Laravel 5.0 application](/docs/laravel/laravel/doc/5.0/installation.html) into a fresh directory in your local environment.  Do not install any versions newer than 5.0 yet, since we need to complete the migration steps for 5.0 first. We'll discuss each piece of the migration process in further detail below.
 
 ### Composer Dependencies & Packages
 
@@ -583,7 +583,7 @@ If `app/controllers/BaseController.php` has a `use` statement at the top, change
 
 ### Password Reminders Updates
 
-Password reminders have been overhauled for greater flexibility. You may examine the new stub controller by running the `php artisan auth:reminders-controller` Artisan command. You may also browse the [updated documentation](/docs/4.1/security#password-reminders-and-reset) and update your application accordingly.
+Password reminders have been overhauled for greater flexibility. You may examine the new stub controller by running the `php artisan auth:reminders-controller` Artisan command. You may also browse the [updated documentation](/docs/laravel/laravel/doc/4.1/security.html#password-reminders-and-reset) and update your application accordingly.
 
 Update your `app/lang/en/reminders.php` language file to match [this updated file](https://github.com/laravel/laravel/blob/v4.1.0/app/lang/en/reminders.php).
 

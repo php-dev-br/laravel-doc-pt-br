@@ -12,7 +12,7 @@
 
 ## Configuração
 
-- [Instalação](contributions.md)
+- [Instalação](installation.md)
 - [Homestead](homestead.md)
 
 ## Tutoriais
