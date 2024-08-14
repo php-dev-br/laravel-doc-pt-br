@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/contributions.md -->
-<!-- revision: fbf431b3d30df9fbb3ac58194c752619b6c354a2 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/contributions.md
+revision: fbf431b3d30df9fbb3ac58194c752619b6c354a2
+status: ready
+---
 
 # Guia de Contribuição
 

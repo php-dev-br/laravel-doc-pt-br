@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/deployment.md -->
-<!-- revision: 2a9cd61538f0b9d340d11f178129b090a183bcbd -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/deployment.md
+revision: 2a9cd61538f0b9d340d11f178129b090a183bcbd
+status: ready
+---
 
 # Implantação
 

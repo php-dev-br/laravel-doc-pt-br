@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/starter-kits.md -->
-<!-- revision: 8332d20b07cc639995649a335620b044151e6dd1 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/starter-kits.md
+revision: 8332d20b07cc639995649a335620b044151e6dd1
+status: ready
+---
 
 # _Kits_ para Iniciantes
 

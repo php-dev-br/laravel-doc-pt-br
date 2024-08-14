@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/lifecycle.md -->
-<!-- revision: 51c2103e2594f1655666b965fbfd5893a0cbec1b -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/lifecycle.md
+revision: 51c2103e2594f1655666b965fbfd5893a0cbec1b
+status: ready
+---
 
 # Ciclo de Vida da Requisição
 

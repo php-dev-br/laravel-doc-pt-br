@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/frontend.md -->
-<!-- revision: 46c2634ef5a4f15427c94a3157b626cf5bd3937f -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/frontend.md
+revision: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
+status: ready
+---
 
 # _Front-end_
 

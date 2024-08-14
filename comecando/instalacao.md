@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/installation.md -->
-<!-- revision: 5f49bc6610d86ab145d99407df04d94c0c83a52d -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/installation.md
+revision: 5f49bc6610d86ab145d99407df04d94c0c83a52d
+status: ready
+---
 
 # Instalação
 

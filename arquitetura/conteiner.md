@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/container.md -->
-<!-- revision: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/container.md
+revision: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+status: ready
+---
 
 # Contêiner de Serviços
 

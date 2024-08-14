@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/releases.md -->
-<!-- revision: 2099c290d28e19aac91eed068a986231fa2447f7 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/releases.md
+revision: 2099c290d28e19aac91eed068a986231fa2447f7
+status: ready
+---
 
 # Notas de Versão
 

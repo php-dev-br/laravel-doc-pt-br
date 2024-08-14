@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/upgrade.md -->
-<!-- revision: b8bf6ca8a64bd05c27e4ef2b6eddbd961d02bf2b -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/upgrade.md
+revision: b8bf6ca8a64bd05c27e4ef2b6eddbd961d02bf2b
+status: ready
+---
 
 # Guia de Atualização
 

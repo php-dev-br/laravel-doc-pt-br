@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/configuration.md -->
-<!-- revision: 5208fb2976c6ee1b7a3c2e69de3ebf72e28e3658 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/configuration.md
+revision: 5208fb2976c6ee1b7a3c2e69de3ebf72e28e3658
+status: ready
+---
 
 # Configuração
 

@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/11.x/structure.md -->
-<!-- revision: 2cda2495b7737431b295d64dc4e0e38e35ce5e48 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/11.x/structure.md
+revision: 2cda2495b7737431b295d64dc4e0e38e35ce5e48
+status: ready
+---
 
 # Estrutura de Diretório
 
