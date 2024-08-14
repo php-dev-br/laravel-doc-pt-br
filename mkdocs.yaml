@@ -13,7 +13,7 @@ nav:
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
   - Começando:
-      - Instalação: contributions.md
+      - Instalação: installation.md
       - Configuração: configuration.md
       - Estrutura de Diretório: structure.md
       - Front-end: frontend.md
@@ -45,7 +45,6 @@ nav:
       - Transmissão: broadcasting.md
       - Cache: cache.md
       - Coleções: collections.md
-      - Contexto: context.md
       - Contratos: contracts.md
       - Eventos: events.md
       - Armazenamento de arquivos: filesystem.md
@@ -88,7 +87,7 @@ nav:
       - Banco de dados: database-testing.md
       - Simulação: mocking.md
   - Pacotes:
-      - Breeze: starter-kits.html#laravel-breeze
+      - Breeze: starter-kits.md#laravel-breeze
       - Cashier (Stripe): billing.md
       - Cashier (Paddle): cashier-paddle.md
       - Dusk: dusk.md
