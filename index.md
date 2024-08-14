@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravelblob.md/4.0/documentation.md -->
-<!-- revision: 2cd8d5873d0dbee24bd9013d5da6fd9f08c1e047 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravelblob.md/4.0/documentation.md
+revision: 2cd8d5873d0dbee24bd9013d5da6fd9f08c1e047
+status: ready
+---
 
 # Documentação do Laravel 4.0
 
