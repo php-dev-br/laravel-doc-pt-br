@@ -45,7 +45,7 @@ In Laravel 5.1 applications, the password reset notification is maintained by th
 <a name="laravel-5.4"></a>
 ## Laravel 5.4
 
-Laravel 5.4 continues the improvements made in Laravel 5.3 by adding support for [Markdown based emails and notifications](/docs/5.4/mail#markdown-mailables), the [Laravel Dusk](/docs/5.4/dusk) browser automation and testing framework, Laravel Mix, Blade "components" and "slots", route model binding on broadcast channels, higher order messages for Collections, object-based Eloquent events, job-level "retry" and "timeout" settings, "realtime" facades, improved support for Redis Cluster, custom pivot table models, middleware for request input trimming and cleaning, and more. In addition, the entire codebase of the framework was reviewed and refactored for general cleanliness.
+Laravel 5.4 continues the improvements made in Laravel 5.3 by adding support for [Markdown based emails and notifications](mail.md#markdown-mailables), the [Laravel Dusk](dusk.md) browser automation and testing framework, Laravel Mix, Blade "components" and "slots", route model binding on broadcast channels, higher order messages for Collections, object-based Eloquent events, job-level "retry" and "timeout" settings, "realtime" facades, improved support for Redis Cluster, custom pivot table models, middleware for request input trimming and cleaning, and more. In addition, the entire codebase of the framework was reviewed and refactored for general cleanliness.
 
 > {tip} This documentation summarizes the most notable improvements to the framework; however, more thorough change logs are always available [on GitHub](https://github.com/laravel/framework/blob/5.4/CHANGELOG-5.4.md).
 
@@ -77,7 +77,7 @@ Using this simple Markdown template, Laravel is able to generate a responsive HT
 
 <img src="https://laravel.com/assets/img/examples/markdown.png" width="551" height="596">
 
-To read more about Markdown mail and notifications, check out the full [mail](/docs/5.4/mail) and [notification](/docs/5.4/notifications) documentation.
+To read more about Markdown mail and notifications, check out the full [mail](mail.md) and [notification](notifications.md) documentation.
 
 > {tip} You may export all of the Markdown mail components to your own application for customization. To export the components, use the `vendor:publish` Artisan command to publish the `laravel-mail` asset tag.
 
@@ -113,7 +113,7 @@ Since Dusk operates using a real browser, you are able to easily test and intera
         });
     }
 
-For more information on Dusk, consult the full [Dusk documentation](/docs/5.4/dusk).
+For more information on Dusk, consult the full [Dusk documentation](dusk.md).
 
 ### Laravel Mix
 
@@ -162,11 +162,11 @@ Named slots may be injected using the `@slot` directive. Any content is not with
         You are not allowed to access this resource!
     @endcomponent
 
-To read more about components and slots, consult the full [Blade documentation](/docs/5.4/blade).
+To read more about components and slots, consult the full [Blade documentation](blade.md).
 
 ### Broadcast Model Binding
 
-Just like HTTP routes, channel routes may now take advantage of implicit and explicit [route model binding](/docs/5.4/routing#route-model-binding). For example, instead of receiving the string or numeric order ID, you may request an actual `Order` model instance:
+Just like HTTP routes, channel routes may now take advantage of implicit and explicit [route model binding](routing.md#route-model-binding). For example, instead of receiving the string or numeric order ID, you may request an actual `Order` model instance:
 
     use App\Order;
 
@@ -174,7 +174,7 @@ Just like HTTP routes, channel routes may now take advantage of implicit and exp
         return $user->id === $order->user_id;
     });
 
-To read more about broadcast model binding, consult the full [event broadcasting](/docs/5.4/broadcasting) documentation.
+To read more about broadcast model binding, consult the full [event broadcasting](broadcasting.md) documentation.
 
 ### Collection Higher Order Messages
 
@@ -198,7 +198,7 @@ Likewise, we can use the `sum` higher order message to gather the total number o
 
 > {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-4/episodes/10) for this feature available on Laracasts.
 
-Eloquent event handlers may now be mapped to event objects. This provides a more intuitive way of handling Eloquent events and makes it easier to test the events. To get started, define an `$events` property on your Eloquent model that maps various points of the Eloquent model's lifecycle to your own [event classes](/docs/5.4/events):
+Eloquent event handlers may now be mapped to event objects. This provides a more intuitive way of handling Eloquent events and makes it easier to test the events. To get started, define an `$events` property on your Eloquent model that maps various points of the Eloquent model's lifecycle to your own [event classes](events.md):
 
     <?php
 
@@ -249,7 +249,7 @@ Previously, queue job "retry" and "timeout" settings could only be configured gl
         public $timeout = 120;
     }
 
-For more information about these settings, consult the full [queue documentation](/docs/5.4/queues).
+For more information about these settings, consult the full [queue documentation](queues.md).
 
 ### Request Sanitization Middleware
 
@@ -277,7 +277,7 @@ These middleware will automatically trim request input values and convert any em
 
 > {video} There is a free [video tutorial](https://laracasts.com/series/whats-new-in-laravel-5-4/episodes/8) for this feature available on Laracasts.
 
-Previously, only Laravel's own built-in services exposed [facades](/docs/5.4/facades), which provide quick, terse access to their methods via the service container. However, in Laravel 5.4, you may easily convert any of your application's classes into a facade in realtime simply by prefixing the imported class name with `Facades`. For example, imagine your application contains a class like the following:
+Previously, only Laravel's own built-in services exposed [facades](facades.md), which provide quick, terse access to their methods via the service container. However, in Laravel 5.4, you may easily convert any of your application's classes into a facade in realtime simply by prefixing the imported class name with `Facades`. For example, imagine your application contains a class like the following:
 
     <?php
 
@@ -320,7 +320,7 @@ You may easily use this class as a facade like so:
         PaymentGateway::pay($amount);
     });
 
-Of course, if you leverage a realtime facade in this way, you may easily write a test for the interaction using Laravel's [facade mocking capabilities](/docs/5.4/mocking):
+Of course, if you leverage a realtime facade in this way, you may easily write a test for the interaction using Laravel's [facade mocking capabilities](mocking.md):
 
     PaymentGateway::shouldReceive('pay')->with('100');
 
@@ -347,7 +347,7 @@ In Laravel 5.3, all "pivot" table models for `belongsToMany` relationships used 
 
 ### Improved Redis Cluster Support
 
-Previously, it was not possible to define Redis connections to single hosts and to clusters in the same application. In Laravel 5.4, you may now define Redis connections to multiple single hosts and multiple clusters within the same application. For more information on Redis in Laravel, please consult the full [Redis documentation](/docs/5.4/redis).
+Previously, it was not possible to define Redis connections to single hosts and to clusters in the same application. In Laravel 5.4, you may now define Redis connections to multiple single hosts and multiple clusters within the same application. For more information on Redis in Laravel, please consult the full [Redis documentation](redis.md).
 
 <a name="utf8mb4"></a>
 ### Migration Default String Length
@@ -371,7 +371,7 @@ If you choose to switch to this character set manually and are running a version
 <a name="laravel-5.3"></a>
 ## Laravel 5.3
 
-Laravel 5.3 continues the improvements made in Laravel 5.2 by adding a driver based [notification system](/docs/5.3/notifications), robust realtime support via [Laravel Echo](/docs/5.3/broadcasting), painless OAuth2 servers via [Laravel Passport](/docs/5.3/passport), full-text model searching via [Laravel Scout](/docs/5.3/scout), Webpack support in Laravel Elixir, "mailable" objects, explicit separation of `web` and `api` routes, Closure based console commands, convenient helpers for storing uploaded files, support for POPO and single-action controllers, improved default frontend scaffolding, and more.
+Laravel 5.3 continues the improvements made in Laravel 5.2 by adding a driver based [notification system](/docs/laravel/laravel/doc/5.3/notifications.html), robust realtime support via [Laravel Echo](/docs/laravel/laravel/doc/5.3/broadcasting.html), painless OAuth2 servers via [Laravel Passport](/docs/laravel/laravel/doc/5.3/passport.html), full-text model searching via [Laravel Scout](/docs/laravel/laravel/doc/5.3/scout.html), Webpack support in Laravel Elixir, "mailable" objects, explicit separation of `web` and `api` routes, Closure based console commands, convenient helpers for storing uploaded files, support for POPO and single-action controllers, improved default frontend scaffolding, and more.
 
 ### Notifications
 
@@ -381,7 +381,7 @@ Laravel Notifications provide a simple, expressive API for sending notifications
 
     $user->notify(new InvoicePaid($invoice));
 
-There is already a wide variety of [community written drivers](http://laravel-notification-channels.com) for notifications, including support for iOS and Android notifications. To learn more about notifications, be sure to check out the [full notification documentation](/docs/5.3/notifications).
+There is already a wide variety of [community written drivers](http://laravel-notification-channels.com) for notifications, including support for iOS and Android notifications. To learn more about notifications, be sure to check out the [full notification documentation](/docs/laravel/laravel/doc/5.3/notifications.html).
 
 ### WebSockets / Event Broadcasting
 
@@ -414,7 +414,7 @@ In addition to subscribing to traditional channels, Laravel Echo also makes it a
             console.log(user.name);
         });
 
-To learn more about Echo and event broadcasting, check out the [full documentation](/docs/5.3/broadcasting).
+To learn more about Echo and event broadcasting, check out the [full documentation](/docs/laravel/laravel/doc/5.3/broadcasting.html).
 
 ### Laravel Passport (OAuth2 Server)
 
@@ -443,11 +443,11 @@ In addition, Passport includes helpful middleware for verifying that an access t
         // Access token has "check-status" scope...
     })->middleware('scope:check-status');
 
-Lastly, Passport includes support for consuming your own API from your JavaScript application without worrying about passing access tokens. Passport achieves this through encrypted JWT cookies and synchronized CSRF tokens, allowing you to focus on what matters: your application. For more information on Passport, be sure to check out its [full documentation](/docs/5.3/passport).
+Lastly, Passport includes support for consuming your own API from your JavaScript application without worrying about passing access tokens. Passport achieves this through encrypted JWT cookies and synchronized CSRF tokens, allowing you to focus on what matters: your application. For more information on Passport, be sure to check out its [full documentation](/docs/laravel/laravel/doc/5.3/passport.html).
 
 ### Search (Laravel Scout)
 
-Laravel Scout provides a simple, driver based solution for adding full-text search to your [Eloquent models](/docs/5.3/eloquent). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records. Currently, Scout ships with an [Algolia](https://www.algolia.com/) driver; however, writing custom drivers is simple and you are free to extend Scout with your own search implementations.
+Laravel Scout provides a simple, driver based solution for adding full-text search to your [Eloquent models](/docs/laravel/laravel/doc/5.3/eloquent.html). Using model observers, Scout will automatically keep your search indexes in sync with your Eloquent records. Currently, Scout ships with an [Algolia](https://www.algolia.com/) driver; however, writing custom drivers is simple and you are free to extend Scout with your own search implementations.
 
 Making models searchable is as simple as adding a `Searchable` trait to the model:
 
@@ -477,7 +477,7 @@ Once your models have been indexed, its a breeze to perform full-text searches a
 
     return Order::search('Star Trek')->where('user_id', 1)->paginate();
 
-Of course, Scout has many more features which are covered in the [full documentation](/docs/5.3/scout).
+Of course, Scout has many more features which are covered in the [full documentation](/docs/laravel/laravel/doc/5.3/scout.html).
 
 ### Mailable Objects
 
@@ -511,7 +511,7 @@ Of course, you may also mark mailable objects as "queueable" so that they will b
         //
     }
 
-For more information on mailable objects, be sure to check out the [mail documentation](/docs/5.3/mail).
+For more information on mailable objects, be sure to check out the [mail documentation](/docs/laravel/laravel/doc/5.3/mail.html).
 
 ### Storing Uploaded Files
 
@@ -537,7 +537,7 @@ For more information on storing uploaded files, check out the [full documentatio
 
 ### Webpack & Laravel Elixir
 
-Along with Laravel 5.3, Laravel Elixir 6.0 has been released with baked-in support for the Webpack and Rollup JavaScript module bundlers. By default, the Laravel 5.3 `gulpfile.js` file now uses Webpack to compile your JavaScript. The [full Laravel Elixir documentation](/docs/5.3/elixir) contains more information on both of these bundlers:
+Along with Laravel 5.3, Laravel Elixir 6.0 has been released with baked-in support for the Webpack and Rollup JavaScript module bundlers. By default, the Laravel 5.3 `gulpfile.js` file now uses Webpack to compile your JavaScript. The [full Laravel Elixir documentation](/docs/laravel/laravel/doc/5.3/elixir.html) contains more information on both of these bundlers:
 
     elixir(mix => {
         mix.sass('app.scss')
@@ -552,7 +552,7 @@ Laravel 5.3 ships with a more modern frontend structure. This primarily affects 
 
 In addition, support for single file [Vue components](https://vuejs.org) is now included out of the box. A sample `Example.vue` component is included in the `resources/assets/js/components` directory. In addition, the new `resources/assets/js/app.js` file bootstraps and configures your JavaScript libraries and, if applicable, Vue components.
 
-This structure provides more guidance on how to begin developing modern, robust JavaScript applications, without requiring your application to use any given JavaScript or CSS framework. For more information on getting started with modern Laravel frontend development, check out the new [introductory frontend documentation](/docs/5.3/frontend).
+This structure provides more guidance on how to begin developing modern, robust JavaScript applications, without requiring your application to use any given JavaScript or CSS framework. For more information on getting started with modern Laravel frontend development, check out the new [introductory frontend documentation](/docs/laravel/laravel/doc/5.3/frontend.html).
 
 ### Routes Files
 
@@ -566,7 +566,7 @@ In addition to being defined as command classes, Artisan commands may now be def
         $this->info('Building project...');
     });
 
-For more information on Closure commands, check out the [full Artisan documentation](/docs/5.3/artisan#closure-commands).
+For more information on Closure commands, check out the [full Artisan documentation](/docs/laravel/laravel/doc/5.3/artisan.html#closure-commands).
 
 ### The `$loop` Variable
 
@@ -586,7 +586,7 @@ When looping within a Blade template, a `$loop` variable will be available insid
         <p>This is user {{ $user->id }}</p>
     @endforeach
 
-For more information, consult the [full Blade documentation](/docs/5.3/blade#the-loop-variable).
+For more information, consult the [full Blade documentation](/docs/laravel/laravel/doc/5.3/blade.html#the-loop-variable).
 
 <a name="laravel-5.2"></a>
 ## Laravel 5.2
@@ -943,7 +943,7 @@ The base Laravel controller utilizes the new `DispatchesCommands` trait, allowin
 
     $this->dispatch(new PurchasePodcastCommand($user, $podcast));
 
-Of course, you may also use commands for tasks that are executed synchronously (are not queued). In fact, using commands is a great way to encapsulate complex tasks your application needs to perform. For more information, check out the [command bus](/docs/5.0/bus) documentation.
+Of course, you may also use commands for tasks that are executed synchronously (are not queued). In fact, using commands is a great way to encapsulate complex tasks your application needs to perform. For more information, check out the [command bus](/docs/laravel/laravel/doc/5.0/bus.html) documentation.
 
 ### Database Queue
 
@@ -973,7 +973,7 @@ Instead of a variety of confusing, nested environment configuration directories,
 
 Laravel Elixir, by Jeffrey Way, provides a fluent, expressive interface to compiling and concatenating your assets. If you've ever been intimidated by learning Grunt or Gulp, fear no more. Elixir makes it a cinch to get started using Gulp to compile your Less, Sass, and CoffeeScript. It can even run your tests for you!
 
-For more information on Elixir, check out the [full documentation](/docs/5.3/elixir).
+For more information on Elixir, check out the [full documentation](/docs/laravel/laravel/doc/5.3/elixir.html).
 
 ### Laravel Socialite
 
@@ -1071,7 +1071,7 @@ The full change list for this release by running the `php artisan changes` comma
 
 ### PHP 5.4 Requirement
 
-Laravel 4.2 requires PHP 5.4 or greater. This upgraded PHP requirement allows us to use new PHP features such as traits to provide more expressive interfaces for tools like [Laravel Cashier](/docs/billing). PHP 5.4 also brings significant speed and performance improvements over PHP 5.3.
+Laravel 4.2 requires PHP 5.4 or greater. This upgraded PHP requirement allows us to use new PHP features such as traits to provide more expressive interfaces for tools like [Laravel Cashier](billing.md). PHP 5.4 also brings significant speed and performance improvements over PHP 5.3.
 
 ### Laravel Forge
 
@@ -1087,7 +1087,7 @@ Laravel Homestead is an official Vagrant environment for developing robust Larav
 
 The default Laravel 4.2 installation now includes an `app/config/local/database.php` configuration file that is configured to use the Homestead database out of the box, making Laravel initial installation and configuration more convenient.
 
-The official documentation has also been updated to include [Homestead documentation](/docs/homestead).
+The official documentation has also been updated to include [Homestead documentation](homestead.md).
 
 ### Laravel Cashier
 
@@ -1097,7 +1097,7 @@ Laravel Cashier is a simple, expressive library for managing subscription billin
 
 The Artisan `queue:work` command now supports a `--daemon` option to start a worker in "daemon mode", meaning the worker will continue to process jobs without ever re-booting the framework. This results in a significant reduction in CPU usage at the cost of a slightly more complex application deployment process.
 
-More information about daemon queue workers can be found in the [queue documentation](/docs/queues#daemon-queue-worker).
+More information about daemon queue workers can be found in the [queue documentation](queues.md#daemon-queue-worker).
 
 ### Mail API Drivers
 
@@ -1107,7 +1107,7 @@ Laravel 4.2 introduces new Mailgun and Mandrill API drivers for the `Mail` funct
 
 A much cleaner architecture for "soft deletes" and other "global scopes" has been introduced via PHP 5.4 traits. This new architecture allows for the easier construction of similar global traits, and a cleaner separation of concerns within the framework itself.
 
-More information on the new `SoftDeletingTrait` may be found in the [Eloquent documentation](/docs/eloquent#soft-deleting).
+More information on the new `SoftDeletingTrait` may be found in the [Eloquent documentation](eloquent.md#soft-deleting).
 
 ### Convenient Auth & Remindable Traits
 
@@ -1130,7 +1130,7 @@ The full change list for this release by running the `php artisan changes` comma
 
 ### New SSH Component
 
-An entirely new `SSH` component has been introduced with this release. This feature allows you to easily SSH into remote servers and run commands. To learn more, consult the [SSH component documentation](/docs/4.1/ssh).
+An entirely new `SSH` component has been introduced with this release. This feature allows you to easily SSH into remote servers and run commands. To learn more, consult the [SSH component documentation](/docs/laravel/laravel/doc/4.1/ssh.html).
 
 The new `php artisan tail` command utilizes the new SSH component. For more information, consult the `tail` [command documentation](http://laravel.com/docs/ssh#tailing-remote-logs).
 
@@ -1140,13 +1140,13 @@ The `php artisan tinker` command now utilizes the [Boris REPL](https://github.co
 
 ### Eloquent Improvements
 
-A new `hasManyThrough` relationship has been added to Eloquent. To learn how to use it, consult the [Eloquent documentation](/docs/eloquent#has-many-through).
+A new `hasManyThrough` relationship has been added to Eloquent. To learn how to use it, consult the [Eloquent documentation](eloquent.md#has-many-through).
 
-A new `whereHas` method has also been introduced to allow [retrieving models based on relationship constraints](/docs/eloquent#querying-relations).
+A new `whereHas` method has also been introduced to allow [retrieving models based on relationship constraints](eloquent.md#querying-relations).
 
 ### Database Read / Write Connections
 
-Automatic handling of separate read / write connections is now available throughout the database layer, including the query builder and Eloquent. For more information, consult [the documentation](/docs/database#read-write-connections).
+Automatic handling of separate read / write connections is now available throughout the database layer, including the query builder and Eloquent. For more information, consult [the documentation](database.md#read-write-connections).
 
 ### Queue Priority
 
@@ -1154,15 +1154,15 @@ Queue priorities are now supported by passing a comma-delimited list to the `que
 
 ### Failed Queue Job Handling
 
-The queue facilities now include automatic handling of failed jobs when using the new `--tries` switch on `queue:listen`. More information on handling failed jobs can be found in the [queue documentation](/docs/queues#failed-jobs).
+The queue facilities now include automatic handling of failed jobs when using the new `--tries` switch on `queue:listen`. More information on handling failed jobs can be found in the [queue documentation](queues.md#failed-jobs).
 
 ### Cache Tags
 
-Cache "sections" have been superseded by "tags". Cache tags allow you to assign multiple "tags" to a cache item, and flush all items assigned to a single tag. More information on using cache tags may be found in the [cache documentation](/docs/cache#cache-tags).
+Cache "sections" have been superseded by "tags". Cache tags allow you to assign multiple "tags" to a cache item, and flush all items assigned to a single tag. More information on using cache tags may be found in the [cache documentation](cache.md#cache-tags).
 
 ### Flexible Password Reminders
 
-The password reminder engine has been changed to provide greater developer flexibility when validating passwords, flashing status messages to the session, etc. For more information on using the enhanced password reminder engine, [consult the documentation](/docs/4.1/security#password-reminders-and-reset).
+The password reminder engine has been changed to provide greater developer flexibility when validating passwords, flashing status messages to the session, etc. For more information on using the enhanced password reminder engine, [consult the documentation](/docs/laravel/laravel/doc/4.1/security.html#password-reminders-and-reset).
 
 ### Improved Routing Engine
 
