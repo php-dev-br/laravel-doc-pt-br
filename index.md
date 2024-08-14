@@ -4,7 +4,7 @@ revision: 9a43373c5a454d96e9ec25ceb550d7348742a3bd
 status: ready
 ---
 
-# Documentação do Laravel
+# Documentação do Laravel 7.x
 
 ## Prólogo
 
@@ -120,4 +120,4 @@ status: ready
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/7.x/index.html)
+- [Documentação da API](https://laravel.com/api/7.x)
