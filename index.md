@@ -12,7 +12,7 @@
 
 ## Configuração
 
-- [Instalação](contributions.md)
+- [Instalação](installation.md)
 - [Configuração](configuration.md)
 - [Homestead](homestead.md)
 - [Valet](valet.md)
