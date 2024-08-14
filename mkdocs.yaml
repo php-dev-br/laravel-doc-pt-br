@@ -32,8 +32,6 @@ nav:
       - Estrutura da Aplicação: structure.md
   - Serviços:
       - Authentication: authentication.md
-      - Authorization: authorization.md
-      - Console Artisan: artisan.md
       - Cobrança: billing.md
       - Cache: cache.md
       - Coleções: collections.md
