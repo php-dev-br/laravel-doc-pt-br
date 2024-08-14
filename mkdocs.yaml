@@ -14,7 +14,7 @@ nav:
       - Guia de Contribuição: contributions.md
       - Documentação da API: https://laravel.com/api/7.x/index.html
   - Começando:
-      - Instalação: contributions.md
+      - Instalação: installation.md
       - Configuração: configuration.md
       - Estrutura de Diretório: structure.md
       - Front-end: frontend.md
@@ -58,7 +58,6 @@ nav:
       - Transmissão: broadcasting.md
       - Cache: cache.md
       - Coleções: collections.md
-      - Contexto: context.md
       - Eventos: events.md
       - Armazenamento de arquivos: filesystem.md
       - Auxiliares: helpers.md
