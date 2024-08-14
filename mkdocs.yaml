@@ -7,7 +7,7 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel: index.md
+  - Documentação do Laravel 5.7: index.md
   - Prólogo:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
