@@ -7,7 +7,7 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 ### navigation ###
 
 nav:
-  - Documentação do Laravel: index.md
+  - Documentação do Laravel 8.x: index.md
   - Prólogo:
       - Notas de Versão: releases.md
       - Guia de Atualização: upgrade.md
@@ -103,4 +103,4 @@ nav:
       - Telescope: telescope.md
       - Valet: valet.md
   - API:
-      - Documentação da API: https://laravel.com/api/8.x/index.html
+      - Documentação da API: https://laravel.com/api/8.x
