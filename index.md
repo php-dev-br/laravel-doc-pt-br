@@ -1,6 +1,8 @@
-<!-- source_url: https://github.com/laravel/docs/blob/4.2/documentation.md -->
-<!-- revision: 6290902c11147389b2a5867de03e3217d5acd595 -->
-<!-- status: ready -->
+---
+source_url: https://github.com/laravel/docs/blob/4.2/documentation.md
+revision: 6290902c11147389b2a5867de03e3217d5acd595
+status: ready
+---
 
 # Documentação do Laravel 4.2
 
