@@ -4,7 +4,7 @@ revision: 04ad01474ea43f445af1cb45b5229b01f218f166
 status: ready
 ---
 
-# Documentação do Laravel
+# Documentação do Laravel 10.x
 
 ## Prólogo
 
@@ -133,4 +133,4 @@ status: ready
 
 ## API
 
-- [Documentação da API](https://laravel.com/api/10.x/index.html)
+- [Documentação da API](https://laravel.com/api/10.x)
