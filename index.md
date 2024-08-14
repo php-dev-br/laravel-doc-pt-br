@@ -4,7 +4,7 @@ revision: adbfcb7ec763352066e7e76ed061972741aec8c5
 status: ready
 ---
 
-# Documentação do Laravel
+# Documentação do Laravel 5.4
 
 ## Prólogo
 
