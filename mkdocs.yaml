@@ -9,7 +9,7 @@ INHERIT: !ENV MKDOCS_BASE_CONFIG
 nav:
   - Documentação do Laravel 9.x: index.md
   - Prólogo:
-      - Notas de Versão: releases.md
+      - Notas de Versão: prologo/versoes.md
       - Guia de Atualização: upgrade.md
       - Guia de Contribuição: contributions.md
   - Começando:
