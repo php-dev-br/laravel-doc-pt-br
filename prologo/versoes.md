@@ -1,6 +1,6 @@
 ---
 source_url: https://github.com/laravel/docs/blob/11.x/releases.md
-revision: 2099c290d28e19aac91eed068a986231fa2447f7
+revision: 1b69438a67473dc3a9c7f351b3fa742460d11054
 status: ready
 ---
 
@@ -19,7 +19,7 @@ trimestre), enquanto as versões menores e de correções podem ser lançadas
 semanalmente.
 Versões menores e de correções **nunca** devem conter alterações significativas.
 
-Ao referenciar o _framework_ Laravel e seus componentes a partir de sua
+Ao referenciar o _framework_ Laravel e seus componentes a partir da sua
 aplicação ou pacote, você deve sempre usar uma restrição de versão como `^11.0`,
 uma vez que as principais versões do Laravel incluem alterações significativas.
 No entanto, nos esforçamos para sempre garantir que você possa atualizar para
@@ -97,7 +97,7 @@ A seguir discutiremos os destaques da nova estrutura de aplicação do Laravel.
 O arquivo `bootstrap/app.php` foi revitalizado como um arquivo de configuração
 da aplicação com foco em código.
 A partir deste arquivo, agora você pode personalizar o roteamento, os
-_middlewares_, os provedores de serviço, o tratamento de exceções da sua
+_middlewares_, os provedores de serviços, o tratamento de exceções da sua
 aplicação e muito mais.
 Este arquivo unifica uma variedade de configurações de comportamento de alto
 nível das aplicações que antes estavam espalhadas pela estrutura de arquivos da
@@ -118,11 +118,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })->create();
 ```
 
-#### Provedores de Serviço
+#### Provedores de Serviços
 
 Em vez da estrutura padrão da aplicação Laravel contendo cinco provedores de
-serviço, o Laravel 11 inclui apenas um único `AppServiceProvider`.
-A funcionalidade dos provedores de serviço anteriores foi incorporada ao
+serviços, o Laravel 11 inclui apenas um único `AppServiceProvider`.
+A funcionalidade dos provedores de serviços anteriores foi incorporada ao
 `bootstrap/app.php`, é tratada automaticamente pelo _framework_ ou pode ser
 colocada no `AppServiceProvider` da sua aplicação.
 
@@ -147,7 +147,7 @@ php artisan install:api
 php artisan install:broadcasting
 ```
 
-#### _Middleware_
+#### _Middlewares_
 
 Anteriormente, as novas aplicações Laravel incluíam nove _middlewares_.
 Esses _middlewares_ executavam uma variedade de tarefas, como autenticação de
@@ -172,14 +172,14 @@ adicionados ao _framework_ e podem ser invocados a partir do arquivo
 ```
 
 Como todo _middleware_ pode ser facilmente personalizado por meio do arquivo
-`bootstrap/app.php` da sua aplicação, a necessidade de uma classe _kernel_ HTTP
-separada foi eliminada.
+`bootstrap/app.php` da sua aplicação, a necessidade de uma classe “_kernel_”
+HTTP separada foi eliminada.
 
 #### Agendamento
 
 Usando uma nova fachada `Schedule`, as tarefas agendadas agora podem ser
 definidas diretamente no arquivo `routes/console.php` da sua aplicação,
-eliminando a necessidade de uma classe _kernel_ de console separada:
+eliminando a necessidade de uma classe “_kernel_” de console separada:
 
 ```php
 use Illuminate\Support\Facades\Schedule;
@@ -224,7 +224,7 @@ abstract class Controller
 
 #### Padrões da Aplicação
 
-Por padrão, as novas aplicações Laravel usam SQLite para armazenamento de banco
+Por padrão, as novas aplicações Laravel usam SQLite para armazenamento do banco
 de dados, bem como o _driver_ `database` para sessão, _cache_ e fila do Laravel.
 Isso permite que você comece a construir sua aplicação imediatamente após criar
 uma nova aplicação Laravel, sem ser necessário instalar software adicional ou
@@ -262,10 +262,11 @@ Para mais informações sobre o Laravel Reverb, consulte a
 _A limitação de taxa por segundo foi contribuída por
 [Tim MacDonald](https://github.com/timacdonald)_.
 
-O Laravel agora suporta limitação de taxa por segundo para todos os limitadores
-de taxa, incluindo aqueles para requisições HTTP e trabalhos em fila.
+O Laravel agora suporta limitação de taxa “por segundo” para todos os
+limitadores de taxa, incluindo aqueles para requisições HTTP e trabalhos em
+fila.
 Anteriormente, os limitadores de taxa do Laravel eram limitados à granularidade
-por minuto:
+“por minuto”:
 
 ```php
 RateLimiter::for('faturas', function (Request $request) {
@@ -283,8 +284,8 @@ _A rota de integridade foi contribuído por
 
 As novas aplicações Laravel 11 incluem uma diretiva de rota `health`, que
 instrui o Laravel a definir um _endpoint_ de verificação de integridade simples
-que pode ser invocado por serviços de monitoramento de integridade de aplicações
-de terceiros ou sistemas de orquestração como o Kubernetes.
+que pode ser invocado por serviços de monitoramento de integridade de outras
+aplicações ou sistemas de orquestração como o Kubernetes.
 Por padrão, esta rota é servida em `/up`:
 
 ```php
@@ -316,7 +317,7 @@ O Laravel 11 permite que você defina as chaves de encriptação anteriores da s
 aplicação como uma lista delimitada por vírgula através da variável de ambiente
 `APP_PREVIOUS_KEYS`.
 
-Ao encriptar valores, o Laravel sempre usará a chave de encriptação atual, que
+Ao encriptar valores, o Laravel sempre usará a chave de encriptação “atual”, que
 está na variável de ambiente `APP_KEY`.
 Ao desencriptar valores, o Laravel tentará primeiro a chave atual.
 Se a desencriptação falhar usando a chave atual, o Laravel tentará todas as
@@ -324,7 +325,7 @@ chaves anteriores até que uma das chaves seja capaz de desencriptar o valor.
 
 Essa abordagem de desencriptação elegante permite que as pessoas usuárias
 continuem usando sua aplicação ininterruptamente, mesmo que sua chave de
-encriptação seja alternada.
+encriptação seja rotacionada.
 
 Para mais informações sobre encriptação no Laravel, confira a
 [documentação sobre encriptação](../encryption.md).
@@ -335,18 +336,18 @@ _A atualização automática do hash de senha foi contribuída por
 [Stephen Rees-Carter](https://github.com/valorin)_.
 
 O algoritmo de _hash_ de senha padrão do Laravel é o bcrypt.
-O fator de trabalho para _hashes_ bcrypt pode ser ajustado através do arquivo
+O “fator de trabalho” para _hashes_ bcrypt pode ser ajustado através do arquivo
 de configuração `config/hashing.php` ou da variável de ambiente `BCRYPT_ROUNDS`.
 
 Normalmente, o fator de trabalho do bcrypt deve ser aumentado ao longo do tempo
 à medida que o poder de processamento das CPUs/GPUs aumenta.
 Se você aumentar o fator de trabalho do bcrypt para sua aplicação, o Laravel irá
 refazer as senhas das pessoas usuárias de maneira elegante e automática à medida
-que as pessoas usuárias se autenticam na sua aplicação.
+que elas se autenticam na sua aplicação.
 
-### Validação de _Prompt_
+### Validação do _Prompt_
 
-_A integração com o validador do Prompts foi contribuída por
+_A integração com o validador do prompt foi contribuída por
 [Andrea Marco Sartori](https://github.com/cerbero90)_.
 
 [Laravel Prompts](../prompts.md) é um pacote PHP para adicionar formulários
@@ -382,8 +383,8 @@ $name = text('Qual o seu nome?', validate: [
 _Os testes de interação de fila foram contribuídos por
 [Taylor Otwell](https://github.com/taylorotwell)_.
 
-Anteriormente, tentar testar se um trabalho na fila foi liberado, excluído ou
-falhou manualmente era complicado e exigia a definição de dados de teste e
+Anteriormente, tentar testar manualmente se um trabalho na fila foi liberado,
+excluído ou falhou era complicado e exigia a definição de dados de teste e
 _stubs_ de fila personalizados.
 No entanto, no Laravel 11, você pode testar facilmente essas interações de fila
 usando o método `withFakeQueueInteractions`:
@@ -398,7 +399,7 @@ $job->handle();
 $job->assertReleased(delay: 30);
 ```
 
-Para obter mais informações sobre como testar trabalhos em fila, confira a
+Para obter mais informações sobre como testar trabalhos de fila, confira a
 [documentação sobre filas](../queues.md#testing).
 
 ### Novos Comandos do Artisan
@@ -454,7 +455,7 @@ _[Nuno Maduro](https://github.com/nunomaduro)_.
 
 A função auxiliar `once` executa a função de retorno de chamada fornecida e
 armazena o resultado em _cache_ na memória durante a duração da requisição.
-Qualquer chamada subsequentes para a função `once` com a mesma função de retorno
+Qualquer chamada subsequente para a função `once` com a mesma função de retorno
 de chamada retornará o resultado armazenado em _cache_ anteriormente:
 
 ```php
@@ -501,7 +502,7 @@ Para mais informações sobre os _drivers_ de banco de dados do Laravel, confira
 
 ### Operação e Inspeção Aprimoradas de Esquemas de Bancos de Dados
 
-_Operação e inspeção aprimoradas de esquemas de bancos de dados foram
+_A operação e a inspeção aprimoradas de esquemas de bancos de dados foram
 contribuídas por [Hafez Divandari](https://github.com/hafezdivandari)_.
 
 O Laravel 11 fornece métodos adicionais de operação e inspeção de esquema de
