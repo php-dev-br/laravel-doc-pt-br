@@ -12,7 +12,7 @@ status: ready
 
 ## Esquema de Versionamento
 
-O Laravel e seus pacotes seguem o
+O Laravel e seus outros pacotes originais seguem o
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 As versões maiores do _framework_ são lançadas todos os anos (por volta do 1º
 trimestre), enquanto as versões menores e de correções podem ser lançadas
@@ -72,7 +72,7 @@ estrutura de aplicação simplificada, limitação de taxa por segundo, roteamen
 de integridade, rotação elegante de chaves de encriptação, melhorias nos testes
 de fila, transporte de e-mail [Resend](https://resend.com), integração do
 validador do Prompts, novos comandos do Artisan e muito mais.
-Além disso, o Laravel Reverb, um servidor WebSocket próprio escalonável, foi
+Além disso, o Laravel Reverb, um servidor WebSocket original escalonável, foi
 introduzido para fornecer recursos robustos em tempo real para suas aplicações.
 
 ### PHP 8.2 {: #php-8.2 }
