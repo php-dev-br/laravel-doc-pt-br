@@ -75,7 +75,7 @@ validador do Prompts, novos comandos do Artisan e muito mais.
 Além disso, o Laravel Reverb, um servidor WebSocket original escalonável, foi
 introduzido para fornecer recursos robustos em tempo real para suas aplicações.
 
-### PHP 8.2 {: #php-8.2 }
+### PHP 8.2 {: #php-8-2 }
 
 O Laravel 11.x requer no mínimo a versão 8.2 do PHP.
 
