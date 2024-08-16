@@ -1,7 +1,7 @@
 ---
 source_url: https://github.com/laravel/docs/blob/10.x/releases.md
 revision: 7a21c9cbe2164e560c9861e972d16bf6d306d938
-status: wip
+status: ready
 ---
 
 # Notas de Versão
