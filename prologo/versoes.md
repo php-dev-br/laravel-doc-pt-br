@@ -89,7 +89,7 @@ desenvolvedora para iniciar e interagir com processos externos.
 Além disso, o Laravel Pennant foi introduzido para fornecer uma abordagem
 maravilhosa para gerenciar as “_flags_ de recursos” da sua aplicação.
 
-### PHP 8.1 {: #php-8.1 }
+### PHP 8.1 {: #php-8-1 }
 
 O Laravel 10.x requer no mínimo a versão 8.1 do PHP.
 
@@ -221,8 +221,8 @@ Por conveniência, os testes mais lentos serão exibidos diretamente na saída d
 CLI:
 
 <img
-  alt="Captura de tela mostrando o resultado da execução do comando 'php artisan test --profile'"
-  src="https://user-images.githubusercontent.com/5457236/217328439-d8d983ec-d0fc-4cde-93d9-ae5bccf5df14.png" />
+alt="Captura de tela da execução do comando 'php artisan test --profile'"
+src="https://user-images.githubusercontent.com/5457236/217328439-d8d983ec-d0fc-4cde-93d9-ae5bccf5df14.png" />
 
 ### Geração Automática de Código do Pest
 
@@ -256,5 +256,5 @@ com uma aparência nova e moderna, incluindo tipografia, espaçamento e _design_
 aprimorados:
 
 <img
-  alt="Captura de tela do novo design do Horizon"
-  src="conteudo/img/exemplo-horizon.png">
+alt="Captura de tela do novo design do Horizon"
+src="conteudo/img/exemplo-horizon.png">
