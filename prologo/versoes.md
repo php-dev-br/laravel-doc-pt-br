@@ -38,19 +38,19 @@ mudar no futuro.
 
 ## Política de Suporte
 
-Para todas as versões do Laravel, as correções de erros são fornecidas por 18
+Para todas as versões do Laravel, as correções de falhas são fornecidas por 18
 meses e as correções de segurança são fornecidas por 2 anos.
 Para todas as bibliotecas adicionais, incluindo Lumen, apenas a versão maior
-mais recente recebe correções de erros.
+mais recente recebe correções de falhas.
 Além disso, revise as versões do banco de dados
 [suportadas pelo Laravel](../database.md#introduction).
 
-|              Versão               |  PHP (*)  |       Lançamento        | Correções de erros até | Correções de segurança até |
-|:---------------------------------:|:---------:|:-----------------------:|:----------------------:|:--------------------------:|
-| <span class="bg-red-500">9</span> | 8.0 - 8.2 | 8 de fevereiro de 2022  |  8 de agosto de 2023   |   6 de fevereiro de 2024   |
-|                10                 | 8.1 - 8.3 | 14 de fevereiro de 2023 |  6 de agosto de 2024   |   4 de fevereiro de 2025   |
-|                11                 | 8.2 - 8.3 |   12 de março de 2024   | 3 de setembro de 2025  |    12 de março de 2026     |
-|                12                 | 8.2 - 8.3 |  1º trimestre de 2025   |  3º trimestre de 2026  |    1º trimestre de 2027    |
+|              Versão               |  PHP (*)  |       Lançamento        | Correções de falhas até | Correções de segurança até |
+|:---------------------------------:|:---------:|:-----------------------:|:-----------------------:|:--------------------------:|
+| <span class="bg-red-500">9</span> | 8.0 - 8.2 | 8 de fevereiro de 2022  |   8 de agosto de 2023   |   6 de fevereiro de 2024   |
+|                10                 | 8.1 - 8.3 | 14 de fevereiro de 2023 |   6 de agosto de 2024   |   4 de fevereiro de 2025   |
+|                11                 | 8.2 - 8.3 |   12 de março de 2024   |  3 de setembro de 2025  |    12 de março de 2026     |
+|                12                 | 8.2 - 8.3 |  1º trimestre de 2025   |  3º trimestre de 2026   |    1º trimestre de 2027    |
 
 <div class="version-colors">
   <div class="end-of-life">
