@@ -38,20 +38,20 @@ mudar no futuro.
 
 ## Política de Suporte
 
-Para todas as versões do Laravel, as correções de erros são fornecidas por 18
+Para todas as versões do Laravel, as correções de falhas são fornecidas por 18
 meses e as correções de segurança são fornecidas por 2 anos.
 Para todas as bibliotecas adicionais, incluindo Lumen, apenas a versão maior
-mais recente recebe correções de erros.
+mais recente recebe correções de falhas.
 Além disso, revise as versões do banco de dados
 [suportadas pelo Laravel](../database.md#introduction).
 
-| Versão  |  PHP (*)  |       Lançamento        | Correções de erros até | Correções de segurança até |
-|:-------:|:---------:|:-----------------------:|:----------------------:|:--------------------------:|
-| 6 (LTS) | 7.2 - 8.0 |  3 de setembro de 2019  | 25 de janeiro de 2022  |   6 de setembro de 2022    |
-|    7    | 7.2 - 8.0 |   3 de março de 2020    |  6 de outubro de 2020  |     3 de março de 2021     |
-|    8    | 7.3 - 8.1 |  8 de setembro de 2020  |  26 de julho de 2022   |   24 de janeiro de 2023    |
-|    9    | 8.0 - 8.2 | 8 de fevereiro de 2022  |  8 de agosto de 2023   |   6 de fevereiro de 2024   |
-|   10    | 8.1 - 8.3 | 14 de fevereiro de 2023 |  6 de agosto de 2024   |   4 de fevereiro de 2025   |
+| Versão  |  PHP (*)  |       Lançamento        | Correções de falhas até | Correções de segurança até |
+|:-------:|:---------:|:-----------------------:|:-----------------------:|:--------------------------:|
+| 6 (LTS) | 7.2 - 8.0 |  3 de setembro de 2019  |  25 de janeiro de 2022  |   6 de setembro de 2022    |
+|    7    | 7.2 - 8.0 |   3 de março de 2020    |  6 de outubro de 2020   |     3 de março de 2021     |
+|    8    | 7.3 - 8.1 |  8 de setembro de 2020  |   26 de julho de 2022   |   24 de janeiro de 2023    |
+|    9    | 8.0 - 8.2 | 8 de fevereiro de 2022  |   8 de agosto de 2023   |   6 de fevereiro de 2024   |
+|   10    | 8.1 - 8.3 | 14 de fevereiro de 2023 |   6 de agosto de 2024   |   4 de fevereiro de 2025   |
 
 <div class="version-colors">
   <div class="end-of-life">
@@ -367,17 +367,17 @@ determinar os resultados de pesquisa aplicáveis à sua consulta.
 Para saber mais sobre o motor de banco de dados do Scout, consulte a
 [documentação do Scout](../scout.md).
 
-### Renderização de Modelos Blade em Linha
+### Renderização de Modelos do Blade em Linha
 
-_A renderização de modelos Blade em linha foi contribuída por
+_A renderização de modelos do Blade em linha foi contribuída por
 [Jason Beggs](https://github.com/jasonlbeggs).
-A renderização de componentes Blade em linha foi contribuída por
+A renderização de componentes do Blade em linha foi contribuída por
 [Toby Zerner](https://github.com/tobyzerner)_.
 
-Às vezes, você pode precisar transformar uma _string_ bruta de modelo Blade em
-HTML válido.
+Às vezes, você pode precisar transformar uma _string_ bruta de modelo do Blade
+em HTML válido.
 Você pode fazer isso usando o método `render` fornecido pela fachada `Blade`.
-O método `render` aceita a _string_ do modelo Blade e um _array_ opcional de
+O método `render` aceita a _string_ do modelo do Blade e um _array_ opcional de
 dados para fornecer ao modelo:
 
 ```php
@@ -404,7 +404,7 @@ _O atalho para o nome do slot foi contribuído por
 Nas versões anteriores do Laravel, os nomes dos _slots_ eram fornecidos usando
 um atributo `name` na _tag_ `x-slot`:
 
-```blade
+```bladehtml
 <x-alert>
     <x-slot name="title">
         Erro no Servidor
@@ -417,16 +417,15 @@ um atributo `name` na _tag_ `x-slot`:
 No entanto, a partir do Laravel 9.x, você pode especificar o nome do _slot_
 usando uma sintaxe mais curta e conveniente:
 
-```xml
-
+```bladehtml
 <x-slot:title>
     Erro no Servidor
 </x-slot>
 ```
 
-### Diretivas Blade `@checked` e `@selected`
+### Diretivas `@checked` e `@selected` do Blade
 
-_As diretivas Blade `@checked` e `@selected` foram contribuídas por
+_As diretivas `@checked` e `@selected` do Blade foram contribuídas por
 [Ash Allen](https://github.com/ash-jc-allen) e
 [Taylor Otwell](https://github.com/taylorotwell)_.
 
@@ -435,7 +434,7 @@ facilmente se um determinado elemento HTML `checkbox` está “marcado”.
 Esta diretiva irá exibir `checked` se a condição fornecida for avaliada como
 `true`:
 
-```blade
+```bladehtml
 <input type="checkbox"
     name="active"
     value="active"
@@ -445,7 +444,7 @@ Esta diretiva irá exibir `checked` se a condição fornecida for avaliada como
 Da mesma forma, a diretiva `@selected` pode ser usada para indicar se uma
 determinada opção do elemento HTML `select` deve ser “selecionada”:
 
-```blade
+```bladehtml
 <select name="version">
     @foreach ($product->versions as $version)
         <option value="{{ $version }}" @selected(old('version') == $version)>
@@ -488,10 +487,10 @@ _A validação aprimorada das entradas de _arrays_ aninhados foi contribuída po
 Às vezes, você pode precisar acessar o valor de um determinado elemento de
 _array_ aninhado ao atribuir regras de validação ao atributo.
 Agora você pode fazer isso usando o método `Rule::forEach`.
-O método `forEach` aceita uma _clojure_ que será invocada para cada iteração do
+O método `forEach` aceita uma _closure_ que será invocada para cada iteração do
 atributo do _array_ sob validação e receberá o valor do atributo e o nome do
 atributo explícito e totalmente expandido.
-A _clojure_ deve retornar um _array_ de regras para atribuir ao elemento do
+A _closure_ deve retornar um _array_ de regras para atribuir ao elemento do
 _array_:
 
 ```php
