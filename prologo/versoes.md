@@ -394,10 +394,10 @@ Para obter mais informações sobre a vinculação do modelo de rota, consulte a
 _O suporte a múltiplos drivers de correio foi contribuído por
 [Taylor Otwell](https://twitter.com/taylorotwell)_.
 
-O Laravel 7 permite a configuração de múltiplos “_mailers_” para uma única
+O Laravel 7 permite a configuração de múltiplos "_mailers_" para uma única
 aplicação.
 Cada _mailer_ configurado no arquivo de configuração `mail` pode ter suas
-próprias opções e até mesmo seu próprio “transporte” exclusivo, permitindo que
+próprias opções e até mesmo seu próprio "transporte" exclusivo, permitindo que
 sua aplicação use diferentes serviços de _e-mail_ para enviar determinadas
 mensagens de _e-mail_.
 Por exemplo, sua aplicação pode usar Postmark para enviar mensagens
@@ -436,7 +436,7 @@ O Laravel 7 inclui suporte original para configurar respostas de requisições
 `OPTIONS` de Compartilhamento de Recursos de Origem Cruzada (CORS), integrando o
 popular pacote Laravel CORS escrito por Barry vd. Heuvel.
 Uma nova configuração `cors` está incluída no
-[esqueleto da aplicação Laravel padrão](https://github.com/laravel/laravel/blob/develop/config/cors.php).
+[esqueleto da aplicação Laravel padrão](https://github.com/laravel/laravel/blob/7.x/config/cors.php).
 
 Para obter mais informações sobre o suporte ao CORS no Laravel 7.x, consulte a
 [documentação do CORS](../routing.md#cors).
@@ -540,7 +540,7 @@ _A personalização dos arquivos de exemplo foi contribuída por
 
 Os comandos `make` do console do Artisan são usados para criar uma variedade de
 classes, como controladores, trabalhos, migrações e testes.
-Essas classes são geradas usando arquivos “de exemplo” preenchidos com valores
+Essas classes são geradas usando arquivos "de exemplo" preenchidos com valores
 baseados em sua entrada.
 No entanto, às vezes você pode querer fazer pequenas alterações nos arquivos
 gerados pelo Artisan.
