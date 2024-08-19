@@ -77,8 +77,8 @@ Portanto, lançamos uma variedade de recursos robustos no Laravel 9 sem quebrar 
 compatibilidade com versões anteriores.
 
 Portanto, esse compromisso de lançar novos recursos excelentes durante a versão
-atual provavelmente fará com que futuras versões “principais” sejam usadas
-principalmente para tarefas de “manutenção”, como atualização das dependências
+atual provavelmente fará com que futuras versões "principais" sejam usadas
+principalmente para tarefas de "manutenção", como atualização das dependências
 originais, que podem ser vistas nestas notas de versão.
 
 O Laravel 10 continua as melhorias feitas no Laravel 9.x, introduzindo tipos de
@@ -87,7 +87,7 @@ todos os arquivos de exemplo usados para gerar classes em todo o _framework_.
 Além disso, foi introduzida uma nova camada de abstração amigável à pessoa
 desenvolvedora para iniciar e interagir com processos externos.
 Além disso, o Laravel Pennant foi introduzido para fornecer uma abordagem
-maravilhosa para gerenciar as “_flags_ de recursos” da sua aplicação.
+maravilhosa para gerenciar as "_flags_ de recursos" da sua aplicação.
 
 ### PHP 8.1 {: #php-8-1 }
 
