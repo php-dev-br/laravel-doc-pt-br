@@ -71,7 +71,7 @@ in the channel at other times.
 ## Which Branch?
 
 **All** bug fixes should be sent to the latest stable branch or to
-the [current LTS branch](releases.md#support-policy). Bug fixes should **never**
+the [current LTS branch](prologo/versoes.md#politica-de-suporte). Bug fixes should **never**
 be sent to the `master` branch unless they fix features that exist only in the
 upcoming release.
 
