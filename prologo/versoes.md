@@ -262,7 +262,7 @@ Em versões anteriores do Laravel, você poderia querer definir o escopo do
 segundo modelo do Eloquent em uma definição de rota de forma que ele seja filho
 do modelo anterior do Eloquent.
 Por exemplo, considere esta definição de rota que recupera uma postagem de
-_blog_ por _slug_ para uma pessoa usuária específica:
+_blog_ de uma pessoa usuária específica por _slug_:
 
 ```php
 use App\Models\Post;
