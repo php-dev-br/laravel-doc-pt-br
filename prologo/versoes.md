@@ -230,7 +230,7 @@ _A compressão de migrações foi contribuída por
 migrações ao longo do tempo.
 Isso pode fazer com que seu diretório de migrações fique inchado com
 potencialmente centenas de migrações.
-Se estiver usando o MySQL ou PostgreSQL, agora você pode “comprimir” suas
+Se estiver usando o MySQL ou PostgreSQL, agora você pode "comprimir" suas
 migrações em um único arquivo SQL.
 Para começar, execute o comando `schema:dump`:
 
@@ -242,7 +242,7 @@ php artisan schema:dump
 php artisan schema:dump --prune
 ```
 
-Quando você executa este comando, o Laravel irá gravar um arquivo de “esquema”
+Quando você executa este comando, o Laravel irá gravar um arquivo de "esquema"
 no seu diretório `database/schema`.
 Agora, quando você tentar migrar seu banco de dados e nenhuma outra migração
 tiver sido executada, o Laravel executará primeiro o SQL do arquivo de esquema.
@@ -372,9 +372,9 @@ _As melhorias no modo de manutenção foram contribuídas por
 [Spatie](https://spatie.be)_.
 
 Nas versões anteriores do Laravel, o recurso do modo de manutenção
-`php artisan down` pode ser ignorado usando uma “lista de permissões” de
+`php artisan down` pode ser ignorado usando uma "lista de permissões" de
 endereços IP autorizados a acessar a aplicação.
-Este recurso foi removido em favor de uma solução de “segredo” ou _token_ mais
+Este recurso foi removido em favor de uma solução de "segredo" ou _token_ mais
 simples.
 
 Enquanto estiver no modo de manutenção, você pode usar a opção `secret` para
