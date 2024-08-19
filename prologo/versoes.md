@@ -200,8 +200,8 @@ User::factory()->count(5)->suspended()->create();
 Conforme mencionado, as fábricas de modelos do Laravel 8 contêm suporte de
 primeira classe a relacionamentos.
 Portanto, supondo que nosso modelo `User` tenha um método de relacionamento
-`posts`, podemos simplesmente executar o seguinte código para gerar uma pessoa
-usuária com três _posts_:
+`posts`, podemos simplesmente executar o seguinte código para gerar um modelo de
+pessoa usuária com três _posts_:
 
 ```php
 $users = User::factory()
