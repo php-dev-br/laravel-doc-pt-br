@@ -77,11 +77,11 @@ introduzir alterações significativas.
 Portanto, lançamos uma variedade de recursos robustos no Laravel 8 sem quebrar a
 compatibilidade com versões anteriores, como suporte a testes paralelos, _kits_
 para iniciantes aprimorados do Breeze, melhorias no cliente HTTP e até mesmo
-novos tipos de relacionamento do Eloquent, como “tem um de muitos”.
+novos tipos de relacionamento do Eloquent, como "tem um de muitos".
 
 Portanto, esse compromisso de lançar novos recursos excelentes durante a versão
-atual provavelmente fará com que futuras versões “principais” sejam usadas
-principalmente para tarefas de “manutenção”, como atualização das dependências
+atual provavelmente fará com que futuras versões "principais" sejam usadas
+principalmente para tarefas de "manutenção", como atualização das dependências
 originais, que podem ser vistas nestas notas de versão.
 
 O Laravel 9 continua as melhorias feitas no Laravel 8.x, introduzindo suporte
@@ -194,7 +194,7 @@ _A conversão em enums foi contribuída por
 [Mohamed Said](https://github.com/themsaid)_.
 
 O Eloquent agora permite que você converta os valores de seus atributos em
-[_enums_ “apoiadas”](/docs/php/doc/8/language.enumerations.backed.html) do PHP.
+[_enums_ "apoiadas"](/docs/php/doc/8/language.enumerations.backed.html) do PHP.
 Para fazer isso, você pode especificar o atributo e a _enum_ que deseja
 converter no _array_ de propriedades `$casts` do seu modelo:
 
@@ -281,7 +281,7 @@ No entanto, este comportamento só era suportado anteriormente pelo Laravel
 quando uma chave personalizada era usada para a vinculação da rota filha.
 
 No entanto, no Laravel 9.x, agora você pode instruir o Laravel a definir o
-escopo das vinculações “filhas” mesmo quando uma chave personalizada não é
+escopo das vinculações "filhas" mesmo quando uma chave personalizada não é
 fornecida.
 Para fazer isso, você pode invocar o método `scopeBindings` ao definir sua rota:
 
@@ -358,7 +358,7 @@ _O motor de banco de dados do Laravel Scout foi contribuído por
 [Dries Vints](https://github.com/driesvints)_.
 
 Se a sua aplicação interage com bancos de dados de pequeno a médio porte ou tem
-uma carga de trabalho leve, agora você pode usar o motor de “banco de dados” do
+uma carga de trabalho leve, agora você pode usar o motor de "banco de dados" do
 Scout em vez de um serviço de pesquisa dedicado, como Algolia ou MeiliSearch.
 O motor de banco de dados usará cláusulas `WHERE LIKE` e índices de texto
 completo ao filtrar os resultados do seu banco de dados existente para
@@ -430,7 +430,7 @@ _As diretivas `@checked` e `@selected` do Blade foram contribuídas por
 [Taylor Otwell](https://github.com/taylorotwell)_.
 
 Por conveniência, agora você pode usar a diretiva `@checked` para indicar
-facilmente se um determinado elemento HTML `checkbox` está “marcado”.
+facilmente se um determinado elemento HTML `checkbox` está "marcado".
 Esta diretiva irá exibir `checked` se a condição fornecida for avaliada como
 `true`:
 
@@ -442,7 +442,7 @@ Esta diretiva irá exibir `checked` se a condição fornecida for avaliada como
 ```
 
 Da mesma forma, a diretiva `@selected` pode ser usada para indicar se uma
-determinada opção do elemento HTML `select` deve ser “selecionada”:
+determinada opção do elemento HTML `select` deve ser "selecionada":
 
 ```bladehtml
 <select name="version">
@@ -530,7 +530,7 @@ _A Ignition é desenvolvida por [Spatie](https://spatie.be/)._
 Ignition, a página de depuração de exceções de código aberto criada por Spatie,
 foi redesenhada do zero.
 A nova e aprimorada Ignition vem com o Laravel 9.x e inclui temas claro e
-escuro, funcionalidade personalizável de “abrir no editor” e muito mais.
+escuro, funcionalidade personalizável de "abrir no editor" e muito mais.
 
 <img
 alt="Captura de tela do novo tema da Ignition"
@@ -600,7 +600,7 @@ Para obter mais informações sobre o uso do Soketi, consulte a
 _O suporte aprimorado a coleções no IDE foi contribuído por
 [Nuno Maduro](https://github.com/nunomaduro)_.
 
-O Laravel 9.x adiciona definições aprimoradas de tipo no estilo “genérico” ao
+O Laravel 9.x adiciona definições aprimoradas de tipo no estilo "genérico" ao
 componente de coleções, melhorando o suporte ao IDE e à análise estática.
 IDEs como
 [PHPStorm](https://blog.jetbrains.com/phpstorm/2021/12/phpstorm-2021-3-release/#support_for_future_laravel_collections)
