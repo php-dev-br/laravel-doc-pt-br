@@ -279,7 +279,7 @@ O Laravel agora fornece uma API mínima e expressiva em torno do
 faça rapidamente requisições HTTP de saída para se comunicar com outras
 aplicações _web_.
 O _wrapper_ do Laravel em torno do Guzzle é focado em seus casos de uso mais
-comuns e em uma experiência maravilhosa para o desenvolvedor.
+comuns e em uma experiência maravilhosa para a pessoa desenvolvedora.
 Por exemplo, o cliente facilita requisições `POST` e a interface com dados JSON:
 
 ```php
