@@ -257,4 +257,4 @@ aprimorados:
 
 <img
 alt="Captura de tela do novo design do Horizon"
-src="conteudo/img/exemplo-horizon.png">
+src="/content/img/docs/laravel/laravel/doc/10.x/horizon-example.png">
