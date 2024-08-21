@@ -19,7 +19,7 @@ agosto), enquanto as versões menores e de correções podem ser lançadas
 semanalmente.
 Versões menores e de correções **nunca** devem conter alterações significativas.
 
-Ao referenciar o _framework_ Laravel e seus componentes a partir da sua
+Ao referenciar o _framework_ Laravel ou seus componentes a partir da sua
 aplicação ou pacote, você deve sempre usar uma restrição de versão como `^6.0`,
 uma vez que as principais versões do Laravel incluem alterações significativas.
 No entanto, nos esforçamos para sempre garantir que você possa atualizar para
@@ -47,8 +47,8 @@ Além disso, revise as versões do banco de dados
 
 ## Laravel 6
 
-O Laravel 6 (LTS) continua as melhorias feitas no Laravel 5.8 introduzindo
-versionamento semântico, compatibilidade com
+O Laravel 6 (LTS) continua as melhorias feitas no Laravel 5.8, introduzindo
+versionamento semântico, compatibilidade com o
 [Laravel Vapor](https://vapor.laravel.com), respostas de autorização
 aprimoradas, _middlewares_ de trabalho, coleções preguiçosas, melhorias das
 subconsultas, extração da geração automática de código do _front-end_ para o
