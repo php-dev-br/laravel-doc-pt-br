@@ -19,7 +19,7 @@ fevereiro), enquanto as versões menores e de correções podem ser lançadas
 semanalmente.
 Versões menores e de correções **nunca** devem conter alterações significativas.
 
-Ao referenciar o _framework_ Laravel e seus componentes a partir da sua
+Ao referenciar o _framework_ Laravel ou seus componentes a partir da sua
 aplicação ou pacote, você deve sempre usar uma restrição de versão como `^9.0`,
 uma vez que as principais versões do Laravel incluem alterações significativas.
 No entanto, nos esforçamos para sempre garantir que você possa atualizar para
