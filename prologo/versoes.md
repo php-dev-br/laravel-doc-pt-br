@@ -18,7 +18,7 @@ As versões maiores do _framework_ são lançadas a cada seis meses (em fevereir
 agosto), enquanto as versões menores podem ser lançadas semanalmente.
 Versões menores **nunca** devem conter alterações significativas.
 
-Ao referenciar o _framework_ Laravel e seus componentes a partir da sua
+Ao referenciar o _framework_ Laravel ou seus componentes a partir da sua
 aplicação ou pacote, você deve sempre usar uma restrição de versão como
 `^5.8.*`, uma vez que as principais versões do Laravel incluem alterações
 significativas.
