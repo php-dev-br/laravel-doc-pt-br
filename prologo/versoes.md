@@ -19,7 +19,7 @@ fevereiro e agosto), enquanto as versões menores e de correções podem ser
 lançadas semanalmente.
 Versões menores e de correções **nunca** devem conter alterações significativas.
 
-Ao referenciar o _framework_ Laravel e seus componentes a partir da sua
+Ao referenciar o _framework_ Laravel ou seus componentes a partir da sua
 aplicação ou pacote, você deve sempre usar uma restrição de versão como `^7.0`,
 uma vez que as principais versões do Laravel incluem alterações significativas.
 No entanto, nos esforçamos para sempre garantir que você possa atualizar para
@@ -45,7 +45,7 @@ Além disso, revise as versões do banco de dados
 
 ## Laravel 7
 
-O Laravel 7 continua as melhorias feitas no Laravel 6.x introduzindo o Laravel
+O Laravel 7 continua as melhorias feitas no Laravel 6.x, introduzindo o Laravel
 Sanctum, melhorias na velocidade de roteamento, conversões personalizadas do
 Eloquent, _tags_ de componentes do Blade, operações de _strings_ fluentes, um
 cliente HTTP focado na pessoa desenvolvedora, suporte CORS original, escopo
