@@ -8,7 +8,7 @@ status: ready
 
 ## Prólogo
 
-- [Notas de Versão](releases.md)
+- [Notas de Versão](prologo/versoes.md)
 - [Guia de Atualização](upgrade.md)
 - [Guia de Contribuição](contributions.md)
 - [Documentação da API](https://laravel.com/api/5.6)
